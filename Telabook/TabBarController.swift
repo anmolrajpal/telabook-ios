@@ -42,71 +42,11 @@ class TabBarController: UITabBarController {
         self.showLoginController()
     }
     func authenticate() {
-//        setViewsState()
-//        self.spinner.startAnimating()
-        //        viewControllers = []
         if isLoggedIn() {
             let emailId = UserDefaults.standard.getEmailId()
-            guard let password = UserDefaults.standard.getPassword() else {
-//                self.spinner.stopAnimating()
-                let alertVC = UIAlertController(title: "Authentication Error", message: "Please sign in again.", preferredStyle: UIAlertController.Style.alert)
-                DispatchQueue.main.async {
-                    alertVC.addAction(UIAlertAction(title: "Sign in", style: UIAlertAction.Style.destructive) { (action:UIAlertAction) in
-                        self.handleSignOut()
-                    })
-                    self.present(alertVC, animated: true, completion: nil)
-                }
-                return
-            }
+            let password = UserDefaults.standard.getPassword()
             print("Email => \(emailId)\nPassword => \(password)")
             setUpTabBarViewControllers()
-//            UserAuthenticationService.shared.fetch(rollNo, password) { (data, error) in
-//
-//                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.0, execute: {
-//
-//
-//                    guard error == nil else {
-//                        self.spinner.stopAnimating()
-//                        let alertVC = UIAlertController(title: "Connection Error", message: "Request timed out. Please try again.", preferredStyle: UIAlertController.Style.alert)
-//                        alertVC.addAction(UIAlertAction(title: "Sign Out", style: UIAlertAction.Style.destructive) { (action:UIAlertAction) in
-//                            let loginController = LoginController()
-//                            UserDefaults.standard.setIsLoggedIn(value: false)
-//                            UserDefaults.clearUserData()
-//                            DispatchQueue.main.async {
-//                                self.present(loginController, animated: true, completion: nil)
-//                            }
-//                        })
-//                        alertVC.addAction(UIAlertAction(title: "Retry", style: UIAlertAction.Style.default) { (action:UIAlertAction) in
-//                            self.retry()
-//                        })
-//                        self.present(alertVC, animated: true, completion: nil)
-//                        return
-//                    }
-//
-//                    let result = data?.result
-//                    _ = data?.message
-//                    switch result {
-//                    case ResultType.Failure.rawValue:
-//                        self.spinner.stopAnimating()
-//                        let alertVC = UIAlertController(title: "Authentication Error", message: "Please sign in again.", preferredStyle: UIAlertController.Style.alert)
-//                        alertVC.addAction(UIAlertAction(title: "Sign in", style: UIAlertAction.Style.destructive) { (action:UIAlertAction) in
-//                            let loginController = LoginController()
-//                            UserDefaults.standard.setIsLoggedIn(value: false)
-//                            UserDefaults.clearUserData()
-//                            DispatchQueue.main.async {
-//                                self.present(loginController, animated: true, completion: nil)
-//                            }
-//                        })
-//                        self.present(alertVC, animated: true, completion: nil)
-//
-//                    case ResultType.Success.rawValue:
-//                        self.spinner.stopAnimating()
-//                        self.setUpTabBarViewControllers()
-//                    default:
-//                        break
-//                    }
-//                })
-//            }
         } else {
 //            self.spinner.stopAnimating()
             let loginViewController = LoginViewController()
@@ -115,10 +55,6 @@ class TabBarController: UITabBarController {
             DispatchQueue.main.async {
                 self.present(loginViewController, animated: false, completion: nil)
             }
-            //            DispatchQueue.main.async {
-            //                print("hahahha")
-            //                self.showLoginController()
-            //            }
         }
     }
     private func setUpTabBarViewControllers() {

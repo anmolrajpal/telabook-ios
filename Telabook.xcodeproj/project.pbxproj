@@ -28,9 +28,27 @@
 		6FB11B1D229D19E10098D050 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B1C229D19E10098D050 /* NetworkManager.swift */; };
 		6FB11B1F229D88510098D050 /* SectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B1E229D88510098D050 /* SectionItem.swift */; };
 		6FB11B21229D894A0098D050 /* SectionItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B20229D894A0098D050 /* SectionItemCell.swift */; };
+		6FB11B25229E59F00098D050 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B24229E59F00098D050 /* Config.swift */; };
+		6FB11B27229E5F6F0098D050 /* AuthenticationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B26229E5F6F0098D050 /* AuthenticationService.swift */; };
+		6FB11B29229E75710098D050 /* FirebaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B28229E75710098D050 /* FirebaseAuthService.swift */; };
+		6FB11B2B229EA7C20098D050 /* Codable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B2A229EA7C20098D050 /* Codable.swift */; };
+		6FB11B2D229EB4C40098D050 /* RemindersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B2C229EB4C40098D050 /* RemindersViewController.swift */; };
+		6FB11B2F229EB4F20098D050 /* FollowUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B2E229EB4F20098D050 /* FollowUpViewController.swift */; };
+		6FB11B31229EB5020098D050 /* CallGroupsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B30229EB5020098D050 /* CallGroupsViewController.swift */; };
+		6FB11B33229EB5190098D050 /* OnlineUsersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B32229EB5190098D050 /* OnlineUsersViewController.swift */; };
+		6FB11B35229ED6750098D050 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6FB11B34229ED6740098D050 /* GoogleService-Info.plist */; };
+		6FB11B37229EF4300098D050 /* ManageAgentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B36229EF42F0098D050 /* ManageAgentsViewController.swift */; };
+		6FB11B39229EF4430098D050 /* GalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B38229EF4430098D050 /* GalleryViewController.swift */; };
+		6FB11B3B229EF4500098D050 /* BlockedUsersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B3A229EF4500098D050 /* BlockedUsersViewController.swift */; };
+		6FB11B3D229EF4690098D050 /* ArchivedSMSViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B3C229EF4690098D050 /* ArchivedSMSViewController.swift */; };
+		6FB11B41229F7A290098D050 /* ManageAgentsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B40229F7A290098D050 /* ManageAgentsCell.swift */; };
+		6FB11B4422A2A2E10098D050 /* Telabook.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B4222A2A2E10098D050 /* Telabook.xcdatamodeld */; };
+		6FB11B4622A2A5110098D050 /* PersistenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B4522A2A5110098D050 /* PersistenceService.swift */; };
+		75CA0A53E250757B0D89EA60 /* Pods_Telabook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1482E3F11B70E4874878A5EE /* Pods_Telabook.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1482E3F11B70E4874878A5EE /* Pods_Telabook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Telabook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6FB11AE0229BDDBD0098D050 /* Telabook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Telabook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6FB11AE3229BDDBD0098D050 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6FB11AE8229BDDBD0098D050 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -54,6 +72,24 @@
 		6FB11B1C229D19E10098D050 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		6FB11B1E229D88510098D050 /* SectionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionItem.swift; sourceTree = "<group>"; };
 		6FB11B20229D894A0098D050 /* SectionItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionItemCell.swift; sourceTree = "<group>"; };
+		6FB11B24229E59F00098D050 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		6FB11B26229E5F6F0098D050 /* AuthenticationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationService.swift; sourceTree = "<group>"; };
+		6FB11B28229E75710098D050 /* FirebaseAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthService.swift; sourceTree = "<group>"; };
+		6FB11B2A229EA7C20098D050 /* Codable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Codable.swift; sourceTree = "<group>"; };
+		6FB11B2C229EB4C40098D050 /* RemindersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersViewController.swift; sourceTree = "<group>"; };
+		6FB11B2E229EB4F20098D050 /* FollowUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUpViewController.swift; sourceTree = "<group>"; };
+		6FB11B30229EB5020098D050 /* CallGroupsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallGroupsViewController.swift; sourceTree = "<group>"; };
+		6FB11B32229EB5190098D050 /* OnlineUsersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineUsersViewController.swift; sourceTree = "<group>"; };
+		6FB11B34229ED6740098D050 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		6FB11B36229EF42F0098D050 /* ManageAgentsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsViewController.swift; sourceTree = "<group>"; };
+		6FB11B38229EF4430098D050 /* GalleryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryViewController.swift; sourceTree = "<group>"; };
+		6FB11B3A229EF4500098D050 /* BlockedUsersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUsersViewController.swift; sourceTree = "<group>"; };
+		6FB11B3C229EF4690098D050 /* ArchivedSMSViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedSMSViewController.swift; sourceTree = "<group>"; };
+		6FB11B40229F7A290098D050 /* ManageAgentsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsCell.swift; sourceTree = "<group>"; };
+		6FB11B4322A2A2E10098D050 /* Telabook.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Telabook.xcdatamodel; sourceTree = "<group>"; };
+		6FB11B4522A2A5110098D050 /* PersistenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PersistenceService.swift; path = ../PersistenceService.swift; sourceTree = "<group>"; };
+		C2EE0DDF9E6F5A65BD369028 /* Pods-Telabook.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.debug.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.debug.xcconfig"; sourceTree = "<group>"; };
+		DD0234C0225DA725AC83D099 /* Pods-Telabook.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.release.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,17 +97,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				75CA0A53E250757B0D89EA60 /* Pods_Telabook.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1586A43250115E53D6CA2E61 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1482E3F11B70E4874878A5EE /* Pods_Telabook.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		6FB11AD7229BDDBD0098D050 = {
 			isa = PBXGroup;
 			children = (
 				6FB11AE2229BDDBD0098D050 /* Telabook */,
 				6FB11AE1229BDDBD0098D050 /* Products */,
+				9D78E82FCB5E6192D5C81890 /* Pods */,
+				1586A43250115E53D6CA2E61 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -89,6 +136,8 @@
 				6FB11AFC229BF36B0098D050 /* LaunchScreen.storyboard */,
 				6FB11AE7229BDDBD0098D050 /* Main.storyboard */,
 				6FB11AEF229BDDBE0098D050 /* Info.plist */,
+				6FB11B34229ED6740098D050 /* GoogleService-Info.plist */,
+				6FB11B4222A2A2E10098D050 /* Telabook.xcdatamodeld */,
 				6FB11AEA229BDDBE0098D050 /* Assets.xcassets */,
 				6FB11AE3229BDDBD0098D050 /* AppDelegate.swift */,
 				6FB11AFA229BF0590098D050 /* TabBarController.swift */,
@@ -121,6 +170,10 @@
 				6FB11B04229BFA120098D050 /* HomeViewController.swift */,
 				6FB11B1E229D88510098D050 /* SectionItem.swift */,
 				6FB11B20229D894A0098D050 /* SectionItemCell.swift */,
+				6FB11B2C229EB4C40098D050 /* RemindersViewController.swift */,
+				6FB11B2E229EB4F20098D050 /* FollowUpViewController.swift */,
+				6FB11B30229EB5020098D050 /* CallGroupsViewController.swift */,
+				6FB11B32229EB5190098D050 /* OnlineUsersViewController.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -153,6 +206,11 @@
 			isa = PBXGroup;
 			children = (
 				6FB11B0C229BFA430098D050 /* MoreViewController.swift */,
+				6FB11B36229EF42F0098D050 /* ManageAgentsViewController.swift */,
+				6FB11B40229F7A290098D050 /* ManageAgentsCell.swift */,
+				6FB11B38229EF4430098D050 /* GalleryViewController.swift */,
+				6FB11B3A229EF4500098D050 /* BlockedUsersViewController.swift */,
+				6FB11B3C229EF4690098D050 /* ArchivedSMSViewController.swift */,
 			);
 			path = More;
 			sourceTree = "<group>";
@@ -161,8 +219,10 @@
 			isa = PBXGroup;
 			children = (
 				6FB11B0F229C23840098D050 /* Extensions.swift */,
+				6FB11B2A229EA7C20098D050 /* Codable.swift */,
 				6FB11B1C229D19E10098D050 /* NetworkManager.swift */,
 				6FB11B18229D06BB0098D050 /* CustomUtils.swift */,
+				6FB11B24229E59F00098D050 /* Config.swift */,
 				6FB11B13229C3FCA0098D050 /* BadgeBarItem.swift */,
 				6FB11B15229D05E00098D050 /* UserDefaults.swift */,
 				6FB11B11229C31DF0098D050 /* Enums.swift */,
@@ -173,8 +233,20 @@
 		6FB11B17229D06880098D050 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				6FB11B26229E5F6F0098D050 /* AuthenticationService.swift */,
+				6FB11B28229E75710098D050 /* FirebaseAuthService.swift */,
+				6FB11B4522A2A5110098D050 /* PersistenceService.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		9D78E82FCB5E6192D5C81890 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				C2EE0DDF9E6F5A65BD369028 /* Pods-Telabook.debug.xcconfig */,
+				DD0234C0225DA725AC83D099 /* Pods-Telabook.release.xcconfig */,
+			);
+			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -184,9 +256,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6FB11AF2229BDDBE0098D050 /* Build configuration list for PBXNativeTarget "Telabook" */;
 			buildPhases = (
+				926EF91E3172470E118E13FF /* [CP] Check Pods Manifest.lock */,
 				6FB11ADC229BDDBD0098D050 /* Sources */,
 				6FB11ADD229BDDBD0098D050 /* Frameworks */,
 				6FB11ADE229BDDBD0098D050 /* Resources */,
+				5646E3938B5A1BA63F7B5BC0 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -240,31 +314,102 @@
 				6FB11AF8229BE2400098D050 /* Gotham-Medium.otf in Resources */,
 				6FB11AFD229BF36B0098D050 /* LaunchScreen.storyboard in Resources */,
 				6FB11AE9229BDDBD0098D050 /* Main.storyboard in Resources */,
+				6FB11B35229ED6750098D050 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5646E3938B5A1BA63F7B5BC0 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Telabook/Pods-Telabook-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
+				"${BUILT_PRODUCTS_DIR}/ReachabilitySwift/Reachability.framework",
+				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reachability.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Telabook/Pods-Telabook-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		926EF91E3172470E118E13FF /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Telabook-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		6FB11ADC229BDDBD0098D050 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6FB11B33229EB5190098D050 /* OnlineUsersViewController.swift in Sources */,
 				6FB11AFB229BF0590098D050 /* TabBarController.swift in Sources */,
+				6FB11B29229E75710098D050 /* FirebaseAuthService.swift in Sources */,
+				6FB11B37229EF4300098D050 /* ManageAgentsViewController.swift in Sources */,
 				6FB11B0B229BFA3C0098D050 /* SettingsViewController.swift in Sources */,
+				6FB11B39229EF4430098D050 /* GalleryViewController.swift in Sources */,
+				6FB11B3D229EF4690098D050 /* ArchivedSMSViewController.swift in Sources */,
 				6FB11B09229BFA310098D050 /* SMSViewController.swift in Sources */,
+				6FB11B27229E5F6F0098D050 /* AuthenticationService.swift in Sources */,
+				6FB11B31229EB5020098D050 /* CallGroupsViewController.swift in Sources */,
 				6FB11B1F229D88510098D050 /* SectionItem.swift in Sources */,
+				6FB11B25229E59F00098D050 /* Config.swift in Sources */,
 				6FB11B21229D894A0098D050 /* SectionItemCell.swift in Sources */,
+				6FB11B2D229EB4C40098D050 /* RemindersViewController.swift in Sources */,
+				6FB11B4422A2A2E10098D050 /* Telabook.xcdatamodeld in Sources */,
 				6FB11B16229D05E00098D050 /* UserDefaults.swift in Sources */,
 				6FB11B10229C23840098D050 /* Extensions.swift in Sources */,
 				6FB11AE4229BDDBD0098D050 /* AppDelegate.swift in Sources */,
+				6FB11B3B229EF4500098D050 /* BlockedUsersViewController.swift in Sources */,
 				6FB11B0D229BFA430098D050 /* MoreViewController.swift in Sources */,
 				6FB11B14229C3FCA0098D050 /* BadgeBarItem.swift in Sources */,
 				6FB11B19229D06BB0098D050 /* CustomUtils.swift in Sources */,
 				6FB11B07229BFA240098D050 /* CallsViewController.swift in Sources */,
 				6FB11B1D229D19E10098D050 /* NetworkManager.swift in Sources */,
+				6FB11B41229F7A290098D050 /* ManageAgentsCell.swift in Sources */,
 				6FB11B12229C31DF0098D050 /* Enums.swift in Sources */,
+				6FB11B2F229EB4F20098D050 /* FollowUpViewController.swift in Sources */,
+				6FB11B4622A2A5110098D050 /* PersistenceService.swift in Sources */,
 				6FB11B1B229D07050098D050 /* LoginViewController.swift in Sources */,
+				6FB11B2B229EA7C20098D050 /* Codable.swift in Sources */,
 				6FB11B05229BFA120098D050 /* HomeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -401,6 +546,7 @@
 		};
 		6FB11AF3229BDDBE0098D050 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C2EE0DDF9E6F5A65BD369028 /* Pods-Telabook.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -420,6 +566,7 @@
 		};
 		6FB11AF4229BDDBE0098D050 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DD0234C0225DA725AC83D099 /* Pods-Telabook.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -459,6 +606,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		6FB11B4222A2A2E10098D050 /* Telabook.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				6FB11B4322A2A2E10098D050 /* Telabook.xcdatamodel */,
+			);
+			currentVersion = 6FB11B4322A2A2E10098D050 /* Telabook.xcdatamodel */;
+			path = Telabook.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 6FB11AD8229BDDBD0098D050 /* Project object */;
 }

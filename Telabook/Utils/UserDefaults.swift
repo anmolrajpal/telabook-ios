@@ -14,7 +14,11 @@ extension UserDefaults {
         case emailId
         case password
         case appLaunchCount
+        case token
+        case companyId
+        case workerId
     }
+    
     var appLaunchCount:Int? {
         get {
             return integer(forKey: UserDefaultsKeys.appLaunchCount.rawValue)
@@ -24,6 +28,9 @@ extension UserDefaults {
             synchronize()
         }
     }
+    
+    
+    //MARK: LOGGED IN BOOL
     func setIsLoggedIn(value: Bool) {
         set(value, forKey: UserDefaultsKeys.isLoggedIn.rawValue)
         synchronize()
@@ -33,20 +40,63 @@ extension UserDefaults {
         return bool(forKey: UserDefaultsKeys.isLoggedIn.rawValue)
     }
     
+    
+    //MARK: GET-SET TOKEN
+    func setToken(token: String) {
+        set(token, forKey: UserDefaultsKeys.token.rawValue)
+    }
+    func getToken() -> String {
+        return UserDefaults.standard.string(forKey: UserDefaultsKeys.token.rawValue)!
+    }
+    
+    
+    
+    //MARK: GET-SET EMAIL ID
     func setEmailId(emailId: String) {
         set(emailId, forKey: UserDefaultsKeys.emailId.rawValue)
     }
     func getEmailId() -> String {
-        return UserDefaults.standard.string(forKey: UserDefaultsKeys.emailId.rawValue) ?? ""
+        return UserDefaults.standard.string(forKey: UserDefaultsKeys.emailId.rawValue)!
     }
+    
+    
+    //MARK: GET-SET PASSWORD
     func setPassword(password: String) {
         set(password, forKey: UserDefaultsKeys.password.rawValue)
     }
-    func getPassword() -> String? {
-        return UserDefaults.standard.string(forKey: UserDefaultsKeys.password.rawValue)
+    func getPassword() -> String {
+        return UserDefaults.standard.string(forKey: UserDefaultsKeys.password.rawValue)!
     }
+    
+    
+    //MARK: GET-SET COMPANY ID
+    func setCompanyId(companyId: Int) {
+        set(companyId, forKey: UserDefaultsKeys.companyId.rawValue)
+    }
+    func getCompanyId() -> Int {
+        return UserDefaults.standard.integer(forKey: UserDefaultsKeys.companyId.rawValue)
+    }
+    
+    
+    
+    //MARK: GET-SET WORKER ID
+    func setWorkerId(workerId: Int) {
+        set(workerId, forKey: UserDefaultsKeys.workerId.rawValue)
+    }
+    func getWorkerId() -> Int {
+        return UserDefaults.standard.integer(forKey: UserDefaultsKeys.workerId.rawValue)
+    }
+    
+    
+    
+    
     static func clearUserData() {
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.emailId.rawValue)
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.password.rawValue)
+        UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.token.rawValue)
+        UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.isLoggedIn.rawValue)
+        UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.companyId.rawValue)
+        UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.workerId.rawValue)
+        
     }
 }

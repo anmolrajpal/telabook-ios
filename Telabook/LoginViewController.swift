@@ -9,7 +9,7 @@
 import UIKit
 
 class LoginViewController: UIViewController {
-
+    var token:String?
     override func loadView() {
         super.loadView()
         setupViews()
@@ -31,6 +31,7 @@ class LoginViewController: UIViewController {
         view.addSubview(passwordTextField)
         view.addSubview(forgotPasswordButton)
         view.addSubview(loginButton)
+        loginButton.addSubview(spinner)
     }
     private func setupConstraints() {
         logoImageView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: view.frame.height / 6, leftConstant: 40, bottomConstant: 0, rightConstant: 40, widthConstant: 0, heightConstant: 0)
@@ -40,6 +41,10 @@ class LoginViewController: UIViewController {
         forgotPasswordButton.anchor(top: passwordTextField.bottomAnchor, left: nil, bottom: nil, right: nil, topConstant: 10, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         forgotPasswordButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         loginButton.anchor(top: forgotPasswordButton.bottomAnchor, left: passwordTextField.leftAnchor, bottom: nil, right: passwordTextField.rightAnchor, topConstant: 30, leftConstant: 25, bottomConstant: 0, rightConstant: 25, widthConstant: 0, heightConstant: 40)
+        spinner.centerXAnchor.constraint(equalTo: loginButton.centerXAnchor).isActive = true
+        spinner.centerYAnchor.constraint(equalTo: loginButton.centerYAnchor).isActive = true
+        spinner.widthAnchor.constraint(equalTo: loginButton.widthAnchor).isActive = true
+        spinner.heightAnchor.constraint(equalTo: loginButton.heightAnchor).isActive = true
     }
     fileprivate func startSpinner() {
         spinner.startAnimating()
@@ -84,10 +89,11 @@ class LoginViewController: UIViewController {
             self.view.layoutIfNeeded()
         }, completion: nil)
     }
+    
     let spinner:UIActivityIndicatorView = {
         let spinner = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.white)
 //        spinner.color = .white
-//        spinner.backgroundColor = UIColor.red
+        spinner.backgroundColor = UIColor.telaBlue
 //        spinner.style = UIActivityIndicatorView.Style.whiteLarge
         spinner.hidesWhenStopped = true
         spinner.clipsToBounds = true
@@ -253,6 +259,7 @@ class LoginViewController: UIViewController {
         button.isEnabled = false
         return button
     }()
+    var userInfo:UserInfoCodable?
     @objc func handleLogin() {
         self.login()
     }
@@ -260,22 +267,96 @@ class LoginViewController: UIViewController {
     final private func login() {
         view.endEditing(true)
         let emailId = idTextField.text!, password = passwordTextField.text!
-        guard emailId != "" && password != "" else {
-            DispatchQueue.main.async {
-                UIAlertController.showAlert(alertTitle: "Fields Empty", message: "Required Fields are Empty", alertActionTitle: "Dismiss", controller: self)
-            }
-            return
-        }
-//        startSpinner()
-        authenticate(emailId, password)
+        startSpinner()
+        handleLoginSequence(emailId, password)
     }
-    final private func authenticate(_ emailId:String, _ password:String) {
-        print("Logging in with email ID => \(emailId) & \nPassword => \(password)")
+    fileprivate func handleLoginSequence(_ emailId:String, _ password:String) {
+        self.fetchTokenAndLogin(emailId, password)
+    }
+    fileprivate func fetchTokenAndLogin(_ emailId:String, _ password:String) {
+        FirebaseAuthService.shared.authenticateAndFetchToken(email: emailId, password: password) { (token, error) in
+            if let err = error {
+                print("Error Catched at Firebase Token Completion => \(err.localizedDescription)")
+                DispatchQueue.main.async {
+                    self.stopSpinner()
+                    UIAlertController.showAlert(alertTitle: "Error", message: error?.localizedDescription ?? "Authentication Error. Please try again ", alertActionTitle: "Ok", controller: self)
+                }
+            }
+            if let t = token {
+                guard t != "" else {
+                    print("Error: Empty token String")
+                    DispatchQueue.main.async {
+                        self.stopSpinner()
+                        UIAlertController.showAlert(alertTitle: "Service Error", message: "Service Authentication error occured. Please try again", alertActionTitle: "Ok", controller: self)
+                    }
+                    return
+                }
+                print("Token => \(t)")
+                self.token = t
+                self.loginAndFetchUser(token: t)
+            }
+        }
+    }
+    final private func loginAndFetchUser(token:String) {
+        AuthenticationService.shared.authenticateViaToken(token: token) { (data, serviceError, error) in
+            guard error == nil else {
+                if let err = serviceError {
+                    print(err)
+                    switch err {
+                    
+                    case .FailedRequest:
+                        DispatchQueue.main.async {
+                            self.stopSpinner()
+                            UIAlertController.showAlert(alertTitle: "Request Timed Out", message: error?.localizedDescription ?? "Please try again later", alertActionTitle: "Ok", controller: self)
+                        }
+                    case .InvalidResponse:
+                        DispatchQueue.main.async {
+                            self.stopSpinner()
+                            UIAlertController.showAlert(alertTitle: "Invalid Response", message: error?.localizedDescription ?? "Please try again", alertActionTitle: "Ok", controller: self)
+                        }
+                    case .Unknown:
+                        DispatchQueue.main.async {
+                            self.stopSpinner()
+                            UIAlertController.showAlert(alertTitle: "Some Error Occured", message: error?.localizedDescription ?? "An unknown error occured. Please try again later.", alertActionTitle: "Ok", controller: self)
+                        }
+                    case .Internal:
+                        DispatchQueue.main.async {
+                            self.stopSpinner()
+                            UIAlertController.showAlert(alertTitle: "Internal Error Occured", message: error?.localizedDescription ?? "An internal error occured. Please try again later.", alertActionTitle: "Ok", controller: self)
+                        }
+                    }
+                }
+                return
+            }
+            if let userData = data {
+                self.userInfo = userData
+                guard let userObject = userData.user,
+                    let companyId = userObject.company,
+                    let workerId = userObject.workerId else {
+                        print("Company ID and worker Id - nil")
+                        DispatchQueue.main.async {
+                            self.stopSpinner()
+                            UIAlertController.showAlert(alertTitle: "Error", message: "Error while saving login info. Please try logging in again", alertActionTitle: "Ok", controller: self)
+                        }
+                        return
+                }
+                print("Signing in - USER: \(userObject.name ?? "") \(userObject.lastName ?? "")")
+                self.setUserDefaults(token, companyId, workerId)
+                DispatchQueue.main.async {
+                    self.stopSpinner()
+                    self.dismiss(animated: true, completion: nil)
+                }
+            }
+        }
+    }
+    fileprivate func setUserDefaults(_ token:String, _ companyId:Int, _ workerId:Int) {
+        let emailId = idTextField.text!, password = passwordTextField.text!
         UserDefaults.standard.setIsLoggedIn(value: true)
         UserDefaults.standard.setEmailId(emailId: emailId)
         UserDefaults.standard.setPassword(password: password)
-//        self.stopSpinner()
-        self.dismiss(animated: true, completion: nil)
+        UserDefaults.standard.setToken(token: token)
+        UserDefaults.standard.setCompanyId(companyId: companyId)
+        UserDefaults.standard.setWorkerId(workerId: workerId)
     }
 }
 

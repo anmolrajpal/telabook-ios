@@ -7,6 +7,10 @@
 //
 
 import UIKit
+public extension CodingUserInfoKey {
+    // Helper property to retrieve the Core Data managed object context
+    static let context = CodingUserInfoKey(rawValue: "managedObjectContext")
+}
 extension UIView {
     func anchor(top: NSLayoutYAxisAnchor? = nil, left: NSLayoutXAxisAnchor? = nil, bottom: NSLayoutYAxisAnchor? = nil, right: NSLayoutXAxisAnchor? = nil, topConstant: CGFloat = 0, leftConstant: CGFloat = 0, bottomConstant: CGFloat = 0, rightConstant: CGFloat = 0, widthConstant: CGFloat = 0, heightConstant: CGFloat = 0) {
         translatesAutoresizingMaskIntoConstraints = false
@@ -49,7 +53,9 @@ extension UIViewController {
         navigationController?.navigationBar.barTintColor = UIColor.telaGray3
         view.backgroundColor = UIColor.telaGray1
         navigationController?.navigationBar.isTranslucent = false
-//        navigationController?.navigationBar.tintColor = UIColor.telaYellow
+        navigationController?.setCustomBackBarButton(image: #imageLiteral(resourceName: "back_arrow"), title: nil)
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        navigationItem.backBarButtonItem?.tintColor = .telaGray6
         self.extendedLayoutIncludesOpaqueBars = true
     }
     func hideKeyboardWhenTappedAround() {
@@ -69,6 +75,16 @@ extension UINavigationController {
             return topVC.preferredStatusBarStyle
         }
         return .default
+    }
+    func setCustomBackBarButton(image:UIImage?, title:String?) {
+        if let image = image {
+            self.navigationBar.backItem?.backBarButtonItem?.tintColor = .red
+            self.navigationBar.backIndicatorImage = image
+            self.navigationBar.backIndicatorTransitionMaskImage = image
+        }
+        if let title = title {
+            self.navigationBar.backItem?.title = title
+        }
     }
 }
 extension UIColor {
@@ -123,6 +139,15 @@ extension UIAlertController {
     }
 }
 extension String {
+    static func emptyIfNil(_ optionalString: String?) -> String {
+        let text: String
+        if let unwrapped = optionalString {
+            text = unwrapped
+        } else {
+            text = ""
+        }
+        return text
+    }
     func isValidEmailAddress() -> Bool {
         let emailRegEx = "(?:[a-zA-Z0-9!#$%\\&‘*+/=?\\^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%\\&'*+/=?\\^_`{|}"
             + "~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\"
@@ -134,5 +159,40 @@ extension String {
         
         let emailTest = NSPredicate(format: "SELF MATCHES[c] %@", emailRegEx)
         return emailTest.evaluate(with: self)
+    }
+}
+let imageCache = NSCache<NSString, UIImage>()
+
+extension UIImageView {
+    
+    func loadImageUsingCacheWithURLString(_ URLString: String, placeHolder: UIImage?) {
+        
+        self.image = nil
+        if let cachedImage = imageCache.object(forKey: NSString(string: URLString)) {
+            self.image = cachedImage
+            return
+        }
+        
+        if let url = URL(string: URLString) {
+            URLSession.shared.dataTask(with: url, completionHandler: { (data, response, error) in
+                
+                //print("RESPONSE FROM API: \(response)")
+                if error != nil {
+                    print("ERROR LOADING IMAGES FROM URL: \(String(describing: error))")
+                    DispatchQueue.main.async {
+                        self.image = placeHolder
+                    }
+                    return
+                }
+                DispatchQueue.main.async {
+                    if let data = data {
+                        if let downloadedImage = UIImage(data: data) {
+                            imageCache.setObject(downloadedImage, forKey: NSString(string: URLString))
+                            self.image = downloadedImage
+                        }
+                    }
+                }
+            }).resume()
+        }
     }
 }

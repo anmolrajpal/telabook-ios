@@ -7,8 +7,15 @@
 //
 
 import UIKit
-
+import Firebase
 class HomeViewController: UIViewController {
+    var userInfo:UserInfoCodable? {
+        didSet {
+            guard let user = userInfo?.user else { return }
+            self.operatorNameLabel.text = "\(user.name?.uppercased() ?? "") \(user.lastName?.uppercased() ?? "")"
+        }
+    }
+    
     override func loadView() {
         super.loadView()
         setupViews()
@@ -18,6 +25,7 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpNavBar()
+        fetchUser()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -52,6 +60,27 @@ class HomeViewController: UIViewController {
         operatorDesignationLabel.anchor(top: operatorNameLabel.bottomAnchor, left: operatorNameLabel.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         collectionView.anchor(top: profileImageView.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 50, leftConstant: 20, bottomConstant: 20, rightConstant: 20, widthConstant: 0, heightConstant: 0)
     }
+//    fileprivate func authenticateViaToken(token:String) {
+//        AuthTokenService.shared.fetchUser(token: token) { (data, error) in
+//            if let err = error {
+//                switch err {
+//                case .FailedRequest:
+//                    print("Failed Request Error : \(err.localizedDescription)")
+//                case .InvalidResponse:
+//                    print("Invalid Response Error : \(err.localizedDescription)")
+//                case .Unknown:
+//                    print("Unknown Error : \(err.localizedDescription)")
+//                case .Internal:
+//                    print("Internal Error : \(err.localizedDescription)")
+//                }
+//            }
+//            if let res = data {
+//                self.userInfo = res
+//                print("Name => \(res.user?.name ?? "nil")")
+//                print(res.user as Any)
+//            }
+//        }
+//    }
     let sectionItems:[SectionItem] = [
         SectionItem(image: #imageLiteral(resourceName: "landing_reminder"), title: "REMINDERS", subTitle: "5 Reminders"),
         SectionItem(image: #imageLiteral(resourceName: "landing_followup"), title: "FOLLOW UP", subTitle: "5 Users to Follow Up"),
@@ -84,7 +113,6 @@ class HomeViewController: UIViewController {
     }()
     let operatorNameLabel:UILabel = {
         let label = UILabel()
-        label.text = "anmol rajpal".uppercased()
         label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 13)
         label.textColor = UIColor.white
         label.numberOfLines = 0
@@ -118,6 +146,49 @@ class HomeViewController: UIViewController {
         cv.isHidden = false
         return cv
     }()
+
+    fileprivate func fetchUser() {
+        let token = UserDefaults.standard.getToken()
+        AuthenticationService.shared.authenticateViaToken(token: token) { (data, serviceError, error) in
+            guard error == nil else {
+                if let err = serviceError {
+                    print(err)
+                    switch err {
+                        
+                    case .FailedRequest:
+                        DispatchQueue.main.async {
+//                            self.stopSpinner()
+                            UIAlertController.showAlert(alertTitle: "Request Timed Out", message: error?.localizedDescription ?? "Please try again later", alertActionTitle: "Ok", controller: self)
+                        }
+                    case .InvalidResponse:
+                        DispatchQueue.main.async {
+//                            self.stopSpinner()
+                            UIAlertController.showAlert(alertTitle: "Invalid Response", message: error?.localizedDescription ?? "Please try again", alertActionTitle: "Ok", controller: self)
+                        }
+                    case .Unknown:
+                        DispatchQueue.main.async {
+//                            self.stopSpinner()
+                            UIAlertController.showAlert(alertTitle: "Some Error Occured", message: error?.localizedDescription ?? "An unknown error occured. Please try again later.", alertActionTitle: "Ok", controller: self)
+                        }
+                    case .Internal:
+                        DispatchQueue.main.async {
+//                            self.stopSpinner()
+                            UIAlertController.showAlert(alertTitle: "Internal Error Occured", message: error?.localizedDescription ?? "An internal error occured. Please try again later.", alertActionTitle: "Ok", controller: self)
+                        }
+                    }
+                }
+                return
+            }
+            if let userData = data {
+                self.userInfo = userData
+                guard let userObject = userData.user else {
+                    return
+                }
+                print(userObject)
+            }
+        }
+    }
+
 }
 extension HomeViewController:UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -131,7 +202,23 @@ extension HomeViewController:UICollectionViewDelegate, UICollectionViewDataSourc
         cell.configureCell(sectionItem: sectionItem)
         return cell
     }
-    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        switch indexPath.row {
+            case 0:
+                let remindersViewController = RemindersViewController()
+                self.show(remindersViewController, sender: self)
+            case 1:
+                let followUpViewController = FollowUpViewController()
+                self.show(followUpViewController, sender: self)
+            case 2:
+                let callGroupsViewController = CallGroupsViewController()
+                self.show(callGroupsViewController, sender: self)
+            case 3:
+                let onlineUsersViewController = OnlineUsersViewController()
+                self.show(onlineUsersViewController, sender: self)
+            default: break
+        }
+    }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 //        let numOfItemsInRow = 2
 //        let itemsCount = sectionItems.count

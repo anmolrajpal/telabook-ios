@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import Firebase
 class SettingsViewController: UIViewController {
 
     override func viewDidLoad() {
@@ -26,14 +26,13 @@ class SettingsViewController: UIViewController {
     func setUpNavBarItems() {
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Log Out", style: .plain, target: self, action: #selector(handleRightBarButtonItem))
-        navigationItem.rightBarButtonItem?.tintColor = .telaRed
     navigationItem.rightBarButtonItem?.setTitleTextAttributes([NSAttributedString.Key.font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 11)!,
         NSAttributedString.Key.foregroundColor: UIColor.telaRed], for: .normal)
     }
     @objc func handleRightBarButtonItem() {
         let alertVC = UIAlertController(title: "Confirm Logout", message: "Are you sure you want to log out?", preferredStyle: UIAlertController.Style.alert)
         alertVC.addAction(UIAlertAction(title: "Log Out", style: UIAlertAction.Style.destructive) { (action:UIAlertAction) in
-            self.signOut()
+            self.callSignOutSequence()
         })
         alertVC.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
         self.present(alertVC, animated: true, completion: nil)
@@ -51,6 +50,15 @@ class SettingsViewController: UIViewController {
                 tbc.selectedViewController?.view.isHidden = true
                 tbc.viewControllers = nil
             })
+        }
+    }
+    func callSignOutSequence() {
+        FirebaseAuthService.shared.signOut { (error) in
+            guard error == nil else {
+                UIAlertController.showAlert(alertTitle: "Signout Failed", message: error?.localizedDescription ?? "Try again", alertActionTitle: "Ok", controller: self)
+                return
+            }
+            self.signOut()
         }
     }
 }
