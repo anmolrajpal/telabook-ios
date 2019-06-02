@@ -68,18 +68,23 @@ class TabBarController: UITabBarController {
         smsViewController.tabBarItem = UITabBarItem(title: "SMS", image: #imageLiteral(resourceName: "tab_sms_inactive"), selectedImage: #imageLiteral(resourceName: "tab_sms_active"))
         settingsViewController.tabBarItem = UITabBarItem(title: "SETTINGS", image: #imageLiteral(resourceName: "tab_settings_inactive"), selectedImage: #imageLiteral(resourceName: "tab_settings_active"))
         moreViewController.tabBarItem = UITabBarItem(title: "MORE", image: #imageLiteral(resourceName: "tab_more_inactive"), selectedImage: #imageLiteral(resourceName: "tab_more_active"))
-        let viewControllersList = [homeViewController, callsViewController, smsViewController, settingsViewController, moreViewController]
-        
+        let role = CustomUtils.shared.getUserRole()
+        var viewControllersList:[UIViewController]
+        if role == .Agent {
+            viewControllersList = [homeViewController, callsViewController, smsViewController,  moreViewController]
+        } else {
+            viewControllersList = [homeViewController, callsViewController, smsViewController, settingsViewController, moreViewController]
+        }
+        setupTabBarUI()
+        viewControllers = viewControllersList
+        isLoaded = true
+    }
+    fileprivate func setupTabBarUI() {
         tabBar.barTintColor = UIColor.telaGray4
         tabBar.tintColor = UIColor.telaBlue
     UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 10)!, NSAttributedString.Key.foregroundColor: UIColor.telaGray7], for: .normal)
     UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 10)!,
         NSAttributedString.Key.foregroundColor: UIColor.telaBlue], for: .selected)
         UITabBarItem.appearance().titlePositionAdjustment.vertical = -5
-//        tabBar.backgroundColor = UIColor.red
-//        tabBar.itemSpacing = 15
-//        tabBar.itemPositioning = 1
-        viewControllers = viewControllersList
-        isLoaded = true
     }
 }

@@ -27,15 +27,15 @@ struct Config {
             return "token=\(token)"
         }
         
-        static func getServiceParamString(_ serviceType:ServiceType, params:String...) -> String {
-            switch serviceType {
-                case .Authentication: return "email=\(params[0])&pass=\(params[1])"
-                case .AuthenticationViaToken: return "token=\(params[0])"
-                case .CheckUserExists: return "email=\(params[0])&password=\(params[1])"
-                case .InternalConversations: return "token=\(params[0])&company_id=\(params[1])"
-                case .ExternalConversations: return "token=\(params[0])&worker_id=\(params[1])&Company_id=\(params[2])"
-            }
-        }
+//        static func getServiceParamString(_ serviceType:ServiceType, params:String...) -> String {
+//            switch serviceType {
+//                case .Authentication: return "email=\(params[0])&pass=\(params[1])"
+//                case .AuthenticationViaToken: return "token=\(params[0])"
+//                case .CheckUserExists: return "email=\(params[0])&password=\(params[1])"
+//                case .InternalConversations: return "token=\(params[0])&company_id=\(params[1])"
+//                case .ExternalConversations: return "token=\(params[0])&worker_id=\(params[1])&Company_id=\(params[2])"
+//            }
+//        }
         static func getServiceHostUri(_ serviceType:ServiceType) -> String {
             switch serviceType {
                 case .Authentication: return "\(serviceBaseURL)\(ServiceType.Authentication.rawValue)"

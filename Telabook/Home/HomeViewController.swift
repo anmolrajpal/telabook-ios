@@ -8,14 +8,20 @@
 
 import UIKit
 import Firebase
+import CoreData
 class HomeViewController: UIViewController {
     var userInfo:UserInfoCodable? {
         didSet {
-            guard let user = userInfo?.user else { return }
-            self.operatorNameLabel.text = "\(user.name?.uppercased() ?? "") \(user.lastName?.uppercased() ?? "")"
+            if let u = userInfo {
+                self.updateUserData(userInfoData: u)
+                self.updateUICodable(user: u.user)
+                self.setViewsState(isHidden: false)
+                self.setPlaceholdersViewsState(isHidden: true)
+            }
         }
     }
     
+   
     override func loadView() {
         super.loadView()
         setupViews()
@@ -25,7 +31,13 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpNavBar()
+//        setViewsState(isHidden: true)
+//        startSpinner()
+        preFetchUser()
         fetchUser()
+        
+        let p = self.fetchPermissionsFromStorage()
+        p?.forEach({print($0.name ?? "nil")})
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -46,41 +58,38 @@ class HomeViewController: UIViewController {
         collectionView.register(SectionItemCell.self, forCellWithReuseIdentifier: NSStringFromClass(SectionItemCell.self))
     }
     private func setupViews() {
+        view.addSubview(spinner)
         view.addSubview(glanceLabel)
-        view.addSubview(profileImageView)
-        view.addSubview(operatorNameLabel)
-        view.addSubview(operatorDesignationLabel)
+        view.addSubview(containerView)
+        containerView.addSubview(profileImageView)
+        containerView.addSubview(operatorNameLabel)
+        containerView.addSubview(operatorDesignationLabel)
+        view.addSubview(placeholderLabel)
+        view.addSubview(tryAgainButton)
         view.addSubview(collectionView)
     }
     private func setupConstraints() {
         glanceLabel.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 50, leftConstant: 20, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
-        let calculatedWidth:CGFloat = self.view.frame.width / 7
-        profileImageView.anchor(top: glanceLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: nil, topConstant: 50, leftConstant: self.view.frame.width / 4, bottomConstant: 0, rightConstant: 0, widthConstant: calculatedWidth, heightConstant: calculatedWidth)
-        operatorNameLabel.anchor(top: profileImageView.topAnchor, left: profileImageView.rightAnchor, bottom: nil, right: view.rightAnchor, topConstant: 10, leftConstant: 10, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
-        operatorDesignationLabel.anchor(top: operatorNameLabel.bottomAnchor, left: operatorNameLabel.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        
+//        containerView.topAnchor.constraint(equalTo: glanceLabel.bottomAnchor, constant: 50).isActive = true
+        containerView.anchor(top: glanceLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 50, leftConstant: view.frame.width / 5, bottomConstant: 0, rightConstant: view.frame.width / 5, widthConstant: 0, heightConstant: 0)
+//        containerView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+    
+        let calculatedWidth:CGFloat = self.view.frame.width / 6
+        profileImageView.anchor(top: containerView.topAnchor, left: containerView.leftAnchor, bottom: containerView.bottomAnchor, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: calculatedWidth, heightConstant: calculatedWidth)
+        operatorNameLabel.anchor(top: nil, left: profileImageView.rightAnchor, bottom: nil, right: containerView.rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 10, widthConstant: 0, heightConstant: 0)
+        operatorNameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: -15).isActive = true
+        
+        operatorDesignationLabel.anchor(top: nil, left: operatorNameLabel.leftAnchor, bottom: nil, right: containerView.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        operatorDesignationLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: 10).isActive = true
+        placeholderLabel.anchor(top: nil, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 20, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
+        placeholderLabel.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: -20).isActive = true
+        tryAgainButton.topAnchor.constraint(equalTo: placeholderLabel.bottomAnchor, constant: 20).isActive = true
+        tryAgainButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
         collectionView.anchor(top: profileImageView.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 50, leftConstant: 20, bottomConstant: 20, rightConstant: 20, widthConstant: 0, heightConstant: 0)
     }
-//    fileprivate func authenticateViaToken(token:String) {
-//        AuthTokenService.shared.fetchUser(token: token) { (data, error) in
-//            if let err = error {
-//                switch err {
-//                case .FailedRequest:
-//                    print("Failed Request Error : \(err.localizedDescription)")
-//                case .InvalidResponse:
-//                    print("Invalid Response Error : \(err.localizedDescription)")
-//                case .Unknown:
-//                    print("Unknown Error : \(err.localizedDescription)")
-//                case .Internal:
-//                    print("Internal Error : \(err.localizedDescription)")
-//                }
-//            }
-//            if let res = data {
-//                self.userInfo = res
-//                print("Name => \(res.user?.name ?? "nil")")
-//                print(res.user as Any)
-//            }
-//        }
-//    }
+    
+    
     let sectionItems:[SectionItem] = [
         SectionItem(image: #imageLiteral(resourceName: "landing_reminder"), title: "REMINDERS", subTitle: "5 Reminders"),
         SectionItem(image: #imageLiteral(resourceName: "landing_followup"), title: "FOLLOW UP", subTitle: "5 Users to Follow Up"),
@@ -88,9 +97,19 @@ class HomeViewController: UIViewController {
         SectionItem(image: #imageLiteral(resourceName: "landing_operators"), title: "USERS ONLINE", subTitle: "5 Online Users")
     ]
     let calculatedInset:CGFloat = 20
+    
+    
+    lazy var spinner:UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+        indicator.style = UIActivityIndicatorView.Style.whiteLarge
+        indicator.hidesWhenStopped = true
+        indicator.center = self.view.center
+//        indicator.backgroundColor = .black
+        return indicator
+    }()
     let glanceLabel:UILabel = {
         let label = UILabel()
-        label.text = "at a glance".uppercased()
+        label.text = "AT A GLANCE"
         label.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 30)
         label.textColor = UIColor.telaGray6
         label.numberOfLines = 1
@@ -98,13 +117,19 @@ class HomeViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    let containerView:UIView = {
+        let view = UIView(frame: CGRect.zero)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .clear
+        view.clipsToBounds = true
+        return view
+    }()
     let profileImageView:UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = #imageLiteral(resourceName: "landing_operators")
         imageView.clipsToBounds = true
         imageView.layer.borderWidth = 2
-        imageView.layer.masksToBounds = false
+        imageView.layer.masksToBounds = true
         imageView.layer.borderColor = UIColor.telaBlue.cgColor
         //        imageView.layer.opacity = 0.5
         //        imageView.layer.cornerRadius = imageView.frame.height/2
@@ -146,49 +171,258 @@ class HomeViewController: UIViewController {
         cv.isHidden = false
         return cv
     }()
-
+    let placeholderLabel:UILabel = {
+        let label = UILabel()
+        label.text = "Turn on Mobile Data or Wifi to Access Telabook"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 16)
+        label.textColor = UIColor.telaGray6
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.sizeToFit()
+        label.isHidden = true
+        return label
+    }()
+    let tryAgainButton:UIButton = {
+        let button = UIButton(type: UIButton.ButtonType.roundedRect)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("TRY AGAIN", for: UIControl.State.normal)
+        button.setTitleColor(UIColor.telaGray6, for: UIControl.State.normal)
+        button.titleLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 14)
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.telaGray6.cgColor
+        button.layer.cornerRadius = 8
+        button.backgroundColor = .clear
+        button.isHidden = true
+        button.contentEdgeInsets = UIEdgeInsets(top: 6, left: 20, bottom: 6, right: 20)
+        button.addTarget(self, action: #selector(handleTryAgainAction), for: UIControl.Event.touchUpInside)
+        return button
+    }()
+    let settingsButton:UIButton = {
+        let button = UIButton(type: UIButton.ButtonType.roundedRect)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Settings", for: UIControl.State.normal)
+        button.setTitleColor(UIColor.gray, for: UIControl.State.normal)
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.gray.cgColor
+        button.layer.cornerRadius = 8
+        button.backgroundColor = .clear
+        button.isHidden = true
+        button.contentEdgeInsets = UIEdgeInsets(top: 5, left: 15, bottom: 5, right: 15)
+        button.addTarget(self, action: #selector(launchSettings), for: UIControl.Event.touchUpInside)
+        return button
+    }()
+    @objc func launchSettings() {
+        guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+            return
+        }
+        if UIApplication.shared.canOpenURL(settingsUrl) {
+            UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
+                
+            })
+        }
+    }
+    
+    
+    
+    fileprivate func startSpinner() {
+        self.spinner.startAnimating()
+    }
+    fileprivate func stopSpinner() {
+        self.spinner.stopAnimating()
+    }
+    @objc func handleTryAgainAction() {
+        self.setPlaceholdersViewsState(isHidden: true)
+        self.setViewsState(isHidden: true)
+        self.startSpinner()
+        self.fetchUser()
+    }
+    fileprivate func setPlaceholdersViewsState(isHidden:Bool) {
+        self.placeholderLabel.isHidden = isHidden
+        self.tryAgainButton.isHidden = isHidden
+    }
+    fileprivate func setViewsState(isHidden: Bool) {
+        self.operatorNameLabel.isHidden = isHidden
+        self.operatorDesignationLabel.isHidden = isHidden
+        self.profileImageView.isHidden = isHidden
+        self.collectionView.isHidden = isHidden
+    }
+    
     fileprivate func fetchUser() {
+        print("Company => \(UserDefaults.standard.getCompanyId()) & Worker ID => \(UserDefaults.standard.getWorkerId())")
         let token = UserDefaults.standard.getToken()
         AuthenticationService.shared.authenticateViaToken(token: token) { (data, serviceError, error) in
-            guard error == nil else {
+            guard serviceError == nil else {
                 if let err = serviceError {
+                    print("\n***Error***\n")
                     print(err)
-                    switch err {
-                        
-                    case .FailedRequest:
-                        DispatchQueue.main.async {
-//                            self.stopSpinner()
-                            UIAlertController.showAlert(alertTitle: "Request Timed Out", message: error?.localizedDescription ?? "Please try again later", alertActionTitle: "Ok", controller: self)
-                        }
-                    case .InvalidResponse:
-                        DispatchQueue.main.async {
-//                            self.stopSpinner()
-                            UIAlertController.showAlert(alertTitle: "Invalid Response", message: error?.localizedDescription ?? "Please try again", alertActionTitle: "Ok", controller: self)
-                        }
-                    case .Unknown:
-                        DispatchQueue.main.async {
-//                            self.stopSpinner()
-                            UIAlertController.showAlert(alertTitle: "Some Error Occured", message: error?.localizedDescription ?? "An unknown error occured. Please try again later.", alertActionTitle: "Ok", controller: self)
-                        }
-                    case .Internal:
-                        DispatchQueue.main.async {
-//                            self.stopSpinner()
-                            UIAlertController.showAlert(alertTitle: "Internal Error Occured", message: error?.localizedDescription ?? "An internal error occured. Please try again later.", alertActionTitle: "Ok", controller: self)
-                        }
-                    }
+//                    self.stopSpinner()
+                    self.setViewsState(isHidden: true)
+                    self.setPlaceholdersViewsState(isHidden: false)
+                    self.placeholderLabel.text = err.localizedDescription
                 }
                 return
             }
-            if let userData = data {
-                self.userInfo = userData
-                guard let userObject = userData.user else {
-                    return
-                }
-                print(userObject)
+            guard data != nil else {
+                print("Data nil")
+                return
+            }
+            if let userInfoData = data {
+                self.userInfo = userInfoData
             }
         }
     }
+    fileprivate func updateUserData(userInfoData:UserInfoCodable) {
+        self.clearStorage()
+        self.saveToCoreData(userInfo: userInfoData)
+    }
+    lazy var fetchedResultsController: NSFetchedResultsController<User> = {
+        let fetchRequest = NSFetchRequest<User>(entityName:"User")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending:true)]
+        
+        let controller = NSFetchedResultsController(fetchRequest: fetchRequest,
+                                                    managedObjectContext: PersistenceService.shared.persistentContainer.viewContext,
+                                                    sectionNameKeyPath: nil, cacheName: nil)
+        controller.delegate = self
+        
+        do {
+            try controller.performFetch()
+        } catch {
+            let nserror = error as NSError
+            fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+        }
+        
+        return controller
+    }()
+    fileprivate func updateUICodable(user: UserInfoCodable.User?) {
+        let role = CustomUtils.shared.getUserRole()
+        let firstName = user?.name
+        let lastName = user?.lastName
+        self.operatorNameLabel.text = "\(firstName?.uppercased() ?? "") \(lastName?.uppercased() ?? "")"
+        
+        let initialsText = "\(firstName?.first?.uppercased() ?? "Z")\(lastName?.first?.uppercased() ?? "Z")"
+        self.profileImageView.loadImageUsingCacheWithURLString(user?.profileImageUrl, placeHolder: UIImage.placeholderInitialsImage(text: initialsText))
+        
+        self.operatorDesignationLabel.text = String(describing: role)
+    }
+    fileprivate func updateUI(user: User?) {
+        let role = CustomUtils.shared.getUserRole()
+        let firstName = user?.name
+        let lastName = user?.lastName
+        self.operatorNameLabel.text = "\(firstName?.uppercased() ?? "") \(lastName?.uppercased() ?? "")"
+        
+        let initialsText = "\(firstName?.first?.uppercased() ?? "Z")\(lastName?.first?.uppercased() ?? "Z")"
+        self.profileImageView.loadImageUsingCacheWithURLString(user?.profileImageUrl, placeHolder: UIImage.placeholderInitialsImage(text: initialsText))
+        
+        self.operatorDesignationLabel.text = String(describing: role)
+    }
+    fileprivate func preFetchUser() {
+        let user = fetchedResultsController.fetchedObjects?.first
+        self.updateUI(user: user)
+    }
+    
+    
+    func saveToCoreData(userInfo:UserInfoCodable) {
+        do {
+            guard let codingUserInfoKeyManagedObjectContext = CodingUserInfoKey.context else {
+                fatalError("Failed to retrieve managed object context")
+            }
+            
+            let managedObjectContext = PersistenceService.shared.persistentContainer.viewContext
+            let decoder = JSONDecoder()
+            decoder.userInfo[codingUserInfoKeyManagedObjectContext] = managedObjectContext
+            let encoder = JSONEncoder()
+            let data = try encoder.encode(userInfo.user)
+            
+            _ = try decoder.decode(User.self, from: data)
+            
+//            try managedObjectContext.save()
+            
+            let permissionData = try encoder.encode(userInfo.permissions)
+            _ = try decoder.decode([Permission].self, from: permissionData)
+            try managedObjectContext.save()
+            
+        } catch let error {
+            print(error)
+            
+        }
+    }
+    func clearStorage() {
+        let isInMemoryStore = PersistenceService.shared.persistentContainer.persistentStoreDescriptions.reduce(false) {
+            return $0 ? true : $1.type == NSInMemoryStoreType
+        }
+        
+        let managedObjectContext = PersistenceService.shared.persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "User")
+        let permissionsFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Permission")
+        // NSBatchDeleteRequest is not supported for in-memory stores
+        if isInMemoryStore {
+            print("In Memory Store")
+            do {
+                let users = try managedObjectContext.fetch(fetchRequest)
+                for user in users {
+                    managedObjectContext.delete(user as! NSManagedObject)
+                }
+                let permissions = try managedObjectContext.fetch(permissionsFetchRequest)
+                for permission in permissions {
+                    managedObjectContext.delete(permission as! NSManagedObject)
+                }
+            } catch let error as NSError {
+                print(error)
+            }
+        } else {
+            print("Not In Memory Store")
+            let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+            let permissionsBatchDeleteRequest = NSBatchDeleteRequest(fetchRequest: permissionsFetchRequest)
+            do {
+                try managedObjectContext.execute(batchDeleteRequest)
+                try managedObjectContext.execute(permissionsBatchDeleteRequest)
+            } catch let error as NSError {
+                print(error)
+            }
+        }
+    }
+    func fetchPermissionsFromStorage() -> [Permission]? {
+        let managedObjectContext = PersistenceService.shared.persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<Permission>(entityName: "Permission")
+        let sortDescriptor1 = NSSortDescriptor(key: "id", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor1]
+        
+        do {
+            let permissions = try managedObjectContext.fetch(fetchRequest)
+            return permissions
+        } catch let error {
+            print(error)
+            return nil
+        }
+    }
+    func fetchFromStorage() -> User? {
+        let managedObjectContext = PersistenceService.shared.persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<User>(entityName: "User")
+        let sortDescriptor1 = NSSortDescriptor(key: "id", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor1]
 
+        do {
+            let user = try managedObjectContext.fetch(fetchRequest)
+            return user.first
+        } catch let error {
+            print(error)
+            return nil
+        }
+    }
+   
+    
+    
+}
+extension HomeViewController: NSFetchedResultsControllerDelegate {
+    
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        print("Controller did change content")
+    }
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        print("did change an object")
+//        tableView.reloadData()
+    }
 }
 extension HomeViewController:UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

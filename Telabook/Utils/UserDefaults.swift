@@ -17,6 +17,7 @@ extension UserDefaults {
         case token
         case companyId
         case workerId
+        case roleId
     }
     
     var appLaunchCount:Int? {
@@ -48,7 +49,10 @@ extension UserDefaults {
     func getToken() -> String {
         return UserDefaults.standard.string(forKey: UserDefaultsKeys.token.rawValue)!
     }
-    
+    func updateToken(token:String) {
+        UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.token.rawValue)
+        self.setToken(token: token)
+    }
     
     
     //MARK: GET-SET EMAIL ID
@@ -88,7 +92,13 @@ extension UserDefaults {
     }
     
     
-    
+    //MARK: GET-SET ROLE
+    func setRoleId(roleId:Int) {
+        set(roleId, forKey: UserDefaultsKeys.roleId.rawValue)
+    }
+    func getRoleId() -> Int {
+        return UserDefaults.standard.integer(forKey: UserDefaultsKeys.roleId.rawValue)
+    }
     
     static func clearUserData() {
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.emailId.rawValue)
@@ -97,6 +107,7 @@ extension UserDefaults {
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.isLoggedIn.rawValue)
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.companyId.rawValue)
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.workerId.rawValue)
+        UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.roleId.rawValue)
         
     }
 }

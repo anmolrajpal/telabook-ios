@@ -8,10 +8,12 @@
 
 import Foundation
 import Firebase
+
 final class FirebaseAuthService:NSObject {
     static let shared = FirebaseAuthService()
     typealias TokenFetchCompletion = (String?, Error?) -> ()
     func authenticateAndFetchToken(email:String, password:String, completion: @escaping TokenFetchCompletion) {
+        
         Auth.auth().signIn(withEmail: email, password: password) { [weak self] user, error in
             guard self != nil else { return }
             if let err = error {
@@ -37,6 +39,32 @@ final class FirebaseAuthService:NSObject {
             }
         }
     }
+    
+    func monitorAndSaveToken() {
+        Auth.auth().currentUser?.getIDToken(completion: { (token, error) in
+            if let err = error {
+                print("Error fetching token: \(err)")
+            } else if let token = token {
+                print("Current Token: \(token)")
+                UserDefaults.standard.updateToken(token: token)
+            }
+        })
+    }
+    
+    func monitorAndSaveRemoteToken() {
+        InstanceID.instanceID().instanceID { (result, error) in
+            if let error = error {
+                print("Error fetching remote instance ID: \(error)")
+            } else if let result = result {
+                print("Remote instance ID: \(result.instanceID)")
+                print("Remote instance ID token: \(result.token)")
+                UserDefaults.standard.setToken(token: result.token)
+            }
+        }
+    }
+    
+    
+    //MARK: SIGNOUT
     typealias SignoutCompletion = (Error?) -> ()
     func signOut(completion: @escaping SignoutCompletion) {
         let firebaseAuth = Auth.auth()

@@ -132,10 +132,51 @@ extension UITextField {
     }
 }
 extension UIAlertController {
+    static public func telaAlertController(title:String, message:String = "\n") -> UIAlertController {
+        
+        let alertVC = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertController.Style.alert)
+        let alertTitleAttributedString = NSAttributedString(string: title, attributes: [
+            NSAttributedString.Key.font : UIFont(name: CustomFonts.gothamMedium.rawValue, size: 15)!,
+            NSAttributedString.Key.foregroundColor : UIColor.telaBlue
+            ])
+        let alertMessageAttributedString = NSAttributedString(string: "\n\(message)", attributes: [
+            NSAttributedString.Key.font : UIFont(name: CustomFonts.gothamMedium.rawValue, size: 13)!,
+            NSAttributedString.Key.foregroundColor : UIColor.telaWhite
+            ])
+        alertVC.setValue(alertTitleAttributedString, forKey: "attributedTitle")
+        alertVC.setValue(alertMessageAttributedString, forKey: "attributedMessage")
+    alertVC.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = UIColor.telaGray5
+        
+        alertVC.view.tintColor = UIColor.telaBlue
+        alertVC.view.subviews.first?.subviews.first?.backgroundColor = .clear
+        alertVC.view.subviews.first?.backgroundColor = .clear
+        return alertVC
+    }
     static public func showAlert(alertTitle:String, message: String, alertActionTitle:String, controller: UIViewController) {
         let alert = UIAlertController(title: alertTitle, message: message, preferredStyle: UIAlertController.Style.alert)
         alert.addAction(UIAlertAction(title: alertActionTitle, style: UIAlertAction.Style.default, handler: nil))
         controller.present(alert, animated: true, completion: nil)
+    }
+}
+extension NSObject {
+    static var propertyNames: [String] {
+        var outCount: UInt32 = 0
+        guard let ivars = class_copyIvarList(self, &outCount) else {
+            return []
+        }
+        var result = [String]()
+        let count = Int(outCount)
+        for i in 0..<count {
+            let pro: Ivar = ivars[i]
+            guard let ivarName = ivar_getName(pro) else {
+                continue
+            }
+            guard let name = String(utf8String: ivarName) else {
+                continue
+            }
+            result.append(name)
+        }
+        return result
     }
 }
 extension String {
@@ -162,18 +203,72 @@ extension String {
     }
 }
 let imageCache = NSCache<NSString, UIImage>()
-
+extension UIImage {
+    static public func placeholderInitialsImage(text: String) -> UIImage? {
+//        let image:UIImage = #imageLiteral(resourceName: "idle")
+        let frame = CGRect(x: 0, y: 0, width: 50, height: 50)
+        let textColor = UIColor.white
+        let textFont = UIFont(name: CustomFonts.gothamMedium.rawValue, size:18)!
+        let initialsLabel = UILabel(frame: frame)
+        initialsLabel.font = textFont
+        initialsLabel.textColor = textColor
+        initialsLabel.numberOfLines = 1
+        initialsLabel.textAlignment = .center
+        initialsLabel.backgroundColor = .telaGray5
+        initialsLabel.text = text
+        
+        let scale = UIScreen.main.scale
+        UIGraphicsBeginImageContextWithOptions(frame.size, false, scale)
+       
+        if let currentContext = UIGraphicsGetCurrentContext() {
+            initialsLabel.layer.render(in: currentContext)
+            let newImage = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+            return newImage
+        }
+        return nil
+    }
+    func textToImage(drawText text: String, atPoint point: CGPoint) -> UIImage {
+        let image:UIImage = #imageLiteral(resourceName: "idle")
+        let textColor = UIColor.white
+        let textFont = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 20)!
+        
+        let scale = UIScreen.main.scale
+        UIGraphicsBeginImageContextWithOptions(image.size, false, scale)
+        
+        let textFontAttributes = [
+            NSAttributedString.Key.font: textFont,
+            NSAttributedString.Key.foregroundColor: textColor,
+            ] as [NSAttributedString.Key : Any]
+        image.draw(in: CGRect(origin: CGPoint.zero, size: image.size))
+        
+        let rect = CGRect(origin: point, size: image.size)
+        text.draw(in: rect, withAttributes: textFontAttributes)
+        
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return newImage!
+    }
+}
 extension UIImageView {
     
-    func loadImageUsingCacheWithURLString(_ URLString: String, placeHolder: UIImage?) {
+    func loadImageUsingCacheWithURLString(_ URLString: String?, placeHolder: UIImage?) {
         
         self.image = nil
-        if let cachedImage = imageCache.object(forKey: NSString(string: URLString)) {
+        guard let urlString = URLString else {
+            DispatchQueue.main.async {
+                self.image = placeHolder
+            }
+            return
+        }
+        
+        if let cachedImage = imageCache.object(forKey: NSString(string: urlString)) {
             self.image = cachedImage
             return
         }
         
-        if let url = URL(string: URLString) {
+        if let url = URL(string: urlString) {
             URLSession.shared.dataTask(with: url, completionHandler: { (data, response, error) in
                 
                 //print("RESPONSE FROM API: \(response)")
@@ -187,7 +282,7 @@ extension UIImageView {
                 DispatchQueue.main.async {
                     if let data = data {
                         if let downloadedImage = UIImage(data: data) {
-                            imageCache.setObject(downloadedImage, forKey: NSString(string: URLString))
+                            imageCache.setObject(downloadedImage, forKey: NSString(string: urlString))
                             self.image = downloadedImage
                         }
                     }

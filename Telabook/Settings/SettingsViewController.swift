@@ -26,11 +26,13 @@ class SettingsViewController: UIViewController {
     func setUpNavBarItems() {
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Log Out", style: .plain, target: self, action: #selector(handleRightBarButtonItem))
-    navigationItem.rightBarButtonItem?.setTitleTextAttributes([NSAttributedString.Key.font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 11)!,
-        NSAttributedString.Key.foregroundColor: UIColor.telaRed], for: .normal)
+        let normalStateAttributes = [NSAttributedString.Key.font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 11)!,
+                                     NSAttributedString.Key.foregroundColor: UIColor.telaRed]
+        navigationItem.rightBarButtonItem?.setTitleTextAttributes(normalStateAttributes, for: .normal)
+        navigationItem.rightBarButtonItem?.setTitleTextAttributes(normalStateAttributes, for: .highlighted)
     }
     @objc func handleRightBarButtonItem() {
-        let alertVC = UIAlertController(title: "Confirm Logout", message: "Are you sure you want to log out?", preferredStyle: UIAlertController.Style.alert)
+        let alertVC = UIAlertController.telaAlertController(title: "Confirm Logout", message: "Are you sure you want to log out?")
         alertVC.addAction(UIAlertAction(title: "Log Out", style: UIAlertAction.Style.destructive) { (action:UIAlertAction) in
             self.callSignOutSequence()
         })

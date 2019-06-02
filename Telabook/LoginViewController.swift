@@ -92,9 +92,7 @@ class LoginViewController: UIViewController {
     
     let spinner:UIActivityIndicatorView = {
         let spinner = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.white)
-//        spinner.color = .white
         spinner.backgroundColor = UIColor.telaBlue
-//        spinner.style = UIActivityIndicatorView.Style.whiteLarge
         spinner.hidesWhenStopped = true
         spinner.clipsToBounds = true
         spinner.translatesAutoresizingMaskIntoConstraints = false
@@ -331,6 +329,8 @@ class LoginViewController: UIViewController {
             if let userData = data {
                 self.userInfo = userData
                 guard let userObject = userData.user,
+                    let userRole = userData.roles,
+                    let roleId = userRole[0].id,
                     let companyId = userObject.company,
                     let workerId = userObject.workerId else {
                         print("Company ID and worker Id - nil")
@@ -340,8 +340,8 @@ class LoginViewController: UIViewController {
                         }
                         return
                 }
-                print("Signing in - USER: \(userObject.name ?? "") \(userObject.lastName ?? "")")
-                self.setUserDefaults(token, companyId, workerId)
+                print("Signing in - USER: \(userObject.name ?? "") \(userObject.lastName ?? "") \nRole ID => \(roleId)")
+                self.setUserDefaults(token, companyId, workerId, roleId)
                 DispatchQueue.main.async {
                     self.stopSpinner()
                     self.dismiss(animated: true, completion: nil)
@@ -349,7 +349,7 @@ class LoginViewController: UIViewController {
             }
         }
     }
-    fileprivate func setUserDefaults(_ token:String, _ companyId:Int, _ workerId:Int) {
+    fileprivate func setUserDefaults(_ token:String, _ companyId:Int, _ workerId:Int, _ roleId:Int) {
         let emailId = idTextField.text!, password = passwordTextField.text!
         UserDefaults.standard.setIsLoggedIn(value: true)
         UserDefaults.standard.setEmailId(emailId: emailId)
@@ -357,6 +357,7 @@ class LoginViewController: UIViewController {
         UserDefaults.standard.setToken(token: token)
         UserDefaults.standard.setCompanyId(companyId: companyId)
         UserDefaults.standard.setWorkerId(workerId: workerId)
+        UserDefaults.standard.setRoleId(roleId: roleId)
     }
 }
 

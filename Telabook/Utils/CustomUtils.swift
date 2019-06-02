@@ -7,6 +7,16 @@
 //
 
 import Foundation
-class CustomUtils {
-    
+final class CustomUtils {
+    static let shared = CustomUtils()
+    func getUserRole() -> UserRole {
+        let roleId = UserDefaults.standard.getRoleId()
+        switch roleId {
+        case 1: return .SuperUser
+        case 2: return .Admin
+        case 3: return .Receptionist
+        case 4: return .Agent
+        default: fatalError("Invalid Role ID")
+        }
+    }
 }

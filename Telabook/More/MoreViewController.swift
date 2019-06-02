@@ -19,7 +19,7 @@ class MoreViewController: UIViewController {
         super.viewDidLoad()
         setUpNavBar()
         setupTableView()
-//        setupNavBarItems()
+//        setupAgentLogoutButton()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -35,9 +35,51 @@ class MoreViewController: UIViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
+    fileprivate func setupAgentLogoutButton() {
+        let role = CustomUtils.shared.getUserRole()
+        if role == .Agent {
+            setupNavBarItems()
+        }
+    }
     fileprivate func setupNavBarItems() {
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-        self.navigationItem.backBarButtonItem?.tintColor = .telaBlue
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Log Out", style: .plain, target: self, action: #selector(handleRightBarButtonItem))
+        let normalStateAttributes = [NSAttributedString.Key.font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 11)!,
+            NSAttributedString.Key.foregroundColor: UIColor.telaRed]
+        navigationItem.rightBarButtonItem?.setTitleTextAttributes(normalStateAttributes, for: .normal)
+        navigationItem.rightBarButtonItem?.setTitleTextAttributes(normalStateAttributes, for: .selected)
+    }
+    @objc func handleRightBarButtonItem() {
+        let alertVC = UIAlertController.telaAlertController(title: "Confirm Logout", message: "Are you sure you want to log out?")
+        alertVC.addAction(UIAlertAction(title: "Log Out", style: UIAlertAction.Style.destructive) { (action:UIAlertAction) in
+            self.callSignOutSequence()
+        })
+        alertVC.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
+        self.present(alertVC, animated: true, completion: nil)
+    }
+    private func signOut() {
+        let loginViewController = LoginViewController()
+        UserDefaults.standard.setIsLoggedIn(value: false)
+        UserDefaults.clearUserData()
+        DispatchQueue.main.async {
+            guard let tbc = self.tabBarController as? TabBarController else {
+                return
+            }
+            tbc.isLoaded = false
+            tbc.present(loginViewController, animated: true, completion: {
+                tbc.selectedViewController?.view.isHidden = true
+                tbc.viewControllers = nil
+            })
+        }
+    }
+    func callSignOutSequence() {
+        FirebaseAuthService.shared.signOut { (error) in
+            guard error == nil else {
+                UIAlertController.showAlert(alertTitle: "Signout Failed", message: error?.localizedDescription ?? "Try again", alertActionTitle: "Ok", controller: self)
+                return
+            }
+            self.signOut()
+        }
     }
     fileprivate func setupViews() {
         view.addSubview(tableView)
@@ -50,7 +92,18 @@ class MoreViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
     }
-    let options = ["Manage Agents", "Gallery", "Blocked Users", "Archived SMSes"]
+    
+    var options:[String] = {
+        let role = CustomUtils.shared.getUserRole()
+        if role != .Agent {
+            return ["Manage Agents", "Gallery", "Blocked Users", "Archived SMSes"]
+        } else {
+            return ["Profile Settings", "Blacklisted Numbers", "Clear Cache"]
+        }
+    }()
+    
+
+//    options = ["Manage Agents", "Gallery", "Blocked Users", "Archived SMSes"]
     let tableView : UITableView = {
         let tv = UITableView(frame: CGRect.zero, style: UITableView.Style.plain)
         tv.translatesAutoresizingMaskIntoConstraints = false
@@ -83,22 +136,36 @@ extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        switch indexPath.row {
-            case 0:
-                let manageAgentsVC = ManageAgentsViewController()
-//                self.show(manageAgentsVC, sender: self)
-               
-                self.navigationController?.pushViewController(manageAgentsVC, animated: true)
-            case 1:
-                let galleryVC = GalleryViewController()
-                self.show(galleryVC, sender: self)
-            case 2:
-                let blockedUsersVC = BlockedUsersViewController()
-                self.show(blockedUsersVC, sender: self)
-            case 3:
-                let archivedSMSVC = ArchivedSMSViewController()
-                self.show(archivedSMSVC, sender: self)
+        let role = CustomUtils.shared.getUserRole()
+        if role == .Agent {
+            switch indexPath.row {
+                case 0:
+                    let profileSettingsVC = SettingsViewController()
+                    self.show(profileSettingsVC, sender: self)
+                case 1:
+                    let blockedUsersVC = BlockedUsersViewController()
+                    self.show(blockedUsersVC, sender: self)
+                case 2:
+                    let galleryVC = GalleryViewController()
+                    self.show(galleryVC, sender: self)
             default: break
+            }
+        } else {
+            switch indexPath.row {
+                case 0:
+                    let manageAgentsVC = ManageAgentsViewController()
+                    self.show(manageAgentsVC, sender: self)
+                case 1:
+                    let galleryVC = GalleryViewController()
+                    self.show(galleryVC, sender: self)
+                case 2:
+                    let blockedUsersVC = BlockedUsersViewController()
+                    self.show(blockedUsersVC, sender: self)
+                case 3:
+                    let archivedSMSVC = ArchivedSMSViewController()
+                    self.show(archivedSMSVC, sender: self)
+                default: break
+            }
         }
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

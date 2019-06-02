@@ -7,6 +7,12 @@
 //
 
 import Foundation
+public enum UserRole {
+    case SuperUser
+    case Admin
+    case Receptionist
+    case Agent
+}
 public enum CustomFonts:String {
     case gothamMedium = "Gotham-Medium"
     case gothamBook = "Gotham-Book"

@@ -10,111 +10,156 @@ import Foundation
 
 import CoreData
 
-//class UserInfo:NSManagedObject, Codable {
-//
-//    @NSManaged var user : User?
-////    @NSManaged var permissions : [Permission]?
-////    @NSManaged var roles : [Role]?
-//    enum CodingKeys: String, CodingKey {
-//        case permissions = "permissions"
-//        case roles = "roles"
-//        case user = "user"
-//    }
-//
-//    required convenience init(from decoder: Decoder) throws {
-//        guard let codingUserInfoKeyManagedObjectContext = CodingUserInfoKey.context,
-//            let managedObjectContext = decoder.userInfo[codingUserInfoKeyManagedObjectContext] as? NSManagedObjectContext,
-//            let entity = NSEntityDescription.entity(forEntityName: "User", in: managedObjectContext) else {
-//                fatalError("Failed to decode User")
-//        }
-//        self.init(entity: entity, insertInto: managedObjectContext)
-//        let values = try decoder.container(keyedBy: CodingKeys.self)
-////        permissions = try values.decodeIfPresent([Permission].self, forKey: .permissions)
-////        roles = try values.decodeIfPresent([Role].self, forKey: .roles)
-//        user = try values.decodeIfPresent(User.self, forKey: .user)
-//    }
-//    // MARK: - Encodable
-//    public func encode(to encoder: Encoder) throws {
-//        var container = encoder.container(keyedBy: CodingKeys.self)
-//        try container.encode(user, forKey: .user)
-////        try container.encode(username, forKey: .username)
-////        try container.encode(role, forKey: .role)
-//    }
-//
-//    class User:NSManagedObject, Codable {
-//
-//        @NSManaged var email : String?
-//        @NSManaged var id : Int16?
-//        @NSManaged var lastName : String?
-//        @NSManaged var name : String?
-//        @NSManaged var phone : String?
-//        @NSManaged var profileImage : String?
-//        @NSManaged var profileImageUrl : String?
-//        @NSManaged var username : String?
-//        @NSManaged var workerId : Int16?
-//        @NSManaged var `extension` : String?
-//        @NSManaged var company : Int16?
-//
-//        enum CodingKeys: String, CodingKey {
-//            case email = "email"
-//            case id = "id"
-//            case lastName = "last_name"
-//            case name = "name"
-//            case phone = "phone"
-//            case profileImage = "profile_image"
-//            case profileImageUrl = "profile_image_url"
-//            case username = "username"
-//            case workerId = "worker_id"
-//            case company = "company"
-//            case `extension` = "extension"
-//        }
-//
-//        required convenience init(from decoder: Decoder) throws {
-//            guard let codingUserInfoKeyManagedObjectContext = CodingUserInfoKey.context,
-//                let managedObjectContext = decoder.userInfo[codingUserInfoKeyManagedObjectContext] as? NSManagedObjectContext,
-//                let entity = NSEntityDescription.entity(forEntityName: "User", in: managedObjectContext) else {
-//                    fatalError("Failed to decode User")
-//            }
-//            self.init(entity: entity, insertInto: managedObjectContext)
-//            let values = try decoder.container(keyedBy: CodingKeys.self)
-//            email = try values.decodeIfPresent(String.self, forKey: .email)
-//            id = try values.decodeIfPresent(Int16.self, forKey: .id)
-//            lastName = try values.decodeIfPresent(String.self, forKey: .lastName)
-//            name = try values.decodeIfPresent(String.self, forKey: .name)
-//            phone = try values.decodeIfPresent(String.self, forKey: .phone)
-//            profileImage = try values.decodeIfPresent(String.self, forKey: .profileImage)
-//            profileImageUrl = try values.decodeIfPresent(String.self, forKey: .profileImageUrl)
-//            username = try values.decodeIfPresent(String.self, forKey: .username)
-//            workerId = try values.decodeIfPresent(Int16.self, forKey: .workerId)
-//            `extension` = try values.decodeIfPresent(String.self, forKey: .`extension`)
-//            company = try values.decodeIfPresent(Int16.self, forKey: .company)
-//        }
-//        // MARK: - Encodable
-//        public func encode(to encoder: Encoder) throws {
-//            var container = encoder.container(keyedBy: CodingKeys.self)
-//            try container.encode(email, forKey: .email)
-//            try container.encode(id, forKey: .id)
-//            try container.encode(name, forKey: .name)
-//            try container.encode(lastName, forKey: .lastName)
-//            try container.encode(username, forKey: .username)
-//            try container.encode(phone, forKey: .phone)
-//            try container.encode(`extension`, forKey: .`extension`)
-//            try container.encode(profileImage, forKey: .profileImage)
-//            try container.encode(profileImageUrl, forKey: .profileImageUrl)
-//            try container.encode(company, forKey: .company)
-//            try container.encode(workerId, forKey: .workerId)
-//        }
-//
-//    }
-//
-//
-//
-//
-//
-//}
+class UserInfo:NSManagedObject, Codable {
+
+    @NSManaged var user : User?
+//    @NSManaged var permissions : [Permission]?
+//    @NSManaged var roles : [Role]?
+    enum CodingKeys: String, CodingKey {
+        case permissions = "permissions"
+        case roles = "roles"
+        case user = "user"
+    }
+
+    required convenience init(from decoder: Decoder) throws {
+        guard let codingUserInfoKeyManagedObjectContext = CodingUserInfoKey.context,
+            let managedObjectContext = decoder.userInfo[codingUserInfoKeyManagedObjectContext] as? NSManagedObjectContext,
+            let entity = NSEntityDescription.entity(forEntityName: "User", in: managedObjectContext) else {
+                fatalError("Failed to decode User")
+        }
+        self.init(entity: entity, insertInto: managedObjectContext)
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+//        permissions = try values.decodeIfPresent([Permission].self, forKey: .permissions)
+//        roles = try values.decodeIfPresent([Role].self, forKey: .roles)
+        user = try values.decodeIfPresent(User.self, forKey: .user)
+    }
+    // MARK: - Encodable
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(user, forKey: .user)
+//        try container.encode(username, forKey: .username)
+//        try container.encode(role, forKey: .role)
+    }
+
+    
 
 
 
+
+
+}
+
+
+public class User : NSManagedObject, Codable {
+    
+    @NSManaged var email : String?
+    @NSManaged var id : Int16
+    @NSManaged var lastName : String?
+    @NSManaged var name : String?
+    @NSManaged var phone : String?
+    @NSManaged var profileImage : String?
+    @NSManaged var profileImageUrl : String?
+    @NSManaged var username : String?
+    @NSManaged var workerId : Int16
+    @NSManaged var `extension` : String?
+    @NSManaged var company : Int16
+    
+    enum CodingKeys: String, CodingKey {
+        case email = "email"
+        case id = "id"
+        case lastName = "last_name"
+        case name = "name"
+        case phone = "phone"
+        case profileImage = "profile_image"
+        case profileImageUrl = "profile_image_url"
+        case username = "username"
+        case workerId = "worker_id"
+        case company = "company"
+        case `extension` = "extension"
+    }
+    
+    required convenience public init(from decoder: Decoder) throws {
+        guard let codingUserInfoKeyManagedObjectContext = CodingUserInfoKey.context,
+            let managedObjectContext = decoder.userInfo[codingUserInfoKeyManagedObjectContext] as? NSManagedObjectContext,
+            let entity = NSEntityDescription.entity(forEntityName: "User", in: managedObjectContext) else {
+                fatalError("Failed to decode User")
+        }
+        self.init(entity: entity, insertInto: managedObjectContext)
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        email = try values.decodeIfPresent(String.self, forKey: .email)
+        name = try values.decodeIfPresent(String.self, forKey: .name)
+        phone = try values.decodeIfPresent(String.self, forKey: .phone)
+        profileImage = try values.decodeIfPresent(String.self, forKey: .profileImage)
+        profileImageUrl = try values.decodeIfPresent(String.self, forKey: .profileImageUrl)
+        id = try values.decodeIfPresent(Int16.self, forKey: .id) ?? 0
+        lastName = try values.decodeIfPresent(String.self, forKey: .lastName)
+        
+        username = try values.decodeIfPresent(String.self, forKey: .username)
+        workerId = try values.decodeIfPresent(Int16.self, forKey: .workerId) ?? 0
+        `extension` = try values.decodeIfPresent(String.self, forKey: .`extension`)
+        company = try values.decodeIfPresent(Int16.self, forKey: .company) ?? 0
+    }
+    // MARK: - Encodable
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(email, forKey: .email)
+        try container.encode(id, forKey: .id)
+        try container.encode(name, forKey: .name)
+        try container.encode(lastName, forKey: .lastName)
+        try container.encode(username, forKey: .username)
+        try container.encode(phone, forKey: .phone)
+        try container.encode(`extension`, forKey: .`extension`)
+        try container.encode(profileImage, forKey: .profileImage)
+        try container.encode(profileImageUrl, forKey: .profileImageUrl)
+        try container.encode(company, forKey: .company)
+        try container.encode(workerId, forKey: .workerId)
+    }
+    
+}
+public class Permission : NSManagedObject, Codable {
+    
+    @NSManaged var create : Int16
+    @NSManaged var delete : Int16
+    @NSManaged var id : Int16
+    @NSManaged var name : String?
+    @NSManaged var update : Int16
+    @NSManaged var view : Int16
+    
+    enum CodingKeys: String, CodingKey {
+        case create = "create"
+        case delete = "delete"
+        case id = "id"
+        case name = "name"
+        case update = "update"
+        case view = "view"
+    }
+    
+    required convenience public init(from decoder: Decoder) throws {
+        guard let codingUserInfoKeyManagedObjectContext = CodingUserInfoKey.context,
+            let managedObjectContext = decoder.userInfo[codingUserInfoKeyManagedObjectContext] as? NSManagedObjectContext,
+            let entity = NSEntityDescription.entity(forEntityName: "Permission", in: managedObjectContext) else {
+                fatalError("Failed to decode Permissions")
+        }
+        self.init(entity: entity, insertInto: managedObjectContext)
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        id = try values.decodeIfPresent(Int16.self, forKey: .id) ?? 0
+        create = try values.decodeIfPresent(Int16.self, forKey: .create) ?? 0
+        delete = try values.decodeIfPresent(Int16.self, forKey: .delete) ?? 0
+        
+        name = try values.decodeIfPresent(String.self, forKey: .name)
+        update = try values.decodeIfPresent(Int16.self, forKey: .update) ?? 0
+        view = try values.decodeIfPresent(Int16.self, forKey: .view) ?? 0
+    }
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(name, forKey: .name)
+        try container.encode(view, forKey: .view)
+        try container.encode(create, forKey: .create)
+        try container.encode(update, forKey: .update)
+        try container.encode(delete, forKey: .delete)
+    }
+}
 
 
 
