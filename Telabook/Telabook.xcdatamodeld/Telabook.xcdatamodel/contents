@@ -1,5 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14490.99" systemVersion="18E226" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="ExternalConversation" representedClassName="ExternalConversation" syncable="YES" codeGenerationType="class"/>
+    <entity name="InternalConversation" representedClassName=".InternalConversation" syncable="YES">
+        <attribute name="didNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="externalPendingMessages" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="internalConversationId" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="internalLastMessageDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="internalLastMessageSeen" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="internalNode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="personName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="phoneNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="priority1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="priority2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="priority3" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="profileImage" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="profileImageUrl" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="roleId" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="userId" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="workerId" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+    </entity>
     <entity name="Permission" representedClassName=".Permission" syncable="YES">
         <attribute name="create" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="delete" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
@@ -22,7 +42,9 @@
         <attribute name="workerId" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
     </entity>
     <elements>
-        <element name="User" positionX="-63" positionY="-18" width="128" height="210"/>
         <element name="Permission" positionX="-45" positionY="81" width="128" height="135"/>
+        <element name="User" positionX="-63" positionY="-18" width="128" height="210"/>
+        <element name="InternalConversation" positionX="-54" positionY="81" width="128" height="300"/>
+        <element name="ExternalConversation" positionX="-45" positionY="144" width="128" height="45"/>
     </elements>
 </model>

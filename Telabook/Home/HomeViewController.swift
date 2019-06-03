@@ -15,12 +15,19 @@ class HomeViewController: UIViewController {
             if let u = userInfo {
                 self.updateUserData(userInfoData: u)
                 self.updateUICodable(user: u.user)
+                self.stopSpinner()
                 self.setViewsState(isHidden: false)
                 self.setPlaceholdersViewsState(isHidden: true)
             }
         }
     }
-    
+    let sectionItems:[SectionItem] = [
+        SectionItem(image: #imageLiteral(resourceName: "landing_reminder"), title: "REMINDERS", subTitle: "5 Reminders"),
+        SectionItem(image: #imageLiteral(resourceName: "landing_followup"), title: "FOLLOW UP", subTitle: "5 Users to Follow Up"),
+        SectionItem(image: #imageLiteral(resourceName: "landing_callgroup"), title: "CALL GROUPS", subTitle: "2 Groups"),
+        SectionItem(image: #imageLiteral(resourceName: "landing_operators"), title: "USERS ONLINE", subTitle: "5 Online Users")
+    ]
+    let calculatedInset:CGFloat = 20
    
     override func loadView() {
         super.loadView()
@@ -34,7 +41,7 @@ class HomeViewController: UIViewController {
 //        setViewsState(isHidden: true)
 //        startSpinner()
         preFetchUser()
-        fetchUser()
+        fetchUserData()
         
         let p = self.fetchPermissionsFromStorage()
         p?.forEach({print($0.name ?? "nil")})
@@ -88,17 +95,6 @@ class HomeViewController: UIViewController {
         tryAgainButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
         collectionView.anchor(top: profileImageView.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 50, leftConstant: 20, bottomConstant: 20, rightConstant: 20, widthConstant: 0, heightConstant: 0)
     }
-    
-    
-    let sectionItems:[SectionItem] = [
-        SectionItem(image: #imageLiteral(resourceName: "landing_reminder"), title: "REMINDERS", subTitle: "5 Reminders"),
-        SectionItem(image: #imageLiteral(resourceName: "landing_followup"), title: "FOLLOW UP", subTitle: "5 Users to Follow Up"),
-        SectionItem(image: #imageLiteral(resourceName: "landing_callgroup"), title: "CALL GROUPS", subTitle: "2 Groups"),
-        SectionItem(image: #imageLiteral(resourceName: "landing_operators"), title: "USERS ONLINE", subTitle: "5 Online Users")
-    ]
-    let calculatedInset:CGFloat = 20
-    
-    
     lazy var spinner:UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView()
         indicator.style = UIActivityIndicatorView.Style.whiteLarge
@@ -222,9 +218,6 @@ class HomeViewController: UIViewController {
             })
         }
     }
-    
-    
-    
     fileprivate func startSpinner() {
         self.spinner.startAnimating()
     }
@@ -235,7 +228,7 @@ class HomeViewController: UIViewController {
         self.setPlaceholdersViewsState(isHidden: true)
         self.setViewsState(isHidden: true)
         self.startSpinner()
-        self.fetchUser()
+        self.fetchUserData()
     }
     fileprivate func setPlaceholdersViewsState(isHidden:Bool) {
         self.placeholderLabel.isHidden = isHidden
@@ -247,18 +240,34 @@ class HomeViewController: UIViewController {
         self.profileImageView.isHidden = isHidden
         self.collectionView.isHidden = isHidden
     }
-    
-    fileprivate func fetchUser() {
+    fileprivate func fetchUserData() {
+        FirebaseAuthService.shared.getCurrentToken { (token, error) in
+            if let err = error {
+                print("\n***Error***\n")
+                print(err)
+                DispatchQueue.main.async {
+                    self.stopSpinner()
+                    self.setViewsState(isHidden: true)
+                    self.setPlaceholdersViewsState(isHidden: false)
+                }
+                self.placeholderLabel.text = err.localizedDescription
+            } else if let token = token {
+                self.fetchUserInfoByToken(token)
+            }
+        }
+    }
+    fileprivate func fetchUserInfoByToken(_ token:String) {
         print("Company => \(UserDefaults.standard.getCompanyId()) & Worker ID => \(UserDefaults.standard.getWorkerId())")
-        let token = UserDefaults.standard.getToken()
         AuthenticationService.shared.authenticateViaToken(token: token) { (data, serviceError, error) in
             guard serviceError == nil else {
                 if let err = serviceError {
                     print("\n***Error***\n")
                     print(err)
-//                    self.stopSpinner()
-                    self.setViewsState(isHidden: true)
-                    self.setPlaceholdersViewsState(isHidden: false)
+                    DispatchQueue.main.async {
+                        self.stopSpinner()
+                        self.setViewsState(isHidden: true)
+                        self.setPlaceholdersViewsState(isHidden: false)
+                    }
                     self.placeholderLabel.text = err.localizedDescription
                 }
                 return

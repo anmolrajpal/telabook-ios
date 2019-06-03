@@ -39,7 +39,21 @@ final class FirebaseAuthService:NSObject {
             }
         }
     }
-    
+    func getCurrentToken(completion: @escaping (String?, Error?) -> ()) {
+        Auth.auth().currentUser?.getIDToken(completion: { (token, error) in
+            if let err = error {
+                print("Error fetching token: \(err)")
+                DispatchQueue.main.async {
+                    completion(nil, err)
+                }
+            } else if let token = token {
+                print("Current Token: \(token)")
+                DispatchQueue.main.async {
+                    completion(token, nil)
+                }
+            }
+        })
+    }
     func monitorAndSaveToken() {
         Auth.auth().currentUser?.getIDToken(completion: { (token, error) in
             if let err = error {

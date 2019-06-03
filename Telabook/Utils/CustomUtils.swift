@@ -19,4 +19,11 @@ final class CustomUtils {
         default: fatalError("Invalid Role ID")
         }
     }
+    func getInitials(from fullName:String) -> String {
+        let groups = fullName.split(separator: " ")
+        let firstName = groups.first
+        let lastName = groups.last
+        let initials:String = String(firstName?.first ?? "*") + String(lastName?.first ?? "*")
+        return initials
+    }
 }
