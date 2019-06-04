@@ -47,6 +47,10 @@
 		6FB11B4622A2A5110098D050 /* PersistenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B4522A2A5110098D050 /* PersistenceService.swift */; };
 		6FB11B4922A503E00098D050 /* SMSCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B4822A503E00098D050 /* SMSCell.swift */; };
 		6FEF96A022A50F4A00F2FF83 /* InternalConversationsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF969F22A50F4A00F2FF83 /* InternalConversationsAPI.swift */; };
+		6FEF96A222A6677900F2FF83 /* ExternalConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF96A122A6677900F2FF83 /* ExternalConversation.swift */; };
+		6FEF96A422A6679400F2FF83 /* ExternalConversationsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF96A322A6679400F2FF83 /* ExternalConversationsAPI.swift */; };
+		6FEF96A622A67F2900F2FF83 /* SMSDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF96A522A67F2900F2FF83 /* SMSDetailViewController.swift */; };
+		6FEF96A822A682E700F2FF83 /* SMSDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF96A722A682E700F2FF83 /* SMSDetailCell.swift */; };
 		75CA0A53E250757B0D89EA60 /* Pods_Telabook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1482E3F11B70E4874878A5EE /* Pods_Telabook.framework */; };
 /* End PBXBuildFile section */
 
@@ -95,6 +99,10 @@
 		6FB11B4722A462340098D050 /* Telabook.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Telabook.entitlements; sourceTree = "<group>"; };
 		6FB11B4822A503E00098D050 /* SMSCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSCell.swift; sourceTree = "<group>"; };
 		6FEF969F22A50F4A00F2FF83 /* InternalConversationsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalConversationsAPI.swift; sourceTree = "<group>"; };
+		6FEF96A122A6677900F2FF83 /* ExternalConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalConversation.swift; sourceTree = "<group>"; };
+		6FEF96A322A6679400F2FF83 /* ExternalConversationsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalConversationsAPI.swift; sourceTree = "<group>"; };
+		6FEF96A522A67F2900F2FF83 /* SMSDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSDetailViewController.swift; sourceTree = "<group>"; };
+		6FEF96A722A682E700F2FF83 /* SMSDetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSDetailCell.swift; sourceTree = "<group>"; };
 		C2EE0DDF9E6F5A65BD369028 /* Pods-Telabook.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.debug.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.debug.xcconfig"; sourceTree = "<group>"; };
 		DD0234C0225DA725AC83D099 /* Pods-Telabook.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.release.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -123,6 +131,7 @@
 			isa = PBXGroup;
 			children = (
 				6FB11B4822A503E00098D050 /* SMSCell.swift */,
+				6FEF96A722A682E700F2FF83 /* SMSDetailCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -131,6 +140,7 @@
 			isa = PBXGroup;
 			children = (
 				6F6EAB3022A508380096365A /* InternalConversation.swift */,
+				6FEF96A122A6677900F2FF83 /* ExternalConversation.swift */,
 			);
 			name = Model;
 			path = View/Model;
@@ -272,6 +282,7 @@
 			isa = PBXGroup;
 			children = (
 				6FB11B08229BFA310098D050 /* SMSViewController.swift */,
+				6FEF96A522A67F2900F2FF83 /* SMSDetailViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -280,6 +291,7 @@
 			isa = PBXGroup;
 			children = (
 				6FEF969F22A50F4A00F2FF83 /* InternalConversationsAPI.swift */,
+				6FEF96A322A6679400F2FF83 /* ExternalConversationsAPI.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -436,6 +448,8 @@
 				6FB11AFB229BF0590098D050 /* TabBarController.swift in Sources */,
 				6FB11B29229E75710098D050 /* FirebaseAuthService.swift in Sources */,
 				6FB11B37229EF4300098D050 /* ManageAgentsViewController.swift in Sources */,
+				6FEF96A222A6677900F2FF83 /* ExternalConversation.swift in Sources */,
+				6FEF96A622A67F2900F2FF83 /* SMSDetailViewController.swift in Sources */,
 				6FB11B0B229BFA3C0098D050 /* SettingsViewController.swift in Sources */,
 				6FB11B39229EF4430098D050 /* GalleryViewController.swift in Sources */,
 				6FB11B3D229EF4690098D050 /* ArchivedSMSViewController.swift in Sources */,
@@ -455,8 +469,10 @@
 				6FB11B3B229EF4500098D050 /* BlockedUsersViewController.swift in Sources */,
 				6FB11B0D229BFA430098D050 /* MoreViewController.swift in Sources */,
 				6FB11B14229C3FCA0098D050 /* BadgeBarItem.swift in Sources */,
+				6FEF96A422A6679400F2FF83 /* ExternalConversationsAPI.swift in Sources */,
 				6FB11B19229D06BB0098D050 /* CustomUtils.swift in Sources */,
 				6FB11B07229BFA240098D050 /* CallsViewController.swift in Sources */,
+				6FEF96A822A682E700F2FF83 /* SMSDetailCell.swift in Sources */,
 				6FB11B1D229D19E10098D050 /* NetworkManager.swift in Sources */,
 				6FB11B41229F7A290098D050 /* ManageAgentsCell.swift in Sources */,
 				6FB11B12229C31DF0098D050 /* Enums.swift in Sources */,

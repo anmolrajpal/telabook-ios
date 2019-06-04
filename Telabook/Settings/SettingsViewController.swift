@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import CoreData
 class SettingsViewController: UIViewController {
 
     override func viewDidLoad() {
@@ -54,12 +55,30 @@ class SettingsViewController: UIViewController {
             })
         }
     }
+    fileprivate func dumpCoreDataStorage() {
+        do {
+            
+            let context = PersistenceService.shared.persistentContainer.viewContext
+            let entityNames = [String(describing: ExternalConversation.self), String(describing: InternalConversation.self), String(describing: Permission.self), String(describing: User.self)]
+            for entityName in entityNames {
+                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+                do {
+                    let objects  = try context.fetch(fetchRequest) as? [NSManagedObject]
+                    _ = objects.map{$0.map{context.delete($0)}}
+                    PersistenceService.shared.saveContext()
+                } catch let error {
+                    print("ERROR DELETING : \(error)")
+                }
+            }
+        }
+    }
     func callSignOutSequence() {
         FirebaseAuthService.shared.signOut { (error) in
             guard error == nil else {
                 UIAlertController.showAlert(alertTitle: "Signout Failed", message: error?.localizedDescription ?? "Try again", alertActionTitle: "Ok", controller: self)
                 return
             }
+            self.dumpCoreDataStorage()
             self.signOut()
         }
     }

@@ -291,3 +291,20 @@ extension UIImageView {
         }
     }
 }
+extension Date {
+    static func getDateFromString(dateString:String?, dateFormat:CustomDateFormat) -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = dateFormat.rawValue
+        if let string = dateString {
+            let date:Date? = dateFormatter.date(from: string)
+            return date
+        }
+        return nil
+    }
+    static func getStringFromDate(date:Date, dateFormat:CustomDateFormat) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = dateFormat.rawValue
+        let dateString:String = dateFormatter.string(from: date)
+        return dateString
+    }
+}

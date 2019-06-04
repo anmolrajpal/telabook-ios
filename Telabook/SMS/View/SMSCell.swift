@@ -18,7 +18,14 @@ class SMSCell: UITableViewCell {
                 let initials = CustomUtils.shared.getInitials(from: name)
                 self.profileImageView.loadImageUsingCacheWithURLString(conversation.profileImageUrl, placeHolder: UIImage.placeholderInitialsImage(text: initials))
             }
-           
+            let count = conversation.externalPendingMessages
+            if count > 0 {
+                self.badgeCountLabel.isHidden = false
+                self.badgeCountLabel.text = String(count)
+            } else {
+                self.badgeCountLabel.isHidden = true
+            }
+            
         }
     }
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -36,15 +43,22 @@ class SMSCell: UITableViewCell {
         containerView.addSubview(nameLabel)
         
         contentView.addSubview(containerView)
+        contentView.addSubview(badgeCountLabel)
     }
     fileprivate func setupConstraints() {
         profileImageView.centerYAnchor.constraint(equalTo:self.contentView.centerYAnchor).isActive = true
         profileImageView.leadingAnchor.constraint(equalTo:self.contentView.leadingAnchor, constant:10).isActive = true
         profileImageView.widthAnchor.constraint(equalToConstant:70).isActive = true
         profileImageView.heightAnchor.constraint(equalToConstant:70).isActive = true
-        containerView.anchor(top: contentView.topAnchor, left: profileImageView.rightAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 10, widthConstant: 0, heightConstant: 0)
+        containerView.anchor(top: contentView.topAnchor, left: profileImageView.rightAnchor, bottom: contentView.bottomAnchor, right: badgeCountLabel.leftAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
         nameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: -15).isActive = true
         nameLabel.anchor(top: nil, left: containerView.leftAnchor, bottom: nil, right: containerView.rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 10, widthConstant: 0, heightConstant: 0)
+//        badgeCountLabel.leftAnchor.constraint(equalTo: containerView.rightAnchor, constant: 10).isActive = true
+        
+        badgeCountLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: 0).isActive = true
+//        badgeCountLabel.widthAnchor.constraint(equalToConstant: 20).isActive = true
+//        badgeCountLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        badgeCountLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
       
     }
     let profileImageView:UIImageView = {
@@ -71,5 +85,17 @@ class SMSCell: UITableViewCell {
         view.clipsToBounds = true
         view.backgroundColor = .clear
         return view
+    }()
+    let badgeCountLabel:UILabel = {
+        let label = InsetLabel(4, 4, 6, 6)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "10"
+        label.textColor = .telaWhite
+        label.layer.cornerRadius = label.frame.height / 2
+        label.backgroundColor = .telaRed
+        label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 13)
+        label.numberOfLines = 1
+        label.clipsToBounds = true
+        return label
     }()
 }

@@ -17,6 +17,26 @@ public enum CustomFonts:String {
     case gothamMedium = "Gotham-Medium"
     case gothamBook = "Gotham-Book"
 }
+public enum CustomDateFormat: String {
+    /// Time
+    case time = "HH:mm:ss"
+    case hmma = "h:mm a"
+    
+    /// Date with hours
+    case dateWithTime = "yyyy-MM-dd HH:mm:ss"
+    case dateWithTimeType1 = "dd/MM/yyyy hh:mm:ss"
+//    case telaDateTim = CustomDateFormat.telaDateTime()
+    /// Date
+    case date = "dd/MM/yyyy"
+    case dateType1 = "dd MMM, yyyy"
+    case dateType2 = "MMM d"
+    case MMMMdEEEE = "MMMM d EEEE"
+    case ddMMMyyyy = "dd MMM yyyy"
+    
+    static func telaDateTime() -> String {
+        return "\(self.ddMMMyyyy.rawValue) | \(self.hmma.rawValue)"
+    }
+}
 public enum TextFieldIconPosition {
     case Left
     case Right

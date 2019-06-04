@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14490.99" systemVersion="18E226" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="ExternalConversation" representedClassName="ExternalConversation" syncable="YES" codeGenerationType="class"/>
+    <entity name="ExternalConversation" representedClassName=".ExternalConversation" syncable="YES">
+        <attribute name="allLastMessageSeen" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="allLastMessageText" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="colour" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="customerId" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="customerPerson" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="customerPhoneNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="externalConversationBlackList" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="externalConversationId" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="internalAddressBookId" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="internalAddressBookName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="internalAddressBookNameActive" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="lastMessageDatetime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="node" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="priority" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="unreadMessages" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="workerPerson" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="workerPhoneNumber" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="InternalConversation" representedClassName=".InternalConversation" syncable="YES">
         <attribute name="didNumber" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="externalPendingMessages" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
@@ -42,9 +60,9 @@
         <attribute name="workerId" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
     </entity>
     <elements>
+        <element name="ExternalConversation" positionX="-45" positionY="144" width="128" height="300"/>
+        <element name="InternalConversation" positionX="-54" positionY="81" width="128" height="300"/>
         <element name="Permission" positionX="-45" positionY="81" width="128" height="135"/>
         <element name="User" positionX="-63" positionY="-18" width="128" height="210"/>
-        <element name="InternalConversation" positionX="-54" positionY="81" width="128" height="300"/>
-        <element name="ExternalConversation" positionX="-45" positionY="144" width="128" height="45"/>
     </elements>
 </model>

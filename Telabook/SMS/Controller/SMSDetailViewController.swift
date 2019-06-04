@@ -1,17 +1,18 @@
 //
-//  SMSViewController.swift
+//  SMSDetailViewController.swift
 //  Telabook
 //
-//  Created by Anmol Rajpal on 27/05/19.
+//  Created by Anmol Rajpal on 04/06/19.
 //  Copyright © 2019 Natovi. All rights reserved.
 //
 
 import UIKit
 import CoreData
-class SMSViewController: UIViewController {
+class SMSDetailViewController: UIViewController {
+    var workerId = Int()
     lazy var fetchedhResultController: NSFetchedResultsController<NSFetchRequestResult> = {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: InternalConversation.self))
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "userId", ascending: true)]
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: ExternalConversation.self))
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "lastMessageDatetime", ascending: true)]
         let frc = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: PersistenceService.shared.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
         frc.delegate = self
         return frc
@@ -30,14 +31,7 @@ class SMSViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationItem.title = "SMS"
 //        updateTableContent()
-    }
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        if let selectionIndexPath = self.tableView.indexPathForSelectedRow {
-            self.tableView.deselectRow(at: selectionIndexPath, animated: animated)
-        }
     }
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -49,7 +43,7 @@ class SMSViewController: UIViewController {
         tableView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
     }
     fileprivate func setupTableView() {
-        tableView.register(SMSCell.self, forCellReuseIdentifier: NSStringFromClass(SMSCell.self))
+        tableView.register(SMSDetailCell.self, forCellReuseIdentifier: NSStringFromClass(SMSDetailCell.self))
         tableView.delegate = self
         tableView.dataSource = self
     }
@@ -89,13 +83,14 @@ class SMSViewController: UIViewController {
 //                    self.setPlaceholdersViewsState(isHidden: false)
                 }
             } else if let token = token {
-                self.fetchInternalConversations(token: token)
+                self.fetchExternalConversations(token: token)
             }
         }
     }
-    fileprivate func fetchInternalConversations(token:String) {
+    fileprivate func fetchExternalConversations(token:String) {
         let companyId = UserDefaults.standard.getCompanyId()
-        InternalConversationsAPI.shared.fetch(token: token, companyId: String(companyId)) { (data, serviceError, error) in
+        print("Worker ID => \(String(self.workerId))")
+        ExternalConversationsAPI.shared.fetch(token: token, companyId: String(companyId), workerId: String(workerId)) { (data, serviceError, error) in
             if let serviceErr = serviceError {
                 print("Service Error: \(serviceErr.localizedDescription)")
             } else if let err = error {
@@ -116,16 +111,16 @@ class SMSViewController: UIViewController {
             let managedObjectContext = PersistenceService.shared.persistentContainer.viewContext
             let decoder = JSONDecoder()
             decoder.userInfo[context] = managedObjectContext
-            let response = try decoder.decode([InternalConversation].self, from: data)
+            let response = try decoder.decode([ExternalConversation].self, from: data)
             try managedObjectContext.save()
-            print(response.first?.personName ?? "nil")
+            print(response.first?.workerPerson ?? "nil")
             DispatchQueue.main.async {
-//                completion(response, nil, nil)
+                //                completion(response, nil, nil)
             }
         } catch let error {
             print("Error Processing Response Data: \(error)")
             DispatchQueue.main.async {
-//                completion(nil, .Internal, error)
+                //                completion(nil, .Internal, error)
             }
         }
     }
@@ -133,7 +128,7 @@ class SMSViewController: UIViewController {
         do {
             
             let context = PersistenceService.shared.persistentContainer.viewContext
-            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: InternalConversation.self))
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: ExternalConversation.self))
             do {
                 let objects  = try context.fetch(fetchRequest) as? [NSManagedObject]
                 _ = objects.map{$0.map{context.delete($0)}}
@@ -149,11 +144,11 @@ class SMSViewController: UIViewController {
         }
         
         let managedObjectContext = PersistenceService.shared.persistentContainer.viewContext
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: InternalConversation.self))
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: ExternalConversation.self))
         
         // NSBatchDeleteRequest is not supported for in-memory stores
         if isInMemoryStore {
-            print("Internal Convos In Memory Store")
+            print("External Convos In Memory Store")
             do {
                 let items = try managedObjectContext.fetch(fetchRequest)
                 for item in items {
@@ -163,7 +158,7 @@ class SMSViewController: UIViewController {
                 print(error)
             }
         } else {
-            print("Internal Convos Not In Memory Store")
+            print("External Convos Not In Memory Store")
             let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
             do {
                 try managedObjectContext.execute(batchDeleteRequest)
@@ -174,7 +169,7 @@ class SMSViewController: UIViewController {
         }
     }
 }
-extension SMSViewController : UITableViewDelegate, UITableViewDataSource {
+extension SMSDetailViewController : UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let count = fetchedhResultController.sections?.first?.numberOfObjects {
             return count
@@ -183,32 +178,21 @@ extension SMSViewController : UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(SMSCell.self), for: indexPath) as! SMSCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(SMSDetailCell.self), for: indexPath) as! SMSDetailCell
+        cell.selectionStyle = .none
         cell.backgroundColor = .clear
-        cell.accessoryType = .disclosureIndicator
-        let backgroundView = UIView()
-        backgroundView.backgroundColor = UIColor.telaGray7.withAlphaComponent(0.2)
-        cell.selectedBackgroundView  = backgroundView
-        if let conversation = fetchedhResultController.object(at: indexPath) as? InternalConversation {
-            cell.internalConversation = conversation
+//        cell.accessoryType = .disclosureIndicator
+        if let conversation = fetchedhResultController.object(at: indexPath) as? ExternalConversation {
+            cell.externalConversation = conversation
         }
         return cell
     }
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let conversation = fetchedhResultController.object(at: indexPath) as? InternalConversation {
-            let workerId = Int(conversation.workerId)
-            let smsDetailVC = SMSDetailViewController()
-            smsDetailVC.workerId = workerId
-            smsDetailVC.navigationItem.title = "\(conversation.personName?.capitalized ?? "")"
-            self.show(smsDetailVC, sender: self)
-        }
-    }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return SMSCell.cellHeight
+        return SMSDetailCell.cellHeight
     }
     
 }
-extension SMSViewController: NSFetchedResultsControllerDelegate {
+extension SMSDetailViewController: NSFetchedResultsControllerDelegate {
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
         
