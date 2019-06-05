@@ -100,7 +100,8 @@ extension UIColor {
     static var telaGray5 = UIColor.rgb(r: 63, g: 63, b: 63)
     static var telaGray6 = UIColor.rgb(r: 96, g: 96, b: 96)
     static var telaGray7 = UIColor.rgb(r: 131, g: 131, b: 131)
-    
+    static var telaGreen = UIColor.rgb(r: 52, g: 225, b: 190)
+    static var telaIndigo = UIColor.rgb(r: 82, g: 142, b: 244)
     
     
     static var randomColor: UIColor {
@@ -112,6 +113,14 @@ extension UIColor {
     
     static func rgb(r: CGFloat, g: CGFloat, b: CGFloat) -> UIColor {
         return UIColor(red: r/255, green: g/255, blue: b/255, alpha: 1)
+    }
+    static func getConversationColor(color:ConversationColor) -> UIColor {
+        switch color {
+        case .Default: return UIColor.telaWhite
+        case .Yellow: return UIColor.telaYellow
+        case .Green: return UIColor.telaGreen
+        case .Blue: return UIColor.telaIndigo
+        }
     }
 }
 extension UITextField {

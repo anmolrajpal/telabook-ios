@@ -57,6 +57,75 @@ public enum ServiceError:Error {
     case Internal
     
 }
+public enum ConversationColor {
+    case Default
+    case Yellow
+    case Green
+    case Blue
+    static func getColorBy(colorCode:Int) -> ConversationColor {
+        switch colorCode {
+        case 0: return .Default
+        case 1: return .Yellow
+        case 2: return .Green
+        case 3: return .Blue
+        default: return .Default
+        }
+    }
+    static func getColorCodeBy(color conversationColor:ConversationColor) -> Int {
+        switch conversationColor {
+        case .Default: return 0
+        case .Yellow: return 1
+        case .Green: return 2
+        case .Blue: return 3
+        }
+    }
+}
+public enum ResponseStatus {
+    //2xx
+    case OK
+    case Created
+    case NoContent
+    case Accepted
+    //4xx
+    case BadRequest
+    case Unauthorized
+    case Forbidden
+    case NotFound
+    case MethodNotAllowed
+    case RequestTimeout
+    case Conflict
+    //5xx
+    case InternalServerError
+    case NotImplemented
+    case BadGateway
+    case ServiceUnavailable
+    //Custom
+    case UnknownResponse
+    
+    static func getResponseStatusBy(statusCode:Int) -> ResponseStatus {
+        switch statusCode {
+        //2xx
+        case 200: return .OK
+        case 201: return .Created
+        case 202: return .Accepted
+        case 204: return .NoContent
+        //4xx
+        case 400: return .BadRequest
+        case 401: return .Unauthorized
+        case 403: return .Forbidden
+        case 404: return .NotFound
+        case 405: return .MethodNotAllowed
+        case 408: return .RequestTimeout
+        case 409: return .Conflict
+        //5xx
+        case 500: return .InternalServerError
+        case 501: return .NotImplemented
+        case 502: return .BadGateway
+        case 503: return .ServiceUnavailable
+        default: return .UnknownResponse
+        }
+    }
+}
 public enum Header {
     enum headerName:String {
         case contentType = "Content-Type"

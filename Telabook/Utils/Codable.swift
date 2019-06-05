@@ -9,7 +9,150 @@
 import Foundation
 
 import CoreData
-
+struct UnarchiveConversationCodable : Codable {
+    
+    let archive : Bool?
+    let blackList : Int?
+    let colour : Int?
+    let createdAt : String?
+    let customName : String?
+    let id : Int?
+    let lastMessageDate : String?
+    let lastMessageSeen : String?
+    let lastMessageText : String?
+    let messageType : String?
+    let multimediaExtension : String?
+    let noArchiveDate : NoArchiveDate?
+    let node : String?
+    let priority : String?
+    let recipientId : Int?
+    let recipientName : String?
+    let recipientPhoneNumber : String?
+    let sender : Sender?
+    let senderDidNumber : String?
+    let senderId : Int?
+    let senderName : String?
+    let senderPhoneNumber : String?
+    let unreadMessage : Int?
+    let updatedAt : String?
+    
+    enum CodingKeys: String, CodingKey {
+        case archive = "archive"
+        case blackList = "black_list"
+        case colour = "colour"
+        case createdAt = "created_at"
+        case customName = "custom_name"
+        case id = "id"
+        case lastMessageDate = "last_message_date"
+        case lastMessageSeen = "last_message_seen"
+        case lastMessageText = "last_message_text"
+        case messageType = "message_type"
+        case multimediaExtension = "multimedia_extension"
+        case noArchiveDate = "no_archive_date"
+        case node = "node"
+        case priority = "priority"
+        case recipientId = "recipient_id"
+        case recipientName = "recipient_name"
+        case recipientPhoneNumber = "recipient_phone_number"
+        case sender = "sender"
+        case senderDidNumber = "sender_did_number"
+        case senderId = "sender_id"
+        case senderName = "sender_name"
+        case senderPhoneNumber = "sender_phone_number"
+        case unreadMessage = "unread_message"
+        case updatedAt = "updated_at"
+    }
+    
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        archive = try values.decodeIfPresent(Bool.self, forKey: .archive)
+        blackList = try values.decodeIfPresent(Int.self, forKey: .blackList)
+        colour = try values.decodeIfPresent(Int.self, forKey: .colour)
+        createdAt = try values.decodeIfPresent(String.self, forKey: .createdAt)
+        customName = try values.decodeIfPresent(String.self, forKey: .customName)
+        id = try values.decodeIfPresent(Int.self, forKey: .id)
+        lastMessageDate = try values.decodeIfPresent(String.self, forKey: .lastMessageDate)
+        lastMessageSeen = try values.decodeIfPresent(String.self, forKey: .lastMessageSeen)
+        lastMessageText = try values.decodeIfPresent(String.self, forKey: .lastMessageText)
+        messageType = try values.decodeIfPresent(String.self, forKey: .messageType)
+        multimediaExtension = try values.decodeIfPresent(String.self, forKey: .multimediaExtension)
+        noArchiveDate = try values.decodeIfPresent(NoArchiveDate.self, forKey: .noArchiveDate)
+        node = try values.decodeIfPresent(String.self, forKey: .node)
+        priority = try values.decodeIfPresent(String.self, forKey: .priority)
+        recipientId = try values.decodeIfPresent(Int.self, forKey: .recipientId)
+        recipientName = try values.decodeIfPresent(String.self, forKey: .recipientName)
+        recipientPhoneNumber = try values.decodeIfPresent(String.self, forKey: .recipientPhoneNumber)
+        sender = try values.decodeIfPresent(Sender.self, forKey: .sender)
+        senderDidNumber = try values.decodeIfPresent(String.self, forKey: .senderDidNumber)
+        senderId = try values.decodeIfPresent(Int.self, forKey: .senderId)
+        senderName = try values.decodeIfPresent(String.self, forKey: .senderName)
+        senderPhoneNumber = try values.decodeIfPresent(String.self, forKey: .senderPhoneNumber)
+        unreadMessage = try values.decodeIfPresent(Int.self, forKey: .unreadMessage)
+        updatedAt = try values.decodeIfPresent(String.self, forKey: .updatedAt)
+    }
+    struct Sender : Codable {
+        
+        let companyId : Int?
+        let createdAt : String?
+        let deletedAt : String?
+        let didId : Int?
+        let extensionId : String?
+        let id : Int?
+        let personId : Int?
+        let status : Int?
+        let timer : Int?
+        let updatedAt : String?
+        
+        enum CodingKeys: String, CodingKey {
+            case companyId = "company_id"
+            case createdAt = "created_at"
+            case deletedAt = "deleted_at"
+            case didId = "did_id"
+            case extensionId = "extension_id"
+            case id = "id"
+            case personId = "person_id"
+            case status = "status"
+            case timer = "timer"
+            case updatedAt = "updated_at"
+        }
+        
+        init(from decoder: Decoder) throws {
+            let values = try decoder.container(keyedBy: CodingKeys.self)
+            companyId = try values.decodeIfPresent(Int.self, forKey: .companyId)
+            createdAt = try values.decodeIfPresent(String.self, forKey: .createdAt)
+            deletedAt = try values.decodeIfPresent(String.self, forKey: .deletedAt)
+            didId = try values.decodeIfPresent(Int.self, forKey: .didId)
+            extensionId = try values.decodeIfPresent(String.self, forKey: .extensionId)
+            id = try values.decodeIfPresent(Int.self, forKey: .id)
+            personId = try values.decodeIfPresent(Int.self, forKey: .personId)
+            status = try values.decodeIfPresent(Int.self, forKey: .status)
+            timer = try values.decodeIfPresent(Int.self, forKey: .timer)
+            updatedAt = try values.decodeIfPresent(String.self, forKey: .updatedAt)
+        }
+        
+    }
+    struct NoArchiveDate : Codable {
+        
+        let date : String?
+        let timezone : String?
+        let timezoneType : Int?
+        
+        enum CodingKeys: String, CodingKey {
+            case date = "date"
+            case timezone = "timezone"
+            case timezoneType = "timezone_type"
+        }
+        
+        init(from decoder: Decoder) throws {
+            let values = try decoder.container(keyedBy: CodingKeys.self)
+            date = try values.decodeIfPresent(String.self, forKey: .date)
+            timezone = try values.decodeIfPresent(String.self, forKey: .timezone)
+            timezoneType = try values.decodeIfPresent(Int.self, forKey: .timezoneType)
+        }
+        
+    }
+    
+}
 class UserInfo:NSManagedObject, Codable {
 
     @NSManaged var user : User?

@@ -9,7 +9,7 @@
 import UIKit
 
 class SMSDetailCell: UITableViewCell {
-    static let cellHeight:CGFloat = 60.0
+    static let cellHeight:CGFloat = 91.0
     var externalConversation:ExternalConversation? {
         didSet {
             guard let conversation = externalConversation else {return}
@@ -24,6 +24,9 @@ class SMSDetailCell: UITableViewCell {
             let timeStr = Date.getStringFromDate(date: dateTime, dateFormat: CustomDateFormat.hmma)
             let dateTimeStr = "\(dateStr) | \(timeStr)"
             self.dateTimeLabel.text = dateTimeStr
+            
+            let color = UIColor.getConversationColor(color: ConversationColor.getColorBy(colorCode: Int(conversation.colour)))
+            self.nameLabel.textColor = color
         }
     }
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -49,9 +52,9 @@ class SMSDetailCell: UITableViewCell {
         priorityImageView.widthAnchor.constraint(equalToConstant:40).isActive = true
         priorityImageView.heightAnchor.constraint(equalToConstant:40).isActive = true
         containerView.anchor(top: contentView.topAnchor, left: priorityImageView.rightAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 10, widthConstant: 0, heightConstant: 0)
-        nameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: -10).isActive = true
+        nameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: -15).isActive = true
         nameLabel.anchor(top: nil, left: containerView.leftAnchor, bottom: nil, right: containerView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 10, widthConstant: 0, heightConstant: 0)
-        lastMessageLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: 10).isActive = true
+        lastMessageLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: 15).isActive = true
         lastMessageLabel.anchor(top: nil, left: nameLabel.leftAnchor, bottom: nil, right: dateTimeLabel.leftAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 10, widthConstant: 0, heightConstant: 0)
         dateTimeLabel.centerYAnchor.constraint(equalTo: lastMessageLabel.centerYAnchor).isActive = true
         dateTimeLabel.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0).isActive = true

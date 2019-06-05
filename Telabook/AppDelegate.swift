@@ -21,7 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
         FirebaseApp.configure()
         
-        /*********
+        
         // [START set_messaging_delegate]
         Messaging.messaging().delegate = self
         // [END set_messaging_delegate]
@@ -45,7 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         application.registerForRemoteNotifications()
         
         // [END register_for_notifications]
-        *********/
+ 
         
         FirebaseAuthService.shared.monitorAndSaveToken()
         PersistenceService.shared.applicationDocumentsDirectory()
@@ -77,7 +77,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     
     
-    /*********
+    
     // [START receive_message]
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
         // If you are receiving a notification message while your app is in the background,
@@ -125,11 +125,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // With swizzling disabled you must set the APNs token here.
         // Messaging.messaging().apnsToken = deviceToken
     }
- *********/
+ 
 }
 
 
-/*********
+
 // [START ios_10_message_handling]
 @available(iOS 10, *)
 extension AppDelegate : UNUserNotificationCenterDelegate {
@@ -170,9 +170,9 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
     }
 }
 // [END ios_10_message_handling]
-**********/
 
-/*********
+
+
 extension AppDelegate : MessagingDelegate {
     // [START refresh_token]
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
@@ -192,4 +192,4 @@ extension AppDelegate : MessagingDelegate {
     }
     // [END ios_10_data_message]
 }
-*********/
+

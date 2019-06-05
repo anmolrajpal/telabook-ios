@@ -297,7 +297,7 @@ class LoginViewController: UIViewController {
     }
     final private func loginAndFetchUser(token:String) {
         AuthenticationService.shared.authenticateViaToken(token: token) { (data, serviceError, error) in
-            guard error == nil else {
+            guard serviceError == nil else {
                 if let err = serviceError {
                     print(err)
                     switch err {
