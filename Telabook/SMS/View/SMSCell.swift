@@ -87,7 +87,7 @@ class SMSCell: UITableViewCell {
         return view
     }()
     let badgeCountLabel:UILabel = {
-        let label = InsetLabel(4, 4, 6, 6)
+        let label = InsetLabel(3.5, 3.5, 7, 7)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "10"
         label.textColor = .telaWhite

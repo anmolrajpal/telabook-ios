@@ -26,6 +26,9 @@ class ExternalConversation:NSManagedObject, Codable {
     @NSManaged var unreadMessages : Int16
     @NSManaged var workerPerson : String?
     @NSManaged var workerPhoneNumber : String?
+    @NSManaged var `internal` : InternalConversation?
+    @NSManaged var isArchived : Bool
+//    @NSManaged var archived : [ExternalConversation]?
     
     enum CodingKeys: String, CodingKey {
         case allLastMessageSeen = "all_last_message_seen"
@@ -45,6 +48,8 @@ class ExternalConversation:NSManagedObject, Codable {
         case unreadMessages = "unread_messages"
         case workerPerson = "worker_person"
         case workerPhoneNumber = "worker_phone_number"
+        case `internal` = "internal"
+        case isArchived = "isArchived"
     }
     
     //MARK: DECODABLE
@@ -73,6 +78,8 @@ class ExternalConversation:NSManagedObject, Codable {
         unreadMessages = try values.decodeIfPresent(Int16.self, forKey: .unreadMessages) ?? 0
         workerPerson = try values.decodeIfPresent(String.self, forKey: .workerPerson)
         workerPhoneNumber = try values.decodeIfPresent(String.self, forKey: .workerPhoneNumber)
+        `internal` = try values.decodeIfPresent(InternalConversation.self, forKey: .internal)
+        isArchived = try values.decodeIfPresent(Bool.self, forKey: .isArchived) ?? false
     }
     
     // MARK: - Encodable
@@ -95,5 +102,7 @@ class ExternalConversation:NSManagedObject, Codable {
         try container.encode(unreadMessages, forKey: .unreadMessages)
         try container.encode(workerPerson, forKey: .workerPerson)
         try container.encode(workerPhoneNumber, forKey: .workerPhoneNumber)
+        try container.encode(`internal`, forKey: .internal)
+        try container.encode(isArchived, forKey: .isArchived)
     }
 }

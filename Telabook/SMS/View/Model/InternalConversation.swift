@@ -26,6 +26,8 @@ class InternalConversation : NSManagedObject, Codable {
     @NSManaged var userId : Int16
     @NSManaged var username : String?
     @NSManaged var workerId : Int16
+    @NSManaged var external: NSSet?
+//    @NSManaged var archived: NSSet?
     
     enum CodingKeys: String, CodingKey {
         case didNumber = "did_number"
@@ -74,7 +76,25 @@ class InternalConversation : NSManagedObject, Codable {
         workerId = try values.decodeIfPresent(Int16.self, forKey: .workerId) ?? 0
     }
     
-    
+    func update(conversation:InternalConversation) {
+        didNumber = conversation.didNumber
+        externalPendingMessages = conversation.externalPendingMessages
+        internalConversationId = conversation.internalConversationId
+        internalLastMessageDate = conversation.internalLastMessageDate
+        internalLastMessageSeen = conversation.internalLastMessageSeen
+        internalNode = conversation.internalNode
+        personName = conversation.personName
+        phoneNumber = conversation.phoneNumber
+        priority1 = conversation.priority1
+        priority2 = conversation.priority2
+        priority3 = conversation.priority3
+        profileImage = conversation.profileImage
+        profileImageUrl = conversation.profileImageUrl
+        roleId = conversation.roleId
+        userId = conversation.userId
+        username = conversation.username
+        workerId = conversation.workerId
+    }
     // MARK: - Encodable
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)

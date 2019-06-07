@@ -47,6 +47,9 @@ extension UIView {
     }
 }
 extension UIViewController {
+    
+    
+    
     func setUpNavBar() {
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.telaBlue, .font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 15)!]
         navigationController?.navigationBar.prefersLargeTitles = false
@@ -141,6 +144,26 @@ extension UITextField {
     }
 }
 extension UIAlertController {
+    static func showModalSpinner(controller:UIViewController) {
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
+        let alertMessageAttributedString = NSAttributedString(string: "Please wait...", attributes: [
+            NSAttributedString.Key.font : UIFont(name: CustomFonts.gothamMedium.rawValue, size: 14)!,
+            NSAttributedString.Key.foregroundColor : UIColor.telaWhite
+            ])
+        alert.setValue(alertMessageAttributedString, forKey: "attributedMessage")
+    alert.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = UIColor.telaGray5
+        alert.view.subviews.first?.backgroundColor = UIColor.clear
+        alert.view.subviews.first?.subviews.first?.backgroundColor = .clear
+        let loadingIndicator = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50))
+        loadingIndicator.hidesWhenStopped = true
+        loadingIndicator.style = UIActivityIndicatorView.Style.white
+        loadingIndicator.startAnimating();
+        alert.view.addSubview(loadingIndicator)
+        controller.present(alert, animated: true, completion: nil)
+    }
+    static func dismissModalSpinner(controller:UIViewController) {
+        controller.dismiss(animated: true, completion: nil)
+    }
     static public func telaAlertController(title:String, message:String = "\n") -> UIAlertController {
         
         let alertVC = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertController.Style.alert)

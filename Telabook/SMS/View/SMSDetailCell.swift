@@ -13,8 +13,12 @@ class SMSDetailCell: UITableViewCell {
     var externalConversation:ExternalConversation? {
         didSet {
             guard let conversation = externalConversation else {return}
-            if let name = conversation.workerPerson {
-                self.nameLabel.text = name
+            if let number = conversation.customerPhoneNumber {
+                if let name = conversation.internalAddressBookName {
+                    self.nameLabel.text = "\(name) (\(number))"
+                } else {
+                    self.nameLabel.text = number
+                }
             }
             if let lastMessage = conversation.allLastMessageText {
                 self.lastMessageLabel.text = lastMessage
@@ -43,6 +47,7 @@ class SMSDetailCell: UITableViewCell {
         contentView.addSubview(priorityImageView)
         containerView.addSubview(nameLabel)
         containerView.addSubview(lastMessageLabel)
+        containerView.addSubview(badgeCountLabel)
         containerView.addSubview(dateTimeLabel)
         contentView.addSubview(containerView)
     }
@@ -51,9 +56,11 @@ class SMSDetailCell: UITableViewCell {
         priorityImageView.leadingAnchor.constraint(equalTo:self.contentView.leadingAnchor, constant:10).isActive = true
         priorityImageView.widthAnchor.constraint(equalToConstant:40).isActive = true
         priorityImageView.heightAnchor.constraint(equalToConstant:40).isActive = true
-        containerView.anchor(top: contentView.topAnchor, left: priorityImageView.rightAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 10, widthConstant: 0, heightConstant: 0)
+        containerView.anchor(top: contentView.topAnchor, left: priorityImageView.rightAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         nameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: -15).isActive = true
-        nameLabel.anchor(top: nil, left: containerView.leftAnchor, bottom: nil, right: containerView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 10, widthConstant: 0, heightConstant: 0)
+        nameLabel.anchor(top: nil, left: containerView.leftAnchor, bottom: nil, right: badgeCountLabel.leftAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
+        badgeCountLabel.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor).isActive = true
+        badgeCountLabel.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0).isActive = true
         lastMessageLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: 15).isActive = true
         lastMessageLabel.anchor(top: nil, left: nameLabel.leftAnchor, bottom: nil, right: dateTimeLabel.leftAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 10, widthConstant: 0, heightConstant: 0)
         dateTimeLabel.centerYAnchor.constraint(equalTo: lastMessageLabel.centerYAnchor).isActive = true
@@ -90,6 +97,18 @@ class SMSDetailCell: UITableViewCell {
         label.textAlignment = .left
         label.lineBreakMode = NSLineBreakMode.byTruncatingTail
         label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 11.0)
+        return label
+    }()
+    let badgeCountLabel:UILabel = {
+        let label = InsetLabel(3.5, 3.5, 7, 7)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "10"
+        label.textColor = .telaWhite
+        label.layer.cornerRadius = label.frame.height / 2
+        label.backgroundColor = .telaRed
+        label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 13)
+        label.numberOfLines = 1
+        label.clipsToBounds = true
         return label
     }()
     let dateTimeLabel:UILabel = {

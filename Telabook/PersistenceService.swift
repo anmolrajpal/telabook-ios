@@ -29,6 +29,8 @@ class PersistenceService: NSObject {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         })
+        
+//        container.viewContext.concurrencyType = NSManagedObjectContextConcurrencyType.privateQueueConcurrencyType
         container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         container.viewContext.undoManager = nil
         container.viewContext.shouldDeleteInaccessibleFaults = true

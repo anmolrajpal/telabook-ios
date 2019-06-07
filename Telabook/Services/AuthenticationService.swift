@@ -35,6 +35,7 @@ final class AuthenticationService: NSObject {
             if response.statusCode == 200 {
                 processResponseData(data: data, completion: completion)
             } else {
+                print(response.statusCode)
                 DispatchQueue.main.async {
                     completion(nil, .InvalidResponse, error)
                 }

@@ -47,7 +47,7 @@ final class FirebaseAuthService:NSObject {
                     completion(nil, err)
                 }
             } else if let token = token {
-                print("Current Token: \(token)")
+//                print("Current Token: \(token)")
                 DispatchQueue.main.async {
                     completion(token, nil)
                 }

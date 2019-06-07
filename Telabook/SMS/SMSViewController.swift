@@ -9,6 +9,7 @@
 import UIKit
 import CoreData
 class SMSViewController: UIViewController {
+    var externalConversations:[ExternalConversation]?
     lazy var fetchedhResultController: NSFetchedResultsController<NSFetchRequestResult> = {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: InternalConversation.self))
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "userId", ascending: true)]
@@ -25,7 +26,9 @@ class SMSViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpNavBar()
+        self.preFetchData()
         updateTableContent()
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -67,7 +70,7 @@ class SMSViewController: UIViewController {
         return tv
     }()
     fileprivate func updateTableContent() {
-        self.preFetchData()
+        
         self.fetchDataFromAPI()
     }
     fileprivate func preFetchData() {
@@ -108,6 +111,77 @@ class SMSViewController: UIViewController {
             }
         }
     }
+    func updateConvos(savedFilteredConvos:[InternalConversation], context:NSManagedObjectContext) {
+        do {
+            
+            try context.save()
+        } catch let error {
+            print("Error Updating Core Data Internal Conversations")
+            print(error.localizedDescription)
+        }
+    }
+    func deleteConvos(_ savedConvos:[InternalConversation], _ savedFilteredConvos:[InternalConversation], _ context:NSManagedObjectContext) {
+        for i in savedConvos {
+            for j in savedFilteredConvos {
+                if i.workerId == j.workerId {
+                    print("Match found = \(i.workerId)")
+                } else {
+                    _ = context.delete(i)
+                }
+            }
+        }
+        PersistenceService.shared.saveContext()
+    }
+    func syncConversations(fetchedConvos:[InternalConversation], context:NSManagedObjectContext) {
+        context.performAndWait {
+            let matchingRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: InternalConversation.self))
+            let workerIds = fetchedConvos.map { $0.workerId }.compactMap { $0 }
+            matchingRequest.predicate = NSPredicate(format: "workerId in %@", argumentArray: [workerIds])
+            if let savedConvos = self.fetchSavedInternalConvos() {
+                do {
+                    if let savedFilteredConvos = try context.fetch(matchingRequest) as? [InternalConversation] {
+                        self.deleteConvos(savedConvos, savedFilteredConvos, context)
+                    }
+                   
+                } catch let error {
+                    print("Bingo Error")
+                    print(error.localizedDescription)
+                }
+            }
+        }
+    }
+    func fetchSavedInternalConvos() -> [InternalConversation]? {
+        let managedObjectContext = PersistenceService.shared.persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: InternalConversation.self))
+        do {
+            return try managedObjectContext.fetch(fetchRequest) as? [InternalConversation]
+        } catch let error {
+            print("Error=> \(error.localizedDescription)")
+            return nil
+        }
+    }
+    func loadExternalConvos() {
+        let managedObjectContext = PersistenceService.shared.persistentContainer.viewContext
+        if let convos = fetchSavedInternalConvos() {
+            self.externalConversations = [ExternalConversation]()
+            for convo in convos {
+                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: ExternalConversation.self))
+                fetchRequest.sortDescriptors = [NSSortDescriptor(key: "lastMessageDatetime", ascending: false)]
+                fetchRequest.predicate = NSPredicate(format: "internal.personName = %@", convo.personName!)
+                fetchRequest.fetchLimit = 1
+                do {
+                let fetchedConvos = try managedObjectContext.fetch(fetchRequest) as? [ExternalConversation]
+                    print(fetchedConvos as Any)
+                self.externalConversations?.append(contentsOf: fetchedConvos!)
+                    print("readhed here: count")
+                    print(self.externalConversations?.count ?? -1)
+                    print(self.externalConversations as Any)
+                } catch let error {
+                    print("Error=> \(error.localizedDescription)")
+                }
+            }
+        }
+    }
     fileprivate func saveToCoreData(data: Data) {
         do {
             guard let context = CodingUserInfoKey.context else {
@@ -117,7 +191,9 @@ class SMSViewController: UIViewController {
             let decoder = JSONDecoder()
             decoder.userInfo[context] = managedObjectContext
             let response = try decoder.decode([InternalConversation].self, from: data)
+//            self.syncConversations(fetchedConvos: response, context: managedObjectContext)
             try managedObjectContext.save()
+            loadExternalConvos()
             print(response.first?.personName ?? "nil")
             DispatchQueue.main.async {
 //                completion(response, nil, nil)
@@ -142,91 +218,5 @@ class SMSViewController: UIViewController {
                 print("ERROR DELETING : \(error)")
             }
         }
-    }
-    func clearStorage() {
-        let isInMemoryStore = PersistenceService.shared.persistentContainer.persistentStoreDescriptions.reduce(false) {
-            return $0 ? true : $1.type == NSInMemoryStoreType
-        }
-        
-        let managedObjectContext = PersistenceService.shared.persistentContainer.viewContext
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: InternalConversation.self))
-        
-        // NSBatchDeleteRequest is not supported for in-memory stores
-        if isInMemoryStore {
-            print("Internal Convos In Memory Store")
-            do {
-                let items = try managedObjectContext.fetch(fetchRequest)
-                for item in items {
-                    managedObjectContext.delete(item as! NSManagedObject)
-                }
-            } catch let error as NSError {
-                print(error)
-            }
-        } else {
-            print("Internal Convos Not In Memory Store")
-            let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-            do {
-                try managedObjectContext.execute(batchDeleteRequest)
-                PersistenceService.shared.saveContext()
-            } catch let error as NSError {
-                print(error)
-            }
-        }
-    }
-}
-extension SMSViewController : UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let count = fetchedhResultController.sections?.first?.numberOfObjects {
-            return count
-        }
-        return 0
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(SMSCell.self), for: indexPath) as! SMSCell
-        cell.backgroundColor = .clear
-        cell.accessoryType = .disclosureIndicator
-        let backgroundView = UIView()
-        backgroundView.backgroundColor = UIColor.telaGray7.withAlphaComponent(0.2)
-        cell.selectedBackgroundView  = backgroundView
-        if let conversation = fetchedhResultController.object(at: indexPath) as? InternalConversation {
-            cell.internalConversation = conversation
-        }
-        return cell
-    }
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let conversation = fetchedhResultController.object(at: indexPath) as? InternalConversation {
-            let workerId = Int(conversation.workerId)
-            let smsDetailVC = SMSDetailViewController()
-            smsDetailVC.workerId = workerId
-            smsDetailVC.navigationItem.title = "\(conversation.personName?.capitalized ?? "")"
-            self.show(smsDetailVC, sender: self)
-        }
-    }
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return SMSCell.cellHeight
-    }
-    
-}
-extension SMSViewController: NSFetchedResultsControllerDelegate {
-    
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        
-        switch type {
-        case .insert:
-            self.tableView.insertRows(at: [newIndexPath!], with: .top)
-        case .delete:
-            self.tableView.deleteRows(at: [indexPath!], with: .bottom)
-        default:
-            break
-        }
-    }
-    
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        self.tableView.endUpdates()
-    }
-    
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        tableView.beginUpdates()
     }
 }

@@ -10,16 +10,68 @@ import UIKit
 import CoreData
 class SMSDetailViewController: UIViewController {
     var workerId = Int()
-    
-    lazy var fetchedhResultController: NSFetchedResultsController<NSFetchRequestResult> = {
+    var internalConversation:InternalConversation? {
+        didSet {
+            if let conversation = internalConversation {
+                self.navigationItem.title = "\(conversation.personName?.capitalized ?? "")"
+            }
+        }
+    }
+    var archivedConversations:[ExternalConversation]? {
+        didSet {
+            
+        }
+    }
+    lazy var externalConversationsFRC: NSFetchedResultsController<NSFetchRequestResult> = {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: ExternalConversation.self))
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "lastMessageDatetime", ascending: true)]
-        
-//        fetchRequest.predicate = NSPredicate(format: " = %@", workerId)
+        fetchRequest.includesPendingChanges = false
+       
+        let workerIdPredicate = NSPredicate(format: "internal.workerId = %d", self.internalConversation!.workerId)
+        let archiveCheckPredicate = NSPredicate(format: "isArchived == %@", NSNumber(value:false))
+        let andPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [workerIdPredicate, archiveCheckPredicate])
+        fetchRequest.predicate = andPredicate
         let frc = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: PersistenceService.shared.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+        print(frc)
         frc.delegate = self
         return frc
     }()
+    
+    lazy var archivedConversationsFRC: NSFetchedResultsController<NSFetchRequestResult> = {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: ExternalConversation.self))
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "lastMessageDatetime", ascending: true)]
+        let workerIdPredicate = NSPredicate(format: "internal.workerId = %d", self.internalConversation!.workerId)
+        let archiveCheckPredicate = NSPredicate(format: "isArchived == %@", NSNumber(value:true))
+        let andPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [workerIdPredicate, archiveCheckPredicate])
+        fetchRequest.predicate = andPredicate
+//        let andPredicate = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.NSAndPredicateType, subpredicates: []
+        let frc = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: PersistenceService.shared.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+        print("Archived FRC => \(frc)")
+        frc.delegate = self
+        return frc
+    }()
+//    lazy var fetchedResultsController:NSFetchedResultsController<NSFetchRequestResult> = {
+//        return self.externalConversationsFRC
+//    }()
+    var fetchedResultsController:NSFetchedResultsController<NSFetchRequestResult>?
+    
+    
+    
+    func fetchSavedExternalConvos(isArchive:Bool?) -> [ExternalConversation]? {
+        let managedObjectContext = PersistenceService.shared.persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: ExternalConversation.self))
+        
+        if let isArchive = isArchive {
+            fetchRequest.predicate = NSPredicate(format: "isArchived == %@", NSNumber(value: isArchive))
+        }
+        fetchRequest.predicate = NSPredicate(format: "internal.workerId = %d", self.internalConversation!.workerId)
+        do {
+            return try managedObjectContext.fetch(fetchRequest) as? [ExternalConversation]
+        } catch let error {
+            print("Error=> \(error.localizedDescription)")
+            return nil
+        }
+    }
     override func loadView() {
         super.loadView()
         setupViews()
@@ -29,29 +81,87 @@ class SMSDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpNavBar()
-        updateTableContent()
+        
+        fetchedResultsController = externalConversationsFRC
+        self.preFetchData(isArchived: false)
+        self.fetchDataFromAPI(isArchive: false)
+//        segmentedControl.selectedSegmentIndex = 0
+//        updateTableContent()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 //        updateTableContent()
+        let abc = self.fetchSavedExternalConvos(isArchive: nil)
+        //        print(abc as Any)
+        if let a = abc {
+            print("MARK: View Did Load")
+            a.forEach({
+                print("Internal Address Book Name => \($0.internalAddressBookName as Any)")
+                print("isArchived => \($0.isArchived as Any)")
+            })
+        }
+        let abcd = self.fetchSavedExternalConvos(isArchive: false)
+        //        print(abc as Any)
+        if let b = abcd {
+            print("MARK: View Did Load")
+            b.forEach({
+                print("Internal Address Book Name => \($0.internalAddressBookName as Any)")
+                print("isArchived => \($0.isArchived as Any)")
+            })
+        }
     }
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
     fileprivate func setupViews() {
+        view.addSubview(spinner)
         view.addSubview(segmentedControl)
         view.addSubview(tableView)
+        view.addSubview(placeholderLabel)
+        view.addSubview(tryAgainButton)
     }
     fileprivate func setupConstraints() {
         segmentedControl.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 40)
         tableView.anchor(top: segmentedControl.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        placeholderLabel.anchor(top: nil, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 20, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
+        placeholderLabel.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: -20).isActive = true
+        tryAgainButton.topAnchor.constraint(equalTo: placeholderLabel.bottomAnchor, constant: 20).isActive = true
+        tryAgainButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
     }
     fileprivate func setupTableView() {
         tableView.register(SMSDetailCell.self, forCellReuseIdentifier: NSStringFromClass(SMSDetailCell.self))
         tableView.delegate = self
         tableView.dataSource = self
     }
+    fileprivate func startSpinner() {
+        self.spinner.startAnimating()
+    }
+    fileprivate func stopSpinner() {
+        self.spinner.stopAnimating()
+    }
+    @objc func handleTryAgainAction() {
+        self.setPlaceholdersViewsState(isHidden: true)
+        self.setViewsState(isHidden: true)
+        self.startSpinner()
+//        self.fetchUserData()
+    }
+    fileprivate func setPlaceholdersViewsState(isHidden:Bool) {
+        self.placeholderLabel.isHidden = isHidden
+        self.tryAgainButton.isHidden = isHidden
+    }
+    fileprivate func setViewsState(isHidden: Bool) {
+        self.tableView.isHidden = isHidden
+    }
+    
+    lazy var spinner:UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+        indicator.style = UIActivityIndicatorView.Style.whiteLarge
+        indicator.hidesWhenStopped = true
+        indicator.center = self.view.center
+        //        indicator.backgroundColor = .black
+        return indicator
+    }()
     let tableView : UITableView = {
         let tv = UITableView(frame: CGRect.zero, style: UITableView.Style.plain)
         tv.translatesAutoresizingMaskIntoConstraints = false
@@ -64,6 +174,33 @@ class SMSDetailViewController: UIViewController {
         tv.showsVerticalScrollIndicator = true
         tv.tableFooterView = UIView(frame: CGRect.zero)
         return tv
+    }()
+    let placeholderLabel:UILabel = {
+        let label = UILabel()
+        label.text = "Turn on Mobile Data or Wifi to Access Telabook"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 16)
+        label.textColor = UIColor.telaGray6
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.sizeToFit()
+        label.isHidden = true
+        return label
+    }()
+    let tryAgainButton:UIButton = {
+        let button = UIButton(type: UIButton.ButtonType.roundedRect)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("TRY AGAIN", for: UIControl.State.normal)
+        button.setTitleColor(UIColor.telaGray6, for: UIControl.State.normal)
+        button.titleLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 14)
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.telaGray6.cgColor
+        button.layer.cornerRadius = 8
+        button.backgroundColor = .clear
+        button.isHidden = true
+        button.contentEdgeInsets = UIEdgeInsets(top: 6, left: 20, bottom: 6, right: 20)
+        button.addTarget(self, action: #selector(handleTryAgainAction), for: UIControl.Event.touchUpInside)
+        return button
     }()
     let segmentedControl:UISegmentedControl = {
         let options = ["Inbox", "Direct Message", "Archived"]
@@ -81,22 +218,50 @@ class SMSDetailViewController: UIViewController {
         control.setTitleTextAttributes(attributes, for: UIControl.State.selected)
         control.setTitleTextAttributes(unselectedAttributes, for: UIControl.State.normal)
         control.backgroundColor = .telaGray3
-        
+        control.addTarget(self, action: #selector(segmentDidChange), for: .valueChanged)
         return control
     }()
-    fileprivate func updateTableContent() {
-        self.preFetchData()
-        self.fetchDataFromAPI()
+    @objc fileprivate func segmentDidChange() {
+        switch segmentedControl.selectedSegmentIndex {
+        case 0: print("Segment 0")
+//            self.startSpinner()
+            self.fetchedResultsController = self.externalConversationsFRC
+            self.preFetchData(isArchived: false)
+            self.fetchDataFromAPI(isArchive: false)
+        case 2: print("Segment 2")
+//            startSpinner()
+            self.fetchedResultsController = self.archivedConversationsFRC
+            self.preFetchData(isArchived: true)
+            self.fetchDataFromAPI(isArchive: true)
+        default: break
+        }
+//        DispatchQueue.main.async {
+//            self.tableView.reloadData()
+//        }
     }
-    fileprivate func preFetchData() {
+    fileprivate func updateTableContent() {
+//        self.preFetchData()
+        self.fetchDataFromAPI(isArchive: false)
+    }
+    fileprivate func preFetchData(isArchived:Bool) {
         do {
-            try self.fetchedhResultController.performFetch()
-            print("COUNT FETCHED FIRST: \(String(describing: self.fetchedhResultController.sections?.first?.numberOfObjects))")
+            try self.fetchedResultsController?.performFetch()
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+            print("COUNT FETCHED FIRST: \(String(describing: self.fetchedResultsController?.sections?.first?.numberOfObjects))")
+//            if !isArchived {
+//                try self.fetchedResultController.performFetch()
+//                print("COUNT FETCHED FIRST: \(String(describing: self.fetchedResultController.sections?.first?.numberOfObjects))")
+//            } else {
+//                try self.archivedFetchedResultController.performFetch()
+//            }
         } catch let error  {
             print("ERROR: \(error)")
         }
     }
-    fileprivate func fetchDataFromAPI() {
+    
+    fileprivate func fetchDataFromAPI(isArchive:Bool) {
         FirebaseAuthService.shared.getCurrentToken { (token, error) in
             if let err = error {
                 print("\n***Error***\n")
@@ -107,57 +272,162 @@ class SMSDetailViewController: UIViewController {
 //                    self.setPlaceholdersViewsState(isHidden: false)
                 }
             } else if let token = token {
-                self.fetchExternalConversations(token: token)
+                self.fetchExternalConversations(token: token, isArchived: isArchive)
             }
         }
     }
-    fileprivate func fetchExternalConversations(token:String) {
+    fileprivate func fetchArchivedConversations(token:String) {
         let companyId = UserDefaults.standard.getCompanyId()
         
         print("Worker ID => \(String(self.workerId))")
-        ExternalConversationsAPI.shared.fetch(token: token, companyId: String(companyId), workerId: String(workerId), isArchived: false) { (data, serviceError, error) in
-            if let serviceErr = serviceError {
-                print("Service Error: \(serviceErr.localizedDescription)")
-            } else if let err = error {
-                print("Error: \(err.localizedDescription)")
-            } else if let responseData = data {
+        ExternalConversationsAPI.shared.fetch(token: token, companyId: String(companyId), workerId: String(workerId), isArchived: true) { (responseStatus, data, serviceError, error) in
+            if let err = error {
                 DispatchQueue.main.async {
-                    self.clearData()
-                    self.saveToCoreData(data: responseData)
+                    self.stopSpinner()
+                    print("***Error Fetching Conversations****\n\(err.localizedDescription)")
+                    self.showAlert(title: "Error", message: err.localizedDescription)
+                }
+            } else if let serviceErr = serviceError {
+                DispatchQueue.main.async {
+                    self.stopSpinner()
+                    print("***Error Fetching Conversations****\n\(serviceErr.localizedDescription)")
+                    self.showAlert(title: "Error", message: serviceErr.localizedDescription)
+                }
+            } else if let status = responseStatus {
+                guard status == .OK else {
+                    if status == .NoContent {
+                        DispatchQueue.main.async {
+                            self.stopSpinner()
+                            print("***No Archived Content****\nResponse Status => \(status)")
+//                            self.setViewsState(isHidden: true)
+//                            self.setPlaceholdersViewsState(isHidden: false)
+                            self.placeholderLabel.text = "No Archived Conversations"
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            self.stopSpinner()
+                            print("***Invalid Response****\nResponse Status => \(status)")
+                            self.showAlert(title: "Error", message: "Unable to fetch conversations. Please try again.")
+                        }
+                    }
+                    return
+                }
+                if let data = data {
+                    print("Archived Conversations => \n\(data)")
+                    DispatchQueue.main.async {
+                        self.handleArchived(data: data)
+                    }
+//                    self.clearData()
+//                    self.saveToCoreData(data: data)
                 }
             }
         }
     }
-    fileprivate func saveToCoreData(data: Data) {
+    fileprivate func handleArchived(data:Data) {
+        guard let context = CodingUserInfoKey.context else {
+            fatalError("Failed to retrieve managed object context")
+        }
+        let managedObjectContext = PersistenceService.shared.persistentContainer.viewContext
+        let decoder = JSONDecoder()
+        decoder.userInfo[context] = managedObjectContext
         do {
-            guard let context = CodingUserInfoKey.context else {
-                fatalError("Failed to retrieve managed object context")
-            }
-            let managedObjectContext = PersistenceService.shared.persistentContainer.viewContext
-            let decoder = JSONDecoder()
-            decoder.userInfo[context] = managedObjectContext
             let response = try decoder.decode([ExternalConversation].self, from: data)
-//            let abc = NSManagedObject(entity: NSEntityDescription.entity(forEntityName: "ExternalConversation", in: managedObjectContext)!, insertInto: managedObjectContext)
-            
-//            let item = abc.mutableSetValue(forKey: "parent")
-//            item.addObjects(from: response)
+            print("Archived Messages : \n")
+            print(response)
+            response.forEach({
+                $0.internal = self.internalConversation
+                $0.isArchived = true
+            })
+//            self.archivedConversations = response
             try managedObjectContext.save()
-            print(response.first?.workerPerson ?? "nil")
-            DispatchQueue.main.async {
-                //                completion(response, nil, nil)
+        } catch let error {
+            print(error.localizedDescription)
+        }
+//        self.rowsToDisplay = self.archivedConversations
+        DispatchQueue.main.async {
+            self.stopSpinner()
+        }
+    }
+    fileprivate func fetchExternalConversations(token:String, isArchived:Bool) {
+        let companyId = UserDefaults.standard.getCompanyId()
+        
+        print("Worker ID => \(String(self.workerId))")
+        ExternalConversationsAPI.shared.fetch(token: token, companyId: String(companyId), workerId: String(workerId), isArchived: isArchived) { (responseStatus, data, serviceError, error) in
+            if let err = error {
+                print("***Error Fetching Conversations****\n\(err.localizedDescription)")
+                self.showAlert(title: "Error", message: err.localizedDescription)
+            } else if let serviceErr = serviceError {
+                print("***Error Fetching Conversations****\n\(serviceErr.localizedDescription)")
+                self.showAlert(title: "Error", message: serviceErr.localizedDescription)
+            } else if let status = responseStatus {
+                guard status == .OK else {
+                    if status == .NoContent {
+                        DispatchQueue.main.async {
+//                            self.stopSpinner()
+                            print("***No Content****\nResponse Status => \(status)")
+//                            self.setViewsState(isHidden: true)
+//                            self.setPlaceholdersViewsState(isHidden: false)
+                            self.placeholderLabel.text = "No Archived Conversations"
+                        }
+                    } else {
+                        print("***Invalid Response****\nResponse Status => \(status)")
+                        self.showAlert(title: "Error", message: "Unable to fetch conversations. Please try again.")
+                    }
+                    return
+                }
+                if let data = data {
+                    DispatchQueue.main.async {
+                        self.clearConversationData()
+                        self.saveToCoreData(data: data, isArchived: isArchived)
+                    }
+                }
+            }
+        }
+    }
+    fileprivate func saveToCoreData(data: Data, isArchived:Bool) {
+        guard let context = CodingUserInfoKey.context else {
+            fatalError("Failed to retrieve managed object context")
+        }
+        let managedObjectContext = PersistenceService.shared.persistentContainer.viewContext
+        let decoder = JSONDecoder()
+        decoder.userInfo[context] = managedObjectContext
+        do {
+            let response = try decoder.decode([ExternalConversation].self, from: data)
+            if !isArchived {
+                response.forEach({$0.internal = self.internalConversation})
+                try managedObjectContext.save()
+            } else {
+//                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: ExternalConversation.self))
+//                fetchRequest.predicate = NSPredicate(format: "isArchived = %d", false)
+//                fetchRequest.predicate = NSPredicate(format: "internal.workerId = %d", self.internalConversation!.workerId)
+                response.forEach({
+                    $0.internal = self.internalConversation
+                    $0.isArchived = true
+                })
+                var convos = self.fetchSavedExternalConvos(isArchive: nil)
+                print("buggy")
+                print(convos as Any)
+                convos?.append(contentsOf: response)
+                
+                try managedObjectContext.save()
+                
             }
         } catch let error {
             print("Error Processing Response Data: \(error)")
             DispatchQueue.main.async {
-                //                completion(nil, .Internal, error)
+                
             }
         }
     }
-    func clearData() {
+    
+    
+    
+    func clearConversationData() {
         do {
             
             let context = PersistenceService.shared.persistentContainer.viewContext
             let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: ExternalConversation.self))
+            fetchRequest.predicate = NSPredicate(format: "internal.workerId = %d", (internalConversation?.workerId)!)
             do {
                 let objects  = try context.fetch(fetchRequest) as? [NSManagedObject]
                 _ = objects.map{$0.map{context.delete($0)}}
@@ -202,172 +472,5 @@ class SMSDetailViewController: UIViewController {
         alertVC.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.destructive, handler: nil))
         self.present(alertVC, animated: true, completion: nil)
     }
-    fileprivate func handleChatColorSequence(color:ConversationColor, indexPath:IndexPath) {
-        FirebaseAuthService.shared.getCurrentToken { (token, error) in
-            if let err = error {
-                print("\n***Firebase Token Error***\n")
-                print(err)
-                DispatchQueue.main.async {
-                    self.showAlert(title: "Error", message: err.localizedDescription)
-                }
-            } else if let token = token {
-                self.changeChatColor(token:token, color:color, indexPath: indexPath)
-            }
-        }
-    }
-    fileprivate func changeChatColor(token:String, color:ConversationColor, indexPath:IndexPath) {
-        let companyId = UserDefaults.standard.getCompanyId()
-        if let conversation = self.fetchedhResultController.object(at: indexPath) as? ExternalConversation {
-            let conversationId = conversation.externalConversationId
-            ExternalConversationsAPI.shared.setColor(token: token, companyId: String(companyId), conversationId: String(conversationId), colorCode: String(ConversationColor.getColorCodeBy(color: color))) { (responseStatus, data, serviceError, error) in
-                if let err = error {
-                    print("***Error Setting Color****\n\(err.localizedDescription)")
-                    self.showAlert(title: "Error", message: err.localizedDescription)
-                } else if let serviceErr = serviceError {
-                    print("***Error Setting Color****\n\(serviceErr.localizedDescription)")
-                    self.showAlert(title: "Error", message: serviceErr.localizedDescription)
-                } else if let status = responseStatus {
-                    guard status == .Created else {
-                        print("***Error Setting Color****\nInvalid Response: \(status)")
-                        self.showAlert(title: "\(status)", message: "Unable to change color. Please try again")
-                        return
-                    }
-                    DispatchQueue.main.async {
-                        self.updateTableContent()
-                    }
-                    if let data = data {
-                        print("Data length => \(data.count)")
-                        print("Data => \(data)")
-                    }
-                }
-            }
-        } else {
-            DispatchQueue.main.async {
-                print("***Error Setting Color****\nCompany Id not found")
-                self.showAlert(title: "Error", message: "Company ID not found. Unable to change color. Please try again")
-            }
-        }
-        
-    }
-    fileprivate func promptChatColor(indexPath: IndexPath) {
-        let alert = UIAlertController(title: "Set Chat Color", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
-        let defaultAction = UIAlertAction(title: "Default", style: UIAlertAction.Style.default, handler: { (action) in
-            self.handleChatColorSequence(color: .Default, indexPath: indexPath)
-        })
-        
-        let yellowAction = UIAlertAction(title: "Yellow", style: UIAlertAction.Style.default, handler: { (action) in
-            self.handleChatColorSequence(color: .Yellow, indexPath: indexPath)
-        })
-        let greenAction = UIAlertAction(title: "Green", style: UIAlertAction.Style.default, handler: { (action) in
-            self.handleChatColorSequence(color: .Green, indexPath: indexPath)
-        })
-        let blueAction = UIAlertAction(title: "Blue", style: UIAlertAction.Style.default, handler: { (action) in
-            self.handleChatColorSequence(color: .Blue, indexPath: indexPath)
-        })
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.default, handler: nil)
-        alert.addAction(defaultAction)
-        alert.addAction(yellowAction)
-        alert.addAction(greenAction)
-        alert.addAction(blueAction)
-        alert.addAction(cancelAction)
-    alert.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = UIColor.telaGray6
-        
-        alert.view.tintColor = UIColor.telaBlue
-        alert.view.subviews.first?.subviews.first?.backgroundColor = .clear
-        alert.view.subviews.first?.backgroundColor = .clear
-        self.present(alert, animated: true, completion: nil)
-    }
-}
-extension SMSDetailViewController : UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let count = fetchedhResultController.sections?.first?.numberOfObjects {
-            return count
-        }
-        return 0
-    }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(SMSDetailCell.self), for: indexPath) as! SMSDetailCell
-        cell.selectionStyle = .none
-        cell.backgroundColor = .clear
-//        cell.accessoryType = .disclosureIndicator
-        if let conversation = fetchedhResultController.object(at: indexPath) as? ExternalConversation {
-            cell.externalConversation = conversation
-        }
-        return cell
-    }
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return SMSDetailCell.cellHeight
-    }
-    
-        
-    @available(iOS 11.0, *)
-    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let archiveAction = UIContextualAction(style: UIContextualAction.Style.normal, title: "Archive") { (action, view, completion) in
-            completion(true)
-        }
-        archiveAction.image = #imageLiteral(resourceName: "archive")
-        archiveAction.backgroundColor = .telaBlue
-        let colorAction = UIContextualAction(style: UIContextualAction.Style.normal, title: "Chat Color") { (action, view, completion) in
-            DispatchQueue.main.async {
-                self.promptChatColor(indexPath: indexPath)
-                completion(true)
-            }
-        }
-        colorAction.image = #imageLiteral(resourceName: "edit")
-        colorAction.backgroundColor = .telaGray7
-        let configuration = UISwipeActionsConfiguration(actions: [archiveAction, colorAction])
-        return configuration
-    }
-    
-    @available(iOS 11.0, *)
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        
-        let blockAction =  UIContextualAction(style: .normal, title: "Block", handler: { (action,view,completionHandler ) in
-            //do stuff
-            completionHandler(true)
-        })
-        blockAction.image = #imageLiteral(resourceName: "unblock")
-        blockAction.backgroundColor = .red
-        
-        let detailsAction =  UIContextualAction(style: .normal, title: "Details", handler: { (action,view,completionHandler ) in
-            //do stuff
-            completionHandler(true)
-        })
-        detailsAction.image = #imageLiteral(resourceName: "radio_active")
-        detailsAction.backgroundColor = .orange
-        
-        let archiveAction = UIContextualAction(style: UIContextualAction.Style.normal, title: "Archive") { (action, view, completion) in
-            completion(true)
-        }
-        archiveAction.image = #imageLiteral(resourceName: "archive")
-        archiveAction.backgroundColor = .telaGray7
-        let configuration = UISwipeActionsConfiguration(actions: [blockAction, detailsAction])
-        
-        return configuration
-    }
-}
-extension SMSDetailViewController: NSFetchedResultsControllerDelegate {
-    
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        
-        switch type {
-        case .insert:
-            self.tableView.insertRows(at: [newIndexPath!], with: .top)
-        case .delete:
-            self.tableView.deleteRows(at: [indexPath!], with: .bottom)
-        case .update:
-            self.tableView.reloadRows(at: [indexPath!], with: .fade)
-        default:
-            break
-        }
-    }
-    
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        self.tableView.endUpdates()
-    }
-    
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        tableView.beginUpdates()
-    }
 }

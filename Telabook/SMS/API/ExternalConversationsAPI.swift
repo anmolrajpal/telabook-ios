@@ -22,7 +22,7 @@ final class ExternalConversationsAPI: NSObject, ExternalConversationsAPIProtocol
             return "token=\(token)&worker_id=\(workerId)&company_id=\(companyId)&category=archived"
         }
     }
-    func fetch(token:String, companyId:String, workerId:String, isArchived:Bool, completion: @escaping APITaskCompletion) {
+    func fetch(token:String, companyId:String, workerId:String, isArchived:Bool, completion: @escaping APICompletion) {
         
         let serviceHost:String = apiURL
         let paramString = getAPIUrlParamString(token, companyId, workerId, isArchived)
@@ -32,7 +32,7 @@ final class ExternalConversationsAPI: NSObject, ExternalConversationsAPIProtocol
         request.httpMethod = httpMethod.GET.rawValue
         request.addValue(Header.contentType.json.rawValue, forHTTPHeaderField: Header.headerName.contentType.rawValue)
         URLSession.shared.dataTask(with: request as URLRequest) { (data, response, error) in
-            self.handleResponseData(data: data, response: response, error: error, completion: completion)
+            self.handleResponse(data: data, response: response, error: error, completion: completion)
             }.resume()
     }
     //MARK: PROTOCOL EXTERNAL CONVERSATIONS FETCH END
@@ -48,7 +48,7 @@ final class ExternalConversationsAPI: NSObject, ExternalConversationsAPIProtocol
     internal func handleArchivingParamString(_ token: String, _ companyId: String, _ conversationId:String) -> String {
         return "token=\(token)&company_id=\(companyId)&external_conversation_id=\(conversationId)"
     }
-    func handleArchiving(token:String, companyId:String, conversationId:String, markArchive:Bool, completion: @escaping APITaskCompletion) {
+    func handleArchiving(token:String, companyId:String, conversationId:String, markArchive:Bool, completion: @escaping APICompletion) {
         let serviceHost:String
         if markArchive {
             serviceHost = archiveECApiURL
@@ -62,7 +62,7 @@ final class ExternalConversationsAPI: NSObject, ExternalConversationsAPIProtocol
         request.httpMethod = httpMethod.POST.rawValue
         request.addValue(Header.contentType.json.rawValue, forHTTPHeaderField: Header.headerName.contentType.rawValue)
         URLSession.shared.dataTask(with: request as URLRequest) { (data, response, error) in
-            self.handleResponseData(data: data, response: response, error: error, completion: completion)
+            self.handleResponse(data: data, response: response, error: error, completion: completion)
             }.resume()
     }
     //MARK: PROTOCOL ARCHIVING/UNARCHIVING EXTERNAL CONVERSATION END
