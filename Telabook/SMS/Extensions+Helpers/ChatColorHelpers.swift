@@ -57,7 +57,7 @@ extension SMSDetailViewController {
     
     fileprivate func changeChatColor(token:String, color:ConversationColor, indexPath:IndexPath) {
         let companyId = UserDefaults.standard.getCompanyId()
-        if let conversation = self.fetchedResultsController?.object(at: indexPath) as? ExternalConversation {
+        if let conversation = self.fetchedResultsController.object(at: indexPath) as? ExternalConversation {
             let conversationId = conversation.externalConversationId
             let colorCode = ConversationColor.getColorCodeBy(color: color)
             ExternalConversationsAPI.shared.setColor(token: token, companyId: String(companyId), conversationId: String(conversationId), colorCode: String(colorCode)) { (responseStatus, data, serviceError, error) in
@@ -77,19 +77,8 @@ extension SMSDetailViewController {
                         return
                     }
                     DispatchQueue.main.async {
-                        //                        self.updateTableContent()
-                        
-                        if let conversation = self.fetchedResultsController?.object(at: indexPath) as? ExternalConversation {
-                            let id = conversation.externalConversationId
-                            guard id != 0 else {
-                                UIAlertController.dismissModalSpinner(controller: self)
-                                print("ID = 0")
-                                return
-                            }
-                            print("External Convo Id => \(id) - type of \(type(of: id)) & color code=> \(colorCode)")
-                            self.updateColorInCoreData(id: id, color: Int16(colorCode))
-                        }
-                        
+                        print("External Convo Id => \(conversationId) - type of \(type(of: conversationId)) & color code=> \(colorCode)")
+                        self.updateColorInCoreData(id: conversationId, color: Int16(colorCode))
                     }
                     if let data = data {
                         print("Data length => \(data.count)")
@@ -117,6 +106,7 @@ extension SMSDetailViewController {
             let result = try managedObjectContext.fetch(request)
             if result.count > 0 {
                 let managedObject = result[0] as! NSManagedObject
+                print(managedObject)
                 managedObject.setValue(color, forKey: "colour")
                 try managedObjectContext.save()
                 UIAlertController.dismissModalSpinner(controller: self)

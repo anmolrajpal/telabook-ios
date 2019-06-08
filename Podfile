@@ -9,4 +9,5 @@ target 'Telabook' do
 	pod 'Firebase/Auth'
   pod 'Firebase/Messaging'
 	pod 'ReachabilitySwift'
+  pod 'MessageKit'
 end

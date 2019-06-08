@@ -74,7 +74,7 @@ class ExternalConversation:NSManagedObject, Codable {
         internalAddressBookName = try values.decodeIfPresent(String.self, forKey: .internalAddressBookName)
         lastMessageDatetime = Date(timeIntervalSince1970: try values.decodeIfPresent(Double.self, forKey: .lastMessageDatetime) ?? 0)
         node = try values.decodeIfPresent(String.self, forKey: .node)
-        priority = try values.decodeIfPresent(Int16.self, forKey: .priority) ?? 0
+        priority = try values.decodeIfPresent(Int16.self, forKey: .priority) ?? 1
         unreadMessages = try values.decodeIfPresent(Int16.self, forKey: .unreadMessages) ?? 0
         workerPerson = try values.decodeIfPresent(String.self, forKey: .workerPerson)
         workerPhoneNumber = try values.decodeIfPresent(String.self, forKey: .workerPhoneNumber)

@@ -6,7 +6,7 @@
 //  Copyright © 2019 Natovi. All rights reserved.
 //
 
-import Foundation
+import UIKit
 public enum UserRole {
     case SuperUser
     case Admin
@@ -56,6 +56,33 @@ public enum ServiceError:Error {
     case InvalidResponse
     case Internal
     
+}
+public enum ConversationPriority {
+    case Low
+    case Medium
+    case High
+    static func getPriority(by priorityCode: Int) -> ConversationPriority {
+        switch priorityCode {
+            case 1: return .Low
+            case 2: return .Medium
+            case 3: return .High
+            default: return .Low
+        }
+    }
+    static func getPriorityCode(by priority: ConversationPriority) -> Int {
+        switch priority {
+        case .Low: return 1
+        case .Medium: return 2
+        case .High: return 3
+        }
+    }
+    static func getImage(by priority: ConversationPriority) -> UIImage {
+        switch priority {
+        case .Low: return #imageLiteral(resourceName: "followup_low")
+        case .Medium: return #imageLiteral(resourceName: "followup_medium")
+        case .High: return #imageLiteral(resourceName: "followup_high")
+        }
+    }
 }
 public enum ConversationColor {
     case Default

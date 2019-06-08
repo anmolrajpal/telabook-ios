@@ -12,23 +12,11 @@ import CoreData
 extension SMSDetailViewController : UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        //        if self.segmentedControl.selectedSegmentIndex == 0 {
-        if let count = fetchedResultsController?.sections?.first?.numberOfObjects {
+        if let count = fetchedResultsController.sections?.first?.numberOfObjects {
             print("FRC Count => \(count)")
             return count
         }
         return 0
-        //        } else if segmentedControl.selectedSegmentIndex == 2 {
-        //            if let count = archivedFetchedResultController.sections?.first?.numberOfObjects {
-        //                print("Segment 2 Count => ")
-        //                print(count)
-        //                return count
-        //            }
-        //            return 0
-        //        } else {
-        //            print("Segment 1 Count => 0")
-        //            return 0
-        //        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -36,7 +24,7 @@ extension SMSDetailViewController : UITableViewDataSource {
         cell.selectionStyle = .none
         cell.backgroundColor = .clear
         cell.accessoryType = .disclosureIndicator
-        if let conversation = fetchedResultsController?.object(at: indexPath) as? ExternalConversation {
+        if let conversation = fetchedResultsController.object(at: indexPath) as? ExternalConversation {
             print("Person Name at indexpath \(indexPath.row) => \(conversation.internalAddressBookName ?? "null")")
             cell.externalConversation = conversation
         }
@@ -111,6 +99,7 @@ extension SMSDetailViewController : UITableViewDelegate {
 extension SMSDetailViewController: NSFetchedResultsControllerDelegate {
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        print("did change object check")
         self.tableView.reloadData()
         /*
         switch type {

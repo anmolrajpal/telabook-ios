@@ -55,6 +55,7 @@ class InternalConversation : NSManagedObject, Codable {
             let entity = NSEntityDescription.entity(forEntityName: String(describing:InternalConversation.self), in: managedObjectContext) else {
                 fatalError("Failed to decode User")
         }
+        
         self.init(entity: entity, insertInto: managedObjectContext)
         let values = try decoder.container(keyedBy: CodingKeys.self)
         didNumber = try values.decodeIfPresent(String.self, forKey: .didNumber)
@@ -76,24 +77,51 @@ class InternalConversation : NSManagedObject, Codable {
         workerId = try values.decodeIfPresent(Int16.self, forKey: .workerId) ?? 0
     }
     
-    func update(conversation:InternalConversation) {
-        didNumber = conversation.didNumber
-        externalPendingMessages = conversation.externalPendingMessages
-        internalConversationId = conversation.internalConversationId
-        internalLastMessageDate = conversation.internalLastMessageDate
-        internalLastMessageSeen = conversation.internalLastMessageSeen
-        internalNode = conversation.internalNode
-        personName = conversation.personName
-        phoneNumber = conversation.phoneNumber
-        priority1 = conversation.priority1
-        priority2 = conversation.priority2
-        priority3 = conversation.priority3
-        profileImage = conversation.profileImage
-        profileImageUrl = conversation.profileImageUrl
-        roleId = conversation.roleId
-        userId = conversation.userId
-        username = conversation.username
-        workerId = conversation.workerId
+    func update(conversation:InternalConversation, context:NSManagedObjectContext) {
+        conversation.setValue(conversation.didNumber, forKey: "didNumber")
+        conversation.setValue(conversation.externalPendingMessages, forKey: "externalPendingMessages")
+        conversation.setValue(conversation.internalConversationId, forKey: "internalConversationId")
+        conversation.setValue(conversation.internalLastMessageDate, forKey: "internalLastMessageDate")
+        conversation.setValue(conversation.internalLastMessageSeen, forKey: "internalLastMessageSeen")
+        conversation.setValue(conversation.internalNode, forKey: "internalNode")
+        conversation.setValue(conversation.personName, forKey: "personName")
+        conversation.setValue(conversation.phoneNumber, forKey: "phoneNumber")
+        conversation.setValue(conversation.priority1, forKey: "priority1")
+        conversation.setValue(conversation.priority2, forKey: "priority2")
+        conversation.setValue(conversation.priority3, forKey: "priority3")
+        conversation.setValue(conversation.profileImage, forKey: "profileImage")
+        conversation.setValue(conversation.profileImageUrl, forKey: "profileImageUrl")
+        conversation.setValue(conversation.roleId, forKey: "roleId")
+        conversation.setValue(conversation.userId, forKey: "userId")
+        conversation.setValue(conversation.username, forKey: "username")
+        do {
+            try context.save()
+        } catch let error {
+            print("Insertion Error: \(error.localizedDescription)")
+        }
+    }
+    func insert(conversation:InternalConversation, context:NSManagedObjectContext) {
+        conversation.setValue(conversation.didNumber, forKey: "didNumber")
+        conversation.setValue(conversation.externalPendingMessages, forKey: "externalPendingMessages")
+        conversation.setValue(conversation.internalConversationId, forKey: "internalConversationId")
+        conversation.setValue(conversation.internalLastMessageDate, forKey: "internalLastMessageDate")
+        conversation.setValue(conversation.internalLastMessageSeen, forKey: "internalLastMessageSeen")
+        conversation.setValue(conversation.internalNode, forKey: "internalNode")
+        conversation.setValue(conversation.personName, forKey: "personName")
+        conversation.setValue(conversation.phoneNumber, forKey: "phoneNumber")
+        conversation.setValue(conversation.priority1, forKey: "priority1")
+        conversation.setValue(conversation.priority2, forKey: "priority2")
+        conversation.setValue(conversation.priority3, forKey: "priority3")
+        conversation.setValue(conversation.profileImage, forKey: "profileImage")
+        conversation.setValue(conversation.profileImageUrl, forKey: "profileImageUrl")
+        conversation.setValue(conversation.roleId, forKey: "roleId")
+        conversation.setValue(conversation.userId, forKey: "userId")
+        conversation.setValue(conversation.username, forKey: "username")
+        do {
+            try context.save()
+        } catch let error {
+            print("Insertion Error: \(error.localizedDescription)")
+        }
     }
     // MARK: - Encodable
     public func encode(to encoder: Encoder) throws {

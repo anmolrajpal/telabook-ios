@@ -111,9 +111,32 @@ class SMSViewController: UIViewController {
             }
         }
     }
-    func updateConvos(savedFilteredConvos:[InternalConversation], context:NSManagedObjectContext) {
+    func upsertConvos(fetchedConvos:[InternalConversation], savedFilteredConvos:[InternalConversation], context:NSManagedObjectContext) {
+        
+        let toUpateWorkerIds = savedFilteredConvos.map { $0.workerId }.compactMap { $0 }
+        print("To update worker IDs => \(toUpateWorkerIds)")
+        guard !toUpateWorkerIds.isEmpty else {
+            print("No Convos to update")
+            return
+        }
+        let matchingRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: InternalConversation.self))
+        matchingRequest.predicate = NSPredicate(format: "workerId in %@", argumentArray: [toUpateWorkerIds])
         do {
-            
+            let convosToUpdate = try context.fetch(matchingRequest) as! [InternalConversation]
+            for fetchedConvo in fetchedConvos {
+                convosToUpdate.forEach({$0.workerId == fetchedConvo.workerId ? $0.update(conversation: fetchedConvo, context: context) : print("Unmatched worker ID => \($0.workerId)")})
+            }
+            let newConvos = fetchedConvos.filter({!savedFilteredConvos.contains($0)})
+            guard !newConvos.isEmpty else {
+                print("No Convos to insert")
+                return
+            }
+            print("New Convos available to insert")
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: InternalConversation.self))
+//            fetchRequest.sortDescriptors = [NSSortDescriptor(key: "lastMessageDatetime", ascending: true)]
+            fetchRequest.includesPendingChanges = false
+            var res = try context.fetch(fetchRequest) as? [InternalConversation]
+            res?.append(contentsOf: newConvos)
             try context.save()
         } catch let error {
             print("Error Updating Core Data Internal Conversations")
@@ -121,26 +144,39 @@ class SMSViewController: UIViewController {
         }
     }
     func deleteConvos(_ savedConvos:[InternalConversation], _ savedFilteredConvos:[InternalConversation], _ context:NSManagedObjectContext) {
-        for i in savedConvos {
-            for j in savedFilteredConvos {
-                if i.workerId == j.workerId {
-                    print("Match found = \(i.workerId)")
-                } else {
-                    _ = context.delete(i)
-                }
-            }
+        
+        let convosToDelete = savedConvos.filter({!savedFilteredConvos.contains($0)})
+//        print(cons)
+        guard !convosToDelete.isEmpty else {
+            print("No Convos to delete")
+            return
         }
-        PersistenceService.shared.saveContext()
+        let workerIds = convosToDelete.map { $0.workerId }.compactMap { $0 }
+        let matchingRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: InternalConversation.self))
+        matchingRequest.predicate = NSPredicate(format: "workerId in %@", argumentArray: [workerIds])
+        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: matchingRequest)
+        do {
+            try context.execute(batchDeleteRequest)
+            try context.save()
+        } catch let error {
+            print("Error deleting: \(error.localizedDescription)")
+        }
     }
     func syncConversations(fetchedConvos:[InternalConversation], context:NSManagedObjectContext) {
         context.performAndWait {
             let matchingRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: InternalConversation.self))
+            let hmm = fetchSavedInternalConvos(context: context)
+            print("Post post saved internal count => \(String(describing: hmm?.count))")
             let workerIds = fetchedConvos.map { $0.workerId }.compactMap { $0 }
+            print("Internet fetched worker IDs => \(workerIds)")
             matchingRequest.predicate = NSPredicate(format: "workerId in %@", argumentArray: [workerIds])
-            if let savedConvos = self.fetchSavedInternalConvos() {
+            if let savedConvos = self.fetchSavedInternalConvos(context: context) {
                 do {
+                    print("Post post post saved internal count => \(savedConvos.count)")
                     if let savedFilteredConvos = try context.fetch(matchingRequest) as? [InternalConversation] {
+                        print("Saved Filtered Count => \(savedFilteredConvos.count)")
                         self.deleteConvos(savedConvos, savedFilteredConvos, context)
+                        self.upsertConvos(fetchedConvos: fetchedConvos, savedFilteredConvos: savedFilteredConvos, context: context)
                     }
                    
                 } catch let error {
@@ -150,24 +186,24 @@ class SMSViewController: UIViewController {
             }
         }
     }
-    func fetchSavedInternalConvos() -> [InternalConversation]? {
-        let managedObjectContext = PersistenceService.shared.persistentContainer.viewContext
+    func fetchSavedInternalConvos(context:NSManagedObjectContext) -> [InternalConversation]? {
+//        let context = PersistenceService.shared.persistentContainer.viewContext
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: InternalConversation.self))
         do {
-            return try managedObjectContext.fetch(fetchRequest) as? [InternalConversation]
+            return try context.fetch(fetchRequest) as? [InternalConversation]
         } catch let error {
             print("Error=> \(error.localizedDescription)")
             return nil
         }
     }
-    func loadExternalConvos() {
+    func loadExternalConvos(context:NSManagedObjectContext) {
         let managedObjectContext = PersistenceService.shared.persistentContainer.viewContext
-        if let convos = fetchSavedInternalConvos() {
+        if let convos = fetchSavedInternalConvos(context: context) {
             self.externalConversations = [ExternalConversation]()
             for convo in convos {
                 let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: ExternalConversation.self))
                 fetchRequest.sortDescriptors = [NSSortDescriptor(key: "lastMessageDatetime", ascending: false)]
-                fetchRequest.predicate = NSPredicate(format: "internal.personName = %@", convo.personName!)
+                fetchRequest.predicate = NSPredicate(format: "internal.workerId = %d", convo.workerId)
                 fetchRequest.fetchLimit = 1
                 do {
                 let fetchedConvos = try managedObjectContext.fetch(fetchRequest) as? [ExternalConversation]
@@ -188,13 +224,17 @@ class SMSViewController: UIViewController {
                 fatalError("Failed to retrieve managed object context")
             }
             let managedObjectContext = PersistenceService.shared.persistentContainer.viewContext
+//            let check = fetchSavedInternalConvos(context: managedObjectContext)
+//            print("check saved internal count => \(String(describing: check?.count))")
             let decoder = JSONDecoder()
             decoder.userInfo[context] = managedObjectContext
-            let response = try decoder.decode([InternalConversation].self, from: data)
+            _ = try decoder.decode([InternalConversation].self, from: data)
+//            let check1 = fetchSavedInternalConvos(context: managedObjectContext)
+//            print("check saved internal count => \(String(describing: check1?.count))")
 //            self.syncConversations(fetchedConvos: response, context: managedObjectContext)
             try managedObjectContext.save()
-            loadExternalConvos()
-            print(response.first?.personName ?? "nil")
+            loadExternalConvos(context: managedObjectContext)
+//            print(response.first?.personName ?? "nil")
             DispatchQueue.main.async {
 //                completion(response, nil, nil)
             }

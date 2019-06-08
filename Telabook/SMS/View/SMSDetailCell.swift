@@ -13,24 +13,7 @@ class SMSDetailCell: UITableViewCell {
     var externalConversation:ExternalConversation? {
         didSet {
             guard let conversation = externalConversation else {return}
-            if let number = conversation.customerPhoneNumber {
-                if let name = conversation.internalAddressBookName {
-                    self.nameLabel.text = "\(name) (\(number))"
-                } else {
-                    self.nameLabel.text = number
-                }
-            }
-            if let lastMessage = conversation.allLastMessageText {
-                self.lastMessageLabel.text = lastMessage
-            }
-            let dateTime = conversation.lastMessageDatetime
-            let dateStr = Date.getStringFromDate(date: dateTime, dateFormat: CustomDateFormat.ddMMMyyyy)
-            let timeStr = Date.getStringFromDate(date: dateTime, dateFormat: CustomDateFormat.hmma)
-            let dateTimeStr = "\(dateStr) | \(timeStr)"
-            self.dateTimeLabel.text = dateTimeStr
-            
-            let color = UIColor.getConversationColor(color: ConversationColor.getColorBy(colorCode: Int(conversation.colour)))
-            self.nameLabel.textColor = color
+            self.setupCell(conversation: conversation)
         }
     }
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -42,7 +25,35 @@ class SMSDetailCell: UITableViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+    fileprivate func setupCell(conversation:ExternalConversation) {
+        let priorityCode = conversation.priority
+        self.priorityImageView.image = ConversationPriority.getImage(by: ConversationPriority.getPriority(by: Int(priorityCode)))
+        if let number = conversation.customerPhoneNumber {
+            if let name = conversation.internalAddressBookName {
+                self.nameLabel.text = "\(name) (\(number))"
+            } else {
+                self.nameLabel.text = number
+            }
+        }
+        if let lastMessage = conversation.allLastMessageText {
+            self.lastMessageLabel.text = lastMessage
+        }
+        let dateTime = conversation.lastMessageDatetime
+        let dateStr = Date.getStringFromDate(date: dateTime, dateFormat: CustomDateFormat.ddMMMyyyy)
+        let timeStr = Date.getStringFromDate(date: dateTime, dateFormat: CustomDateFormat.hmma)
+        let dateTimeStr = "\(dateStr) | \(timeStr)"
+        self.dateTimeLabel.text = dateTimeStr
+        
+        let color = UIColor.getConversationColor(color: ConversationColor.getColorBy(colorCode: Int(conversation.colour)))
+        self.nameLabel.textColor = color
+        let count = conversation.unreadMessages
+        if count > 0 {
+            self.badgeCountLabel.isHidden = false
+            self.badgeCountLabel.text = String(count)
+        } else {
+            self.badgeCountLabel.isHidden = true
+        }
+    }
     fileprivate func setupViews() {
         contentView.addSubview(priorityImageView)
         containerView.addSubview(nameLabel)
@@ -56,7 +67,7 @@ class SMSDetailCell: UITableViewCell {
         priorityImageView.leadingAnchor.constraint(equalTo:self.contentView.leadingAnchor, constant:10).isActive = true
         priorityImageView.widthAnchor.constraint(equalToConstant:40).isActive = true
         priorityImageView.heightAnchor.constraint(equalToConstant:40).isActive = true
-        containerView.anchor(top: contentView.topAnchor, left: priorityImageView.rightAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        containerView.anchor(top: contentView.topAnchor, left: priorityImageView.rightAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor, topConstant: 0, leftConstant: 5, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         nameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: -15).isActive = true
         nameLabel.anchor(top: nil, left: containerView.leftAnchor, bottom: nil, right: badgeCountLabel.leftAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
         badgeCountLabel.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor).isActive = true

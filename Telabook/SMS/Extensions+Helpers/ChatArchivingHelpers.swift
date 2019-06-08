@@ -29,7 +29,7 @@ extension SMSDetailViewController {
     }
     fileprivate func handleChatArchiving(token:String, markArchive:Bool, indexPath:IndexPath, completion: @escaping (Bool) -> ()) {
         let companyId = UserDefaults.standard.getCompanyId()
-        if let conversation = self.fetchedResultsController?.object(at: indexPath) as? ExternalConversation {
+        if let conversation = self.fetchedResultsController.object(at: indexPath) as? ExternalConversation {
             let conversationId = conversation.externalConversationId
             ExternalConversationsAPI.shared.handleArchiving(token: token, companyId: String(companyId), conversationId: String(conversationId), markArchive: markArchive) { (responseStatus, data, serviceError, error) in
                 if let err = error {
@@ -51,7 +51,7 @@ extension SMSDetailViewController {
                             completion(false)
                             return
                         }
-                        if let conversation = self.fetchedResultsController?.object(at: indexPath) as? ExternalConversation {
+                        if let conversation = self.fetchedResultsController.object(at: indexPath) as? ExternalConversation {
                             let id = conversation.externalConversationId
                             guard id != 0 else {
                                 UIAlertController.dismissModalSpinner(controller: self)

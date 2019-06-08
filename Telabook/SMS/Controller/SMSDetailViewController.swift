@@ -53,7 +53,7 @@ class SMSDetailViewController: UIViewController {
 //    lazy var fetchedResultsController:NSFetchedResultsController<NSFetchRequestResult> = {
 //        return self.externalConversationsFRC
 //    }()
-    var fetchedResultsController:NSFetchedResultsController<NSFetchRequestResult>?
+    lazy var fetchedResultsController:NSFetchedResultsController<NSFetchRequestResult> = { return self.externalConversationsFRC }()
     
     
     
@@ -225,11 +225,14 @@ class SMSDetailViewController: UIViewController {
         switch segmentedControl.selectedSegmentIndex {
         case 0: print("Segment 0")
 //            self.startSpinner()
+            tableView.isHidden = false
             self.fetchedResultsController = self.externalConversationsFRC
             self.preFetchData(isArchived: false)
             self.fetchDataFromAPI(isArchive: false)
+        case 1: tableView.isHidden = true
         case 2: print("Segment 2")
 //            startSpinner()
+            tableView.isHidden = false
             self.fetchedResultsController = self.archivedConversationsFRC
             self.preFetchData(isArchived: true)
             self.fetchDataFromAPI(isArchive: true)
@@ -245,17 +248,11 @@ class SMSDetailViewController: UIViewController {
     }
     fileprivate func preFetchData(isArchived:Bool) {
         do {
-            try self.fetchedResultsController?.performFetch()
-            DispatchQueue.main.async {
+            try self.fetchedResultsController.performFetch()
+//            DispatchQueue.main.async {
                 self.tableView.reloadData()
-            }
-            print("COUNT FETCHED FIRST: \(String(describing: self.fetchedResultsController?.sections?.first?.numberOfObjects))")
-//            if !isArchived {
-//                try self.fetchedResultController.performFetch()
-//                print("COUNT FETCHED FIRST: \(String(describing: self.fetchedResultController.sections?.first?.numberOfObjects))")
-//            } else {
-//                try self.archivedFetchedResultController.performFetch()
 //            }
+            print("COUNT FETCHED FIRST: \(String(describing: self.fetchedResultsController.sections?.first?.numberOfObjects))")
         } catch let error  {
             print("ERROR: \(error)")
         }
@@ -267,87 +264,15 @@ class SMSDetailViewController: UIViewController {
                 print("\n***Error***\n")
                 print(err)
                 DispatchQueue.main.async {
-//                    self.stopSpinner()
-//                    self.setViewsState(isHidden: true)
-//                    self.setPlaceholdersViewsState(isHidden: false)
+                    
                 }
             } else if let token = token {
                 self.fetchExternalConversations(token: token, isArchived: isArchive)
             }
         }
     }
-    fileprivate func fetchArchivedConversations(token:String) {
-        let companyId = UserDefaults.standard.getCompanyId()
-        
-        print("Worker ID => \(String(self.workerId))")
-        ExternalConversationsAPI.shared.fetch(token: token, companyId: String(companyId), workerId: String(workerId), isArchived: true) { (responseStatus, data, serviceError, error) in
-            if let err = error {
-                DispatchQueue.main.async {
-                    self.stopSpinner()
-                    print("***Error Fetching Conversations****\n\(err.localizedDescription)")
-                    self.showAlert(title: "Error", message: err.localizedDescription)
-                }
-            } else if let serviceErr = serviceError {
-                DispatchQueue.main.async {
-                    self.stopSpinner()
-                    print("***Error Fetching Conversations****\n\(serviceErr.localizedDescription)")
-                    self.showAlert(title: "Error", message: serviceErr.localizedDescription)
-                }
-            } else if let status = responseStatus {
-                guard status == .OK else {
-                    if status == .NoContent {
-                        DispatchQueue.main.async {
-                            self.stopSpinner()
-                            print("***No Archived Content****\nResponse Status => \(status)")
-//                            self.setViewsState(isHidden: true)
-//                            self.setPlaceholdersViewsState(isHidden: false)
-                            self.placeholderLabel.text = "No Archived Conversations"
-                        }
-                    } else {
-                        DispatchQueue.main.async {
-                            self.stopSpinner()
-                            print("***Invalid Response****\nResponse Status => \(status)")
-                            self.showAlert(title: "Error", message: "Unable to fetch conversations. Please try again.")
-                        }
-                    }
-                    return
-                }
-                if let data = data {
-                    print("Archived Conversations => \n\(data)")
-                    DispatchQueue.main.async {
-                        self.handleArchived(data: data)
-                    }
-//                    self.clearData()
-//                    self.saveToCoreData(data: data)
-                }
-            }
-        }
-    }
-    fileprivate func handleArchived(data:Data) {
-        guard let context = CodingUserInfoKey.context else {
-            fatalError("Failed to retrieve managed object context")
-        }
-        let managedObjectContext = PersistenceService.shared.persistentContainer.viewContext
-        let decoder = JSONDecoder()
-        decoder.userInfo[context] = managedObjectContext
-        do {
-            let response = try decoder.decode([ExternalConversation].self, from: data)
-            print("Archived Messages : \n")
-            print(response)
-            response.forEach({
-                $0.internal = self.internalConversation
-                $0.isArchived = true
-            })
-//            self.archivedConversations = response
-            try managedObjectContext.save()
-        } catch let error {
-            print(error.localizedDescription)
-        }
-//        self.rowsToDisplay = self.archivedConversations
-        DispatchQueue.main.async {
-            self.stopSpinner()
-        }
-    }
+    
+    
     fileprivate func fetchExternalConversations(token:String, isArchived:Bool) {
         let companyId = UserDefaults.standard.getCompanyId()
         
@@ -397,20 +322,22 @@ class SMSDetailViewController: UIViewController {
                 response.forEach({$0.internal = self.internalConversation})
                 try managedObjectContext.save()
             } else {
-//                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: ExternalConversation.self))
-//                fetchRequest.predicate = NSPredicate(format: "isArchived = %d", false)
-//                fetchRequest.predicate = NSPredicate(format: "internal.workerId = %d", self.internalConversation!.workerId)
                 response.forEach({
                     $0.internal = self.internalConversation
                     $0.isArchived = true
                 })
-                var convos = self.fetchSavedExternalConvos(isArchive: nil)
-                print("buggy")
-                print(convos as Any)
-                convos?.append(contentsOf: response)
+                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: ExternalConversation.self))
+                fetchRequest.sortDescriptors = [NSSortDescriptor(key: "lastMessageDatetime", ascending: true)]
+                fetchRequest.includesPendingChanges = false
                 
+                let workerIdPredicate = NSPredicate(format: "internal.workerId = %d", self.internalConversation!.workerId)
+                let archiveCheckPredicate = NSPredicate(format: "isArchived == %@", NSNumber(value:false))
+                let andPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [workerIdPredicate, archiveCheckPredicate])
+                fetchRequest.predicate = andPredicate
+                var res = try managedObjectContext.fetch(fetchRequest) as? [ExternalConversation]
+                
+                res?.append(contentsOf: response)
                 try managedObjectContext.save()
-                
             }
         } catch let error {
             print("Error Processing Response Data: \(error)")
