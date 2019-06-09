@@ -330,7 +330,7 @@ class LoginViewController: UIViewController {
                 self.userInfo = userData
                 guard let userObject = userData.user,
                     let userRole = userData.roles,
-                    let roleId = userRole[0].id,
+                    let roleId = userRole.first?.id,
                     let companyId = userObject.company,
                     let workerId = userObject.workerId else {
                         print("Company ID and worker Id - nil")
@@ -340,6 +340,15 @@ class LoginViewController: UIViewController {
                         }
                         return
                 }
+//                UserDefaults.standard.userObject = userObject
+//                let name = userObject.name
+//                let lastName = userObject.lastName
+//                let email = userObject.email
+//                let phone = userObject.phone
+//                let profileImage = userObject.profileImage
+//                let profileImageUrl = userObject.profileImageUrl
+//                let dict:[String:Any?] = ["name":name, "lastName":lastName]
+                
                 print("Signing in - USER: \(userObject.name ?? "") \(userObject.lastName ?? "") \nRole ID => \(roleId)")
                 self.setUserDefaults(token, companyId, workerId, roleId)
                 DispatchQueue.main.async {

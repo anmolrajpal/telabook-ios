@@ -33,6 +33,10 @@ extension SMSDetailViewController : UITableViewDataSource {
     
 }
 extension SMSDetailViewController : UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let chatVC = ChatViewController()
+        navigationController?.pushViewController(chatVC, animated: true)
+    }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return SMSDetailCell.cellHeight
     }

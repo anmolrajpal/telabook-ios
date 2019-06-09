@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import MessageKit
 extension UserDefaults {
     
     enum UserDefaultsKeys: String {
@@ -18,6 +19,7 @@ extension UserDefaults {
         case companyId
         case workerId
         case roleId
+        case userObject
     }
     
     var appLaunchCount:Int? {
@@ -30,6 +32,19 @@ extension UserDefaults {
         }
     }
     
+//    var userObject:UserInfoCodable.User? {
+//        get {
+//            return object(forKey: UserDefaultsKeys.userObject.rawValue) as? UserInfoCodable.User
+//        }
+//        set (user) {
+//            set(user, forKey: UserDefaultsKeys.userObject.rawValue)
+//        }
+//    }
+    func getCurrentSender() -> Sender {
+        return Sender(id: "123", displayName: "Anmol Rajpal")
+//        return Sender(id: String(userObject?.id ?? 0), displayName:
+//            (!(userObject?.lastName?.isEmpty ?? true)) ? "\(userObject?.name ?? "nil") \(userObject?.lastName ?? "nil")" : userObject?.name ?? "nil")
+    }
     
     //MARK: LOGGED IN BOOL
     func setIsLoggedIn(value: Bool) {
@@ -108,6 +123,6 @@ extension UserDefaults {
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.companyId.rawValue)
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.workerId.rawValue)
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.roleId.rawValue)
-        
+//        UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.userObject.rawValue)
     }
 }

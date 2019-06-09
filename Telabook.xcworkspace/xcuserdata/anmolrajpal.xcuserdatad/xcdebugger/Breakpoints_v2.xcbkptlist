@@ -26,7 +26,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "581701103.099538"
+            timestampString = "581809896.241962"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "177"
@@ -42,7 +42,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "581701103.099682"
+            timestampString = "581809896.2423199"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "178"
@@ -58,7 +58,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "581701103.099871"
+            timestampString = "581809896.242444"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "179"
@@ -74,7 +74,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "581701103.100001"
+            timestampString = "581809896.242564"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "236"
@@ -90,7 +90,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "581701103.100139"
+            timestampString = "581809896.242655"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "170"
@@ -106,7 +106,7 @@
                   moduleName = "Telabook"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/anmolrajpal/Projects/Telabook/Telabook/SMS/SMSViewController.swift"
-                  timestampString = "581701104.137646"
+                  timestampString = "581809896.9673229"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "170"
@@ -121,7 +121,7 @@
                   moduleName = "Telabook"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/anmolrajpal/Projects/Telabook/Telabook/SMS/SMSViewController.swift"
-                  timestampString = "581701104.141374"
+                  timestampString = "581809896.9703521"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "170"
@@ -136,7 +136,7 @@
                   moduleName = "Telabook"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/anmolrajpal/Projects/Telabook/Telabook/SMS/SMSViewController.swift"
-                  timestampString = "581701104.146183"
+                  timestampString = "581809896.974867"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "170"
@@ -144,6 +144,22 @@
                   offsetFromSymbolStart = "48">
                </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Telabook/SMS/Controller/ChatViewController.swift"
+            timestampString = "581809896.242745"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "36"
+            endingLineNumber = "36"
+            landmarkName = "loadMockMessages()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

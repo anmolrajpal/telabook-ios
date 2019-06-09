@@ -27,7 +27,7 @@ class SMSViewController: UIViewController {
         super.viewDidLoad()
         setUpNavBar()
         self.preFetchData()
-        updateTableContent()
+//        updateTableContent()
         
     }
     
