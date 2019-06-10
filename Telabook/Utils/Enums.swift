@@ -27,6 +27,7 @@ public enum CustomDateFormat: String {
     case dateWithTimeType1 = "dd/MM/yyyy hh:mm:ss"
 //    case telaDateTim = CustomDateFormat.telaDateTime()
     /// Date
+    case chatHeaderDate = "EEEE, MMM d, yyyy"
     case date = "dd/MM/yyyy"
     case dateType1 = "dd MMM, yyyy"
     case dateType2 = "MMM d"

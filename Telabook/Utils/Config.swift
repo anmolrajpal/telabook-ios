@@ -7,7 +7,16 @@
 //
 
 import Foundation
+import Firebase
 struct Config {
+    struct DatabaseConfig {
+        static let databaseRoot = Database.database().reference()
+//        static let databaseChats = databaseRoot.child("chats")
+        static func getChats(companyId:String, node:String) -> DatabaseReference {
+            let path = "companies/\(companyId)/conversations/\(node)"
+            return databaseRoot.child(path)
+        }
+    }
     struct ServiceConfig {
         static let timeoutInterval:TimeInterval = 16.0
         static let serviceBaseURL = "https://fornax.aimservices.tech/"

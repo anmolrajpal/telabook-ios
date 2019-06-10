@@ -11,23 +11,58 @@ import Photos
 import MessageKit
 import MessageInputBar
 
-class ChatViewController : MessagesViewController {
+final class ChatViewController : MessagesViewController {
     var messages:[Message] = []
+    var externalConversation:ExternalConversation? {
+        didSet {
+            if let conversation = externalConversation {
+                title = conversation.internalAddressBookName?.isEmpty ?? true ? conversation.customerPhoneNumber : conversation.internalAddressBookName
+                self.loadChats(node: conversation.node)
+            }
+        }
+    }
+   
     let refreshControl = UIRefreshControl()
     override func viewDidLoad() {
         super.viewDidLoad()
         configureMessageCollectionView()
         configureMessageInputBar()
-        
-        title = "Arya Stark"
+//        loadChats()
         
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        loadMockMessages()
+//        loadMockMessages()
+//        loadChats()
     }
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
+    }
+    
+    func loadChats(node:String?) {
+//        messages = []
+        let companyId = UserDefaults.standard.getCompanyId()
+        if let node = node {
+            let query = Config.DatabaseConfig.getChats(companyId: String(companyId), node: node).queryLimited(toLast: 10)
+            
+            query.observe(.childAdded, with: { [weak self] snapshot in
+                print(snapshot)
+                let messageId = snapshot.key
+                if let data = snapshot.value as? [String: Any],
+                    let text = data["message"] as? String,
+                    let senderId = data["sender"] as? Int,
+                    let senderName = data["sender_name"] as? String,
+//                    let senderNumber = data["sender_number"] as? String,
+//                    let isSenderWorker = data["sender_is_worker"] as? Int,
+//                    let type = data["type"] as? String,
+                    let date = data["date"] as? Double {
+//                    print("Message => \(text), senderId => \(senderId), Sender Name => \(senderName), Sender Number => \(senderNumber), is Sender a worker? => \(isSenderWorker), type => \(type), date => \(date)")
+                    let message = Message(text: text, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000.0 ))
+//                    print(message)
+                    self?.insertMessage(message)
+                }
+            })
+        }
     }
     func loadMockMessages() {
         messages = []
@@ -58,9 +93,14 @@ class ChatViewController : MessagesViewController {
     func configureMessageCollectionView() {
         messagesCollectionView.backgroundColor = .telaGray1
         messagesCollectionView.messagesDataSource = self
-        messagesCollectionView.messageCellDelegate = self
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
+//        messagesCollectionView.messageCellDelegate = self
+        let layout = messagesCollectionView.collectionViewLayout as? MessagesCollectionViewFlowLayout
+        layout?.setMessageOutgoingAvatarSize(.zero)
+        layout?.setMessageIncomingAvatarSize(.zero)
+        layout?.setMessageOutgoingMessageBottomLabelAlignment(LabelAlignment(textAlignment: .right, textInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 15)))
+        layout?.setMessageIncomingMessageBottomLabelAlignment(LabelAlignment(textAlignment: .left, textInsets: UIEdgeInsets(top: 5, left: 15, bottom: 0, right: 0)))
         scrollsToBottomOnKeyboardBeginsEditing = true // default false
         maintainPositionOnKeyboardFrameChanged = true // default false
         
@@ -154,16 +194,26 @@ extension ChatViewController : MessagesDataSource {
         return messages.count
     }
     func cellTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
-        let name = message.sender.displayName
+        let date = Date.getStringFromDate(date: message.sentDate, dateFormat: CustomDateFormat.chatHeaderDate)
         return NSAttributedString(
-            string: name,
+            string: date,
             attributes: [
-                .font: UIFont.preferredFont(forTextStyle: .caption1),
-                .foregroundColor: UIColor(white: 0.3, alpha: 1)
+                .font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 12.0)!,
+                .foregroundColor: UIColor.telaGray7
             ]
         )
     }
-    
+    func messageBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
+        
+        let time = Date.getStringFromDate(date: message.sentDate, dateFormat: CustomDateFormat.hmma)
+        return NSAttributedString(
+            string: time,
+            attributes: [
+                .font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 10.0)!,
+                .foregroundColor: UIColor.telaGray6
+            ]
+        )
+    }
 }
 extension ChatViewController: MessagesDisplayDelegate {
     
@@ -174,43 +224,100 @@ extension ChatViewController: MessagesDisplayDelegate {
         return .telaWhite
     }
     func shouldDisplayHeader(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> Bool {
-        return true
+        return false
     }
-    
+//    func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
+//        avatarView.image = nil
+//        avatarView.frame = .zero
+//        avatarView.setCorner(radius: .zero)
+//    }
     func messageStyle(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageStyle {
         let corner: MessageStyle.TailCorner = isFromCurrentSender(message: message) ? .bottomRight : .bottomLeft
         return .bubbleTail(corner, .curved)
     }
-    
+//    func avatarSize(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGSize {
+//        return CGSize.zero
+//    }
+
 }
 
 // MARK: - MessagesLayoutDelegate
 
 extension ChatViewController: MessagesLayoutDelegate {
     
-    func avatarSize(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGSize {
-        return .zero
+    
+    
+//    func footerViewSize(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGSize {
+//        return CGSize(width: 0, height: 20)
+//    }
+    func cellTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+        return 15
     }
     
-    func footerViewSize(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGSize {
-        return CGSize(width: 0, height: 8)
+    func cellBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+        return 10
     }
     
-    func heightForLocation(message: MessageType, at indexPath: IndexPath, with maxWidth: CGFloat, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        
-        return 0
+    func messageTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+        return 10
     }
+    
+    func messageBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+        return 20
+    }
+    
+    
+//    func heightForLocation(message: MessageType, at indexPath: IndexPath, with maxWidth: CGFloat, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+//
+//        return 0
+//    }
     
 }
 
-extension ChatViewController : MessageCellDelegate {
-    
-}
-extension ChatViewController : MessageLabelDelegate {
-    
-}
+//extension ChatViewController : MessageCellDelegate {
+//
+//}
+//extension ChatViewController : MessageLabelDelegate {
+//
+//}
 extension ChatViewController : MessageInputBarDelegate {
-
+    
+    func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
+        let components = inputBar.inputTextView.components
+        messageInputBar.inputTextView.text = String()
+        messageInputBar.invalidatePlugins()
+        DispatchQueue.global(qos: .default).async {
+            // fake send request task
+            
+            DispatchQueue.main.async { [weak self] in
+                self?.messageInputBar.inputTextView.placeholder = "New Message"
+                self?.insertMessages(components)
+                self?.messagesCollectionView.scrollToBottom(animated: true)
+            }
+        }
+    }
+    private func insertMessages(_ data: [Any]) {
+        let companyId = UserDefaults.standard.getCompanyId()
+        let sender = UserDefaults.standard.getCurrentSender()
+        for component in data {
+            if let str = component as? String {
+                if let node = externalConversation?.node {
+                    print("wooh")
+                    let reference = Config.DatabaseConfig.getChats(companyId: String(companyId), node: node).childByAutoId()
+                    let message = Message(text: str, sender: sender, messageId: UUID().uuidString, date: Date())
+                    let user = PersistenceService.shared.fetchUserFromStorage()
+                    if let phone = user?.phone {
+                        let dict:[String:Any] = ["message":str, "sender_number":phone]
+                        reference.setValue(dict)
+                        insertMessage(message)
+                    }
+                } else if let img = component as? UIImage {
+                    let message = Message(image: img, sender: sender, messageId: UUID().uuidString, date: Date())
+                    insertMessage(message)
+                }
+            }
+        }
+    }
 }
 extension ChatViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     

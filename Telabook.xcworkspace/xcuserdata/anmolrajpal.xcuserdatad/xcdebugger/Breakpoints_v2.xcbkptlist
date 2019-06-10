@@ -26,7 +26,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "581809896.241962"
+            timestampString = "581885013.72"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "177"
@@ -42,7 +42,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "581809896.2423199"
+            timestampString = "581885013.720214"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "178"
@@ -58,7 +58,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "581809896.242444"
+            timestampString = "581885013.720319"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "179"
@@ -74,7 +74,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "581809896.242564"
+            timestampString = "581885013.720417"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "236"
@@ -90,7 +90,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "581809896.242655"
+            timestampString = "581885013.7204911"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "170"
@@ -106,7 +106,7 @@
                   moduleName = "Telabook"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/anmolrajpal/Projects/Telabook/Telabook/SMS/SMSViewController.swift"
-                  timestampString = "581809896.9673229"
+                  timestampString = "581885014.835549"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "170"
@@ -121,7 +121,7 @@
                   moduleName = "Telabook"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/anmolrajpal/Projects/Telabook/Telabook/SMS/SMSViewController.swift"
-                  timestampString = "581809896.9703521"
+                  timestampString = "581885014.83796"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "170"
@@ -136,7 +136,7 @@
                   moduleName = "Telabook"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/anmolrajpal/Projects/Telabook/Telabook/SMS/SMSViewController.swift"
-                  timestampString = "581809896.974867"
+                  timestampString = "581885014.840247"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "170"
@@ -153,12 +153,60 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/Controller/ChatViewController.swift"
-            timestampString = "581809896.242745"
+            timestampString = "581885013.7205991"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "36"
-            endingLineNumber = "36"
+            startingLineNumber = "71"
+            endingLineNumber = "71"
             landmarkName = "loadMockMessages()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Telabook/SMS/Controller/ChatViewController.swift"
+            timestampString = "581885013.7241991"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "46"
+            endingLineNumber = "46"
+            landmarkName = "loadChats(node:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Telabook/SMS/Controller/ChatViewController.swift"
+            timestampString = "581885013.724775"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "51"
+            endingLineNumber = "51"
+            landmarkName = "loadChats(node:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Telabook/SMS/Controller/ChatViewController.swift"
+            timestampString = "581885013.725214"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "60"
+            endingLineNumber = "60"
+            landmarkName = "loadChats(node:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -35,6 +35,9 @@ extension SMSDetailViewController : UITableViewDataSource {
 extension SMSDetailViewController : UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let chatVC = ChatViewController()
+        if let conversation = fetchedResultsController.object(at: indexPath) as? ExternalConversation {
+            chatVC.externalConversation = conversation
+        }
         navigationController?.pushViewController(chatVC, animated: true)
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

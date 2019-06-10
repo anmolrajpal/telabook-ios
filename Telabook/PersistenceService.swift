@@ -59,7 +59,20 @@ class PersistenceService: NSObject {
 
 
 extension PersistenceService {
-    
+    func fetchUserFromStorage() -> User? {
+        let managedObjectContext = PersistenceService.shared.persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<User>(entityName: "User")
+        let sortDescriptor1 = NSSortDescriptor(key: "id", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor1]
+        
+        do {
+            let user = try managedObjectContext.fetch(fetchRequest)
+            return user.first
+        } catch let error {
+            print(error)
+            return nil
+        }
+    }
     func applicationDocumentsDirectory() {
         // The directory the application uses to store the Core Data store file. This code uses a directory named "yo.BlogReaderApp" in the application's documents directory.
         if let url = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).last {
