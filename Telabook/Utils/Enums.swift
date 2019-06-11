@@ -58,6 +58,23 @@ public enum ServiceError:Error {
     case Internal
     
 }
+public enum ChatMessageType {
+    case SMS
+    case MMS
+    static func getMessageType(by typeCode:String) -> ChatMessageType {
+        switch typeCode {
+        case "sms": return .SMS
+        case "mms": return .MMS
+        default: return .SMS
+        }
+    }
+    static func getMessageTypeCode(by type:ChatMessageType) -> String {
+        switch type {
+        case .SMS: return "sms"
+        case .MMS: return "mms"
+        }
+    }
+}
 public enum ConversationPriority {
     case Low
     case Medium

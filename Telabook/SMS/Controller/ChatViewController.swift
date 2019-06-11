@@ -13,21 +13,34 @@ import MessageInputBar
 
 final class ChatViewController : MessagesViewController {
     var messages:[Message] = []
-    var externalConversation:ExternalConversation? {
-        didSet {
-            if let conversation = externalConversation {
-                title = conversation.internalAddressBookName?.isEmpty ?? true ? conversation.customerPhoneNumber : conversation.internalAddressBookName
-                self.loadChats(node: conversation.node)
-            }
-        }
+//    var externalConversation:ExternalConversation? {
+//        didSet {
+//            if let conversation = externalConversation {
+//                print("External Conversation ID => \(conversation.externalConversationId)")
+//                title = conversation.internalAddressBookName?.isEmpty ?? true ? conversation.customerPhoneNumber : conversation.internalAddressBookName
+//                self.loadChats(node: conversation.node)
+//            }
+//        }
+//    }
+    private let conversation:ExternalConversation
+    private let conversationId:String
+    init(conversation: ExternalConversation) {
+        self.conversation = conversation
+        self.conversationId = String(conversation.externalConversationId)
+        super.init(nibName: nil, bundle: nil)
+        title = conversation.internalAddressBookName?.isEmpty ?? true ? conversation.customerPhoneNumber : conversation.internalAddressBookName
+        self.loadChats(node: conversation.node)
     }
-   
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     let refreshControl = UIRefreshControl()
     override func viewDidLoad() {
         super.viewDidLoad()
         configureMessageCollectionView()
         configureMessageInputBar()
 //        loadChats()
+        print("Current Sender => \(String(describing: UserDefaults.standard.currentSender)))")
         
     }
     override func viewDidAppear(_ animated: Bool) {
@@ -43,7 +56,7 @@ final class ChatViewController : MessagesViewController {
 //        messages = []
         let companyId = UserDefaults.standard.getCompanyId()
         if let node = node {
-            let query = Config.DatabaseConfig.getChats(companyId: String(companyId), node: node).queryLimited(toLast: 10)
+            let query = Config.DatabaseConfig.getChats(companyId: String(companyId), node: node).queryLimited(toLast: 50)
             
             query.observe(.childAdded, with: { [weak self] snapshot in
                 print(snapshot)
@@ -113,6 +126,7 @@ final class ChatViewController : MessagesViewController {
 //        messageInputBar.inputTextView.tintColor = .telaWhite
         messageInputBar.inputTextView.textColor = .telaWhite
         messageInputBar.sendButton.setImage(#imageLiteral(resourceName: "autoresponse_icon"), for: .normal)
+        
         messageInputBar.sendButton.title = nil
 //        messageInputBar.isTranslucent = true
         messageInputBar.separatorLine.isHidden = true
@@ -167,10 +181,13 @@ final class ChatViewController : MessagesViewController {
                 messagesCollectionView.reloadSections([messages.count - 2])
             }
         }, completion: { [weak self] _ in
+            self?.messagesCollectionView.scrollToBottom(animated: true)
             if self?.isLastSectionVisible() == true {
+                print("MARK: rLast section visible")
                 self?.messagesCollectionView.scrollToBottom(animated: true)
             }
         })
+        
     }
     func isLastSectionVisible() -> Bool {
         
@@ -180,10 +197,15 @@ final class ChatViewController : MessagesViewController {
         
         return messagesCollectionView.indexPathsForVisibleItems.contains(lastIndexPath)
     }
+    func showAlert(title:String, message:String) {
+        let alertVC = UIAlertController.telaAlertController(title: title, message: message)
+        alertVC.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.destructive, handler: nil))
+        self.present(alertVC, animated: true, completion: nil)
+    }
 }
 extension ChatViewController : MessagesDataSource {
     func currentSender() -> Sender {
-        return UserDefaults.standard.getCurrentSender()
+        return UserDefaults.standard.currentSender
     }
     
     func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
@@ -194,6 +216,7 @@ extension ChatViewController : MessagesDataSource {
         return messages.count
     }
     func cellTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
+        
         let date = Date.getStringFromDate(date: message.sentDate, dateFormat: CustomDateFormat.chatHeaderDate)
         return NSAttributedString(
             string: date,
@@ -284,40 +307,99 @@ extension ChatViewController : MessageInputBarDelegate {
     
     func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
         let components = inputBar.inputTextView.components
-        messageInputBar.inputTextView.text = String()
-        messageInputBar.invalidatePlugins()
+//        messageInputBar.inputTextView.text = String()
+//        messageInputBar.invalidatePlugins()
+        // Send button activity animation
+        inputBar.sendButton.isEnabled = false
+        
+//        messageInputBar.inputTextView.placeholder = "Sending..."
         DispatchQueue.global(qos: .default).async {
             // fake send request task
             
             DispatchQueue.main.async { [weak self] in
-                self?.messageInputBar.inputTextView.placeholder = "New Message"
+//                self?.messageInputBar.inputTextView.placeholder = "New Message"
                 self?.insertMessages(components)
-                self?.messagesCollectionView.scrollToBottom(animated: true)
+                
             }
         }
     }
     private func insertMessages(_ data: [Any]) {
-        let companyId = UserDefaults.standard.getCompanyId()
-        let sender = UserDefaults.standard.getCurrentSender()
+        //        let sender = UserDefaults.standard.currentSender
         for component in data {
             if let str = component as? String {
-                if let node = externalConversation?.node {
-                    print("wooh")
-                    let reference = Config.DatabaseConfig.getChats(companyId: String(companyId), node: node).childByAutoId()
-                    let message = Message(text: str, sender: sender, messageId: UUID().uuidString, date: Date())
-                    let user = PersistenceService.shared.fetchUserFromStorage()
-                    if let phone = user?.phone {
-                        let dict:[String:Any] = ["message":str, "sender_number":phone]
-                        reference.setValue(dict)
-                        insertMessage(message)
+                DispatchQueue.main.async {
+                    self.handleSendingMessageSequence(message: str, type: .SMS)
+                }
+            } else if let _ = component as? UIImage {
+                
+                //                self.handleSendingMessageSequence(message: , type: .MMS)
+            }
+        }
+    }
+    fileprivate func handleSendingMessageSequence(message:String, type:ChatMessageType) {
+        FirebaseAuthService.shared.getCurrentToken { (token, error) in
+            if let err = error {
+                print("\n***Error***\n")
+                print(err)
+                DispatchQueue.main.async {
+                    self.messageInputBar.sendButton.isEnabled = true
+                }
+            } else if let token = token {
+                let id = self.conversationId
+                print("External Conversation ID => \(id)")
+                guard id != "0" else {
+                    print("Error: External Convo ID => 0")
+                    self.messageInputBar.sendButton.isEnabled = true
+                    return
+                }
+                DispatchQueue.main.async {
+                    self.sendMessage(token: token, conversationId: id, message: message, type: type)
+                }
+                
+            }
+        }
+    }
+    private func sendMessage(token:String, conversationId:String, message:String, type:ChatMessageType) {
+        ExternalConversationsAPI.shared.sendMessage(token: token, conversationId: conversationId, message: message, type: type) { (responseStatus, data, serviceError, error) in
+            if let err = error {
+                DispatchQueue.main.async {
+                    UIAlertController.dismissModalSpinner(controller: self)
+                    print("***Error Sending Message****\n\(err.localizedDescription)")
+                    self.showAlert(title: "Error", message: err.localizedDescription)
+                    self.messageInputBar.sendButton.isEnabled = true
+                }
+            } else if let serviceErr = serviceError {
+                DispatchQueue.main.async {
+                    UIAlertController.dismissModalSpinner(controller: self)
+                    print("***Error Sending Message****\n\(serviceErr.localizedDescription)")
+                    self.showAlert(title: "Error", message: serviceErr.localizedDescription)
+                    self.messageInputBar.sendButton.isEnabled = true
+                }
+            } else if let status = responseStatus {
+                guard status == .Created else {
+                    DispatchQueue.main.async {
+                        UIAlertController.dismissModalSpinner(controller: self)
+                        print("***Error Sending Message****\nInvalid Response: \(status)")
+                        self.showAlert(title: "\(status)", message: "Unable to send Message. Please try again")
+                        self.messageInputBar.sendButton.isEnabled = true
                     }
-                } else if let img = component as? UIImage {
-                    let message = Message(image: img, sender: sender, messageId: UUID().uuidString, date: Date())
-                    insertMessage(message)
+                    return
+                }
+                
+                DispatchQueue.main.async {
+                    print("Message sent: \(message)")
+                    self.messageInputBar.inputTextView.text = ""
+                    self.messagesCollectionView.scrollToBottom(animated: true)
+                    self.messageInputBar.sendButton.isEnabled = true
+                }
+                if let data = data {
+                    print("Data length => \(data.count)")
+                    print("Data => \(data)")
                 }
             }
         }
     }
+    
 }
 extension ChatViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     

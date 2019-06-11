@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import MessageKit
 class LoginViewController: UIViewController {
     var token:String?
     override func loadView() {
@@ -340,6 +340,9 @@ class LoginViewController: UIViewController {
                         }
                         return
                 }
+                let currentSender = Sender(id: String(userObject.id ?? 0), displayName: (!(userObject.lastName?.isEmpty ?? true)) ? "\(userObject.name ?? "nil") \(userObject.lastName ?? "nil")" : userObject.name ?? "nil")
+                
+                UserDefaults.standard.currentSender = currentSender
 //                UserDefaults.standard.userObject = userObject
 //                let name = userObject.name
 //                let lastName = userObject.lastName

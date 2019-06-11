@@ -32,6 +32,7 @@ struct Config {
             case GetBlacklist = "blacklists?"
             case UnblockNumber = "remove_number_blacklist?"
             case ChangeColor = "set_colour?"
+            case SendMessage = "send?"
         }
         
         static func getAuthenticationParamString(emailId:String, password:String) -> String {
@@ -55,6 +56,7 @@ struct Config {
                 case .GetBlacklist: return "\(serviceBasePublicAPI)\(ServiceType.GetBlacklist.rawValue)"
                 case .UnblockNumber: return "\(serviceBasePublicAPI)\(ServiceType.UnblockNumber.rawValue)"
                 case .ChangeColor: return "\(serviceBasePublicAPI)\(ServiceType.ChangeColor.rawValue)"
+                case .SendMessage: return "\(serviceBasePublicAPI)\(ServiceType.SendMessage.rawValue)"
             }
         }
     }

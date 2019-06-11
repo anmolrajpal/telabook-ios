@@ -147,6 +147,40 @@ final class ExternalConversationsAPI: NSObject, ExternalConversationsAPIProtocol
             }.resume()
     }
     //MARK: PROTOCOL CHANGE CONVERSATION COLOR END
+    
+    
+    
+    //MARK: PROTOCOL SEND MESSAGE START
+    internal var sendMessageApiURL:String {
+        return Config.ServiceConfig.getServiceHostUri(.SendMessage)
+    }
+    internal func sendMessageParamString(_ token: String, _ conversationId:String, message:String, type:ChatMessageType) -> String {
+        switch type {
+        case .SMS: return "token=\(token)&id=\(conversationId)&message=\(message)"
+        case .MMS: return "token=\(token)&id=\(conversationId)&imageURL=\(message)"
+        }
+    }
+    func sendMessage(token:String, conversationId:String, message:String, type: ChatMessageType, completion: @escaping APICompletion) {
+        let serviceHost = sendMessageApiURL
+        let paramString = sendMessageParamString(token, conversationId, message: message, type: type)
+        let params = paramString.data(using: String.Encoding.ascii, allowLossyConversion: false)
+        let uri = serviceHost
+//        print(uri)
+        let url = URL(string: uri)!
+        var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Config.ServiceConfig.timeoutInterval)
+        request.httpMethod = httpMethod.POST.rawValue
+        request.addValue(Header.contentType.urlEncoded.rawValue, forHTTPHeaderField: Header.headerName.contentType.rawValue)
+        request.httpBody = params
+        URLSession.shared.dataTask(with: request as URLRequest) { (data, response, error) in
+            self.handleResponse(data: data, response: response, error: error, completion: completion)
+            }.resume()
+    }
+    //MARK: PROTOCOL SEND MESSAGE END
+    
+    
+    
+    
+    
     typealias APICompletion = (ResponseStatus?, Data?, ServiceError?, Error?) -> ()
     //MARK: HANDLE RESPONSE DATA
     internal func handleResponse(data: Data?, response: URLResponse?, error: Error?, completion: @escaping APICompletion) {

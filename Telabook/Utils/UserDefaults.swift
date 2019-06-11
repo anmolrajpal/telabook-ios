@@ -19,7 +19,10 @@ extension UserDefaults {
         case companyId
         case workerId
         case roleId
+        case userId
+        case userName
         case userObject
+        case currentSender
     }
     
     var appLaunchCount:Int? {
@@ -40,11 +43,20 @@ extension UserDefaults {
 //            set(user, forKey: UserDefaultsKeys.userObject.rawValue)
 //        }
 //    }
-    func getCurrentSender() -> Sender {
-        return Sender(id: "123", displayName: "Anmol Rajpal")
-//        return Sender(id: String(userObject?.id ?? 0), displayName:
-//            (!(userObject?.lastName?.isEmpty ?? true)) ? "\(userObject?.name ?? "nil") \(userObject?.lastName ?? "nil")" : userObject?.name ?? "nil")
+    var currentSender:Sender! {
+        get {
+            return Sender(id: string(forKey: UserDefaultsKeys.userId.rawValue)!, displayName: string(forKey: UserDefaultsKeys.userName.rawValue)!)
+        }
+        set (sender) {
+            set(sender.id, forKey: UserDefaultsKeys.userId.rawValue)
+            set(sender.displayName, forKey: UserDefaultsKeys.userName.rawValue)
+        }
     }
+//    func getCurrentSender() -> Sender {
+//        return Sender(id: "123", displayName: "Anmol Rajpal")
+////        return Sender(id: String(userObject?.id ?? 0), displayName:
+////            (!(userObject?.lastName?.isEmpty ?? true)) ? "\(userObject?.name ?? "nil") \(userObject?.lastName ?? "nil")" : userObject?.name ?? "nil")
+//    }
     
     //MARK: LOGGED IN BOOL
     func setIsLoggedIn(value: Bool) {
@@ -123,6 +135,8 @@ extension UserDefaults {
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.companyId.rawValue)
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.workerId.rawValue)
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.roleId.rawValue)
+        UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.userId.rawValue)
+        UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.userName.rawValue)
 //        UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.userObject.rawValue)
     }
 }
