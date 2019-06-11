@@ -324,6 +324,19 @@ extension UIImageView {
     }
 }
 extension Date {
+    static func isDateSame(date1 lhs:Date, date2 rhs:Date) -> Bool {
+        let lhsDay = Calendar.current.component(.day, from: lhs)
+        let lhsMonth = Calendar.current.component(.month, from: lhs)
+        let lhsYear = Calendar.current.component(.year, from: lhs)
+        let rhsDay = Calendar.current.component(.day, from: rhs)
+        let rhsMonth = Calendar.current.component(.month, from: rhs)
+        let rhsYear = Calendar.current.component(.year, from: rhs)
+        if (lhsDay == rhsDay && lhsMonth == rhsMonth && lhsYear == rhsYear) {
+            return true
+        } else {
+            return false
+        }
+    }
     static func getDateFromString(dateString:String?, dateFormat:CustomDateFormat) -> Date? {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = dateFormat.rawValue

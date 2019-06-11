@@ -183,7 +183,6 @@ final class ChatViewController : MessagesViewController {
         }, completion: { [weak self] _ in
             self?.messagesCollectionView.scrollToBottom(animated: true)
             if self?.isLastSectionVisible() == true {
-                print("MARK: rLast section visible")
                 self?.messagesCollectionView.scrollToBottom(animated: true)
             }
         })
@@ -202,6 +201,7 @@ final class ChatViewController : MessagesViewController {
         alertVC.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.destructive, handler: nil))
         self.present(alertVC, animated: true, completion: nil)
     }
+    var davos:[Message] = []
 }
 extension ChatViewController : MessagesDataSource {
     func currentSender() -> Sender {
@@ -215,16 +215,23 @@ extension ChatViewController : MessagesDataSource {
     func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int {
         return messages.count
     }
+    
+    func isEarliest(_ message:Message) -> Bool {
+        let filteredMessages = self.messages.filter{( Date.isDateSame(date1: message.sentDate, date2: $0.sentDate) )}
+        return message == filteredMessages.min() ? true : false
+    }
     func cellTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
-        
-        let date = Date.getStringFromDate(date: message.sentDate, dateFormat: CustomDateFormat.chatHeaderDate)
-        return NSAttributedString(
-            string: date,
-            attributes: [
-                .font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 12.0)!,
-                .foregroundColor: UIColor.telaGray7
-            ]
-        )
+        if isEarliest(message as! Message) {
+            let date = Date.getStringFromDate(date: message.sentDate, dateFormat: CustomDateFormat.chatHeaderDate)
+            return NSAttributedString(
+                string: date,
+                attributes: [
+                    .font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 12.0)!,
+                    .foregroundColor: UIColor.telaGray7
+                ]
+            )
+        }
+        return nil
     }
     func messageBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
         
@@ -270,30 +277,25 @@ extension ChatViewController: MessagesLayoutDelegate {
     
     
     
-//    func footerViewSize(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGSize {
-//        return CGSize(width: 0, height: 20)
-//    }
+    func footerViewSize(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGSize {
+        return CGSize.zero
+    }
     func cellTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        return 15
+        return isEarliest(message as! Message) ? 30.0 : 0
     }
     
     func cellBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        return 10
+        return 0
     }
     
     func messageTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        return 10
+        return 0
     }
     
     func messageBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
         return 20
     }
     
-    
-//    func heightForLocation(message: MessageType, at indexPath: IndexPath, with maxWidth: CGFloat, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-//
-//        return 0
-//    }
     
 }
 

@@ -135,3 +135,14 @@ struct Message: MessageType {
 //    }
     
 }
+extension Message: Comparable {
+    
+    static func == (lhs: Message, rhs: Message) -> Bool {
+        return lhs.sentDate == rhs.sentDate
+    }
+    
+    static func < (lhs: Message, rhs: Message) -> Bool {
+        return lhs.sentDate < rhs.sentDate
+    }
+    
+}

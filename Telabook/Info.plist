@@ -17,9 +17,13 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
-	<string>4</string>
+	<string>5</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Used to send photos from the camera</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Used to send photos from the camera roll</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Gotham-Medium.otf</string>
@@ -31,10 +35,6 @@
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Used to send photos from the camera</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Used to send photos from the camera roll</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UIRequiredDeviceCapabilities</key>
