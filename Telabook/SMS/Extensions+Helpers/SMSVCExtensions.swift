@@ -9,12 +9,16 @@
 import UIKit
 import CoreData
 
-extension SMSViewController : UITableViewDataSource {
+extension SMSViewController : UITableViewDataSource, UISearchBarDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let count = fetchedhResultController.sections?.first?.numberOfObjects {
-            return count
+        if isSearching {
+            return filteredSearch.count
+        } else {
+            if let count = fetchedhResultController.sections?.first?.numberOfObjects {
+                return count
+            }
+            return 0
         }
-        return 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -24,29 +28,58 @@ extension SMSViewController : UITableViewDataSource {
         let backgroundView = UIView()
         backgroundView.backgroundColor = UIColor.telaGray7.withAlphaComponent(0.2)
         cell.selectedBackgroundView  = backgroundView
-        if let conversation = fetchedhResultController.object(at: indexPath) as? InternalConversation {
-            cell.internalConversation = conversation
+        let conversation:InternalConversation
+        if isSearching {
+            conversation = self.filteredSearch[indexPath.row]
+        } else {
+            conversation = fetchedhResultController.object(at: indexPath) as! InternalConversation
         }
+        cell.internalConversation = conversation
+//        if let conversation = fetchedhResultController.object(at: indexPath) as? InternalConversation {
+//            cell.internalConversation = conversation
+//        }
         return cell
+    }
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        isSearching = false
+        tableView.reloadData()
+    }
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        searchBar.setShowsCancelButton(true, animated: true)
+        searchController.view.backgroundColor = UIColor.telaBlack.withAlphaComponent(0.6)
+    }
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text == nil || searchBar.text?.count == 0 {
+            searchController.view.backgroundColor = UIColor.telaBlack.withAlphaComponent(0.6)
+            isSearching = false
+            view.endEditing(true)
+            tableView.reloadData()
+        } else {
+            searchController.view.backgroundColor = .clear
+            isSearching = true
+            let convos = self.fetchedhResultController.fetchedObjects as! [InternalConversation]
+            filteredSearch = convos.filter({$0.personName?.range(of: searchBar.text!, options: String.CompareOptions.caseInsensitive) != nil})
+            tableView.reloadData()
+        }
     }
 }
 extension SMSViewController : UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let conversation = fetchedhResultController.object(at: indexPath) as? InternalConversation {
-            let workerId = Int(conversation.workerId)
-            let smsDetailVC = SMSDetailViewController()
-            smsDetailVC.workerId = workerId
-            
             print(self.externalConversations?.count ?? -1)
             print(self.externalConversations as Any)
-            if self.externalConversations?.count ?? 0 > 0 {
-                smsDetailVC.internalConversation = self.externalConversations?[indexPath.row].internal
+            let smsDetailVC = SMSDetailViewController(conversation: conversation)
+            navigationController?.pushViewController(smsDetailVC, animated: true)
+            /*
+            if !(self.externalConversations?.isEmpty ?? true) {
+                let smsDetailVC = SMSDetailViewController(conversation: (self.externalConversations?[indexPath.row].internal)!)
+                navigationController?.pushViewController(smsDetailVC, animated: true)
             } else {
-                smsDetailVC.internalConversation = conversation
+                let smsDetailVC = SMSDetailViewController(conversation: conversation)
+                navigationController?.pushViewController(smsDetailVC, animated: true)
             }
-            //            smsDetailVC.navigationItem.title = "\(conversation.personName?.capitalized ?? "")"
-            self.show(smsDetailVC, sender: self)
+             */
         }
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

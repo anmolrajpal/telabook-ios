@@ -493,7 +493,7 @@ struct ExternalConversationsCodable : Codable {
     let internalAddressBookId : Int?
     let internalAddressBookNameActive : Int?
     let internalAddressBookNames : String?
-    let lastMessageDatetime : Int?
+    let lastMessageDatetime : Double?
     let node : String?
     let priority : Int?
     let unreadMessages : Int?
@@ -533,7 +533,7 @@ struct ExternalConversationsCodable : Codable {
         internalAddressBookId = try values.decodeIfPresent(Int.self, forKey: .internalAddressBookId)
         internalAddressBookNameActive = try values.decodeIfPresent(Int.self, forKey: .internalAddressBookNameActive)
         internalAddressBookNames = try values.decodeIfPresent(String.self, forKey: .internalAddressBookNames)
-        lastMessageDatetime = try values.decodeIfPresent(Int.self, forKey: .lastMessageDatetime)
+        lastMessageDatetime = try values.decodeIfPresent(Double.self, forKey: .lastMessageDatetime)
         node = try values.decodeIfPresent(String.self, forKey: .node)
         priority = try values.decodeIfPresent(Int.self, forKey: .priority)
         unreadMessages = try values.decodeIfPresent(Int.self, forKey: .unreadMessages)

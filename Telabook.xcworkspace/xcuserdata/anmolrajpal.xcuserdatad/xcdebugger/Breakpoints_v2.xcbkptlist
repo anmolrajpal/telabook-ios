@@ -22,138 +22,11 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "581976944.290786"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "177"
-            endingLineNumber = "177"
-            landmarkName = "syncConversations(fetchedConvos:context:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "581976944.290936"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "178"
-            endingLineNumber = "178"
-            landmarkName = "syncConversations(fetchedConvos:context:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "581976944.291034"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "179"
-            endingLineNumber = "179"
-            landmarkName = "syncConversations(fetchedConvos:context:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "581976944.291098"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "236"
-            endingLineNumber = "236"
-            landmarkName = "saveToCoreData(data:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "581976944.291189"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "170"
-            endingLineNumber = "170"
-            landmarkName = "syncConversations(fetchedConvos:context:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; () in Telabook.SMSViewController.syncConversations(fetchedConvos: Swift.Array&lt;Telabook.InternalConversation&gt;, context: __C.NSManagedObjectContext) -&gt; ()"
-                  moduleName = "Telabook"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/anmolrajpal/Projects/Telabook/Telabook/SMS/SMSViewController.swift"
-                  timestampString = "581976945.073902"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "170"
-                  endingLineNumber = "170"
-                  offsetFromSymbolStart = "1428">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Telabook.InternalConversation) -&gt; Swift.Int16 in closure #1 () -&gt; () in Telabook.SMSViewController.syncConversations(fetchedConvos: Swift.Array&lt;Telabook.InternalConversation&gt;, context: __C.NSManagedObjectContext) -&gt; ()"
-                  moduleName = "Telabook"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/anmolrajpal/Projects/Telabook/Telabook/SMS/SMSViewController.swift"
-                  timestampString = "581976945.077167"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "170"
-                  endingLineNumber = "170"
-                  offsetFromSymbolStart = "24">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 (Swift.Int16) -&gt; Swift.Optional&lt;Swift.Int16&gt; in closure #1 () -&gt; () in Telabook.SMSViewController.syncConversations(fetchedConvos: Swift.Array&lt;Telabook.InternalConversation&gt;, context: __C.NSManagedObjectContext) -&gt; ()"
-                  moduleName = "Telabook"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/anmolrajpal/Projects/Telabook/Telabook/SMS/SMSViewController.swift"
-                  timestampString = "581976945.080397"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "170"
-                  endingLineNumber = "170"
-                  offsetFromSymbolStart = "48">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/Controller/ChatViewController.swift"
-            timestampString = "581976944.291281"
+            timestampString = "582047734.981475"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "84"
@@ -169,7 +42,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/Controller/ChatViewController.swift"
-            timestampString = "581976944.291998"
+            timestampString = "582047734.981891"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "59"
@@ -185,7 +58,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/Controller/ChatViewController.swift"
-            timestampString = "581976944.292503"
+            timestampString = "582047734.9822381"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "64"
@@ -201,7 +74,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/Controller/ChatViewController.swift"
-            timestampString = "581976944.2929929"
+            timestampString = "582047734.982527"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "73"
@@ -217,12 +90,348 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/Utils/Extensions.swift"
-            timestampString = "581976944.293499"
+            timestampString = "582047734.982921"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "338"
             endingLineNumber = "338"
             landmarkName = "isDateSame(date1:date2:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Telabook/SMS/SMSViewController.swift"
+            timestampString = "582047734.983058"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "236"
+            endingLineNumber = "236"
+            landmarkName = "deleteConvos(_:_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Telabook/SMS/SMSViewController.swift"
+            timestampString = "582047734.983272"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "237"
+            endingLineNumber = "237"
+            landmarkName = "deleteConvos(_:_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Telabook/SMS/SMSViewController.swift"
+            timestampString = "582047734.983413"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "246"
+            endingLineNumber = "246"
+            landmarkName = "deleteConvos(_:_:_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Telabook.SMSViewController.upsertConvos(fetchedConvos: Swift.Array&lt;Telabook.InternalConversationsCodable&gt;, savedFilteredConvos: Swift.Array&lt;Telabook.InternalConversation&gt;, context: __C.NSManagedObjectContext) -&gt; ()"
+                  moduleName = "Telabook"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/anmolrajpal/Projects/Telabook/Telabook/SMS/SMSViewController.swift"
+                  timestampString = "582016526.183617"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "127"
+                  endingLineNumber = "127"
+                  offsetFromSymbolStart = "2632">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #3 (Telabook.InternalConversation) -&gt; () in Telabook.SMSViewController.upsertConvos(fetchedConvos: Swift.Array&lt;Telabook.InternalConversationsCodable&gt;, savedFilteredConvos: Swift.Array&lt;Telabook.InternalConversation&gt;, context: __C.NSManagedObjectContext) -&gt; ()"
+                  moduleName = "Telabook"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/anmolrajpal/Projects/Telabook/Telabook/SMS/SMSViewController.swift"
+                  timestampString = "582016526.190503"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "127"
+                  endingLineNumber = "127"
+                  offsetFromSymbolStart = "176">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Telabook/SMS/SMSViewController.swift"
+            timestampString = "582047734.9836169"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "257"
+            endingLineNumber = "257"
+            landmarkName = "updateConvos(fetchedConvos:savedFilteredConvos:context:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Telabook/SMS/SMSViewController.swift"
+            timestampString = "582047734.983775"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "262"
+            endingLineNumber = "262"
+            landmarkName = "updateConvos(fetchedConvos:savedFilteredConvos:context:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Telabook.SMSViewController.insertConvos(fetchedConvos: Swift.Array&lt;Telabook.InternalConversationsCodable&gt;, savedFilteredConvos: Swift.Array&lt;Telabook.InternalConversation&gt;, context: __C.NSManagedObjectContext) -&gt; ()"
+                  moduleName = "Telabook"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/anmolrajpal/Projects/Telabook/Telabook/SMS/SMSViewController.swift"
+                  timestampString = "582043068.70713"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "234"
+                  endingLineNumber = "234"
+                  offsetFromSymbolStart = "1492">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Telabook.InternalConversationsCodable) -&gt; () in Telabook.SMSViewController.insertConvos(fetchedConvos: Swift.Array&lt;Telabook.InternalConversationsCodable&gt;, savedFilteredConvos: Swift.Array&lt;Telabook.InternalConversation&gt;, context: __C.NSManagedObjectContext) -&gt; ()"
+                  moduleName = "Telabook"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/anmolrajpal/Projects/Telabook/Telabook/SMS/SMSViewController.swift"
+                  timestampString = "582043068.714536"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "235"
+                  endingLineNumber = "235"
+                  offsetFromSymbolStart = "140">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Telabook/SMS/SMSViewController.swift"
+            timestampString = "582047734.983897"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "229"
+            endingLineNumber = "229"
+            landmarkName = "deleteConvos(_:_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Telabook/SMS/SMSViewController.swift"
+            timestampString = "582047734.984017"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "233"
+            endingLineNumber = "233"
+            landmarkName = "deleteConvos(_:_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Telabook/SMS/SMSViewController.swift"
+            timestampString = "582047734.984122"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "268"
+            endingLineNumber = "268"
+            landmarkName = "updateConvos(fetchedConvos:savedFilteredConvos:context:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Telabook/SMS/SMSViewController.swift"
+            timestampString = "582047734.98426"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "238"
+            endingLineNumber = "238"
+            landmarkName = "deleteConvos(_:_:_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Telabook.SMSViewController.updateConvos(fetchedConvos: Swift.Array&lt;Telabook.InternalConversationsCodable&gt;, savedFilteredConvos: Swift.Array&lt;Telabook.InternalConversation&gt;, context: __C.NSManagedObjectContext) -&gt; ()"
+                  moduleName = "Telabook"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/anmolrajpal/Projects/Telabook/Telabook/SMS/SMSViewController.swift"
+                  timestampString = "582033756.6630189"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "127"
+                  endingLineNumber = "127"
+                  offsetFromSymbolStart = "2528">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #3 (Telabook.InternalConversation) -&gt; () in Telabook.SMSViewController.updateConvos(fetchedConvos: Swift.Array&lt;Telabook.InternalConversationsCodable&gt;, savedFilteredConvos: Swift.Array&lt;Telabook.InternalConversation&gt;, context: __C.NSManagedObjectContext) -&gt; ()"
+                  moduleName = "Telabook"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/anmolrajpal/Projects/Telabook/Telabook/SMS/SMSViewController.swift"
+                  timestampString = "582033756.66699"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "128"
+                  endingLineNumber = "128"
+                  offsetFromSymbolStart = "64">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Telabook/SMS/SMSViewController.swift"
+            timestampString = "582047734.984334"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "239"
+            endingLineNumber = "239"
+            landmarkName = "deleteConvos(_:_:_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #3 (Telabook.InternalConversation) -&gt; () in Telabook.SMSViewController.updateConvos(fetchedConvos: Swift.Array&lt;Telabook.InternalConversationsCodable&gt;, savedFilteredConvos: Swift.Array&lt;Telabook.InternalConversation&gt;, context: __C.NSManagedObjectContext) -&gt; ()"
+                  moduleName = "Telabook"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/anmolrajpal/Projects/Telabook/Telabook/SMS/SMSViewController.swift"
+                  timestampString = "582043068.768383"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "210"
+                  endingLineNumber = "210"
+                  offsetFromSymbolStart = "64">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Telabook.InternalConversationsCodable) -&gt; Swift.Bool in closure #3 (Telabook.InternalConversation) -&gt; () in Telabook.SMSViewController.updateConvos(fetchedConvos: Swift.Array&lt;Telabook.InternalConversationsCodable&gt;, savedFilteredConvos: Swift.Array&lt;Telabook.InternalConversation&gt;, context: __C.NSManagedObjectContext) -&gt; ()"
+                  moduleName = "Telabook"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/anmolrajpal/Projects/Telabook/Telabook/SMS/SMSViewController.swift"
+                  timestampString = "582043068.771809"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "211"
+                  endingLineNumber = "211"
+                  offsetFromSymbolStart = "36">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Telabook/SMS/Extensions+Helpers/SMSDetailVCCoreDataHelpers.swift"
+            timestampString = "582047734.984482"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "130"
+            endingLineNumber = "130"
+            landmarkName = "insertConvos(fetchedConvos:savedFilteredConvos:context:isArchived:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Telabook/SMS/Extensions+Helpers/SMSDetailVCCoreDataHelpers.swift"
+            timestampString = "582047734.98463"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "139"
+            endingLineNumber = "139"
+            landmarkName = "insertConvos(fetchedConvos:savedFilteredConvos:context:isArchived:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Telabook/SMS/Extensions+Helpers/SMSDetailVCCoreDataHelpers.swift"
+            timestampString = "582047734.984731"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "134"
+            endingLineNumber = "134"
+            landmarkName = "insertConvos(fetchedConvos:savedFilteredConvos:context:isArchived:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

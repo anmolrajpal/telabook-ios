@@ -9,25 +9,25 @@
 import UIKit
 import CoreData
 class SMSDetailViewController: UIViewController {
-    var workerId = Int()
-    var internalConversation:InternalConversation? {
-        didSet {
-            if let conversation = internalConversation {
-                self.navigationItem.title = "\(conversation.personName?.capitalized ?? "")"
-            }
-        }
+    internal let internalConversation:InternalConversation
+    internal let workerId:Int16
+    init(conversation:InternalConversation) {
+        self.internalConversation = conversation
+        self.workerId = conversation.workerId
+        super.init(nibName: nil, bundle: nil)
+        self.navigationItem.title = "\(conversation.personName?.capitalized ?? "")"
     }
-    var archivedConversations:[ExternalConversation]? {
-        didSet {
-            
-        }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
+    
     lazy var externalConversationsFRC: NSFetchedResultsController<NSFetchRequestResult> = {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: ExternalConversation.self))
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "lastMessageDatetime", ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "lastMessageDatetime", ascending: false)]
         fetchRequest.includesPendingChanges = false
        
-        let workerIdPredicate = NSPredicate(format: "internal.workerId = %d", self.internalConversation!.workerId)
+        let workerIdPredicate = NSPredicate(format: "internal.workerId = %d", self.workerId)
         let archiveCheckPredicate = NSPredicate(format: "isArchived == %@", NSNumber(value:false))
         let andPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [workerIdPredicate, archiveCheckPredicate])
         fetchRequest.predicate = andPredicate
@@ -39,8 +39,8 @@ class SMSDetailViewController: UIViewController {
     
     lazy var archivedConversationsFRC: NSFetchedResultsController<NSFetchRequestResult> = {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: ExternalConversation.self))
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "lastMessageDatetime", ascending: true)]
-        let workerIdPredicate = NSPredicate(format: "internal.workerId = %d", self.internalConversation!.workerId)
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "lastMessageDatetime", ascending: false)]
+        let workerIdPredicate = NSPredicate(format: "internal.workerId = %d", self.workerId)
         let archiveCheckPredicate = NSPredicate(format: "isArchived == %@", NSNumber(value:true))
         let andPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [workerIdPredicate, archiveCheckPredicate])
         fetchRequest.predicate = andPredicate
@@ -57,21 +57,7 @@ class SMSDetailViewController: UIViewController {
     
     
     
-    func fetchSavedExternalConvos(isArchive:Bool?) -> [ExternalConversation]? {
-        let managedObjectContext = PersistenceService.shared.persistentContainer.viewContext
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: ExternalConversation.self))
-        
-        if let isArchive = isArchive {
-            fetchRequest.predicate = NSPredicate(format: "isArchived == %@", NSNumber(value: isArchive))
-        }
-        fetchRequest.predicate = NSPredicate(format: "internal.workerId = %d", self.internalConversation!.workerId)
-        do {
-            return try managedObjectContext.fetch(fetchRequest) as? [ExternalConversation]
-        } catch let error {
-            print("Error=> \(error.localizedDescription)")
-            return nil
-        }
-    }
+    
     override func loadView() {
         super.loadView()
         setupViews()
@@ -82,34 +68,18 @@ class SMSDetailViewController: UIViewController {
         super.viewDidLoad()
         setUpNavBar()
         
-        fetchedResultsController = externalConversationsFRC
-        self.preFetchData(isArchived: false)
-        self.fetchDataFromAPI(isArchive: false)
+//        fetchedResultsController = externalConversationsFRC
+//        self.preFetchData(isArchived: false)
+//        self.fetchDataFromAPI(isArchive: false)
 //        segmentedControl.selectedSegmentIndex = 0
 //        updateTableContent()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-//        updateTableContent()
-        let abc = self.fetchSavedExternalConvos(isArchive: nil)
-        //        print(abc as Any)
-        if let a = abc {
-            print("MARK: View Did Load")
-            a.forEach({
-                print("Internal Address Book Name => \($0.internalAddressBookName as Any)")
-                print("isArchived => \($0.isArchived as Any)")
-            })
-        }
-        let abcd = self.fetchSavedExternalConvos(isArchive: false)
-        //        print(abc as Any)
-        if let b = abcd {
-            print("MARK: View Did Load")
-            b.forEach({
-                print("Internal Address Book Name => \($0.internalAddressBookName as Any)")
-                print("isArchived => \($0.isArchived as Any)")
-            })
-        }
+        fetchedResultsController = externalConversationsFRC
+        self.preFetchData(isArchived: false)
+        self.fetchDataFromAPI(isArchive: false)
     }
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -221,6 +191,7 @@ class SMSDetailViewController: UIViewController {
         control.addTarget(self, action: #selector(segmentDidChange), for: .valueChanged)
         return control
     }()
+    
     @objc fileprivate func segmentDidChange() {
         switch segmentedControl.selectedSegmentIndex {
         case 0: print("Segment 0")
@@ -302,14 +273,15 @@ class SMSDetailViewController: UIViewController {
                 }
                 if let data = data {
                     DispatchQueue.main.async {
-                        self.clearConversationData()
+//                        self.clearConversationData()
                         self.saveToCoreData(data: data, isArchived: isArchived)
                     }
                 }
             }
         }
     }
-    fileprivate func saveToCoreData(data: Data, isArchived:Bool) {
+    /*
+    func saveToCoreData(data: Data, isArchived:Bool) {
         guard let context = CodingUserInfoKey.context else {
             fatalError("Failed to retrieve managed object context")
         }
@@ -346,15 +318,14 @@ class SMSDetailViewController: UIViewController {
             }
         }
     }
-    
-    
+    */
     
     func clearConversationData() {
         do {
             
             let context = PersistenceService.shared.persistentContainer.viewContext
             let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: ExternalConversation.self))
-            fetchRequest.predicate = NSPredicate(format: "internal.workerId = %d", (internalConversation?.workerId)!)
+            fetchRequest.predicate = NSPredicate(format: "internal.workerId = %d", self.workerId)
             do {
                 let objects  = try context.fetch(fetchRequest) as? [NSManagedObject]
                 _ = objects.map{$0.map{context.delete($0)}}

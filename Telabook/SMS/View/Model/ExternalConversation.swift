@@ -8,6 +8,86 @@
 
 import Foundation
 import CoreData
+
+class ExternalConversation:NSManagedObject {
+    @NSManaged var allLastMessageSeen : String?
+    @NSManaged var allLastMessageText : String?
+    @NSManaged var colour : Int16
+    @NSManaged var customerId : Int16
+    @NSManaged var customerPerson : String?
+    @NSManaged var customerPhoneNumber : String?
+    @NSManaged var externalConversationBlackList : Int16
+    @NSManaged var externalConversationId : Int16
+    @NSManaged var internalAddressBookId : Int16
+    @NSManaged var internalAddressBookNameActive : Int16
+    @NSManaged var internalAddressBookName : String?
+    @NSManaged var lastMessageDatetime : Date
+    @NSManaged var node : String?
+    @NSManaged var priority : Int16
+    @NSManaged var unreadMessages : Int16
+    @NSManaged var workerPerson : String?
+    @NSManaged var workerPhoneNumber : String?
+    @NSManaged var `internal` : InternalConversation?
+    @NSManaged var isArchived : Bool
+    
+    static func update(conversation:ExternalConversation, context:NSManagedObjectContext, externalConversation:ExternalConversationsCodable) {
+        conversation.setValue(externalConversation.allLastMessageSeen, forKey: "allLastMessageSeen")
+        conversation.setValue(externalConversation.allLastMessageText, forKey: "allLastMessageText")
+        conversation.setValue(externalConversation.colour, forKey: "colour")
+        conversation.setValue(externalConversation.customerId, forKey: "customerId")
+        conversation.setValue(externalConversation.customerPerson, forKey: "customerPerson")
+        conversation.setValue(externalConversation.customerPhoneNumber, forKey: "customerPhoneNumber")
+        conversation.setValue(externalConversation.externalConversationBlackList, forKey: "externalConversationBlackList")
+        conversation.setValue(externalConversation.externalConversationId, forKey: "externalConversationId")
+        conversation.setValue(externalConversation.internalAddressBookId, forKey: "internalAddressBookId")
+        conversation.setValue(externalConversation.internalAddressBookNameActive, forKey: "internalAddressBookNameActive")
+        conversation.setValue(externalConversation.internalAddressBookNames, forKey: "internalAddressBookName")
+        conversation.setValue(Date(timeIntervalSince1970: externalConversation.lastMessageDatetime ?? 0), forKey: "lastMessageDatetime")
+        conversation.setValue(externalConversation.node, forKey: "node")
+        conversation.setValue(externalConversation.priority, forKey: "priority")
+        conversation.setValue(externalConversation.unreadMessages, forKey: "unreadMessages")
+        conversation.setValue(externalConversation.workerPerson, forKey: "workerPerson")
+        conversation.setValue(externalConversation.workerPhoneNumber, forKey: "workerPhoneNumber")
+        do {
+            try context.save()
+        } catch let error {
+            print("Insertion Error: \(error.localizedDescription)")
+        }
+        
+    }
+    
+    static func insert(conversation:NSManagedObject, context:NSManagedObjectContext, externalConversation:ExternalConversationsCodable, internalConversation:InternalConversation, isArchived:Bool) {
+        conversation.setValue(externalConversation.allLastMessageSeen, forKey: "allLastMessageSeen")
+        conversation.setValue(externalConversation.allLastMessageText, forKey: "allLastMessageText")
+        conversation.setValue(externalConversation.colour, forKey: "colour")
+        conversation.setValue(externalConversation.customerId, forKey: "customerId")
+        conversation.setValue(externalConversation.customerPerson, forKey: "customerPerson")
+        conversation.setValue(externalConversation.customerPhoneNumber, forKey: "customerPhoneNumber")
+        conversation.setValue(externalConversation.externalConversationBlackList, forKey: "externalConversationBlackList")
+        conversation.setValue(externalConversation.externalConversationId, forKey: "externalConversationId")
+        conversation.setValue(externalConversation.internalAddressBookId, forKey: "internalAddressBookId")
+        conversation.setValue(externalConversation.internalAddressBookNameActive, forKey: "internalAddressBookNameActive")
+        conversation.setValue(externalConversation.internalAddressBookNames, forKey: "internalAddressBookName")
+        conversation.setValue(Date(timeIntervalSince1970: externalConversation.lastMessageDatetime ?? 0), forKey: "lastMessageDatetime")
+        conversation.setValue(externalConversation.node, forKey: "node")
+        conversation.setValue(externalConversation.priority, forKey: "priority")
+        conversation.setValue(externalConversation.unreadMessages, forKey: "unreadMessages")
+        conversation.setValue(externalConversation.workerPerson, forKey: "workerPerson")
+        conversation.setValue(externalConversation.workerPhoneNumber, forKey: "workerPhoneNumber")
+        conversation.setValue(internalConversation, forKey: "internal")
+        conversation.setValue(isArchived, forKey: "isArchived")
+        do {
+            try context.save()
+        } catch let error {
+            print("Insertion Error: \(error.localizedDescription)")
+        }
+    }
+}
+
+
+
+
+/*
 class ExternalConversation:NSManagedObject, Codable {
     @NSManaged var allLastMessageSeen : String?
     @NSManaged var allLastMessageText : String?
@@ -48,7 +128,7 @@ class ExternalConversation:NSManagedObject, Codable {
         case unreadMessages = "unread_messages"
         case workerPerson = "worker_person"
         case workerPhoneNumber = "worker_phone_number"
-        case `internal` = "internal"
+//        case `internal` = "internal"
         case isArchived = "isArchived"
     }
     
@@ -78,7 +158,7 @@ class ExternalConversation:NSManagedObject, Codable {
         unreadMessages = try values.decodeIfPresent(Int16.self, forKey: .unreadMessages) ?? 0
         workerPerson = try values.decodeIfPresent(String.self, forKey: .workerPerson)
         workerPhoneNumber = try values.decodeIfPresent(String.self, forKey: .workerPhoneNumber)
-        `internal` = try values.decodeIfPresent(InternalConversation.self, forKey: .internal)
+//        `internal` = values. as? InternalConversation
         isArchived = try values.decodeIfPresent(Bool.self, forKey: .isArchived) ?? false
     }
     
@@ -102,7 +182,8 @@ class ExternalConversation:NSManagedObject, Codable {
         try container.encode(unreadMessages, forKey: .unreadMessages)
         try container.encode(workerPerson, forKey: .workerPerson)
         try container.encode(workerPhoneNumber, forKey: .workerPhoneNumber)
-        try container.encode(`internal`, forKey: .internal)
+//        try container.encode(`internal`, forKey: .internal)
         try container.encode(isArchived, forKey: .isArchived)
     }
 }
+*/

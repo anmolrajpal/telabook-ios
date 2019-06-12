@@ -8,6 +8,84 @@
 
 import Foundation
 import CoreData
+class InternalConversation : NSManagedObject {
+    @NSManaged var didNumber : String?
+    @NSManaged var externalPendingMessages : Int16
+    @NSManaged var internalConversationId : Int16
+    @NSManaged var internalLastMessageDate : String?
+    @NSManaged var internalLastMessageSeen : String?
+    @NSManaged var internalNode : String?
+    @NSManaged var personName : String?
+    @NSManaged var phoneNumber : String?
+    @NSManaged var priority1 : String?
+    @NSManaged var priority2 : String?
+    @NSManaged var priority3 : String?
+    @NSManaged var profileImage : String?
+    @NSManaged var profileImageUrl : String?
+    @NSManaged var roleId : Int16
+    @NSManaged var userId : Int16
+    @NSManaged var username : String?
+    @NSManaged var workerId : Int16
+    @NSManaged var external: NSSet?
+    
+    func update(conversation:InternalConversation, context:NSManagedObjectContext, internalConversation:InternalConversationsCodable) {
+        conversation.setValue(internalConversation.didNumber, forKey: "didNumber")
+        conversation.setValue(internalConversation.externalPendingMessages, forKey: "externalPendingMessages")
+        conversation.setValue(internalConversation.internalConversationId, forKey: "internalConversationId")
+        conversation.setValue(internalConversation.internalLastMessageDate, forKey: "internalLastMessageDate")
+        conversation.setValue(internalConversation.internalLastMessageSeen, forKey: "internalLastMessageSeen")
+        conversation.setValue(internalConversation.internalNode, forKey: "internalNode")
+        conversation.setValue(internalConversation.personName, forKey: "personName")
+        conversation.setValue(internalConversation.phoneNumber, forKey: "phoneNumber")
+        conversation.setValue(internalConversation.priority1, forKey: "priority1")
+        conversation.setValue(internalConversation.priority2, forKey: "priority2")
+        conversation.setValue(internalConversation.priority3, forKey: "priority3")
+        conversation.setValue(internalConversation.profileImage, forKey: "profileImage")
+        conversation.setValue(internalConversation.profileImageUrl, forKey: "profileImageUrl")
+        conversation.setValue(internalConversation.roleId, forKey: "roleId")
+        conversation.setValue(internalConversation.userId, forKey: "userId")
+        conversation.setValue(internalConversation.username, forKey: "username")
+        conversation.setValue(internalConversation.workerId, forKey: "workerId")
+        do {
+            try context.save()
+        } catch let error {
+            print("Insertion Error: \(error.localizedDescription)")
+        }
+    }
+    static func insert(conversation:NSManagedObject, context:NSManagedObjectContext, internalConversation:InternalConversationsCodable) {
+        conversation.setValue(internalConversation.didNumber, forKey: "didNumber")
+        conversation.setValue(internalConversation.externalPendingMessages, forKey: "externalPendingMessages")
+        conversation.setValue(internalConversation.internalConversationId, forKey: "internalConversationId")
+        conversation.setValue(internalConversation.internalLastMessageDate, forKey: "internalLastMessageDate")
+        conversation.setValue(internalConversation.internalLastMessageSeen, forKey: "internalLastMessageSeen")
+        conversation.setValue(internalConversation.internalNode, forKey: "internalNode")
+        conversation.setValue(internalConversation.personName, forKey: "personName")
+        conversation.setValue(internalConversation.phoneNumber, forKey: "phoneNumber")
+        conversation.setValue(internalConversation.priority1, forKey: "priority1")
+        conversation.setValue(internalConversation.priority2, forKey: "priority2")
+        conversation.setValue(internalConversation.priority3, forKey: "priority3")
+        conversation.setValue(internalConversation.profileImage, forKey: "profileImage")
+        conversation.setValue(internalConversation.profileImageUrl, forKey: "profileImageUrl")
+        conversation.setValue(internalConversation.roleId, forKey: "roleId")
+        conversation.setValue(internalConversation.userId, forKey: "userId")
+        conversation.setValue(internalConversation.username, forKey: "username")
+        conversation.setValue(internalConversation.workerId, forKey: "workerId")
+//        PersistenceService.shared.saveContext()
+        do {
+            try context.save()
+        } catch let error {
+            print("Insertion Error: \(error.localizedDescription)")
+        }
+    }
+}
+
+
+
+
+
+
+
+/*
 class InternalConversation : NSManagedObject, Codable {
     @NSManaged var didNumber : String?
     @NSManaged var externalPendingMessages : Int16
@@ -27,7 +105,7 @@ class InternalConversation : NSManagedObject, Codable {
     @NSManaged var username : String?
     @NSManaged var workerId : Int16
     @NSManaged var external: NSSet?
-//    @NSManaged var archived: NSSet?
+    //    @NSManaged var archived: NSSet?
     
     enum CodingKeys: String, CodingKey {
         case didNumber = "did_number"
@@ -146,3 +224,4 @@ class InternalConversation : NSManagedObject, Codable {
     }
     
 }
+*/

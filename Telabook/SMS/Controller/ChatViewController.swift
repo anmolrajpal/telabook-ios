@@ -312,8 +312,10 @@ extension ChatViewController : MessageInputBarDelegate {
 //        messageInputBar.inputTextView.text = String()
 //        messageInputBar.invalidatePlugins()
         // Send button activity animation
-        inputBar.sendButton.isEnabled = false
-        
+//        inputBar.sendButton.isEnabled = false
+        inputBar.inputTextView.text = ""
+//        self.messagesCollectionView.scrollToBottom(animated: true)
+//        self.messageInputBar.sendButton.isEnabled = true
 //        messageInputBar.inputTextView.placeholder = "Sending..."
         DispatchQueue.global(qos: .default).async {
             // fake send request task
@@ -330,6 +332,8 @@ extension ChatViewController : MessageInputBarDelegate {
         for component in data {
             if let str = component as? String {
                 DispatchQueue.main.async {
+                    self.insertMessage(Message(text: str, sender: UserDefaults.standard.currentSender, messageId: UUID().uuidString, date: Date()))
+                        
                     self.handleSendingMessageSequence(message: str, type: .SMS)
                 }
             } else if let _ = component as? UIImage {
@@ -390,9 +394,9 @@ extension ChatViewController : MessageInputBarDelegate {
                 
                 DispatchQueue.main.async {
                     print("Message sent: \(message)")
-                    self.messageInputBar.inputTextView.text = ""
-                    self.messagesCollectionView.scrollToBottom(animated: true)
-                    self.messageInputBar.sendButton.isEnabled = true
+//                    self.messageInputBar.inputTextView.text = ""
+//                    self.messagesCollectionView.scrollToBottom(animated: true)
+//                    self.messageInputBar.sendButton.isEnabled = true
                 }
                 if let data = data {
                     print("Data length => \(data.count)")
