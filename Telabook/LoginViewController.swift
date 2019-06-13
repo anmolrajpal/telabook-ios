@@ -277,7 +277,7 @@ class LoginViewController: UIViewController {
                 print("Error Catched at Firebase Token Completion => \(err.localizedDescription)")
                 DispatchQueue.main.async {
                     self.stopSpinner()
-                    UIAlertController.showAlert(alertTitle: "Error", message: error?.localizedDescription ?? "Authentication Error. Please try again ", alertActionTitle: "Ok", controller: self)
+                    UIAlertController.showTelaAlert(title: "Error", message: error?.localizedDescription ?? "Authentication Error. Please try again ", controller: self)
                 }
             }
             if let t = token {
@@ -285,7 +285,7 @@ class LoginViewController: UIViewController {
                     print("Error: Empty token String")
                     DispatchQueue.main.async {
                         self.stopSpinner()
-                        UIAlertController.showAlert(alertTitle: "Service Error", message: "Service Authentication error occured. Please try again", alertActionTitle: "Ok", controller: self)
+                        UIAlertController.showTelaAlert(title: "Service Error", message: "Service Authentication error occured. Please try again", controller: self)
                     }
                     return
                 }
@@ -305,22 +305,22 @@ class LoginViewController: UIViewController {
                     case .FailedRequest:
                         DispatchQueue.main.async {
                             self.stopSpinner()
-                            UIAlertController.showAlert(alertTitle: "Request Timed Out", message: error?.localizedDescription ?? "Please try again later", alertActionTitle: "Ok", controller: self)
+                            UIAlertController.showTelaAlert(title: "Request Timed Out", message: error?.localizedDescription ?? "Please try again later", controller: self)
                         }
                     case .InvalidResponse:
                         DispatchQueue.main.async {
                             self.stopSpinner()
-                            UIAlertController.showAlert(alertTitle: "Invalid Response", message: error?.localizedDescription ?? "Please try again", alertActionTitle: "Ok", controller: self)
+                            UIAlertController.showTelaAlert(title: "Invalid Response", message: error?.localizedDescription ?? "Please try again", controller: self)
                         }
                     case .Unknown:
                         DispatchQueue.main.async {
                             self.stopSpinner()
-                            UIAlertController.showAlert(alertTitle: "Some Error Occured", message: error?.localizedDescription ?? "An unknown error occured. Please try again later.", alertActionTitle: "Ok", controller: self)
+                            UIAlertController.showTelaAlert(title: "Some Error Occured", message: error?.localizedDescription ?? "An unknown error occured. Please try again later.", controller: self)
                         }
                     case .Internal:
                         DispatchQueue.main.async {
                             self.stopSpinner()
-                            UIAlertController.showAlert(alertTitle: "Internal Error Occured", message: error?.localizedDescription ?? "An internal error occured. Please try again later.", alertActionTitle: "Ok", controller: self)
+                            UIAlertController.showTelaAlert(title: "Internal Error Occured", message: error?.localizedDescription ?? "An internal error occured. Please try again later.", controller: self)
                         }
                     }
                 }
@@ -336,7 +336,7 @@ class LoginViewController: UIViewController {
                         print("Company ID and worker Id - nil")
                         DispatchQueue.main.async {
                             self.stopSpinner()
-                            UIAlertController.showAlert(alertTitle: "Error", message: "Error while saving login info. Please try logging in again", alertActionTitle: "Ok", controller: self)
+                            UIAlertController.showTelaAlert(title: "Error", message: "Error while saving login info. Please try logging in again", controller: self)
                         }
                         return
                 }

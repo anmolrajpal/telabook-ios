@@ -16,7 +16,7 @@ final class CustomUtils {
         case 2: return .Admin
         case 3: return .Receptionist
         case 4: return .Agent
-        default: fatalError("Invalid Role ID")
+        default: fatalError("Invalid Role ID: \(roleId)")
         }
     }
     func getInitials(from fullName:String) -> String {

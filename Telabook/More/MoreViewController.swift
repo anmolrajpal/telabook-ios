@@ -75,7 +75,7 @@ class MoreViewController: UIViewController {
     func callSignOutSequence() {
         FirebaseAuthService.shared.signOut { (error) in
             guard error == nil else {
-                UIAlertController.showAlert(alertTitle: "Signout Failed", message: error?.localizedDescription ?? "Try again", alertActionTitle: "Ok", controller: self)
+                UIAlertController.showTelaAlert(title: "Signout Failed", message: error?.localizedDescription ?? "Try again", controller: self)
                 return
             }
             self.signOut()

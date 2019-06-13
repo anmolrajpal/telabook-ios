@@ -56,9 +56,9 @@ extension UIViewController {
         navigationController?.navigationBar.barTintColor = UIColor.telaGray3
         view.backgroundColor = UIColor.telaGray1
         navigationController?.navigationBar.isTranslucent = false
-        navigationController?.setCustomBackBarButton(image: #imageLiteral(resourceName: "back_arrow"), title: nil)
+        navigationController?.setCustomBackBarButton(image: #imageLiteral(resourceName: "back_arrow").withRenderingMode(.alwaysOriginal), title: nil)
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-        navigationItem.backBarButtonItem?.tintColor = .telaGray6
+//        navigationItem.backBarButtonItem?.tintColor = .telaGray6
         self.extendedLayoutIncludesOpaqueBars = true
     }
     func hideKeyboardWhenTappedAround() {
@@ -81,7 +81,7 @@ extension UINavigationController {
     }
     func setCustomBackBarButton(image:UIImage?, title:String?) {
         if let image = image {
-            self.navigationBar.backItem?.backBarButtonItem?.tintColor = .red
+//            self.navigationBar.backItem?.backBarButtonItem?.tintColor = .red
             self.navigationBar.backIndicatorImage = image
             self.navigationBar.backIndicatorTransitionMaskImage = image
         }
@@ -144,13 +144,15 @@ extension UITextField {
     }
 }
 extension UIAlertController {
-    static func showModalSpinner(controller:UIViewController) {
+    static func showModalSpinner(with title:String = "Please wait...", controller:UIViewController) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
-        let alertMessageAttributedString = NSAttributedString(string: "Please wait...", attributes: [
+        
+        let alertMessageAttributedString = NSAttributedString(string: title, attributes: [
             NSAttributedString.Key.font : UIFont(name: CustomFonts.gothamMedium.rawValue, size: 14)!,
             NSAttributedString.Key.foregroundColor : UIColor.telaWhite
             ])
         alert.setValue(alertMessageAttributedString, forKey: "attributedMessage")
+        
     alert.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = UIColor.telaGray5
         alert.view.subviews.first?.backgroundColor = UIColor.clear
         alert.view.subviews.first?.subviews.first?.backgroundColor = .clear
@@ -184,9 +186,9 @@ extension UIAlertController {
         alertVC.view.subviews.first?.backgroundColor = .clear
         return alertVC
     }
-    static public func showAlert(alertTitle:String, message: String, alertActionTitle:String, controller: UIViewController) {
-        let alert = UIAlertController(title: alertTitle, message: message, preferredStyle: UIAlertController.Style.alert)
-        alert.addAction(UIAlertAction(title: alertActionTitle, style: UIAlertAction.Style.default, handler: nil))
+    static public func showTelaAlert(title:String, message: String, actionTitle:String = "Ok", style:UIAlertAction.Style = .destructive, controller: UIViewController) {
+        let alert = UIAlertController.telaAlertController(title: title, message: message)
+        alert.addAction(UIAlertAction(title: actionTitle, style: style, handler: nil))
         controller.present(alert, animated: true, completion: nil)
     }
 }

@@ -26,7 +26,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/Controller/ChatViewController.swift"
-            timestampString = "582047734.981475"
+            timestampString = "582107803.918947"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "84"
@@ -42,7 +42,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/Controller/ChatViewController.swift"
-            timestampString = "582047734.981891"
+            timestampString = "582107803.924004"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "59"
@@ -58,7 +58,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/Controller/ChatViewController.swift"
-            timestampString = "582047734.9822381"
+            timestampString = "582107803.9250849"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "64"
@@ -74,7 +74,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/Controller/ChatViewController.swift"
-            timestampString = "582047734.982527"
+            timestampString = "582107803.926069"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "73"
@@ -90,11 +90,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/Utils/Extensions.swift"
-            timestampString = "582047734.982921"
+            timestampString = "582141557.651333"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "338"
-            endingLineNumber = "338"
+            startingLineNumber = "340"
+            endingLineNumber = "340"
             landmarkName = "isDateSame(date1:date2:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -106,12 +106,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "582047734.983058"
+            timestampString = "582107803.928834"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "236"
             endingLineNumber = "236"
-            landmarkName = "deleteConvos(_:_:_:)"
+            landmarkName = "updateConvos(fetchedConvos:savedFilteredConvos:context:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -122,12 +122,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "582047734.983272"
+            timestampString = "582107803.929363"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "237"
             endingLineNumber = "237"
-            landmarkName = "deleteConvos(_:_:_:)"
+            landmarkName = "updateConvos(fetchedConvos:savedFilteredConvos:context:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -138,12 +138,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "582047734.983413"
+            timestampString = "582107803.9297611"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "246"
             endingLineNumber = "246"
-            landmarkName = "deleteConvos(_:_:_:)"
+            landmarkName = "updateConvos(fetchedConvos:savedFilteredConvos:context:)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -186,12 +186,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "582047734.9836169"
+            timestampString = "582107803.930143"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "257"
             endingLineNumber = "257"
-            landmarkName = "updateConvos(fetchedConvos:savedFilteredConvos:context:)"
+            landmarkName = "insertConvos(fetchedConvos:savedFilteredConvos:context:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -202,12 +202,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "582047734.983775"
+            timestampString = "582107803.930513"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "262"
             endingLineNumber = "262"
-            landmarkName = "updateConvos(fetchedConvos:savedFilteredConvos:context:)"
+            landmarkName = "insertConvos(fetchedConvos:savedFilteredConvos:context:)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -250,43 +250,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "582047734.983897"
+            timestampString = "582107803.93088"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "229"
             endingLineNumber = "229"
-            landmarkName = "deleteConvos(_:_:_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "582047734.984017"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "233"
-            endingLineNumber = "233"
-            landmarkName = "deleteConvos(_:_:_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "582047734.984122"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "268"
-            endingLineNumber = "268"
             landmarkName = "updateConvos(fetchedConvos:savedFilteredConvos:context:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -298,12 +266,44 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "582047734.98426"
+            timestampString = "582107803.931151"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "233"
+            endingLineNumber = "233"
+            landmarkName = "updateConvos(fetchedConvos:savedFilteredConvos:context:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Telabook/SMS/SMSViewController.swift"
+            timestampString = "582107803.931527"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "268"
+            endingLineNumber = "268"
+            landmarkName = "insertConvos(fetchedConvos:savedFilteredConvos:context:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Telabook/SMS/SMSViewController.swift"
+            timestampString = "582107803.931769"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "238"
             endingLineNumber = "238"
-            landmarkName = "deleteConvos(_:_:_:)"
+            landmarkName = "updateConvos(fetchedConvos:savedFilteredConvos:context:)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -346,12 +346,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/SMSViewController.swift"
-            timestampString = "582047734.984334"
+            timestampString = "582107803.9320149"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "239"
             endingLineNumber = "239"
-            landmarkName = "deleteConvos(_:_:_:)"
+            landmarkName = "updateConvos(fetchedConvos:savedFilteredConvos:context:)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -394,7 +394,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/Extensions+Helpers/SMSDetailVCCoreDataHelpers.swift"
-            timestampString = "582047734.984482"
+            timestampString = "582107803.932435"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "130"
@@ -410,7 +410,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/Extensions+Helpers/SMSDetailVCCoreDataHelpers.swift"
-            timestampString = "582047734.98463"
+            timestampString = "582107803.93262"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "139"
@@ -426,7 +426,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/SMS/Extensions+Helpers/SMSDetailVCCoreDataHelpers.swift"
-            timestampString = "582047734.984731"
+            timestampString = "582107803.932786"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "134"

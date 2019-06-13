@@ -179,6 +179,32 @@ final class ExternalConversationsAPI: NSObject, ExternalConversationsAPIProtocol
     
     
     
+    //MARK: PROTOCOL START NEW CONVERSATOIN :BEGIN
+    internal var newConversationApiURL:String {
+        return Config.ServiceConfig.getServiceHostUri(.ExternalConversations)
+    }
+    internal func newConversationParamString(_ token: String, _ companyId:String, _ phoneNumber:String, _ senderId:String) -> String {
+        return "token=\(token)&company_id=\(companyId)&phone_number=\(phoneNumber)&sender_id=\(senderId)"
+    }
+    func startNewConversation(token:String, companyId:String, phoneNumber:String, senderId: String, completion: @escaping APICompletion) {
+        let serviceHost = newConversationApiURL
+        let paramString = newConversationParamString(token, companyId, phoneNumber, senderId)
+        let params = paramString.data(using: String.Encoding.ascii, allowLossyConversion: false)
+        let uri = serviceHost
+        //        print(uri)
+        let url = URL(string: uri)!
+        var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Config.ServiceConfig.timeoutInterval)
+        request.httpMethod = httpMethod.POST.rawValue
+        request.addValue(Header.contentType.urlEncoded.rawValue, forHTTPHeaderField: Header.headerName.contentType.rawValue)
+        request.httpBody = params
+        URLSession.shared.dataTask(with: request as URLRequest) { (data, response, error) in
+            self.handleResponse(data: data, response: response, error: error, completion: completion)
+            }.resume()
+    }
+    //MARK: PROTOCOL START NEW CONVERSATION: END
+    
+    
+    
     
     
     typealias APICompletion = (ResponseStatus?, Data?, ServiceError?, Error?) -> ()

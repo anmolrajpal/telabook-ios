@@ -67,7 +67,7 @@ class SMSDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpNavBar()
-        
+        setupNavBarItems()
 //        fetchedResultsController = externalConversationsFRC
 //        self.preFetchData(isArchived: false)
 //        self.fetchDataFromAPI(isArchive: false)
@@ -83,6 +83,26 @@ class SMSDetailViewController: UIViewController {
     }
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
+    }
+    fileprivate func setupNavBarItems() {
+        let addButton = UIBarButtonItem(image: #imageLiteral(resourceName: "add").withRenderingMode(.alwaysOriginal), style: UIBarButtonItem.Style.done, target: self, action: #selector(addButtonTapped))
+//        addButton.tintColor = .telaBlue
+        let editButton = UIBarButtonItem(image: #imageLiteral(resourceName: "edit").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(editButtonTapped))
+        editButton.imageInsets = UIEdgeInsets(top: 0, left: 30, bottom: 0, right: 0)
+//        editButton.tintColor = .telaBlue
+//        let editButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(editButtonTapped))
+//        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
+        navigationItem.rightBarButtonItems = [addButton, editButton]
+    }
+    @objc func addButtonTapped() {
+        let newContactVC = NewContactViewController()
+        newContactVC.modalPresentationStyle = .overFullScreen
+        newContactVC.view.backgroundColor = .telaGray1
+//        navigationController?.presentedViewController?.present(newContactVC, animated: true, completion: nil)
+        self.present(newContactVC, animated: true, completion: nil)
+    }
+    @objc func editButtonTapped() {
+        
     }
     fileprivate func setupViews() {
         view.addSubview(spinner)
