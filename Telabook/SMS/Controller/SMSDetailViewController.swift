@@ -8,7 +8,15 @@
 
 import UIKit
 import CoreData
+import MessageKit
+import MessageInputBar
+import Photos
 class SMSDetailViewController: UIViewController {
+    
+    
+    lazy var messages:[Message] = []
+    var messageInputBar = MessageInputBar()
+    var messagesCollectionView = MessagesCollectionView()
     internal let internalConversation:InternalConversation
     internal let workerId:Int16
     init(conversation:InternalConversation) {
@@ -63,11 +71,25 @@ class SMSDetailViewController: UIViewController {
         setupViews()
         setupConstraints()
         setupTableView()
+        configureMessageCollectionView()
+        configureMessageInputBar()
+    }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        loadMockMessages()
+        isMessagesControllerBeingDismissed = false
     }
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpNavBar()
         setupNavBarItems()
+        setupDefaults()
+        addMenuControllerObservers()
+        addObservers()
+        setupDelegates()
+//        loadMockMessages()
+//        messagesCollectionView.isHidden = true
+//        messageInputBar.isHidden = true
 //        fetchedResultsController = externalConversationsFRC
 //        self.preFetchData(isArchived: false)
 //        self.fetchDataFromAPI(isArchive: false)
@@ -78,11 +100,16 @@ class SMSDetailViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         fetchedResultsController = externalConversationsFRC
+//
         self.preFetchData(isArchived: false)
         self.fetchDataFromAPI(isArchive: false)
     }
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
+    }
+    private func setupDelegates() {
+        messagesCollectionView.delegate = self
+        messagesCollectionView.dataSource = self
     }
     fileprivate func setupNavBarItems() {
         let addButton = UIBarButtonItem(image: #imageLiteral(resourceName: "add").withRenderingMode(.alwaysOriginal), style: UIBarButtonItem.Style.done, target: self, action: #selector(addButtonTapped))
@@ -98,27 +125,260 @@ class SMSDetailViewController: UIViewController {
         let newContactVC = NewContactViewController()
         newContactVC.modalPresentationStyle = .overFullScreen
         newContactVC.view.backgroundColor = .telaGray1
-//        navigationController?.presentedViewController?.present(newContactVC, animated: true, completion: nil)
+        newContactVC.delegate = self
         self.present(newContactVC, animated: true, completion: nil)
     }
     @objc func editButtonTapped() {
         
     }
+
+  
+    
+    
+    
+    
+    func configureMessageCollectionView() {
+        messagesCollectionView.isHidden = true
+        messagesCollectionView.backgroundColor = UIColor.telaGray1
+        messagesCollectionView.messagesDataSource = self
+        messagesCollectionView.messagesLayoutDelegate = self
+        messagesCollectionView.messagesDisplayDelegate = self
+        //        messagesCollectionView.messageCellDelegate = self
+        let layout = messagesCollectionView.collectionViewLayout as? MessagesCollectionViewFlowLayout
+        layout?.setMessageOutgoingAvatarSize(.zero)
+        layout?.setMessageIncomingAvatarSize(.zero)
+        layout?.setMessageOutgoingMessageBottomLabelAlignment(LabelAlignment(textAlignment: .right, textInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 15)))
+        layout?.setMessageIncomingMessageBottomLabelAlignment(LabelAlignment(textAlignment: .left, textInsets: UIEdgeInsets(top: 5, left: 15, bottom: 0, right: 0)))
+//        scrollsToBottomOnKeyboardBeginsEditing = true
+//        maintainPositionOnKeyboardFrameChanged = true
+    }
+    
+    func configureMessageInputBar() {
+        messageInputBar.isHidden = true
+        messageInputBar.delegate = self
+        //        messageInputBar.inputTextView.tintColor = .telaWhite
+        messageInputBar.inputTextView.textColor = .telaWhite
+        messageInputBar.sendButton.setImage(#imageLiteral(resourceName: "autoresponse_icon"), for: .normal)
+        
+        messageInputBar.sendButton.title = nil
+        //        messageInputBar.isTranslucent = true
+        messageInputBar.separatorLine.isHidden = true
+        messageInputBar.backgroundView.backgroundColor = UIColor.telaGray1
+        messageInputBar.contentView.backgroundColor = UIColor.telaGray1
+        messageInputBar.inputTextView.backgroundColor = UIColor.telaGray5
+        messageInputBar.inputTextView.keyboardAppearance = UIKeyboardAppearance.dark
+        messageInputBar.inputTextView.layer.borderWidth = 0
+        messageInputBar.inputTextView.layer.cornerRadius = 20.0
+        messageInputBar.inputTextView.layer.masksToBounds = true
+        messageInputBar.inputTextView.textContainerInset = UIEdgeInsets(top: 8, left: 10, bottom: 8, right: 10)
+        messageInputBar.inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 15, bottom: 8, right: 36)
+        messageInputBar.inputTextView.scrollIndicatorInsets = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
+        let cameraItem = InputBarButtonItem(type: .custom) // 1
+        //        cameraItem.tintColor = .blue
+        cameraItem.image = #imageLiteral(resourceName: "camera_icon")
+        cameraItem.addTarget(
+            self,
+            action: #selector(cameraButtonPressed), // 2
+            for: .primaryActionTriggered
+        )
+        cameraItem.setSize(CGSize(width: 60, height: 30), animated: false)
+        messageInputBar.leftStackView.alignment = .center
+        messageInputBar.setLeftStackViewWidthConstant(to: 50, animated: false)
+        messageInputBar.setStackViewItems([cameraItem], forStack: .left, animated: false) // 3
+        //        messageInputBar.sendButton.setTitleColor(.telaGreen, for: .normal)
+        //        messageInputBar.sendButton.setTitleColor(
+        //            UIColor.telaGreen.withAlphaComponent(0.3),
+        //            for: .highlighted
+        //        )
+    }
+    @objc private func cameraButtonPressed() {
+        let picker = UIImagePickerController()
+        picker.delegate = self
+        
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            picker.sourceType = .camera
+        } else {
+            picker.sourceType = .photoLibrary
+        }
+        
+        self.present(picker, animated: true, completion: nil)
+    }
+    // MARK: - Helpers
+    func insert(_ message:Message) {
+        self.messages.append(message)
+        messagesCollectionView.reloadData()
+        messagesCollectionView.scrollToBottom(animated: true)
+    }
+    func insertMessage(_ message: Message) {
+        messages.append(message)
+        // Reload last section to update header/footer labels and insert a new one
+        messagesCollectionView.performBatchUpdates({
+            messagesCollectionView.insertSections([messages.count - 1])
+            if messages.count >= 2 {
+                messagesCollectionView.reloadSections([messages.count - 2])
+            }
+        }, completion: { [weak self] _ in
+            self?.messagesCollectionView.scrollToBottom(animated: true)
+            if self?.isLastSectionVisible() == true {
+                self?.messagesCollectionView.scrollToBottom(animated: true)
+            }
+        })
+        
+    }
+    func isLastSectionVisible() -> Bool {
+        
+        guard !messages.isEmpty else { return false }
+        
+        let lastIndexPath = IndexPath(item: 0, section: messages.count - 1)
+        
+        return messagesCollectionView.indexPathsForVisibleItems.contains(lastIndexPath)
+    }
+    
+    
+    /*
+    
+    func loadChats(node:String?) {
+        messages = []
+        let companyId = UserDefaults.standard.getCompanyId()
+        if let node = node {
+            let query = Config.DatabaseConfig.getChats(companyId: String(companyId), node: node).queryLimited(toLast: 50)
+            
+            query.observe(.childAdded, with: { [weak self] snapshot in
+                let messageId = snapshot.key
+                if let data = snapshot.value as? [String: Any],
+                    let text = data["message"] as? String,
+                    let senderId = data["sender"] as? Int,
+                    let senderName = data["sender_name"] as? String,
+                    //                    let senderNumber = data["sender_number"] as? String,
+                    //                    let isSenderWorker = data["sender_is_worker"] as? Int,
+                    //                    let type = data["type"] as? String,
+                    let date = data["date"] as? Double {
+                    //                    print("Message => \(text), senderId => \(senderId), Sender Name => \(senderName), Sender Number => \(senderNumber), is Sender a worker? => \(isSenderWorker), type => \(type), date => \(date)")
+                    let message = Message(text: text, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000.0 ))
+                    //                    print(message)
+                    self?.insertMessage(message)
+                }
+            })
+        }
+    }
+    */
+     func loadMockMessages() {
+        messages = []
+        let mockUser = Sender(id: "99", displayName: "Arya Stark")
+        let message = Message(text: "Valar Morghulis!", sender: currentSender(), messageId: UUID().uuidString, date: Date())
+//        self.insert(message)
+         self.insertMessage(message)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            let replyMessage = Message(text: "Valar Dohaeris!", sender: mockUser, messageId: UUID().uuidString, date: Date())
+//            self.insert(replyMessage)
+            self.insertMessage(replyMessage)
+            
+        }
+    }
+    
+    
     fileprivate func setupViews() {
         view.addSubview(spinner)
         view.addSubview(segmentedControl)
+        view.addSubview(messagesCollectionView)
         view.addSubview(tableView)
         view.addSubview(placeholderLabel)
         view.addSubview(tryAgainButton)
     }
     fileprivate func setupConstraints() {
         segmentedControl.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 40)
+        messagesCollectionView.anchor(top: segmentedControl.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         tableView.anchor(top: segmentedControl.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         placeholderLabel.anchor(top: nil, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 20, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
         placeholderLabel.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: -20).isActive = true
         tryAgainButton.topAnchor.constraint(equalTo: placeholderLabel.bottomAnchor, constant: 20).isActive = true
         tryAgainButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
     }
+    
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        isMessagesControllerBeingDismissed = true
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        isMessagesControllerBeingDismissed = false
+    }
+    override func viewDidLayoutSubviews() {
+        // Hack to prevent animation of the contentInset after viewDidAppear
+        if isFirstLayout {
+            defer { isFirstLayout = false }
+            addKeyboardObservers()
+            messageCollectionViewBottomInset = requiredInitialScrollViewBottomInset()
+        }
+        adjustScrollViewTopInset()
+    }
+    
+    // MARK: - Initializers
+    
+    deinit {
+        removeKeyboardObservers()
+        removeMenuControllerObservers()
+        removeObservers()
+        clearMemoryCache()
+    }
+    var scrollsToBottomOnKeyboardBeginsEditing: Bool = false
+    var maintainPositionOnKeyboardFrameChanged: Bool = false
+    override var canBecomeFirstResponder: Bool {
+        return true
+    }
+    override var inputAccessoryView: UIView? {
+        return messageInputBar
+    }
+
+    override var shouldAutorotate: Bool {
+        return false
+    }
+    var additionalBottomInset: CGFloat = 0 {
+        didSet {
+            let delta = additionalBottomInset - oldValue
+            messageCollectionViewBottomInset += delta
+        }
+    }
+    private var isFirstLayout: Bool = true
+    internal var isMessagesControllerBeingDismissed: Bool = false
+    
+    internal var selectedIndexPathForMenu: IndexPath?
+    
+    internal var messageCollectionViewBottomInset: CGFloat = 0 {
+        didSet {
+            messagesCollectionView.contentInset.bottom = messageCollectionViewBottomInset
+            messagesCollectionView.scrollIndicatorInsets.bottom = messageCollectionViewBottomInset
+        }
+    }
+    // MARK: - Methods [Private]
+    
+    private func setupDefaults() {
+        extendedLayoutIncludesOpaqueBars = true
+        automaticallyAdjustsScrollViewInsets = false
+
+        messagesCollectionView.keyboardDismissMode = .interactive
+        messagesCollectionView.alwaysBounceVertical = true
+    }
+    // MARK: - Helpers
+    
+    private func addObservers() {
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(clearMemoryCache), name: UIApplication.didReceiveMemoryWarningNotification, object: nil)
+    }
+    
+    private func removeObservers() {
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didReceiveMemoryWarningNotification, object: nil)
+    }
+    
+    @objc private func clearMemoryCache() {
+//        MessageStyle.bubbleImageCache.removeAllObjects()
+    }
+    
+    
+    
+    
+    
     fileprivate func setupTableView() {
         tableView.register(SMSDetailCell.self, forCellReuseIdentifier: NSStringFromClass(SMSDetailCell.self))
         tableView.delegate = self
@@ -216,13 +476,20 @@ class SMSDetailViewController: UIViewController {
         switch segmentedControl.selectedSegmentIndex {
         case 0: print("Segment 0")
 //            self.startSpinner()
+            messagesCollectionView.isHidden = true
+            messageInputBar.isHidden = true
             tableView.isHidden = false
             self.fetchedResultsController = self.externalConversationsFRC
             self.preFetchData(isArchived: false)
             self.fetchDataFromAPI(isArchive: false)
         case 1: tableView.isHidden = true
+            messagesCollectionView.isHidden = false
+            messageInputBar.isHidden = false
+//            loadMockMessages()
         case 2: print("Segment 2")
 //            startSpinner()
+            messagesCollectionView.isHidden = true
+            messageInputBar.isHidden = true
             tableView.isHidden = false
             self.fetchedResultsController = self.archivedConversationsFRC
             self.preFetchData(isArchived: true)
@@ -390,5 +657,252 @@ class SMSDetailViewController: UIViewController {
         alertVC.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.destructive, handler: nil))
         self.present(alertVC, animated: true, completion: nil)
     }
+    
+}
+
+extension SMSDetailViewController : MessagesDataSource {
+    func currentSender() -> Sender {
+        return UserDefaults.standard.currentSender
+    }
+    
+    func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
+        return messages[indexPath.section]
+    }
+    
+    func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int {
+        return messages.count
+    }
+    
+    func isEarliest(_ message:Message) -> Bool {
+        let filteredMessages = self.messages.filter{( Date.isDateSame(date1: message.sentDate, date2: $0.sentDate) )}
+        return message == filteredMessages.min() ? true : false
+    }
+    func cellTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
+        if isEarliest(message as! Message) {
+            let date = Date.getStringFromDate(date: message.sentDate, dateFormat: CustomDateFormat.chatHeaderDate)
+            return NSAttributedString(
+                string: date,
+                attributes: [
+                    .font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 12.0)!,
+                    .foregroundColor: UIColor.telaGray7
+                ]
+            )
+        }
+        return nil
+    }
+    func messageBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
+        
+        let time = Date.getStringFromDate(date: message.sentDate, dateFormat: CustomDateFormat.hmma)
+        return NSAttributedString(
+            string: time,
+            attributes: [
+                .font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 10.0)!,
+                .foregroundColor: UIColor.telaGray6
+            ]
+        )
+    }
+}
+extension SMSDetailViewController: MessagesDisplayDelegate {
+    
+    func backgroundColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
+        return isFromCurrentSender(message: message) ? .telaBlue : .telaLightYellow
+    }
+    func textColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
+        return isFromCurrentSender(message: message) ? .telaWhite : .telaBlack
+    }
+    func shouldDisplayHeader(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> Bool {
+        return false
+    }
+    //    func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
+    //        avatarView.image = nil
+    //        avatarView.frame = .zero
+    //        avatarView.setCorner(radius: .zero)
+    //    }
+    func messageStyle(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageStyle {
+        let corner: MessageStyle.TailCorner = isFromCurrentSender(message: message) ? .bottomRight : .bottomLeft
+        return .bubbleTail(corner, .curved)
+    }
+    //    func avatarSize(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGSize {
+    //        return CGSize.zero
+    //    }
+    
+}
+extension SMSDetailViewController: MessagesLayoutDelegate {
+    
+    
+    
+    func footerViewSize(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGSize {
+        return CGSize.zero
+    }
+    func cellTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+        return isEarliest(message as! Message) ? 30.0 : 0
+    }
+    
+    func cellBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+        return 0
+    }
+    
+    func messageTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+        return 0
+    }
+    
+    func messageBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+        return 20
+    }
+    
+    
+}
+extension SMSDetailViewController : MessageInputBarDelegate {
+    
+    func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
+        let components = inputBar.inputTextView.components
+        //        messageInputBar.inputTextView.text = String()
+        //        messageInputBar.invalidatePlugins()
+        // Send button activity animation
+        //        inputBar.sendButton.isEnabled = false
+        inputBar.inputTextView.text = ""
+        //        self.messagesCollectionView.scrollToBottom(animated: true)
+        //        self.messageInputBar.sendButton.isEnabled = true
+        //        messageInputBar.inputTextView.placeholder = "Sending..."
+        DispatchQueue.global(qos: .default).async {
+            // fake send request task
+            
+            DispatchQueue.main.async { [weak self] in
+                //                self?.messageInputBar.inputTextView.placeholder = "New Message"
+                self?.insertMessages(components)
+                
+            }
+        }
+    }
+    private func insertMessages(_ data: [Any]) {
+        //        let sender = UserDefaults.standard.currentSender
+        for component in data {
+            if let str = component as? String {
+                DispatchQueue.main.async {
+                    self.insertMessage(Message(text: str, sender: UserDefaults.standard.currentSender, messageId: UUID().uuidString, date: Date()))
+                    
+//                    self.handleSendingMessageSequence(message: str, type: .SMS)
+                }
+            } else if let _ = component as? UIImage {
+                
+                //                self.handleSendingMessageSequence(message: , type: .MMS)
+            }
+        }
+    }
+    /*
+    fileprivate func handleSendingMessageSequence(message:String, type:ChatMessageType) {
+        FirebaseAuthService.shared.getCurrentToken { (token, error) in
+            if let err = error {
+                print("\n***Error***\n")
+                print(err)
+                DispatchQueue.main.async {
+                    self.messageInputBar.sendButton.isEnabled = true
+                }
+            } else if let token = token {
+                let id = self.conversationId
+                print("External Conversation ID => \(id)")
+                guard id != "0" else {
+                    print("Error: External Convo ID => 0")
+                    self.messageInputBar.sendButton.isEnabled = true
+                    return
+                }
+                DispatchQueue.main.async {
+                    self.sendMessage(token: token, conversationId: id, message: message, type: type)
+                }
+                
+            }
+        }
+    }
+     */
+    /*
+ private func sendMessage(token:String, conversationId:String, message:String, type:ChatMessageType) {
+        ExternalConversationsAPI.shared.sendMessage(token: token, conversationId: conversationId, message: message, type: type) { (responseStatus, data, serviceError, error) in
+            if let err = error {
+                DispatchQueue.main.async {
+                    UIAlertController.dismissModalSpinner(controller: self)
+                    print("***Error Sending Message****\n\(err.localizedDescription)")
+                    self.showAlert(title: "Error", message: err.localizedDescription)
+                    self.messageInputBar.sendButton.isEnabled = true
+                }
+            } else if let serviceErr = serviceError {
+                DispatchQueue.main.async {
+                    UIAlertController.dismissModalSpinner(controller: self)
+                    print("***Error Sending Message****\n\(serviceErr.localizedDescription)")
+                    self.showAlert(title: "Error", message: serviceErr.localizedDescription)
+                    self.messageInputBar.sendButton.isEnabled = true
+                }
+            } else if let status = responseStatus {
+                guard status == .Created else {
+                    DispatchQueue.main.async {
+                        UIAlertController.dismissModalSpinner(controller: self)
+                        print("***Error Sending Message****\nInvalid Response: \(status)")
+                        self.showAlert(title: "\(status)", message: "Unable to send Message. Please try again")
+                        self.messageInputBar.sendButton.isEnabled = true
+                    }
+                    return
+                }
+                
+                DispatchQueue.main.async {
+                    print("Message sent: \(message)")
+                    //                    self.messageInputBar.inputTextView.text = ""
+                    //                    self.messagesCollectionView.scrollToBottom(animated: true)
+                    //                    self.messageInputBar.sendButton.isEnabled = true
+                }
+                if let data = data {
+                    print("Data length => \(data.count)")
+                    print("Data => \(data)")
+                }
+            }
+        }
+    }
+    */
+}
+extension SMSDetailViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        picker.dismiss(animated: true, completion: nil)
+        
+        if let asset = info[.phAsset] as? PHAsset { // 1
+            let size = CGSize(width: 500, height: 500)
+            PHImageManager.default().requestImage(for: asset, targetSize: size, contentMode: .aspectFit, options: nil) { result, info in
+                guard let image = result else {
+                    return
+                }
+                
+                //                self.sendPhoto(image)
+            }
+        } else if let image = info[.originalImage] as? UIImage { // 2
+            //            sendPhoto(image)
+        }
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true, completion: nil)
+    }
+    
+}
+
+
+
+
+extension SMSDetailViewController: NewConversationDelegate {
+    func startConversation(dismiss vc: UIViewController, result newConversation: NewConversationCodable) {
+        DispatchQueue.global(qos: .background).async {
+            self.fetchDataFromAPI(isArchive: false)
+        }
+
+        vc.dismiss(animated: true, completion: {
+            if let id = newConversation.externalConversationId,
+                id != 0,
+                let node = newConversation.node {
+                let chatVC = ChatViewController(conversationId: String(id), node: node)
+                chatVC.title = newConversation.recipientPerson?.isEmpty ?? true ? newConversation.recipientNumber : newConversation.recipientPerson
+                self.navigationController?.pushViewController(chatVC, animated: true)
+                
+            }
+        })
+        
+    }
+    
     
 }

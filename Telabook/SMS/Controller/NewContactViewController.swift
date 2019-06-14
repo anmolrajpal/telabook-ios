@@ -9,7 +9,7 @@
 import UIKit
 
 class NewContactViewController: UIViewController {
-
+    var delegate:NewConversationDelegate?
     override func loadView() {
         super.loadView()
         setupViews()
@@ -75,7 +75,7 @@ class NewContactViewController: UIViewController {
     }
     let cancelButton:UIButton = {
         let button = UIButton(type: UIButton.ButtonType.system)
-//        button.setTitleColor(.telaBlue, for: .normal)
+        //        button.setTitleColor(.telaBlue, for: .normal)
         button.setAttributedTitle(NSAttributedString(string: "Cancel", attributes: [
             .font : UIFont(name: CustomFonts.gothamBook.rawValue, size: 15.0)!,
             .foregroundColor: UIColor.telaBlue
@@ -106,8 +106,8 @@ class NewContactViewController: UIViewController {
         textField.keyboardAppearance = UIKeyboardAppearance.dark
         textField.textContentType = UITextContentType.telephoneNumber
         textField.translatesAutoresizingMaskIntoConstraints = false
-//        textField.addTarget(self, action: #selector(idFieldDidReturn(textField:)), for: UIControl.Event.editingDidEndOnExit)
-//        textField.addTarget(self, action: #selector(idFieldDidChange(textField:)), for: UIControl.Event.editingChanged)
+        //        textField.addTarget(self, action: #selector(idFieldDidReturn(textField:)), for: UIControl.Event.editingDidEndOnExit)
+        //        textField.addTarget(self, action: #selector(idFieldDidChange(textField:)), for: UIControl.Event.editingChanged)
         return textField
     }()
     lazy var messageButton: UIButton = {
@@ -182,14 +182,34 @@ class NewContactViewController: UIViewController {
                     return
                 }
                 if let data = data {
-                    print(data as Any)
-                    DispatchQueue.main.async {
-                        UIAlertController.dismissModalSpinner(controller: self)
-                        print("STATUS: GOOD")
+                    let decoder = JSONDecoder()
+                    do {
+                        let response = try decoder.decode(NewConversationCodable.self, from: data)
+                        print(response)
+                        
+                        if let id = response.externalConversationId,
+                            id != 0,
+                            let node = response.node {
+                            
+                            DispatchQueue.main.async {
+
+                            UIAlertController.dismissModalSpinner(controller: self)
+                                print("STATUS: GOOD")
+                                self.delegate?.startConversation(dismiss: self, result: response)
+                            }
+                            
+                        }
+                    } catch let error {
+                        print("Error decoding data: \(error.localizedDescription)")
                     }
+                    
                 }
             }
         }
     }
 }
+protocol NewConversationDelegate {
+    func startConversation(dismiss vc:UIViewController, result newConversation:NewConversationCodable)
+}
+
 

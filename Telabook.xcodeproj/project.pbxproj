@@ -55,6 +55,8 @@
 		6FB8EA4522AA6BCE00294EAC /* SMSVCExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB8EA4422AA6BCE00294EAC /* SMSVCExtensions.swift */; };
 		6FBDEC7622B28D4D00A8511E /* NewContactViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FBDEC7522B28D4D00A8511E /* NewContactViewController.swift */; };
 		6FBDEC7822B28D5E00A8511E /* EditDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FBDEC7722B28D5E00A8511E /* EditDetailsViewController.swift */; };
+		6FBDEC7A22B3D3C200A8511E /* SMSDetailVCChatExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FBDEC7922B3D3C200A8511E /* SMSDetailVCChatExtensions.swift */; };
+		6FBDEC7C22B3F1DA00A8511E /* SMSDetailVC+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FBDEC7B22B3F1DA00A8511E /* SMSDetailVC+CollectionView.swift */; };
 		6FEF96A022A50F4A00F2FF83 /* InternalConversationsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF969F22A50F4A00F2FF83 /* InternalConversationsAPI.swift */; };
 		6FEF96A222A6677900F2FF83 /* ExternalConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF96A122A6677900F2FF83 /* ExternalConversation.swift */; };
 		6FEF96A422A6679400F2FF83 /* ExternalConversationsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF96A322A6679400F2FF83 /* ExternalConversationsAPI.swift */; };
@@ -117,6 +119,8 @@
 		6FB8EA4422AA6BCE00294EAC /* SMSVCExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSVCExtensions.swift; sourceTree = "<group>"; };
 		6FBDEC7522B28D4D00A8511E /* NewContactViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewContactViewController.swift; sourceTree = "<group>"; };
 		6FBDEC7722B28D5E00A8511E /* EditDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditDetailsViewController.swift; sourceTree = "<group>"; };
+		6FBDEC7922B3D3C200A8511E /* SMSDetailVCChatExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSDetailVCChatExtensions.swift; sourceTree = "<group>"; };
+		6FBDEC7B22B3F1DA00A8511E /* SMSDetailVC+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SMSDetailVC+CollectionView.swift"; sourceTree = "<group>"; };
 		6FEF969F22A50F4A00F2FF83 /* InternalConversationsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalConversationsAPI.swift; sourceTree = "<group>"; };
 		6FEF96A122A6677900F2FF83 /* ExternalConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalConversation.swift; sourceTree = "<group>"; };
 		6FEF96A322A6679400F2FF83 /* ExternalConversationsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalConversationsAPI.swift; sourceTree = "<group>"; };
@@ -317,6 +321,8 @@
 			children = (
 				6FB11B08229BFA310098D050 /* SMSViewController.swift */,
 				6FEF96A522A67F2900F2FF83 /* SMSDetailViewController.swift */,
+				6FBDEC7B22B3F1DA00A8511E /* SMSDetailVC+CollectionView.swift */,
+				6FBDEC7922B3D3C200A8511E /* SMSDetailVCChatExtensions.swift */,
 				6FBDEC7522B28D4D00A8511E /* NewContactViewController.swift */,
 				6FBDEC7722B28D5E00A8511E /* EditDetailsViewController.swift */,
 				6F9011D322AC3B130046F5E3 /* ChatViewController.swift */,
@@ -506,6 +512,7 @@
 				6FB11B09229BFA310098D050 /* SMSViewController.swift in Sources */,
 				6FB11B27229E5F6F0098D050 /* AuthenticationService.swift in Sources */,
 				6FB11B31229EB5020098D050 /* CallGroupsViewController.swift in Sources */,
+				6FBDEC7C22B3F1DA00A8511E /* SMSDetailVC+CollectionView.swift in Sources */,
 				6FB11B1F229D88510098D050 /* SectionItem.swift in Sources */,
 				6F6EAB3122A508380096365A /* InternalConversation.swift in Sources */,
 				6FEF96A022A50F4A00F2FF83 /* InternalConversationsAPI.swift in Sources */,
@@ -529,6 +536,7 @@
 				6FB11B1D229D19E10098D050 /* NetworkManager.swift in Sources */,
 				6FB11B41229F7A290098D050 /* ManageAgentsCell.swift in Sources */,
 				6FB11B12229C31DF0098D050 /* Enums.swift in Sources */,
+				6FBDEC7A22B3D3C200A8511E /* SMSDetailVCChatExtensions.swift in Sources */,
 				6FB11B2F229EB4F20098D050 /* FollowUpViewController.swift in Sources */,
 				6FB11B4922A503E00098D050 /* SMSCell.swift in Sources */,
 				6FB11B4622A2A5110098D050 /* PersistenceService.swift in Sources */,

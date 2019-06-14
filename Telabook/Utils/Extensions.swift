@@ -105,8 +105,8 @@ extension UIColor {
     static var telaGray7 = UIColor.rgb(r: 131, g: 131, b: 131)
     static var telaGreen = UIColor.rgb(r: 52, g: 225, b: 190)
     static var telaIndigo = UIColor.rgb(r: 82, g: 142, b: 244)
-    
-    
+    static var telaLightYellow = UIColor.rgb(r: 255, g: 245, b: 157)
+    static var telaLightBlue = UIColor.rgb(r: 144, g: 202, b: 249)
     static var randomColor: UIColor {
         return UIColor(red: .random(in: 0...1),
                        green: .random(in: 0...1),

@@ -21,8 +21,10 @@ extension SMSDetailViewController : UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(SMSDetailCell.self), for: indexPath) as! SMSDetailCell
-        cell.selectionStyle = .none
         cell.backgroundColor = .clear
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = UIColor.telaGray7.withAlphaComponent(0.2)
+        cell.selectedBackgroundView  = backgroundView
         cell.accessoryType = .disclosureIndicator
         if let conversation = fetchedResultsController.object(at: indexPath) as? ExternalConversation {
             print("Person Name at indexpath \(indexPath.row) => \(conversation.internalAddressBookName ?? "null")")
@@ -35,8 +37,14 @@ extension SMSDetailViewController : UITableViewDataSource {
 extension SMSDetailViewController : UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let conversation = fetchedResultsController.object(at: indexPath) as? ExternalConversation {
-            let chatVC = ChatViewController(conversation: conversation)
-            navigationController?.pushViewController(chatVC, animated: true)
+            let id = conversation.externalConversationId
+            if id != 0,
+                let node = conversation.node {
+                let chatVC = ChatViewController(conversationId: String(id), node: node)
+                chatVC.title = conversation.internalAddressBookName?.isEmpty ?? true ? conversation.customerPhoneNumber : conversation.internalAddressBookName
+                navigationController?.pushViewController(chatVC, animated: true)
+            }
+            
         }
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

@@ -13,23 +13,13 @@ import MessageInputBar
 
 final class ChatViewController : MessagesViewController {
     var messages:[Message] = []
-//    var externalConversation:ExternalConversation? {
-//        didSet {
-//            if let conversation = externalConversation {
-//                print("External Conversation ID => \(conversation.externalConversationId)")
-//                title = conversation.internalAddressBookName?.isEmpty ?? true ? conversation.customerPhoneNumber : conversation.internalAddressBookName
-//                self.loadChats(node: conversation.node)
-//            }
-//        }
-//    }
-    private let conversation:ExternalConversation
     private let conversationId:String
-    init(conversation: ExternalConversation) {
-        self.conversation = conversation
-        self.conversationId = String(conversation.externalConversationId)
+    private let node:String
+    init(conversationId: String, node: String) {
+        self.conversationId = String(conversationId)
+        self.node = node
         super.init(nibName: nil, bundle: nil)
-        title = conversation.internalAddressBookName?.isEmpty ?? true ? conversation.customerPhoneNumber : conversation.internalAddressBookName
-        self.loadChats(node: conversation.node)
+        self.loadChats(node: node)
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -53,13 +43,12 @@ final class ChatViewController : MessagesViewController {
     }
     
     func loadChats(node:String?) {
-//        messages = []
+        messages = []
         let companyId = UserDefaults.standard.getCompanyId()
         if let node = node {
             let query = Config.DatabaseConfig.getChats(companyId: String(companyId), node: node).queryLimited(toLast: 50)
             
             query.observe(.childAdded, with: { [weak self] snapshot in
-                print(snapshot)
                 let messageId = snapshot.key
                 if let data = snapshot.value as? [String: Any],
                     let text = data["message"] as? String,
@@ -114,11 +103,8 @@ final class ChatViewController : MessagesViewController {
         layout?.setMessageIncomingAvatarSize(.zero)
         layout?.setMessageOutgoingMessageBottomLabelAlignment(LabelAlignment(textAlignment: .right, textInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 15)))
         layout?.setMessageIncomingMessageBottomLabelAlignment(LabelAlignment(textAlignment: .left, textInsets: UIEdgeInsets(top: 5, left: 15, bottom: 0, right: 0)))
-        scrollsToBottomOnKeyboardBeginsEditing = true // default false
-        maintainPositionOnKeyboardFrameChanged = true // default false
-        
-//        messagesCollectionView.addSubview(refreshControl)
-//        refreshControl.addTarget(self, action: #selector(loadMoreMessages), for: .valueChanged)
+        scrollsToBottomOnKeyboardBeginsEditing = true
+        maintainPositionOnKeyboardFrameChanged = true
     }
     
     func configureMessageInputBar() {
