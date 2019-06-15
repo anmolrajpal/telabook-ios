@@ -33,29 +33,33 @@ extension SMSDetailViewController {
             let conversationId = conversation.externalConversationId
             ExternalConversationsAPI.shared.handleArchiving(token: token, companyId: String(companyId), conversationId: String(conversationId), markArchive: markArchive) { (responseStatus, data, serviceError, error) in
                 if let err = error {
-                    UIAlertController.dismissModalSpinner(controller: self)
-                    print("***Error handling Archiving****\n\(err.localizedDescription)")
-                    self.showAlert(title: "Error", message: err.localizedDescription)
-                    completion(false)
+                       DispatchQueue.main.async { UIAlertController.dismissModalSpinner(controller: self)
+                        print("***Error handling Archiving****\n\(err.localizedDescription)")
+                        self.showAlert(title: "Error", message: err.localizedDescription)
+                        completion(false)
+                    }
                 } else if let serviceErr = serviceError {
-                    UIAlertController.dismissModalSpinner(controller: self)
-                    print("***Error handling Archiving****\n\(serviceErr.localizedDescription)")
-                    self.showAlert(title: "Error", message: serviceErr.localizedDescription)
-                    completion(false)
+                       DispatchQueue.main.async { UIAlertController.dismissModalSpinner(controller: self)
+                        print("***Error handling Archiving****\n\(serviceErr.localizedDescription)")
+                        self.showAlert(title: "Error", message: serviceErr.localizedDescription)
+                        completion(false)
+                    }
                 } else if let status = responseStatus {
                     if markArchive {
                         guard status == .Created else {
-                            UIAlertController.dismissModalSpinner(controller: self)
-                            print("***Error Archiving Chat****\nInvalid Response: \(status)")
-                            self.showAlert(title: "\(status)", message: "Unable to Archive Chat. Please try again")
-                            completion(false)
+                            DispatchQueue.main.async {    UIAlertController.dismissModalSpinner(controller: self)
+                                print("***Error Archiving Chat****\nInvalid Response: \(status)")
+                                self.showAlert(title: "\(status)", message: "Unable to Archive Chat. Please try again")
+                                completion(false)
+                            }
                             return
                         }
                         if let conversation = self.fetchedResultsController.object(at: indexPath) as? ExternalConversation {
                             let id = conversation.externalConversationId
                             guard id != 0 else {
-                                UIAlertController.dismissModalSpinner(controller: self)
-                                completion(false)
+                                   DispatchQueue.main.async { UIAlertController.dismissModalSpinner(controller: self)
+                                    completion(false)
+                                }
                                 return
                             }
                             DispatchQueue.main.async {
@@ -64,10 +68,11 @@ extension SMSDetailViewController {
                         }
                     } else {
                         guard status == .OK else {
-                            UIAlertController.dismissModalSpinner(controller: self)
-                            print("***Error Unarchiving Chat****\nInvalid Response: \(status)")
-                            self.showAlert(title: "\(status)", message: "Unable to Archive Chat. Please try again")
-                            completion(false)
+                               DispatchQueue.main.async { UIAlertController.dismissModalSpinner(controller: self)
+                                print("***Error Unarchiving Chat****\nInvalid Response: \(status)")
+                                self.showAlert(title: "\(status)", message: "Unable to Archive Chat. Please try again")
+                                completion(false)
+                            }
                             return
                         }
                         if let data = data {
@@ -101,13 +106,17 @@ extension SMSDetailViewController {
                 let managedObject = result[0] as! NSManagedObject
                 managedObject.setValue(markArchive, forKey: "isArchived")
                 try managedObjectContext.save()
-                UIAlertController.dismissModalSpinner(controller: self)
-                completion(true)
+                DispatchQueue.main.async {
+                    UIAlertController.dismissModalSpinner(controller: self)
+                    completion(true)
+                }
             }
         } catch let error {
-            UIAlertController.dismissModalSpinner(controller: self)
-            print(error.localizedDescription)
-            completion(false)
+            DispatchQueue.main.async {
+                UIAlertController.dismissModalSpinner(controller: self)
+                print(error.localizedDescription)
+                completion(false)
+            }
         }
     }
 }

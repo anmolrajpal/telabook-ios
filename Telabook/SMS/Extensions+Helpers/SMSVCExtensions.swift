@@ -69,6 +69,7 @@ extension SMSViewController : UITableViewDelegate {
         if let conversation = fetchedhResultController.object(at: indexPath) as? InternalConversation {
             print(self.externalConversations?.count ?? -1)
             print(self.externalConversations as Any)
+            print(conversation)
             let smsDetailVC = SMSDetailViewController(conversation: conversation)
             navigationController?.pushViewController(smsDetailVC, animated: true)
             /*

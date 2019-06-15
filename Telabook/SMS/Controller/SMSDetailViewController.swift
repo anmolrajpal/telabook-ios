@@ -14,7 +14,7 @@ import Photos
 class SMSDetailViewController: UIViewController {
     
     
-    lazy var messages:[Message] = []
+    var messages:[Message] = []
     var messageInputBar = MessageInputBar()
     var messagesCollectionView = MessagesCollectionView()
     internal let internalConversation:InternalConversation
@@ -87,7 +87,6 @@ class SMSDetailViewController: UIViewController {
         addMenuControllerObservers()
         addObservers()
         setupDelegates()
-//        loadMockMessages()
 //        messagesCollectionView.isHidden = true
 //        messageInputBar.isHidden = true
 //        fetchedResultsController = externalConversationsFRC
@@ -99,8 +98,8 @@ class SMSDetailViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+//        messages = []
         fetchedResultsController = externalConversationsFRC
-//
         self.preFetchData(isArchived: false)
         self.fetchDataFromAPI(isArchive: false)
     }
@@ -131,11 +130,7 @@ class SMSDetailViewController: UIViewController {
     @objc func editButtonTapped() {
         
     }
-
-  
-    
-    
-    
+ 
     
     func configureMessageCollectionView() {
         messagesCollectionView.isHidden = true
@@ -211,6 +206,7 @@ class SMSDetailViewController: UIViewController {
     }
     func insertMessage(_ message: Message) {
         messages.append(message)
+        print(messages)
         // Reload last section to update header/footer labels and insert a new one
         messagesCollectionView.performBatchUpdates({
             messagesCollectionView.insertSections([messages.count - 1])
@@ -268,12 +264,12 @@ class SMSDetailViewController: UIViewController {
         let message = Message(text: "Valar Morghulis!", sender: currentSender(), messageId: UUID().uuidString, date: Date())
 //        self.insert(message)
          self.insertMessage(message)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+        
             let replyMessage = Message(text: "Valar Dohaeris!", sender: mockUser, messageId: UUID().uuidString, date: Date())
 //            self.insert(replyMessage)
             self.insertMessage(replyMessage)
             
-        }
+        
     }
     
     
@@ -298,6 +294,9 @@ class SMSDetailViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        print("Being dismissed")
+        messages.removeAll()
+        messagesCollectionView.reloadData()
         isMessagesControllerBeingDismissed = true
     }
     override func viewDidDisappear(_ animated: Bool) {
@@ -522,10 +521,12 @@ class SMSDetailViewController: UIViewController {
                 print("\n***Error***\n")
                 print(err)
                 DispatchQueue.main.async {
-                    
+                    UIAlertController.showTelaAlert(title: "Error", message: err.localizedDescription, controller: self)
                 }
             } else if let token = token {
-                self.fetchExternalConversations(token: token, isArchived: isArchive)
+                DispatchQueue.main.async {
+                    self.fetchExternalConversations(token: token, isArchived: isArchive)
+                }
             }
         }
     }
@@ -538,10 +539,14 @@ class SMSDetailViewController: UIViewController {
         ExternalConversationsAPI.shared.fetch(token: token, companyId: String(companyId), workerId: String(workerId), isArchived: isArchived) { (responseStatus, data, serviceError, error) in
             if let err = error {
                 print("***Error Fetching Conversations****\n\(err.localizedDescription)")
-                self.showAlert(title: "Error", message: err.localizedDescription)
+                DispatchQueue.main.async {
+                    self.showAlert(title: "Error", message: err.localizedDescription)
+                }
             } else if let serviceErr = serviceError {
                 print("***Error Fetching Conversations****\n\(serviceErr.localizedDescription)")
-                self.showAlert(title: "Error", message: serviceErr.localizedDescription)
+                DispatchQueue.main.async {
+                    self.showAlert(title: "Error", message: serviceErr.localizedDescription)
+                }
             } else if let status = responseStatus {
                 guard status == .OK else {
                     if status == .NoContent {
@@ -554,7 +559,9 @@ class SMSDetailViewController: UIViewController {
                         }
                     } else {
                         print("***Invalid Response****\nResponse Status => \(status)")
-                        self.showAlert(title: "Error", message: "Unable to fetch conversations. Please try again.")
+                        DispatchQueue.main.async {
+                            self.showAlert(title: "Error", message: "Unable to fetch conversations. Please try again.")
+                        }
                     }
                     return
                 }
