@@ -352,7 +352,7 @@ extension ChatViewController : MessageInputBarDelegate {
         }
     }
     private func sendMessage(token:String, conversationId:String, message:String, type:ChatMessageType) {
-        ExternalConversationsAPI.shared.sendMessage(token: token, conversationId: conversationId, message: message, type: type) { (responseStatus, data, serviceError, error) in
+        ExternalConversationsAPI.shared.sendMessage(token: token, conversationId: conversationId, message: message, type: type, isDirectMessage: false) { (responseStatus, data, serviceError, error) in
             if let err = error {
                 DispatchQueue.main.async {
                     UIAlertController.dismissModalSpinner(controller: self)

@@ -11,7 +11,6 @@ import Firebase
 struct Config {
     struct DatabaseConfig {
         static let databaseRoot = Database.database().reference()
-//        static let databaseChats = databaseRoot.child("chats")
         static func getChats(companyId:String, node:String) -> DatabaseReference {
             let path = "companies/\(companyId)/conversations/\(node)"
             return databaseRoot.child(path)
@@ -33,6 +32,7 @@ struct Config {
             case UnblockNumber = "remove_number_blacklist?"
             case ChangeColor = "set_colour?"
             case SendMessage = "send?"
+            case DirectMessage = "chat?"
         }
         
         static func getAuthenticationParamString(emailId:String, password:String) -> String {
@@ -57,6 +57,7 @@ struct Config {
                 case .UnblockNumber: return "\(serviceBasePublicAPI)\(ServiceType.UnblockNumber.rawValue)"
                 case .ChangeColor: return "\(serviceBasePublicAPI)\(ServiceType.ChangeColor.rawValue)"
                 case .SendMessage: return "\(serviceBasePublicAPI)\(ServiceType.SendMessage.rawValue)"
+                case .DirectMessage: return "\(serviceBasePublicAPI)\(ServiceType.DirectMessage.rawValue)"
             }
         }
     }

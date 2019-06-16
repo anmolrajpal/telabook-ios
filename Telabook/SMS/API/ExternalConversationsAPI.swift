@@ -154,14 +154,17 @@ final class ExternalConversationsAPI: NSObject, ExternalConversationsAPIProtocol
     internal var sendMessageApiURL:String {
         return Config.ServiceConfig.getServiceHostUri(.SendMessage)
     }
+    internal var directMessageApiURL:String {
+        return Config.ServiceConfig.getServiceHostUri(.DirectMessage)
+    }
     internal func sendMessageParamString(_ token: String, _ conversationId:String, message:String, type:ChatMessageType) -> String {
         switch type {
         case .SMS: return "token=\(token)&id=\(conversationId)&message=\(message)"
         case .MMS: return "token=\(token)&id=\(conversationId)&imageURL=\(message)"
         }
     }
-    func sendMessage(token:String, conversationId:String, message:String, type: ChatMessageType, completion: @escaping APICompletion) {
-        let serviceHost = sendMessageApiURL
+    func sendMessage(token:String, conversationId:String, message:String, type: ChatMessageType, isDirectMessage:Bool, completion: @escaping APICompletion) {
+        let serviceHost = isDirectMessage ? directMessageApiURL : sendMessageApiURL
         let paramString = sendMessageParamString(token, conversationId, message: message, type: type)
         let params = paramString.data(using: String.Encoding.ascii, allowLossyConversion: false)
         let uri = serviceHost

@@ -24,6 +24,7 @@ class SMSDetailViewController: UIViewController {
         self.workerId = conversation.workerId
         super.init(nibName: nil, bundle: nil)
         self.navigationItem.title = "\(conversation.personName?.capitalized ?? "")"
+        self.loadChats(node: conversation.internalNode)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -76,7 +77,7 @@ class SMSDetailViewController: UIViewController {
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        loadMockMessages()
+//        loadMockMessages()
         isMessagesControllerBeingDismissed = false
     }
     override func viewDidLoad() {
@@ -98,7 +99,6 @@ class SMSDetailViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-//        messages = []
         fetchedResultsController = externalConversationsFRC
         self.preFetchData(isArchived: false)
         self.fetchDataFromAPI(isArchive: false)
@@ -231,7 +231,7 @@ class SMSDetailViewController: UIViewController {
     }
     
     
-    /*
+    
     
     func loadChats(node:String?) {
         messages = []
@@ -240,24 +240,26 @@ class SMSDetailViewController: UIViewController {
             let query = Config.DatabaseConfig.getChats(companyId: String(companyId), node: node).queryLimited(toLast: 50)
             
             query.observe(.childAdded, with: { [weak self] snapshot in
+                print("Snapshot: =>")
+                print(snapshot)
                 let messageId = snapshot.key
                 if let data = snapshot.value as? [String: Any],
                     let text = data["message"] as? String,
                     let senderId = data["sender"] as? Int,
                     let senderName = data["sender_name"] as? String,
-                    //                    let senderNumber = data["sender_number"] as? String,
-                    //                    let isSenderWorker = data["sender_is_worker"] as? Int,
-                    //                    let type = data["type"] as? String,
+//                    let senderNumber = data["sender_number"] as? String,
+//                    let isSenderWorker = data["sender_is_worker"] as? Int,
+//                    let type = data["type"] as? String,
                     let date = data["date"] as? Double {
-                    //                    print("Message => \(text), senderId => \(senderId), Sender Name => \(senderName), Sender Number => \(senderNumber), is Sender a worker? => \(isSenderWorker), type => \(type), date => \(date)")
-                    let message = Message(text: text, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000.0 ))
+//                    print("Message => \(text), senderId => \(senderId), Sender Name => \(senderName), Sender Number => \(senderNumber), is Sender a worker? => \(isSenderWorker), type => \(type), date => \(date)")
+                    let message = Message(text: text, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date)))
                     //                    print(message)
                     self?.insertMessage(message)
                 }
             })
         }
     }
-    */
+    
      func loadMockMessages() {
         messages = []
         let mockUser = Sender(id: "99", displayName: "Arya Stark")
@@ -295,12 +297,13 @@ class SMSDetailViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         print("Being dismissed")
-        messages.removeAll()
-        messagesCollectionView.reloadData()
+        
         isMessagesControllerBeingDismissed = true
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+//        messages.removeAll()
+//        messagesCollectionView.reloadData()
         isMessagesControllerBeingDismissed = false
     }
     override func viewDidLayoutSubviews() {
@@ -473,31 +476,40 @@ class SMSDetailViewController: UIViewController {
     
     @objc fileprivate func segmentDidChange() {
         switch segmentedControl.selectedSegmentIndex {
-        case 0: print("Segment 0")
-//            self.startSpinner()
+        case 0: handleSegmentControls(for: .Inbox)
+        case 1: handleSegmentControls(for: .DirectMessage)
+        case 2: handleSegmentControls(for: .Archived)
+        default: fatalError("Invalid Segment")
+        }
+    }
+    private enum SegmentType {
+        case Inbox
+        case DirectMessage
+        case Archived
+    }
+    private func handleSegmentControls(for type:SegmentType) {
+        switch type {
+        case .Inbox:
+            messageInputBar.inputTextView.resignFirstResponder()
             messagesCollectionView.isHidden = true
             messageInputBar.isHidden = true
             tableView.isHidden = false
             self.fetchedResultsController = self.externalConversationsFRC
             self.preFetchData(isArchived: false)
             self.fetchDataFromAPI(isArchive: false)
-        case 1: tableView.isHidden = true
+        case .DirectMessage:
+            tableView.isHidden = true
             messagesCollectionView.isHidden = false
             messageInputBar.isHidden = false
-//            loadMockMessages()
-        case 2: print("Segment 2")
-//            startSpinner()
+        case .Archived:
+            messageInputBar.inputTextView.resignFirstResponder()
             messagesCollectionView.isHidden = true
             messageInputBar.isHidden = true
             tableView.isHidden = false
             self.fetchedResultsController = self.archivedConversationsFRC
             self.preFetchData(isArchived: true)
             self.fetchDataFromAPI(isArchive: true)
-        default: break
         }
-//        DispatchQueue.main.async {
-//            self.tableView.reloadData()
-//        }
     }
     fileprivate func updateTableContent() {
 //        self.preFetchData()
@@ -786,9 +798,9 @@ extension SMSDetailViewController : MessageInputBarDelegate {
         for component in data {
             if let str = component as? String {
                 DispatchQueue.main.async {
-                    self.insertMessage(Message(text: str, sender: UserDefaults.standard.currentSender, messageId: UUID().uuidString, date: Date()))
+//                    self.insertMessage(Message(text: str, sender: UserDefaults.standard.currentSender, messageId: UUID().uuidString, date: Date()))
                     
-//                    self.handleSendingMessageSequence(message: str, type: .SMS)
+                    self.handleSendingMessageSequence(message: str, type: .SMS)
                 }
             } else if let _ = component as? UIImage {
                 
@@ -796,7 +808,7 @@ extension SMSDetailViewController : MessageInputBarDelegate {
             }
         }
     }
-    /*
+    
     fileprivate func handleSendingMessageSequence(message:String, type:ChatMessageType) {
         FirebaseAuthService.shared.getCurrentToken { (token, error) in
             if let err = error {
@@ -806,24 +818,24 @@ extension SMSDetailViewController : MessageInputBarDelegate {
                     self.messageInputBar.sendButton.isEnabled = true
                 }
             } else if let token = token {
-                let id = self.conversationId
-                print("External Conversation ID => \(id)")
-                guard id != "0" else {
-                    print("Error: External Convo ID => 0")
+                let id = self.internalConversation.internalConversationId
+                print("Internal Conversation ID => \(id)")
+                guard id != 0 else {
+                    print("Error: Internal Convo ID => 0")
                     self.messageInputBar.sendButton.isEnabled = true
                     return
                 }
                 DispatchQueue.main.async {
-                    self.sendMessage(token: token, conversationId: id, message: message, type: type)
+                    self.sendMessage(token: token, conversationId: String(id), message: message, type: type)
                 }
                 
             }
         }
     }
-     */
-    /*
+    
+    
  private func sendMessage(token:String, conversationId:String, message:String, type:ChatMessageType) {
-        ExternalConversationsAPI.shared.sendMessage(token: token, conversationId: conversationId, message: message, type: type) { (responseStatus, data, serviceError, error) in
+    ExternalConversationsAPI.shared.sendMessage(token: token, conversationId: conversationId, message: message, type: type, isDirectMessage: true) { (responseStatus, data, serviceError, error) in
             if let err = error {
                 DispatchQueue.main.async {
                     UIAlertController.dismissModalSpinner(controller: self)
@@ -862,7 +874,6 @@ extension SMSDetailViewController : MessageInputBarDelegate {
             }
         }
     }
-    */
 }
 extension SMSDetailViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     

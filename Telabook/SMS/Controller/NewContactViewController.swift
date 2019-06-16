@@ -73,9 +73,8 @@ class NewContactViewController: UIViewController {
     @objc func cancelButtonTapped() {
         self.dismiss(animated: true, completion: nil)
     }
-    let cancelButton:UIButton = {
+    lazy var cancelButton:UIButton = {
         let button = UIButton(type: UIButton.ButtonType.system)
-        //        button.setTitleColor(.telaBlue, for: .normal)
         button.setAttributedTitle(NSAttributedString(string: "Cancel", attributes: [
             .font : UIFont(name: CustomFonts.gothamBook.rawValue, size: 15.0)!,
             .foregroundColor: UIColor.telaBlue
