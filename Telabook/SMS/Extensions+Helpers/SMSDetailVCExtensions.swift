@@ -93,17 +93,18 @@ extension SMSDetailViewController : UITableViewDelegate {
         blockAction.backgroundColor = .red
         
         let detailsAction =  UIContextualAction(style: .normal, title: "Details", handler: { (action,view,completionHandler ) in
-            //do stuff
+            let editDetailsVC = EditDetailsViewController()
+            editDetailsVC.view.backgroundColor = UIColor.telaGray1
+            editDetailsVC.modalPresentationStyle = .overFullScreen
+            DispatchQueue.main.async {
+                self.present(editDetailsVC, animated: true, completion: nil)
+            }
             completionHandler(true)
         })
-        detailsAction.image = #imageLiteral(resourceName: "radio_active")
+        detailsAction.image = #imageLiteral(resourceName: "radio_active").withRenderingMode(.alwaysOriginal)
         detailsAction.backgroundColor = .orange
         
-        let archiveAction = UIContextualAction(style: UIContextualAction.Style.normal, title: "Archive") { (action, view, completion) in
-            completion(true)
-        }
-        archiveAction.image = #imageLiteral(resourceName: "archive")
-        archiveAction.backgroundColor = .telaGray7
+        
         let configuration = UISwipeActionsConfiguration(actions: [blockAction, detailsAction])
         
         return configuration

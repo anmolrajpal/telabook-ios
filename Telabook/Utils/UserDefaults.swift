@@ -135,8 +135,9 @@ extension UserDefaults {
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.companyId.rawValue)
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.workerId.rawValue)
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.roleId.rawValue)
+        UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.currentSender.rawValue)
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.userId.rawValue)
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.userName.rawValue)
-//        UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.userObject.rawValue)
+        
     }
 }

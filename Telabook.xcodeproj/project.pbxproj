@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6F29FD4F22B7E28700BCA2AB /* OverlaySpinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F29FD4E22B7E28700BCA2AB /* OverlaySpinner.swift */; };
+		6F29FD5122B8B36400BCA2AB /* FollowUpCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F29FD5022B8B36400BCA2AB /* FollowUpCell.swift */; };
+		6F29FD5322B8FFD100BCA2AB /* CustomHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F29FD5222B8FFD100BCA2AB /* CustomHeaderView.swift */; };
+		6F29FD5522B909A600BCA2AB /* TextInputCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F29FD5422B909A600BCA2AB /* TextInputCell.swift */; };
 		6F6EAB3122A508380096365A /* InternalConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6EAB3022A508380096365A /* InternalConversation.swift */; };
 		6F9011D422AC3B130046F5E3 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9011D322AC3B130046F5E3 /* ChatViewController.swift */; };
 		6F9011D622ACCA900046F5E3 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9011D522ACCA900046F5E3 /* Message.swift */; };
@@ -68,6 +72,10 @@
 
 /* Begin PBXFileReference section */
 		1482E3F11B70E4874878A5EE /* Pods_Telabook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Telabook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6F29FD4E22B7E28700BCA2AB /* OverlaySpinner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySpinner.swift; sourceTree = "<group>"; };
+		6F29FD5022B8B36400BCA2AB /* FollowUpCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUpCell.swift; sourceTree = "<group>"; };
+		6F29FD5222B8FFD100BCA2AB /* CustomHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomHeaderView.swift; sourceTree = "<group>"; };
+		6F29FD5422B909A600BCA2AB /* TextInputCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInputCell.swift; sourceTree = "<group>"; };
 		6F6EAB3022A508380096365A /* InternalConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalConversation.swift; sourceTree = "<group>"; };
 		6F9011D322AC3B130046F5E3 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		6F9011D522ACCA900046F5E3 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
@@ -244,6 +252,7 @@
 				6FB11B20229D894A0098D050 /* SectionItemCell.swift */,
 				6FB11B2C229EB4C40098D050 /* RemindersViewController.swift */,
 				6FB11B2E229EB4F20098D050 /* FollowUpViewController.swift */,
+				6F29FD5022B8B36400BCA2AB /* FollowUpCell.swift */,
 				6FB11B30229EB5020098D050 /* CallGroupsViewController.swift */,
 				6FB11B32229EB5190098D050 /* OnlineUsersViewController.swift */,
 			);
@@ -295,6 +304,7 @@
 			isa = PBXGroup;
 			children = (
 				6FB11B0F229C23840098D050 /* Extensions.swift */,
+				6F29FD4E22B7E28700BCA2AB /* OverlaySpinner.swift */,
 				6FB11B2A229EA7C20098D050 /* Codable.swift */,
 				6FB11B1C229D19E10098D050 /* NetworkManager.swift */,
 				6FB11B18229D06BB0098D050 /* CustomUtils.swift */,
@@ -325,6 +335,8 @@
 				6FBDEC7922B3D3C200A8511E /* SMSDetailVCChatExtensions.swift */,
 				6FBDEC7522B28D4D00A8511E /* NewContactViewController.swift */,
 				6FBDEC7722B28D5E00A8511E /* EditDetailsViewController.swift */,
+				6F29FD5222B8FFD100BCA2AB /* CustomHeaderView.swift */,
+				6F29FD5422B909A600BCA2AB /* TextInputCell.swift */,
 				6F9011D322AC3B130046F5E3 /* ChatViewController.swift */,
 			);
 			path = Controller;
@@ -499,6 +511,7 @@
 				6F9011D422AC3B130046F5E3 /* ChatViewController.swift in Sources */,
 				6FB11B29229E75710098D050 /* FirebaseAuthService.swift in Sources */,
 				6FB8EA3F22AA34B600294EAC /* ChatColorHelpers.swift in Sources */,
+				6F29FD5522B909A600BCA2AB /* TextInputCell.swift in Sources */,
 				6FBDEC7822B28D5E00A8511E /* EditDetailsViewController.swift in Sources */,
 				6FB11B37229EF4300098D050 /* ManageAgentsViewController.swift in Sources */,
 				6FEF96A222A6677900F2FF83 /* ExternalConversation.swift in Sources */,
@@ -515,6 +528,7 @@
 				6FBDEC7C22B3F1DA00A8511E /* SMSDetailVC+CollectionView.swift in Sources */,
 				6FB11B1F229D88510098D050 /* SectionItem.swift in Sources */,
 				6F6EAB3122A508380096365A /* InternalConversation.swift in Sources */,
+				6F29FD5322B8FFD100BCA2AB /* CustomHeaderView.swift in Sources */,
 				6FEF96A022A50F4A00F2FF83 /* InternalConversationsAPI.swift in Sources */,
 				6FB11B25229E59F00098D050 /* Config.swift in Sources */,
 				6FB11B21229D894A0098D050 /* SectionItemCell.swift in Sources */,
@@ -526,6 +540,7 @@
 				6FB11AE4229BDDBD0098D050 /* AppDelegate.swift in Sources */,
 				6FB11B3B229EF4500098D050 /* BlockedUsersViewController.swift in Sources */,
 				6F9011D822B12BC40046F5E3 /* SMSDetailVCCoreDataHelpers.swift in Sources */,
+				6F29FD4F22B7E28700BCA2AB /* OverlaySpinner.swift in Sources */,
 				6FB11B0D229BFA430098D050 /* MoreViewController.swift in Sources */,
 				6FB11B14229C3FCA0098D050 /* BadgeBarItem.swift in Sources */,
 				6FEF96A422A6679400F2FF83 /* ExternalConversationsAPI.swift in Sources */,
@@ -534,6 +549,7 @@
 				6FB8EA4322AA596A00294EAC /* ChatArchivingHelpers.swift in Sources */,
 				6FEF96A822A682E700F2FF83 /* SMSDetailCell.swift in Sources */,
 				6FB11B1D229D19E10098D050 /* NetworkManager.swift in Sources */,
+				6F29FD5122B8B36400BCA2AB /* FollowUpCell.swift in Sources */,
 				6FB11B41229F7A290098D050 /* ManageAgentsCell.swift in Sources */,
 				6FB11B12229C31DF0098D050 /* Enums.swift in Sources */,
 				6FBDEC7A22B3D3C200A8511E /* SMSDetailVCChatExtensions.swift in Sources */,

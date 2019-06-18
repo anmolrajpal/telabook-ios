@@ -340,17 +340,11 @@ class LoginViewController: UIViewController {
                         }
                         return
                 }
+                print(userObject)
                 let currentSender = Sender(id: String(userObject.id ?? 0), displayName: (!(userObject.lastName?.isEmpty ?? true)) ? "\(userObject.name ?? "nil") \(userObject.lastName ?? "nil")" : userObject.name ?? "nil")
                 
                 UserDefaults.standard.currentSender = currentSender
-//                UserDefaults.standard.userObject = userObject
-//                let name = userObject.name
-//                let lastName = userObject.lastName
-//                let email = userObject.email
-//                let phone = userObject.phone
-//                let profileImage = userObject.profileImage
-//                let profileImageUrl = userObject.profileImageUrl
-//                let dict:[String:Any?] = ["name":name, "lastName":lastName]
+
                 
                 print("Signing in - USER: \(userObject.name ?? "") \(userObject.lastName ?? "") \nRole ID => \(roleId)")
                 self.setUserDefaults(token, companyId, workerId, roleId)

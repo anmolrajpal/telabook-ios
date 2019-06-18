@@ -48,8 +48,6 @@ extension UIView {
 }
 extension UIViewController {
     
-    
-    
     func setUpNavBar() {
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.telaBlue, .font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 15)!]
         navigationController?.navigationBar.prefersLargeTitles = false
@@ -238,6 +236,63 @@ extension String {
 }
 let imageCache = NSCache<NSString, UIImage>()
 extension UIImage {
+    static func textImage(image:UIImage, text:String) -> UIImage {
+        let font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 10.0)!
+        let textColor = UIColor.telaWhite
+        let expectedTextSize = (text as NSString).size(withAttributes: [.font: font])
+        let width = max(expectedTextSize.width, image.size.width)
+        let height = image.size.height + expectedTextSize.height + 5
+        let size = CGSize(width: width, height: height)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { context in
+//            context.currentImage.withRenderingMode(.alwaysOriginal)
+            let textX: CGFloat = expectedTextSize.width > image.size.width ? 0 : (image.size.width / 2) - (expectedTextSize.width / 2)
+            let textY: CGFloat = image.size.height + 5
+            
+            let textPoint: CGPoint = CGPoint.init(x: textX, y: textY)
+            text.draw(at: textPoint, withAttributes: [
+                .font: font,
+                .foregroundColor: textColor
+                ])
+            let imageX: CGFloat = expectedTextSize.width > image.size.width ? (expectedTextSize.width / 2) - (image.size.width / 2) : 0
+            let rect = CGRect(x: imageX,
+                              y: 0,
+                              width: image.size.width,
+                              height: image.size.height)
+            
+            image.draw(in: rect)
+//            image.withRenderingMode(.alwaysOriginal)
+        }
+    }
+    static func textEmbededImage(image: UIImage,
+                            text: String,
+                            isImageBeforeText: Bool,
+                            segFont: UIFont? = nil) -> UIImage {
+        let font = segFont ?? UIFont.systemFont(ofSize: 16)
+        let expectedTextSize = (text as NSString).size(withAttributes: [.font: font])
+        let width = expectedTextSize.width + image.size.width + 5
+        let height = max(expectedTextSize.height, image.size.width)
+        let size = CGSize(width: width, height: height)
+        
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { context in
+            let fontTopPosition: CGFloat = (height - expectedTextSize.height) / 2
+            let textOrigin: CGFloat = isImageBeforeText
+                ? image.size.width + 5
+                : 0
+            let textPoint: CGPoint = CGPoint.init(x: textOrigin, y: fontTopPosition)
+            text.draw(at: textPoint, withAttributes: [.font: font])
+            let alignment: CGFloat = isImageBeforeText
+                ? 0
+                : expectedTextSize.width + 5
+            let rect = CGRect(x: alignment,
+                              y: (height - image.size.height) / 2,
+                              width: image.size.width,
+                              height: image.size.height)
+//            image.withRenderingMode(.alwaysOriginal)
+            image.draw(in: rect)
+        }
+    }
     static public func placeholderInitialsImage(text: String) -> UIImage? {
 //        let image:UIImage = #imageLiteral(resourceName: "idle")
         let frame = CGRect(x: 0, y: 0, width: 50, height: 50)

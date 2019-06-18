@@ -279,6 +279,7 @@ class HomeViewController: UIViewController {
             }
             if let userInfoData = data {
                 self.userInfo = userInfoData
+                print(userInfoData.user!)
             }
         }
     }
