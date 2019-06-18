@@ -13,7 +13,6 @@ extension SMSDetailViewController : UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let count = fetchedResultsController.sections?.first?.numberOfObjects {
-            print("FRC Count => \(count)")
             return count
         }
         return 0
@@ -27,7 +26,6 @@ extension SMSDetailViewController : UITableViewDataSource {
         cell.selectedBackgroundView  = backgroundView
         cell.accessoryType = .disclosureIndicator
         if let conversation = fetchedResultsController.object(at: indexPath) as? ExternalConversation {
-            print("Person Name at indexpath \(indexPath.row) => \(conversation.internalAddressBookName ?? "null")")
             cell.externalConversation = conversation
         }
         return cell
@@ -61,14 +59,16 @@ extension SMSDetailViewController : UITableViewDelegate {
                     self.initiateChatArchivingSequence(markArchive: true, indexPath: indexPath, completion: completion)
                 }
             }
+            archiveAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "archive"), text: "Archive").withRenderingMode(.alwaysOriginal)
         } else {
             archiveAction = UIContextualAction(style: UIContextualAction.Style.normal, title: "Unarchive") { (action, view, completion) in
                 DispatchQueue.main.async {
                     self.initiateChatArchivingSequence(markArchive: false, indexPath: indexPath, completion: completion)
                 }
             }
+            archiveAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "archive"), text: "Unarchive").withRenderingMode(.alwaysOriginal)
         }
-        archiveAction.image = #imageLiteral(resourceName: "archive")
+        
         archiveAction.backgroundColor = .telaBlue
         let colorAction = UIContextualAction(style: UIContextualAction.Style.normal, title: "Chat Color") { (action, view, completion) in
             DispatchQueue.main.async {
@@ -76,7 +76,7 @@ extension SMSDetailViewController : UITableViewDelegate {
                 completion(true)
             }
         }
-        colorAction.image = #imageLiteral(resourceName: "edit")
+        colorAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "smiley_icon"), text: "Chat Color").withRenderingMode(.alwaysOriginal)
         colorAction.backgroundColor = .telaGray7
         let configuration = UISwipeActionsConfiguration(actions: [archiveAction, colorAction])
         return configuration
@@ -89,7 +89,7 @@ extension SMSDetailViewController : UITableViewDelegate {
             //do stuff
             completionHandler(true)
         })
-        blockAction.image = #imageLiteral(resourceName: "unblock")
+        blockAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "unblock"), text: "Block").withRenderingMode(.alwaysOriginal)
         blockAction.backgroundColor = .red
         
         let detailsAction =  UIContextualAction(style: .normal, title: "Details", handler: { (action,view,completionHandler ) in
@@ -101,10 +101,8 @@ extension SMSDetailViewController : UITableViewDelegate {
             }
             completionHandler(true)
         })
-        detailsAction.image = #imageLiteral(resourceName: "radio_active").withRenderingMode(.alwaysOriginal)
+        detailsAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "edit"), text: "Details").withRenderingMode(.alwaysOriginal)
         detailsAction.backgroundColor = .orange
-        
-        
         let configuration = UISwipeActionsConfiguration(actions: [blockAction, detailsAction])
         
         return configuration
@@ -114,7 +112,6 @@ extension SMSDetailViewController : UITableViewDelegate {
 extension SMSDetailViewController: NSFetchedResultsControllerDelegate {
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        print("did change object check")
         self.tableView.reloadData()
         /*
         switch type {

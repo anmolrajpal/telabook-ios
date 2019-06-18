@@ -9,7 +9,7 @@
 import UIKit
 
 class SMSDetailCell: UITableViewCell {
-    static let cellHeight:CGFloat = 91.0
+    static let cellHeight:CGFloat = 70.0
     var externalConversation:ExternalConversation? {
         didSet {
             guard let conversation = externalConversation else {return}
@@ -65,8 +65,8 @@ class SMSDetailCell: UITableViewCell {
     fileprivate func setupConstraints() {
         priorityImageView.centerYAnchor.constraint(equalTo:self.contentView.centerYAnchor).isActive = true
         priorityImageView.leadingAnchor.constraint(equalTo:self.contentView.leadingAnchor, constant:10).isActive = true
-        priorityImageView.widthAnchor.constraint(equalToConstant:40).isActive = true
-        priorityImageView.heightAnchor.constraint(equalToConstant:40).isActive = true
+        priorityImageView.widthAnchor.constraint(equalToConstant:30).isActive = true
+        priorityImageView.heightAnchor.constraint(equalToConstant:30).isActive = true
         containerView.anchor(top: contentView.topAnchor, left: priorityImageView.rightAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor, topConstant: 0, leftConstant: 5, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         nameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: -15).isActive = true
         nameLabel.anchor(top: nil, left: containerView.leftAnchor, bottom: nil, right: badgeCountLabel.leftAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)

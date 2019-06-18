@@ -96,8 +96,8 @@ class NewContactViewController: UIViewController {
         let textField = UITextField()
         textField.attributedPlaceholder = NSAttributedString(string: "Phone Number", attributes: [NSAttributedString.Key.font: UIFont(name: CustomFonts.gothamBook.rawValue, size: 18)!, NSAttributedString.Key.foregroundColor: UIColor.telaGray7])
         textField.textColor = UIColor.telaWhite
-        textField.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 22)
-        textField.setIcon(#imageLiteral(resourceName: "tab_call_active"), position: .Left)
+        textField.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 20)
+        textField.setDefault(string: "+1", at: .Left)
         textField.layer.borderColor = UIColor.telaGray5.cgColor
         textField.layer.borderWidth = 2
         textField.layer.cornerRadius = 15
@@ -105,13 +105,23 @@ class NewContactViewController: UIViewController {
         textField.keyboardAppearance = UIKeyboardAppearance.dark
         textField.textContentType = UITextContentType.telephoneNumber
         textField.translatesAutoresizingMaskIntoConstraints = false
-        //        textField.addTarget(self, action: #selector(idFieldDidReturn(textField:)), for: UIControl.Event.editingDidEndOnExit)
-        //        textField.addTarget(self, action: #selector(idFieldDidChange(textField:)), for: UIControl.Event.editingChanged)
+        //        textField.addTarget(self, action: #selector(numberFieldDidReturn(textField:)), for: UIControl.Event.editingDidEndOnExit)
+        textField.addTarget(self, action: #selector(numberFieldDidChange(textField:)), for: UIControl.Event.editingChanged)
         return textField
     }()
+    
+    @objc func numberFieldDidChange(textField:UITextField) {
+        let isPhoneNumberValid = textField.text?.isPhoneNumberLengthValid() ?? false
+        handleValidationSequence(isValidPhoneNumber: isPhoneNumberValid)
+    }
+    internal func handleValidationSequence(isValidPhoneNumber:Bool) {
+        messageButton.isEnabled = isValidPhoneNumber
+        messageButton.backgroundColor = messageButton.isEnabled ? UIColor.telaBlue : UIColor.telaGray5
+    }
+    
     lazy var messageButton: UIButton = {
         let button = UIButton(type: .system)
-        button.backgroundColor = UIColor.telaBlue
+        button.backgroundColor = UIColor.telaGray5
         button.setTitle("Start Conversation", for: .normal)
         button.titleLabel?.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 14)
         button.layer.borderColor = UIColor.telaBlue.cgColor
@@ -121,7 +131,7 @@ class NewContactViewController: UIViewController {
         button.clipsToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(handleButtonTapped), for: .touchUpInside)
-        button.isEnabled = true
+        button.isEnabled = false
         return button
     }()
     @objc func handleButtonTapped() {
@@ -144,10 +154,15 @@ class NewContactViewController: UIViewController {
                 let phoneNumber = self.numberTextField.text!
                 guard !phoneNumber.isEmpty else {
                     print("Empty")
+                    DispatchQueue.main.async {
+                    UIAlertController.dismissModalSpinner(controller: self, completion: {
+                         UIAlertController.showTelaAlert(title: "Empty", message: "Please enter a valid Phone Number", controller: self)
+                        })
+                    }
                     return
                 }
                 DispatchQueue.main.async {
-                    self.startNewConversation(token: token, phoneNumber: phoneNumber)
+                    self.startNewConversation(token: token, phoneNumber: "+1\(phoneNumber)")
                 }
             }
         }

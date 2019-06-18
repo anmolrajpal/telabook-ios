@@ -244,8 +244,4 @@ extension EditDetailsViewController: UITableViewDelegate {
         default: return 0
         }
     }
-    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        view.backgroundColor = .telaGray7
-        view.tintColor = .telaGray7
-    }
 }

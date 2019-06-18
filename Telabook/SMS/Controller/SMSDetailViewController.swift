@@ -112,13 +112,9 @@ class SMSDetailViewController: UIViewController {
     }
     fileprivate func setupNavBarItems() {
         let addButton = UIBarButtonItem(image: #imageLiteral(resourceName: "add").withRenderingMode(.alwaysOriginal), style: UIBarButtonItem.Style.done, target: self, action: #selector(addButtonTapped))
-//        addButton.tintColor = .telaBlue
-        let editButton = UIBarButtonItem(image: #imageLiteral(resourceName: "edit").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(editButtonTapped))
-        editButton.imageInsets = UIEdgeInsets(top: 0, left: 30, bottom: 0, right: 0)
-//        editButton.tintColor = .telaBlue
-//        let editButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(editButtonTapped))
-//        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
-        navigationItem.rightBarButtonItems = [addButton, editButton]
+//        let editButton = UIBarButtonItem(image: #imageLiteral(resourceName: "edit").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(editButtonTapped))
+//        editButton.imageInsets = UIEdgeInsets(top: 0, left: 30, bottom: 0, right: 0)
+        navigationItem.rightBarButtonItems = [addButton]
     }
     @objc func addButtonTapped() {
         let newContactVC = NewContactViewController()
@@ -518,10 +514,7 @@ class SMSDetailViewController: UIViewController {
     fileprivate func preFetchData(isArchived:Bool) {
         do {
             try self.fetchedResultsController.performFetch()
-//            DispatchQueue.main.async {
-                self.tableView.reloadData()
-//            }
-            print("COUNT FETCHED FIRST: \(String(describing: self.fetchedResultsController.sections?.first?.numberOfObjects))")
+            tableView.reloadData()
         } catch let error  {
             print("ERROR: \(error)")
         }

@@ -38,7 +38,7 @@ public enum CustomDateFormat: String {
         return "\(self.ddMMMyyyy.rawValue) | \(self.hmma.rawValue)"
     }
 }
-public enum TextFieldIconPosition {
+public enum TextFieldItemPosition {
     case Left
     case Right
 }

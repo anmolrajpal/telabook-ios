@@ -125,7 +125,7 @@ extension UIColor {
     }
 }
 extension UITextField {
-    func setIcon(_ image: UIImage, position: TextFieldIconPosition) {
+    func setIcon(_ image: UIImage, position: TextFieldItemPosition) {
         let iconView = UIImageView(frame:
             CGRect(x: 10, y: 10, width: 25, height: 25))
         iconView.image = image
@@ -137,6 +137,23 @@ extension UITextField {
             leftViewMode = .always
         } else {
             rightView = iconContainerView
+            rightViewMode = .always
+        }
+    }
+    func setDefault(string text:String, withFont font:UIFont = UIFont(name: CustomFonts.gothamBook.rawValue, size: 20.0)!, withColor color:UIColor = UIColor.telaWhite, at position: TextFieldItemPosition) {
+        let calculatedSize = (text as NSString).size(withAttributes: [.font: font])
+        let label = UILabel(frame: CGRect(x: 10, y: 10, width: calculatedSize.width, height: calculatedSize.height))
+        label.text = text
+        label.font = font
+        label.textColor = color
+        let containerView: UIView = UIView(frame:
+            CGRect(x: 10, y: 0, width: calculatedSize.width + 13, height: calculatedSize.height + 20))
+        containerView.addSubview(label)
+        if position == .Left {
+            leftView = containerView
+            leftViewMode = .always
+        } else {
+            rightView = containerView
             rightViewMode = .always
         }
     }
@@ -161,8 +178,8 @@ extension UIAlertController {
         alert.view.addSubview(loadingIndicator)
         controller.present(alert, animated: true, completion: nil)
     }
-    static func dismissModalSpinner(controller:UIViewController) {
-        controller.dismiss(animated: true, completion: nil)
+    static func dismissModalSpinner(controller:UIViewController, completion: (() -> Void)? = nil) {
+        controller.dismiss(animated: true, completion: completion)
     }
     static public func telaAlertController(title:String, message:String = "\n") -> UIAlertController {
         
@@ -220,6 +237,11 @@ extension String {
             text = ""
         }
         return text
+    }
+    func isPhoneNumberLengthValid() -> Bool {
+        let regex = "^[0-9]{10}"
+        let regexTest = NSPredicate(format: "SELF MATCHES %@", regex)
+        return regexTest.evaluate(with: self)
     }
     func isValidEmailAddress() -> Bool {
         let emailRegEx = "(?:[a-zA-Z0-9!#$%\\&‘*+/=?\\^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%\\&'*+/=?\\^_`{|}"
