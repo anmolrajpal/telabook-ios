@@ -30,7 +30,6 @@ extension SMSDetailViewController : UITableViewDataSource {
         }
         return cell
     }
-    
 }
 extension SMSDetailViewController : UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -93,13 +92,26 @@ extension SMSDetailViewController : UITableViewDelegate {
         blockAction.backgroundColor = .red
         
         let detailsAction =  UIContextualAction(style: .normal, title: "Details", handler: { (action,view,completionHandler ) in
-            let editDetailsVC = EditDetailsViewController()
-            editDetailsVC.view.backgroundColor = UIColor.telaGray1
-            editDetailsVC.modalPresentationStyle = .overFullScreen
-            DispatchQueue.main.async {
-                self.present(editDetailsVC, animated: true, completion: nil)
+            if let conversation = self.fetchedResultsController.object(at: indexPath) as? ExternalConversation {
+                let customerId = Int(conversation.customerId)
+                guard customerId != 0 else {
+                    print("Customer ID => 0")
+                    return
+                }
+                let editDetailsVC = EditDetailsViewController()
+                editDetailsVC.customerId = customerId
+                editDetailsVC.view.backgroundColor = UIColor.telaGray1
+                editDetailsVC.modalPresentationStyle = .overFullScreen
+                
+                DispatchQueue.main.async {
+                    self.present(editDetailsVC, animated: true, completion: nil)
+                }
+                completionHandler(true)
+            } else {
+                DispatchQueue.main.async {
+                    UIAlertController.showTelaAlert(title: "Error", message: "Invalid Conversation of Conversation not Found", controller: self)
+                }
             }
-            completionHandler(true)
         })
         detailsAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "edit"), text: "Details").withRenderingMode(.alwaysOriginal)
         detailsAction.backgroundColor = .orange
@@ -112,7 +124,8 @@ extension SMSDetailViewController : UITableViewDelegate {
 extension SMSDetailViewController: NSFetchedResultsControllerDelegate {
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        self.tableView.reloadData()
+//        self.tableView.reloadDataWithLayout()
+        tableView.reloadData()
         /*
         switch type {
         case .insert:

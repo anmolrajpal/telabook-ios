@@ -514,6 +514,7 @@ class SMSDetailViewController: UIViewController {
     fileprivate func preFetchData(isArchived:Bool) {
         do {
             try self.fetchedResultsController.performFetch()
+//            tableView.reloadDataWithLayout()
             tableView.reloadData()
         } catch let error  {
             print("ERROR: \(error)")

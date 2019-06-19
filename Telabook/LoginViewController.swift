@@ -46,11 +46,11 @@ class LoginViewController: UIViewController {
         spinner.widthAnchor.constraint(equalTo: loginButton.widthAnchor).isActive = true
         spinner.heightAnchor.constraint(equalTo: loginButton.heightAnchor).isActive = true
     }
-    fileprivate func startSpinner() {
+    fileprivate func startButtonSpinner() {
         spinner.startAnimating()
         self.view.isUserInteractionEnabled = false
     }
-    fileprivate func stopSpinner() {
+    fileprivate func stopButtonSpinner() {
         spinner.stopAnimating()
         self.view.isUserInteractionEnabled = true
     }
@@ -265,7 +265,7 @@ class LoginViewController: UIViewController {
     final private func login() {
         view.endEditing(true)
         let emailId = idTextField.text!, password = passwordTextField.text!
-        startSpinner()
+        startButtonSpinner()
         handleLoginSequence(emailId, password)
     }
     fileprivate func handleLoginSequence(_ emailId:String, _ password:String) {
@@ -276,7 +276,7 @@ class LoginViewController: UIViewController {
             if let err = error {
                 print("Error Catched at Firebase Token Completion => \(err.localizedDescription)")
                 DispatchQueue.main.async {
-                    self.stopSpinner()
+                    self.stopButtonSpinner()
                     UIAlertController.showTelaAlert(title: "Error", message: error?.localizedDescription ?? "Authentication Error. Please try again ", controller: self)
                 }
             }
@@ -284,7 +284,7 @@ class LoginViewController: UIViewController {
                 guard t != "" else {
                     print("Error: Empty token String")
                     DispatchQueue.main.async {
-                        self.stopSpinner()
+                        self.stopButtonSpinner()
                         UIAlertController.showTelaAlert(title: "Service Error", message: "Service Authentication error occured. Please try again", controller: self)
                     }
                     return
@@ -304,22 +304,22 @@ class LoginViewController: UIViewController {
                     
                     case .FailedRequest:
                         DispatchQueue.main.async {
-                            self.stopSpinner()
+                            self.stopButtonSpinner()
                             UIAlertController.showTelaAlert(title: "Request Timed Out", message: error?.localizedDescription ?? "Please try again later", controller: self)
                         }
                     case .InvalidResponse:
                         DispatchQueue.main.async {
-                            self.stopSpinner()
+                            self.stopButtonSpinner()
                             UIAlertController.showTelaAlert(title: "Invalid Response", message: error?.localizedDescription ?? "Please try again", controller: self)
                         }
                     case .Unknown:
                         DispatchQueue.main.async {
-                            self.stopSpinner()
+                            self.stopButtonSpinner()
                             UIAlertController.showTelaAlert(title: "Some Error Occured", message: error?.localizedDescription ?? "An unknown error occured. Please try again later.", controller: self)
                         }
                     case .Internal:
                         DispatchQueue.main.async {
-                            self.stopSpinner()
+                            self.stopButtonSpinner()
                             UIAlertController.showTelaAlert(title: "Internal Error Occured", message: error?.localizedDescription ?? "An internal error occured. Please try again later.", controller: self)
                         }
                     }
@@ -335,7 +335,7 @@ class LoginViewController: UIViewController {
                     let workerId = userObject.workerId else {
                         print("Company ID and worker Id - nil")
                         DispatchQueue.main.async {
-                            self.stopSpinner()
+                            self.stopButtonSpinner()
                             UIAlertController.showTelaAlert(title: "Error", message: "Error while saving login info. Please try logging in again", controller: self)
                         }
                         return
@@ -349,7 +349,7 @@ class LoginViewController: UIViewController {
                 print("Signing in - USER: \(userObject.name ?? "") \(userObject.lastName ?? "") \nRole ID => \(roleId)")
                 self.setUserDefaults(token, companyId, workerId, roleId)
                 DispatchQueue.main.async {
-                    self.stopSpinner()
+                    self.stopButtonSpinner()
                     self.dismiss(animated: true, completion: nil)
                 }
             }

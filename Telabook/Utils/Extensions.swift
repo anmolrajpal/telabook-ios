@@ -7,9 +7,31 @@
 //
 
 import UIKit
+
 public extension CodingUserInfoKey {
     // Helper property to retrieve the Core Data managed object context
     static let context = CodingUserInfoKey(rawValue: "managedObjectContext")
+}
+extension UITableView {
+    func reloadDataWithLayout() {
+        self.reloadData()
+        self.setNeedsLayout()
+        self.layoutIfNeeded()
+        self.reloadData()
+    }
+    func reloadAndScrollToTop() {
+        self.reloadData()
+        self.layoutIfNeeded()
+        //        self.contentOffset = CGPoint(x: 0, y: -self.contentInset.top)
+        self.scrollToRow(at: IndexPath.init(row: 0, section: 0), at: .top, animated: true)
+    }
+    func scrollToTop() {
+        self.contentOffset = .zero
+    }
+    func scrollToBottom(animated: Bool) {
+        //        let y = contentSize.height - frame.size.height + contentInset.bottom
+        setContentOffset(CGPoint(x: 0, y: CGFloat.greatestFiniteMagnitude), animated: animated)
+    }
 }
 extension UIView {
     func anchor(top: NSLayoutYAxisAnchor? = nil, left: NSLayoutXAxisAnchor? = nil, bottom: NSLayoutYAxisAnchor? = nil, right: NSLayoutXAxisAnchor? = nil, topConstant: CGFloat = 0, leftConstant: CGFloat = 0, bottomConstant: CGFloat = 0, rightConstant: CGFloat = 0, widthConstant: CGFloat = 0, heightConstant: CGFloat = 0) {
@@ -47,7 +69,13 @@ extension UIView {
     }
 }
 extension UIViewController {
-    
+//    func startSpinner() {
+//        OverlaySpinner.shared.spinner(mark: .Start)
+//    }
+//    func stopSpinner() {
+//        OverlaySpinner.shared.spinner(mark: .Stop)
+//    }
+
     func setUpNavBar() {
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.telaBlue, .font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 15)!]
         navigationController?.navigationBar.prefersLargeTitles = false

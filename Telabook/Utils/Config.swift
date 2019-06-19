@@ -33,6 +33,8 @@ struct Config {
             case ChangeColor = "set_colour?"
             case SendMessage = "send?"
             case DirectMessage = "chat?"
+            case GetCustomerDetails = "internal_address_book/index?"
+            case UpdateCustomerDetails = "internal_address_book/edit?"
         }
         
         static func getAuthenticationParamString(emailId:String, password:String) -> String {
@@ -58,6 +60,8 @@ struct Config {
                 case .ChangeColor: return "\(serviceBasePublicAPI)\(ServiceType.ChangeColor.rawValue)"
                 case .SendMessage: return "\(serviceBasePublicAPI)\(ServiceType.SendMessage.rawValue)"
                 case .DirectMessage: return "\(serviceBasePublicAPI)\(ServiceType.DirectMessage.rawValue)"
+                case .GetCustomerDetails: return "\(serviceBasePublicAPI)\(ServiceType.GetCustomerDetails.rawValue)"
+                case .UpdateCustomerDetails: return "\(serviceBasePublicAPI)\(ServiceType.UpdateCustomerDetails.rawValue)"
             }
         }
     }

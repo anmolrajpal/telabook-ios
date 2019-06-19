@@ -162,7 +162,7 @@ class NewContactViewController: UIViewController {
                     return
                 }
                 DispatchQueue.main.async {
-                    self.startNewConversation(token: token, phoneNumber: "+1\(phoneNumber)")
+                    self.startNewConversation(token: token, phoneNumber: "%2b1\(phoneNumber)")
                 }
             }
         }

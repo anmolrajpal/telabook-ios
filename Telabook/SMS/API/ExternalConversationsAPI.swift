@@ -208,6 +208,30 @@ final class ExternalConversationsAPI: NSObject, ExternalConversationsAPIProtocol
     
     
     
+    //MARK: PROTOCOL GET CUSTOMER DETAILS :BEGIN
+    internal var getCustomerDetailsApiURL:String {
+        return Config.ServiceConfig.getServiceHostUri(.GetCustomerDetails)
+    }
+    internal func getCustomerDetailsParamString(_ token: String, _ companyId:String, _ customerId:String) -> String {
+        return "token=\(token)&company_id=\(companyId)&customer_id=\(customerId)"
+    }
+    func getCustomerDetails(token:String, companyId:String, customerId:String, completion: @escaping APICompletion) {
+        let serviceHost = getCustomerDetailsApiURL
+        let paramString = getCustomerDetailsParamString(token, companyId, customerId)
+        let uri = serviceHost + paramString
+        let url = URL(string: uri)!
+        var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Config.ServiceConfig.timeoutInterval)
+        request.httpMethod = httpMethod.GET.rawValue
+        request.addValue(Header.contentType.json.rawValue, forHTTPHeaderField: Header.headerName.contentType.rawValue)
+        URLSession.shared.dataTask(with: request as URLRequest) { (data, response, error) in
+            self.handleResponse(data: data, response: response, error: error, completion: completion)
+            }.resume()
+    }
+    //MARK: PROTOCOL GET CUSTOMER DETAILS: END
+    
+    
+    
+    
     
     
     typealias APICompletion = (ResponseStatus?, Data?, ServiceError?, Error?) -> ()

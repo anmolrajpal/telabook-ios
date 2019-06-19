@@ -21,7 +21,6 @@ class SMSDetailCell: UITableViewCell {
         setupViews()
         setupConstraints()
     }
-    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -42,8 +41,10 @@ class SMSDetailCell: UITableViewCell {
         let dateStr = Date.getStringFromDate(date: dateTime, dateFormat: CustomDateFormat.ddMMMyyyy)
         let timeStr = Date.getStringFromDate(date: dateTime, dateFormat: CustomDateFormat.hmma)
         let dateTimeStr = "\(dateStr) | \(timeStr)"
-        self.dateTimeLabel.text = dateTimeStr
+//        let size = (dateTimeStr as NSString).size(withAttributes: [.font: dateTimeLabel.font!])
         
+        self.dateTimeLabel.text = dateTimeStr
+//        self.dateTimeLabel.widthAnchor.constraint(equalToConstant: size.width + 20).isActive = true
         let color = UIColor.getConversationColor(color: ConversationColor.getColorBy(colorCode: Int(conversation.colour)))
         self.nameLabel.textColor = color
         let count = conversation.unreadMessages
@@ -72,21 +73,20 @@ class SMSDetailCell: UITableViewCell {
         nameLabel.anchor(top: nil, left: containerView.leftAnchor, bottom: nil, right: badgeCountLabel.leftAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
         badgeCountLabel.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor).isActive = true
         badgeCountLabel.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0).isActive = true
+        
+        
         lastMessageLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: 15).isActive = true
-        lastMessageLabel.anchor(top: nil, left: nameLabel.leftAnchor, bottom: nil, right: dateTimeLabel.leftAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 10, widthConstant: 0, heightConstant: 0)
+        
+        lastMessageLabel.anchor(top: nil, left: nameLabel.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 80, widthConstant: containerView.frame.width / 2, heightConstant: 0)
         dateTimeLabel.centerYAnchor.constraint(equalTo: lastMessageLabel.centerYAnchor).isActive = true
-        dateTimeLabel.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0).isActive = true
+        dateTimeLabel.anchor(top: nil, left: nil, bottom: nil, right: containerView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         
     }
     let priorityImageView:UIImageView = {
         let imageView = UIImageView()
         imageView.image = #imageLiteral(resourceName: "followup_small_high")
         imageView.contentMode = .scaleAspectFill
-//        imageView.backgroundColor = .green
         imageView.translatesAutoresizingMaskIntoConstraints = false
-//        imageView.layer.cornerRadius = 35
-//        imageView.layer.borderWidth = 1
-//        imageView.layer.borderColor = UIColor.telaBlue.cgColor
         imageView.clipsToBounds = true
         return imageView
     }()
