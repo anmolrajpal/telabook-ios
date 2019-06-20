@@ -7,7 +7,32 @@
 //
 
 import UIKit
-
+extension URLSession {
+    func constructURL(scheme:String = Config.ServiceConfig.serviceURLScheme, host:String = Config.ServiceConfig.serviceHost, path:Config.ServiceConfig.ServiceTypePath, parameters:[String:String]? = nil) -> URL? {
+        var components = URLComponents()
+        components.scheme = scheme
+        components.host = host
+        components.path = Config.ServiceConfig.getServiceURLPath(for: path)
+        if let parameters = parameters {
+            components.setQueryItems(with: parameters)
+        }
+        return components.url
+    }
+}
+extension URLComponents {
+//    mutating func constructURL(scheme:String = Config.ServiceConfig.serviceURLScheme, host:String = Config.ServiceConfig.serviceHost, path:Config.ServiceConfig.ServiceTypePath, parameters:[String:String]? = nil) -> URL? {
+//        self.scheme = scheme
+//        self.host = host
+//        self.path = Config.ServiceConfig.getServiceURLPath(for: path)
+//        if let parameters = parameters {
+//            self.setQueryItems(with: parameters)
+//        }
+//        return self.url
+//    }
+    mutating func setQueryItems(with parameters: [String: String]) {
+        self.queryItems = parameters.map { URLQueryItem(name: $0.key, value: $0.value) }
+    }
+}
 public extension CodingUserInfoKey {
     // Helper property to retrieve the Core Data managed object context
     static let context = CodingUserInfoKey(rawValue: "managedObjectContext")

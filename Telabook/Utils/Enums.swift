@@ -51,6 +51,9 @@ public enum httpMethod:String {
     case POST
     case PUT
 }
+public enum UrlScheme:String {
+    case http, https
+}
 public enum ServiceError:Error {
     case Unknown
     case FailedRequest
@@ -146,6 +149,30 @@ public enum ResponseStatus {
     case ServiceUnavailable
     //Custom
     case UnknownResponse
+    
+    static func getStatusCode(by status:ResponseStatus) -> Int {
+        switch status {
+        //2xx
+        case .OK: return 200
+        case .Created: return 201
+        case .Accepted: return 202
+        case .NoContent: return 204
+        //4xx
+        case .BadRequest: return 400
+        case .Unauthorized: return 401
+        case .Forbidden: return 403
+        case .NotFound: return 404
+        case .MethodNotAllowed: return 405
+        case .RequestTimeout: return 408
+        case .Conflict: return 409
+        //5xx
+        case .InternalServerError: return 500
+        case .NotImplemented: return 501
+        case .BadGateway: return 502
+        case .ServiceUnavailable: return 503
+        case .UnknownResponse: return 0
+        }
+    }
     
     static func getResponseStatusBy(statusCode:Int) -> ResponseStatus {
         switch statusCode {

@@ -94,17 +94,24 @@ extension SMSDetailViewController : UITableViewDelegate {
         let detailsAction =  UIContextualAction(style: .normal, title: "Details", handler: { (action,view,completionHandler ) in
             if let conversation = self.fetchedResultsController.object(at: indexPath) as? ExternalConversation {
                 let customerId = Int(conversation.customerId)
-                guard customerId != 0 else {
-                    print("Customer ID => 0")
+                let workerId = Int(self.workerId)
+                guard customerId != 0, workerId != 0 else {
+                    print("Customer ID & Worker ID => 0")
                     return
                 }
-                let editDetailsVC = EditDetailsViewController()
-                editDetailsVC.customerId = customerId
-                editDetailsVC.view.backgroundColor = UIColor.telaGray1
-                editDetailsVC.modalPresentationStyle = .overFullScreen
+//                let editDetailsVC = EditDetailsViewController()
+//                editDetailsVC.customerId = customerId
+//                editDetailsVC.view.backgroundColor = UIColor.telaGray1
+//                editDetailsVC.modalPresentationStyle = .overFullScreen
                 
+                let customerDetailsVC = CustomerDetailsViewController()
+                customerDetailsVC.customerId = customerId
+                customerDetailsVC.workerId = workerId
+                customerDetailsVC.view.backgroundColor = UIColor.telaGray1
+                customerDetailsVC.modalPresentationStyle = .overFullScreen
                 DispatchQueue.main.async {
-                    self.present(editDetailsVC, animated: true, completion: nil)
+                    self.present(customerDetailsVC, animated: true, completion: nil)
+//                    self.present(editDetailsVC, animated: true, completion: nil)
                 }
                 completionHandler(true)
             } else {

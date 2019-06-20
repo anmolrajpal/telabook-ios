@@ -231,7 +231,47 @@ final class ExternalConversationsAPI: NSObject, ExternalConversationsAPIProtocol
     
     
     
-    
+    //MARK: PROTOCOL EDIT CUSTOMER DETAILS :BEGIN
+    internal var updateCustomerDetailsApiURL:String {
+        return Config.ServiceConfig.getServiceHostUri(.UpdateCustomerDetails)
+    }
+    internal func getUpdateCustomerDetailsParameters(_ token: String, _ companyId:String, _ customerId:String, _ workerId:String, _ name:String, _ surname:String, _ addressOne:String, _ addressTwo:String, _ description:String, _ star:ConversationPriority, _ isCustomer:Bool, _ isNameActive:Bool) -> [String:String] {
+        let parameters:[String:String] = [
+            "token":token,
+            "company_id":companyId,
+            "customer_id":customerId,
+            "worker_id":workerId,
+            "internal_address_book_names":name,
+            "internal_address_book_surnames":surname,
+            "internal_address_book_address_one":addressOne,
+            "internal_address_book_address_two":addressTwo,
+            "internal_address_book_description":description,
+            "internal_address_book_star":String(ConversationPriority.getPriorityCode(by: star)),
+            "internal_address_book_is_custumer":String(isCustomer ? 1 : 0),
+            "internal_address_book_active_name":String(isNameActive ? 1 : 0)
+        ]
+        return parameters
+//        return "token=\(token)&company_id=\(companyId)&customer_id=\(customerId)&worker_id=\(workerId)&internal_address_book_names=\(name)&internal_address_book_surnames=\(surname)&internal_address_book_address_one=\(addressOne)&internal_address_book_address_two=\(addressTwo)&internal_address_book_description=\(description)&internal_address_book_star=\(ConversationPriority.getPriorityCode(by: star))&internal_address_book_is_custumer=\(isCustomer ? 1 : 0)&internal_address_book_active_name=\(isNameActive ? 1 : 0)"
+    }
+    func updateCustomerDetails(token:String, companyId:String, customerId:String, workerId:String, name:String, surname:String, addressOne:String, addressTwo:String, description:String, star:ConversationPriority, isCustomer:Bool, isNameActive:Bool, completion: @escaping APICompletion) {
+        let parameters = getUpdateCustomerDetailsParameters(token, companyId, customerId, workerId, name, surname, addressOne, addressTwo, description, star, isCustomer, isNameActive)
+        guard let url = URLSession.shared.constructURL(path: .UpdateCustomerDetails, parameters: parameters) else {
+            print("Error: Unable to construct URL")
+            DispatchQueue.main.async {
+                completion(nil, nil, .Internal, NSError(domain: "", code: ResponseStatus.getStatusCode(by: .BadRequest), userInfo: nil))
+            }
+            return
+        }
+
+        var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Config.ServiceConfig.timeoutInterval)
+        request.httpMethod = httpMethod.POST.rawValue
+//        request.addValue(Header.contentType.urlEncoded.rawValue, forHTTPHeaderField: Header.headerName.contentType.rawValue)
+        
+        URLSession.shared.dataTask(with: request as URLRequest) { (data, response, error) in
+            self.handleResponse(data: data, response: response, error: error, completion: completion)
+            }.resume()
+    }
+    //MARK: PROTOCOL EDIT CUSTOMER DETAILS: END
     
     
     typealias APICompletion = (ResponseStatus?, Data?, ServiceError?, Error?) -> ()

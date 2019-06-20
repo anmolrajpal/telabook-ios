@@ -238,9 +238,8 @@ class EditDetailsViewController: UIViewController {
                     if status == .NoContent {
                         DispatchQueue.main.async {
                             self.stopSpinner()
-                            self.setPlaceholdersViewsState(isHidden: false)
-                            self.setViewsState(isHidden: true)
-                            self.placeholderLabel.text = "No Content"
+                            self.setPlaceholdersViewsState(isHidden: true)
+                            self.setViewsState(isHidden: false)
                         }
                     } else {
                         DispatchQueue.main.async {
@@ -250,7 +249,6 @@ class EditDetailsViewController: UIViewController {
                             self.placeholderLabel.text = "Invalid Response: \(status)"
                         }
                     }
-                    print("***Invalid Response****\nResponse Status => \(status)")
                     return
                 }
                 if let data = data {
