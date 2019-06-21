@@ -11,6 +11,8 @@ import CoreData
 import MessageKit
 import MessageInputBar
 import Photos
+import FirebaseStorage
+
 class SMSDetailViewController: UIViewController {
     
     
@@ -41,7 +43,6 @@ class SMSDetailViewController: UIViewController {
         let andPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [workerIdPredicate, archiveCheckPredicate])
         fetchRequest.predicate = andPredicate
         let frc = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: PersistenceService.shared.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
-        print(frc)
         frc.delegate = self
         return frc
     }()
@@ -101,6 +102,12 @@ class SMSDetailViewController: UIViewController {
         super.viewWillAppear(animated)
         fetchedResultsController = externalConversationsFRC
         self.preFetchData(isArchived: false)
+        let count = self.fetchedResultsController.sections?.first?.numberOfObjects
+        if count == 0 {
+            self.startSpinner()
+        }
+        self.startNetworkSpinner()
+        
         self.fetchDataFromAPI(isArchive: false)
     }
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -140,8 +147,8 @@ class SMSDetailViewController: UIViewController {
         layout?.setMessageIncomingAvatarSize(.zero)
         layout?.setMessageOutgoingMessageBottomLabelAlignment(LabelAlignment(textAlignment: .right, textInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 15)))
         layout?.setMessageIncomingMessageBottomLabelAlignment(LabelAlignment(textAlignment: .left, textInsets: UIEdgeInsets(top: 5, left: 15, bottom: 0, right: 0)))
-//        scrollsToBottomOnKeyboardBeginsEditing = true
-//        maintainPositionOnKeyboardFrameChanged = true
+        scrollsToBottomOnKeyboardBeginsEditing = true
+        maintainPositionOnKeyboardFrameChanged = true
     }
     
     func configureMessageInputBar() {
@@ -183,6 +190,9 @@ class SMSDetailViewController: UIViewController {
         //        )
     }
     @objc private func cameraButtonPressed() {
+        promptPhotosPickerMenu()
+    }
+    private func handleSourceTypeCamera() {
         let picker = UIImagePickerController()
         picker.delegate = self
         
@@ -191,9 +201,123 @@ class SMSDetailViewController: UIViewController {
         } else {
             picker.sourceType = .photoLibrary
         }
-        
-        self.present(picker, animated: true, completion: nil)
+        picker.modalPresentationStyle = .overFullScreen
+        present(picker, animated: true, completion: nil)
     }
+    private func handleSourceTypeGallery() {
+        let picker = UIImagePickerController()
+        picker.delegate = self
+        picker.sourceType = .photoLibrary
+        picker.modalPresentationStyle = .overFullScreen
+        present(picker, animated: true, completion: nil)
+    }
+    internal func promptPhotosPickerMenu() {
+        let alert = UIAlertController(title: "Choose Image Source", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+        let cameraAction = UIAlertAction(title: "Camera", style: UIAlertAction.Style.default, handler: { (action) in
+            self.handleSourceTypeCamera()
+        })
+        
+        let galleryAction = UIAlertAction(title: "Gallery", style: UIAlertAction.Style.default, handler: { (action) in
+            self.handleSourceTypeGallery()
+        })
+       
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.destructive, handler: nil)
+        alert.addAction(cameraAction)
+        alert.addAction(galleryAction)
+        alert.addAction(cancelAction)
+    alert.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = UIColor.telaGray6
+        
+        alert.view.tintColor = UIColor.telaBlue
+        alert.view.subviews.first?.subviews.first?.backgroundColor = .clear
+        alert.view.subviews.first?.backgroundColor = .clear
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    
+    
+    private var isSendingPhoto = false {
+        didSet {
+            DispatchQueue.main.async {
+                self.messageInputBar.leftStackViewItems.forEach { item in
+//                    item.isEnabled = !self.isSendingPhoto
+                    
+                }
+            }
+        }
+    }
+    fileprivate var storageUploadTask:StorageUploadTask!
+    private func uploadImage(_ image: UIImage, callback: @escaping (URL?) -> Void) {
+     
+        
+        guard let scaledImage = image.scaledToSafeUploadSize, let data = scaledImage.jpegData(compressionQuality: 0.4) else {
+            callback(nil)
+            return
+        }
+        
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/jpeg"
+        
+        
+        
+        let imageName = [UUID().uuidString, String(Int(Date().timeIntervalSince1970)*1000)].joined(separator: "-") + ".jpg"
+        let ref = Config.StorageConfig.messageImageRef.child(imageName)
+        
+   
+        storageUploadTask = ref.putData(data, metadata: metadata, completion: { (meta, error) in
+            guard error == nil else {
+                print("Error uploading: \(error!)")
+                callback(nil)
+                return
+            }
+            ref.downloadURL(completion: { (url, err) in
+                guard let downloadUrl = url else {
+                    if let err = err {
+                        print("Error: Unable to get download url => \(err.localizedDescription)")
+                    }
+                    callback(nil)
+                    return
+                }
+                callback(downloadUrl)
+            })
+        })
+        
+    }
+    
+    private func sendPhoto(_ image: UIImage) {
+        isSendingPhoto = true
+        
+        uploadImage(image) { [weak self] url in
+            guard let `self` = self else {
+                return
+            }
+            self.isSendingPhoto = false
+            
+            guard let url = url else {
+                return
+            }
+            self.handleSendingMessageSequence(message: url.absoluteString, type: .MMS)
+        }
+    }
+    
+    private func downloadImage(at url: URL, completion: @escaping (UIImage?) -> Void) {
+        let ref = Storage.storage().reference(forURL: url.absoluteString)
+        let megaByte = Int64(1 * 1024 * 1024)
+        
+        ref.getData(maxSize: megaByte) { data, error in
+            guard let imageData = data else {
+                completion(nil)
+                return
+            }
+            
+            completion(UIImage(data: imageData))
+        }
+    }
+    
+    
+    
+    
+    
+    
     // MARK: - Helpers
     func insert(_ message:Message) {
         self.messages.append(message)
@@ -236,21 +360,41 @@ class SMSDetailViewController: UIViewController {
             let query = Config.DatabaseConfig.getChats(companyId: String(companyId), node: node).queryLimited(toLast: 50)
             
             query.observe(.childAdded, with: { [weak self] snapshot in
-                print("Snapshot: =>")
-                print(snapshot)
                 let messageId = snapshot.key
-                if let data = snapshot.value as? [String: Any],
-                    let text = data["message"] as? String,
-                    let senderId = data["sender"] as? Int,
-                    let senderName = data["sender_name"] as? String,
-//                    let senderNumber = data["sender_number"] as? String,
-//                    let isSenderWorker = data["sender_is_worker"] as? Int,
-//                    let type = data["type"] as? String,
-                    let date = data["date"] as? Double {
-//                    print("Message => \(text), senderId => \(senderId), Sender Name => \(senderName), Sender Number => \(senderNumber), is Sender a worker? => \(isSenderWorker), type => \(type), date => \(date)")
-                    let message = Message(text: text, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date)))
-                    //                    print(message)
-                    self?.insertMessage(message)
+                if let data = snapshot.value as? [String: Any] {
+                    
+                    
+                    if let text = data["message"] as? String,
+                        let senderId = data["sender"] as? Int,
+                        let senderName = data["sender_name"] as? String,
+    //                    let senderNumber = data["sender_number"] as? String,
+    //                    let isSenderWorker = data["sender_is_worker"] as? Int,
+    //                    let type = data["type"] as? String,
+                        let date = data["date"] as? Double {
+                        let message = Message(text: text, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date)))
+                        self?.insertMessage(message)
+                    } else if let imageUrl = data["img"] as? String,
+                        let senderId = data["sender"] as? Int,
+                        let senderName = data["sender_name"] as? String,
+                        //                    let senderNumber = data["sender_number"] as? String,
+                        //                    let isSenderWorker = data["sender_is_worker"] as? Int,
+                        //                    let type = data["type"] as? String,
+                        let date = data["date"] as? Double {
+                        guard let url = URL(string: imageUrl) else {
+                            print("Unable to construct URL from imageURL => \(imageUrl)")
+                            return
+                        }
+                        self?.downloadImage(at: url) { [weak self] image in
+                            guard let `self` = self else {
+                                return
+                            }
+                            guard let image = image else {
+                                return
+                            }
+                            let message = Message(image: image, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date)))
+                            self.insertMessage(message)
+                        }
+                    }
                 }
             })
         }
@@ -289,6 +433,18 @@ class SMSDetailViewController: UIViewController {
         tryAgainButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
     }
     
+    fileprivate func startSpinner() {
+        OverlaySpinner.shared.spinner(mark: .Start)
+    }
+    fileprivate func stopSpinner() {
+        OverlaySpinner.shared.spinner(mark: .Stop)
+    }
+    fileprivate func startNetworkSpinner() {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+    }
+    fileprivate func stopNetworkSpinner() {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = false
+    }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -353,7 +509,7 @@ class SMSDetailViewController: UIViewController {
     
     private func setupDefaults() {
         extendedLayoutIncludesOpaqueBars = true
-        automaticallyAdjustsScrollViewInsets = false
+        UIScrollView().contentInsetAdjustmentBehavior = .never
 
         messagesCollectionView.keyboardDismissMode = .interactive
         messagesCollectionView.alwaysBounceVertical = true
@@ -374,20 +530,12 @@ class SMSDetailViewController: UIViewController {
     }
     
     
-    
-    
-    
     fileprivate func setupTableView() {
         tableView.register(SMSDetailCell.self, forCellReuseIdentifier: NSStringFromClass(SMSDetailCell.self))
         tableView.delegate = self
         tableView.dataSource = self
     }
-    fileprivate func startSpinner() {
-        self.spinner.startAnimating()
-    }
-    fileprivate func stopSpinner() {
-        self.spinner.stopAnimating()
-    }
+ 
     @objc func handleTryAgainAction() {
         self.setPlaceholdersViewsState(isHidden: true)
         self.setViewsState(isHidden: true)
@@ -527,6 +675,8 @@ class SMSDetailViewController: UIViewController {
                 print("\n***Error***\n")
                 print(err)
                 DispatchQueue.main.async {
+                    self.stopSpinner()
+                    self.stopNetworkSpinner()
                     UIAlertController.showTelaAlert(title: "Error", message: err.localizedDescription, controller: self)
                 }
             } else if let token = token {
@@ -546,11 +696,15 @@ class SMSDetailViewController: UIViewController {
             if let err = error {
                 print("***Error Fetching Conversations****\n\(err.localizedDescription)")
                 DispatchQueue.main.async {
+                    self.stopSpinner()
+                    self.stopNetworkSpinner()
                     self.showAlert(title: "Error", message: err.localizedDescription)
                 }
             } else if let serviceErr = serviceError {
                 print("***Error Fetching Conversations****\n\(serviceErr.localizedDescription)")
                 DispatchQueue.main.async {
+                    self.stopSpinner()
+                    self.stopNetworkSpinner()
                     self.showAlert(title: "Error", message: serviceErr.localizedDescription)
                 }
             } else if let status = responseStatus {
@@ -558,6 +712,8 @@ class SMSDetailViewController: UIViewController {
                     if status == .NoContent {
                         DispatchQueue.main.async {
 //                            self.stopSpinner()
+                            self.stopSpinner()
+                            self.stopNetworkSpinner()
                             print("***No Content****\nResponse Status => \(status)")
 //                            self.setViewsState(isHidden: true)
 //                            self.setPlaceholdersViewsState(isHidden: false)
@@ -566,6 +722,8 @@ class SMSDetailViewController: UIViewController {
                     } else {
                         print("***Invalid Response****\nResponse Status => \(status)")
                         DispatchQueue.main.async {
+                            self.stopSpinner()
+                            self.stopNetworkSpinner()
                             self.showAlert(title: "Error", message: "Unable to fetch conversations. Please try again.")
                         }
                     }
@@ -574,6 +732,8 @@ class SMSDetailViewController: UIViewController {
                 if let data = data {
                     DispatchQueue.main.async {
 //                        self.clearConversationData()
+                        self.stopSpinner()
+                        self.stopNetworkSpinner()
                         self.saveToCoreData(data: data, isArchived: isArchived)
                     }
                 }
@@ -869,6 +1029,15 @@ extension SMSDetailViewController : MessageInputBarDelegate {
         }
     }
 }
+extension UIImagePickerController {
+    open override var childForStatusBarHidden: UIViewController? {
+        return nil
+    }
+    
+    open override var prefersStatusBarHidden: Bool {
+        return true
+    }
+}
 extension SMSDetailViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
@@ -880,11 +1049,10 @@ extension SMSDetailViewController: UIImagePickerControllerDelegate, UINavigation
                 guard let image = result else {
                     return
                 }
-                
-                //                self.sendPhoto(image)
+                self.sendPhoto(image)
             }
-        } else if let image = info[.originalImage] as? UIImage { // 2
-            //            sendPhoto(image)
+        } else if let image = info[.originalImage] as? UIImage {
+                sendPhoto(image)
         }
     }
     

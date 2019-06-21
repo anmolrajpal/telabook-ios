@@ -62,7 +62,6 @@ extension SMSDetailViewController {
             if let savedConvos = self.fetchSavedExternalConvos(isArchive: false, context: context) {
                 do {
                     print("saved external count => \(savedConvos.count)")
-                    print(savedConvos)
                     if let savedFilteredConvos = try context.fetch(matchingRequest) as? [ExternalConversation] {
                         print("Saved Filtered External Convos Count => \(savedFilteredConvos.count)")
                         self.deleteConvos(savedConvos, savedFilteredConvos, context)
@@ -80,7 +79,6 @@ extension SMSDetailViewController {
     func deleteConvos(_ savedConvos:[ExternalConversation], _ savedFilteredConvos:[ExternalConversation], _ context:NSManagedObjectContext) {
         let convosToDelete = savedConvos.filter({!savedFilteredConvos.contains($0)})
         print("External Convos to delete: Count=> \(convosToDelete.count)")
-        print(convosToDelete)
         guard !convosToDelete.isEmpty else {
             print("No External Convos to delete")
             return
@@ -110,7 +108,6 @@ extension SMSDetailViewController {
         matchingRequest.predicate = NSPredicate(format: "externalConversationId in %@", argumentArray: [toUpateConvoIds])
         do {
             let convosToUpdate = try context.fetch(matchingRequest) as! [ExternalConversation]
-            print("External Convos to update => \(convosToUpdate)")
             convosToUpdate.forEach { (convo) in
                 ExternalConversation.update(conversation: convo, context: context, externalConversation: fetchedConvos.first(where: { (con) -> Bool in
                     con.externalConversationId == Int(convo.externalConversationId)
@@ -125,8 +122,7 @@ extension SMSDetailViewController {
         let newConvos = fetchedConvos.filter { (coco) -> Bool in
             !savedFilteredConvos.contains(where: { Int($0.externalConversationId) == coco.externalConversationId })
         }
-        print("New External Convos: Count => \(newConvos.count)")
-        print("New External Convos => \(newConvos)")
+        
         guard !newConvos.isEmpty else {
             print("No External Convos to insert")
             return

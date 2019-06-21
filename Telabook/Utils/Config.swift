@@ -8,6 +8,7 @@
 
 import Foundation
 import Firebase
+import FirebaseStorage
 struct Config {
     struct DatabaseConfig {
         static let databaseRoot = Database.database().reference()
@@ -15,6 +16,11 @@ struct Config {
             let path = "companies/\(companyId)/conversations/\(node)"
             return databaseRoot.child(path)
         }
+    }
+    struct StorageConfig {
+        static let storageRoot = Storage.storage().reference()
+        static let profileImageRef = StorageConfig.storageRoot.child("profile-image")
+        static let messageImageRef = StorageConfig.storageRoot.child("img")
     }
     struct ServiceConfig {
         static let timeoutInterval:TimeInterval = 16.0

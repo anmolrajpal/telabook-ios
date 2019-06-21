@@ -29,16 +29,15 @@ class SMSViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpNavBar()
-        self.preFetchData()
-        self.setupSearchBar()
-//        updateTableContent()
         
+        self.setupSearchBar()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationItem.title = "SMS"
-        updateTableContent()
+        self.preFetchData()
+        self.updateTableContent()
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -73,6 +72,22 @@ class SMSViewController: UIViewController {
         tv.tableFooterView = UIView(frame: CGRect.zero)
         return tv
     }()
+    
+    
+    fileprivate func startSpinner() {
+        OverlaySpinner.shared.spinner(mark: .Start)
+    }
+    fileprivate func stopSpinner() {
+        OverlaySpinner.shared.spinner(mark: .Stop)
+    }
+    fileprivate func startNetworkSpinner() {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+    }
+    fileprivate func stopNetworkSpinner() {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = false
+    }
+    
+    
     fileprivate func setupSearchBar() {
         searchController.searchBar.delegate = self
         searchController.searchBar.autocapitalizationType = .none
@@ -99,13 +114,17 @@ class SMSViewController: UIViewController {
         }
     }
     fileprivate func updateTableContent() {
-        
+        let count = self.fetchedhResultController.sections?.first?.numberOfObjects
+        if count == 0 {
+            self.startSpinner()
+        }
+        self.startNetworkSpinner()
         self.fetchDataFromAPI()
     }
     fileprivate func preFetchData() {
         do {
             try self.fetchedhResultController.performFetch()
-            print("COUNT FETCHED FIRST: \(String(describing: self.fetchedhResultController.sections?.first?.numberOfObjects))")
+//            print("COUNT FETCHED FIRST: \(String(describing: self.fetchedhResultController.sections?.first?.numberOfObjects))")
         } catch let error  {
             print("ERROR: \(error)")
         }
@@ -116,7 +135,8 @@ class SMSViewController: UIViewController {
                 print("\n***Error***\n")
                 print(err)
                 DispatchQueue.main.async {
-//                    self.stopSpinner()
+                    self.stopSpinner()
+                    self.stopNetworkSpinner()
 //                    self.setViewsState(isHidden: true)
 //                    self.setPlaceholdersViewsState(isHidden: false)
                 }
@@ -129,8 +149,12 @@ class SMSViewController: UIViewController {
         let companyId = UserDefaults.standard.getCompanyId()
         InternalConversationsAPI.shared.fetch(token: token, companyId: String(companyId)) { (data, serviceError, error) in
             if let serviceErr = serviceError {
+                self.stopSpinner()
+                self.stopNetworkSpinner()
                 print("Service Error: \(serviceErr.localizedDescription)")
             } else if let err = error {
+                self.stopSpinner()
+                self.stopNetworkSpinner()
                 print("Error: \(err.localizedDescription)")
             } else if let responseData = data {
                 DispatchQueue.main.async {
@@ -162,8 +186,11 @@ class SMSViewController: UIViewController {
                 //                completion(response, nil, nil)
             }
         } catch let error {
+            
             print("Error Processing Response Data: \(error)")
             DispatchQueue.main.async {
+                self.stopSpinner()
+                self.stopNetworkSpinner()
                 //                completion(nil, .Internal, error)
             }
         }
@@ -179,15 +206,18 @@ class SMSViewController: UIViewController {
             if let savedConvos = self.fetchSavedInternalConvos(context: context) {
                 do {
                     print("Post post post saved internal count => \(savedConvos.count)")
-                    print(savedConvos)
                     if let savedFilteredConvos = try context.fetch(matchingRequest) as? [InternalConversation] {
                         print("Saved Filtered Count => \(savedFilteredConvos.count)")
+                        self.stopSpinner()
+                        self.stopNetworkSpinner()
                         self.deleteConvos(savedConvos, savedFilteredConvos, context)
                         self.updateConvos(fetchedConvos: fetchedConvos, savedFilteredConvos: savedFilteredConvos, context: context)
                         self.insertConvos(fetchedConvos: fetchedConvos, savedFilteredConvos: savedFilteredConvos, context: context)
                     }
                     
                 } catch let error {
+                    self.stopSpinner()
+                    self.stopNetworkSpinner()
                     print("Bingo Error")
                     print(error.localizedDescription)
                 }
@@ -195,12 +225,8 @@ class SMSViewController: UIViewController {
         }
     }
     func deleteConvos(_ savedConvos:[InternalConversation], _ savedFilteredConvos:[InternalConversation], _ context:NSManagedObjectContext) {
-        print(savedConvos)
-        print("Separator")
-        print(savedFilteredConvos)
         let convosToDelete = savedConvos.filter({!savedFilteredConvos.contains($0)})
         print("Convos to delete: Count=> \(convosToDelete.count)")
-        print(convosToDelete)
         guard !convosToDelete.isEmpty else {
             print("No Convos to delete")
             return
@@ -234,7 +260,6 @@ class SMSViewController: UIViewController {
         matchingRequest.predicate = NSPredicate(format: "workerId in %@", argumentArray: [toUpateWorkerIds])
         do {
             let convosToUpdate = try context.fetch(matchingRequest) as! [InternalConversation]
-            print("Convos to update => \(convosToUpdate)")
             convosToUpdate.forEach { (convo) in
                 convo.update(conversation: convo, context: context, internalConversation: fetchedConvos.first(where: { (con) -> Bool in
                     con.workerId == Int(convo.workerId)
@@ -253,7 +278,6 @@ class SMSViewController: UIViewController {
             !savedFilteredConvos.contains(where: { Int($0.workerId) == coco.workerId })
         }
         print("New Convos: Count => \(newConvos.count)")
-        print("New Convos => \(newConvos)")
         guard !newConvos.isEmpty else {
             print("No Convos to insert")
             return
@@ -290,11 +314,7 @@ class SMSViewController: UIViewController {
                 fetchRequest.fetchLimit = 1
                 do {
                 let fetchedConvos = try context.fetch(fetchRequest) as? [ExternalConversation]
-                    print(fetchedConvos as Any)
                 self.externalConversations?.append(contentsOf: fetchedConvos!)
-                    print("readhed here: count")
-                    print(self.externalConversations?.count ?? -1)
-                    print(self.externalConversations as Any)
                 } catch let error {
                     print("Error=> \(error.localizedDescription)")
                 }

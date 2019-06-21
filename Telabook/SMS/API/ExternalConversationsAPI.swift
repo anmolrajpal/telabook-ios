@@ -157,23 +157,44 @@ final class ExternalConversationsAPI: NSObject, ExternalConversationsAPIProtocol
     internal var directMessageApiURL:String {
         return Config.ServiceConfig.getServiceHostUri(.DirectMessage)
     }
-    internal func sendMessageParamString(_ token: String, _ conversationId:String, message:String, type:ChatMessageType) -> String {
+    internal func sendMessageParamString(_ token: String, _ conversationId:String, message:String, type:ChatMessageType) -> [String:String] {
+        let mmsParameters:[String:String] = [
+            "token":token,
+            "id":conversationId,
+            "imageURL":message
+        ]
+        let smsParameters:[String:String] = [
+            "token":token,
+            "id":conversationId,
+            "message":message
+        ]
         switch type {
-        case .SMS: return "token=\(token)&id=\(conversationId)&message=\(message)"
-        case .MMS: return "token=\(token)&id=\(conversationId)&imageURL=\(message)"
+        case .SMS: return smsParameters
+        case .MMS: return mmsParameters
         }
     }
     func sendMessage(token:String, conversationId:String, message:String, type: ChatMessageType, isDirectMessage:Bool, completion: @escaping APICompletion) {
-        let serviceHost = isDirectMessage ? directMessageApiURL : sendMessageApiURL
-        let paramString = sendMessageParamString(token, conversationId, message: message, type: type)
-        let params = paramString.data(using: String.Encoding.ascii, allowLossyConversion: false)
-        let uri = serviceHost
-//        print(uri)
-        let url = URL(string: uri)!
+        
+        let parameters = sendMessageParamString(token, conversationId, message: message, type: type)
+        guard let directMessageURL = URLSession.shared.constructURL(path: .DirectMessage, parameters: parameters) else {
+            print("Error: Unable to construct URL")
+            DispatchQueue.main.async {
+                completion(nil, nil, .Internal, NSError(domain: "", code: ResponseStatus.getStatusCode(by: .BadRequest), userInfo: nil))
+            }
+            return
+        }
+        guard let sendMessageURL = URLSession.shared.constructURL(path: .SendMessage, parameters: parameters) else {
+            print("Error: Unable to construct URL")
+            DispatchQueue.main.async {
+                completion(nil, nil, .Internal, NSError(domain: "", code: ResponseStatus.getStatusCode(by: .BadRequest), userInfo: nil))
+            }
+            return
+        }
+        let url:URL = isDirectMessage ? directMessageURL : sendMessageURL
+     
         var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Config.ServiceConfig.timeoutInterval)
         request.httpMethod = httpMethod.POST.rawValue
-        request.addValue(Header.contentType.urlEncoded.rawValue, forHTTPHeaderField: Header.headerName.contentType.rawValue)
-        request.httpBody = params
+        
         URLSession.shared.dataTask(with: request as URLRequest) { (data, response, error) in
             self.handleResponse(data: data, response: response, error: error, completion: completion)
             }.resume()

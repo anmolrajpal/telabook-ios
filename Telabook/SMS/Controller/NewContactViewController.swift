@@ -203,7 +203,7 @@ class NewContactViewController: UIViewController {
                         
                         if let id = response.externalConversationId,
                             id != 0,
-                            let node = response.node {
+                            let _ = response.node {
                             
                             DispatchQueue.main.async {
 

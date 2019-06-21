@@ -10,7 +10,7 @@ import UIKit
 import Photos
 import MessageKit
 import MessageInputBar
-
+import FirebaseStorage
 final class ChatViewController : MessagesViewController {
     var messages:[Message] = []
     private let conversationId:String
@@ -50,18 +50,40 @@ final class ChatViewController : MessagesViewController {
             
             query.observe(.childAdded, with: { [weak self] snapshot in
                 let messageId = snapshot.key
-                if let data = snapshot.value as? [String: Any],
-                    let text = data["message"] as? String,
-                    let senderId = data["sender"] as? Int,
-                    let senderName = data["sender_name"] as? String,
-//                    let senderNumber = data["sender_number"] as? String,
-//                    let isSenderWorker = data["sender_is_worker"] as? Int,
-//                    let type = data["type"] as? String,
-                    let date = data["date"] as? Double {
-//                    print("Message => \(text), senderId => \(senderId), Sender Name => \(senderName), Sender Number => \(senderNumber), is Sender a worker? => \(isSenderWorker), type => \(type), date => \(date)")
-                    let message = Message(text: text, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000.0 ))
-//                    print(message)
-                    self?.insertMessage(message)
+                if let data = snapshot.value as? [String: Any] {
+                    
+                    
+                    if let text = data["message"] as? String,
+                        let senderId = data["sender"] as? Int,
+                        let senderName = data["sender_name"] as? String,
+                        //                    let senderNumber = data["sender_number"] as? String,
+                        //                    let isSenderWorker = data["sender_is_worker"] as? Int,
+                        //                    let type = data["type"] as? String,
+                        let date = data["date"] as? Double {
+                        let message = Message(text: text, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
+                        self?.insertMessage(message)
+                    } else if let imageUrl = data["img"] as? String,
+                        let senderId = data["sender"] as? Int,
+                        let senderName = data["sender_name"] as? String,
+                        //                    let senderNumber = data["sender_number"] as? String,
+                        //                    let isSenderWorker = data["sender_is_worker"] as? Int,
+                        //                    let type = data["type"] as? String,
+                        let date = data["date"] as? Double {
+                        guard let url = URL(string: imageUrl) else {
+                            print("Unable to construct URL from imageURL => \(imageUrl)")
+                            return
+                        }
+                        self?.downloadImage(at: url) { [weak self] image in
+                            guard let `self` = self else {
+                                return
+                            }
+                            guard let image = image else {
+                                return
+                            }
+                            let message = Message(image: image, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
+                            self.insertMessage(message)
+                        }
+                    }
                 }
             })
         }
@@ -145,6 +167,9 @@ final class ChatViewController : MessagesViewController {
 //        )
     }
     @objc private func cameraButtonPressed() {
+        promptPhotosPickerMenu()
+    }
+    private func handleSourceTypeCamera() {
         let picker = UIImagePickerController()
         picker.delegate = self
         
@@ -153,8 +178,113 @@ final class ChatViewController : MessagesViewController {
         } else {
             picker.sourceType = .photoLibrary
         }
+        picker.modalPresentationStyle = .overFullScreen
+        present(picker, animated: true, completion: nil)
+    }
+    private func handleSourceTypeGallery() {
+        let picker = UIImagePickerController()
+        picker.delegate = self
+        picker.sourceType = .photoLibrary
+        picker.modalPresentationStyle = .overFullScreen
+        present(picker, animated: true, completion: nil)
+    }
+    internal func promptPhotosPickerMenu() {
+        let alert = UIAlertController(title: "Choose Image Source", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+        let cameraAction = UIAlertAction(title: "Camera", style: UIAlertAction.Style.default, handler: { (action) in
+            self.handleSourceTypeCamera()
+        })
         
-        self.present(picker, animated: true, completion: nil)
+        let galleryAction = UIAlertAction(title: "Gallery", style: UIAlertAction.Style.default, handler: { (action) in
+            self.handleSourceTypeGallery()
+        })
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.destructive, handler: nil)
+        alert.addAction(cameraAction)
+        alert.addAction(galleryAction)
+        alert.addAction(cancelAction)
+        alert.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = UIColor.telaGray6
+        
+        alert.view.tintColor = UIColor.telaBlue
+        alert.view.subviews.first?.subviews.first?.backgroundColor = .clear
+        alert.view.subviews.first?.backgroundColor = .clear
+        self.present(alert, animated: true, completion: nil)
+    }
+    private var isSendingPhoto = false {
+        didSet {
+            DispatchQueue.main.async {
+                self.messageInputBar.leftStackViewItems.forEach { item in
+                    //                    item.isEnabled = !self.isSendingPhoto
+                    
+                }
+            }
+        }
+    }
+    fileprivate var storageUploadTask:StorageUploadTask!
+    private func uploadImage(_ image: UIImage, callback: @escaping (URL?) -> Void) {
+        
+        
+        guard let scaledImage = image.scaledToSafeUploadSize, let data = scaledImage.jpegData(compressionQuality: 0.4) else {
+            callback(nil)
+            return
+        }
+        
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/jpeg"
+        
+        
+        
+        let imageName = [UUID().uuidString, String(Int(Date().timeIntervalSince1970)*1000)].joined(separator: "-") + ".jpg"
+        let ref = Config.StorageConfig.messageImageRef.child(imageName)
+        
+        
+        storageUploadTask = ref.putData(data, metadata: metadata, completion: { (meta, error) in
+            guard error == nil else {
+                print("Error uploading: \(error!)")
+                callback(nil)
+                return
+            }
+            ref.downloadURL(completion: { (url, err) in
+                guard let downloadUrl = url else {
+                    if let err = err {
+                        print("Error: Unable to get download url => \(err.localizedDescription)")
+                    }
+                    callback(nil)
+                    return
+                }
+                callback(downloadUrl)
+            })
+        })
+        
+    }
+    
+    private func sendPhoto(_ image: UIImage) {
+        isSendingPhoto = true
+        
+        uploadImage(image) { [weak self] url in
+            guard let `self` = self else {
+                return
+            }
+            self.isSendingPhoto = false
+            
+            guard let url = url else {
+                return
+            }
+            self.handleSendingMessageSequence(message: url.absoluteString, type: .MMS)
+        }
+    }
+    
+    private func downloadImage(at url: URL, completion: @escaping (UIImage?) -> Void) {
+        let ref = Storage.storage().reference(forURL: url.absoluteString)
+        let megaByte = Int64(1 * 1024 * 1024)
+        
+        ref.getData(maxSize: megaByte) { data, error in
+            guard let imageData = data else {
+                completion(nil)
+                return
+            }
+            
+            completion(UIImage(data: imageData))
+        }
     }
     // MARK: - Helpers
     
@@ -318,8 +448,8 @@ extension ChatViewController : MessageInputBarDelegate {
         for component in data {
             if let str = component as? String {
                 DispatchQueue.main.async {
-                    self.insertMessage(Message(text: str, sender: UserDefaults.standard.currentSender, messageId: UUID().uuidString, date: Date()))
-                        
+//                    self.insertMessage(Message(text: str, sender: UserDefaults.standard.currentSender, messageId: UUID().uuidString, date: Date()))
+                    
                     self.handleSendingMessageSequence(message: str, type: .SMS)
                 }
             } else if let _ = component as? UIImage {
@@ -404,11 +534,10 @@ extension ChatViewController: UIImagePickerControllerDelegate, UINavigationContr
                 guard let image = result else {
                     return
                 }
-                
-//                self.sendPhoto(image)
+                self.sendPhoto(image)
             }
-        } else if let image = info[.originalImage] as? UIImage { // 2
-//            sendPhoto(image)
+        } else if let image = info[.originalImage] as? UIImage {
+            sendPhoto(image)
         }
     }
     
