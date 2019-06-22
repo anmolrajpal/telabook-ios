@@ -27,15 +27,16 @@ protocol ExternalConversationsAPIProtocol {
     //MARK: ARCHIVE EXTERNAL CONVERSATION END
     
     //MARK: FETCH BLACKLIST START
-    var fetchBlacklistApiURL:String { get }
-    func fetchBlacklistParamString(_ token: String, _ companyId: String) -> String
-    func fetchBlacklist(token:String, companyId:String, completion: @escaping APITaskCompletion)
+    func fetchBlacklist(token:String, companyId:String, completion: @escaping APICompletion)
     //MARK: FETCH BLACKLIST END
     
-    //MARK: HANDLE BLOCKING START
-    var blockNumberApiURL:String { get }
-    var unblockNumberApiURL:String { get }
-    func handleBlockingParamString(_ token: String, _ companyId: String, _ conversationId:String, _ number:String, _ markBlock:Bool) -> String
-    func handleBlocking(token:String, companyId:String, conversationId:String, number:String, markBlock:Bool, completion: @escaping APITaskCompletion)
-    //MARK: HANDLE BLOCKING END
+    //MARK: BLOCK NUMBER START
+    func blockNumber(token:String, companyId:String, conversationId:String, number:String, completion: @escaping APICompletion)
+    //MARK: BLOCK NUMBER END
+    
+    
+    
+    //MARK: UNBLOCK NUMBER START
+    func unblockNumber(token:String, companyId:String, id:String, number:String, completion: @escaping APICompletion)
+    //MARK: UNBLOCK NUMBER END
 }

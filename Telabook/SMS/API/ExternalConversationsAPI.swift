@@ -68,61 +68,88 @@ final class ExternalConversationsAPI: NSObject, ExternalConversationsAPIProtocol
     //MARK: PROTOCOL ARCHIVING/UNARCHIVING EXTERNAL CONVERSATION END
     
     
+    
+    
     //MARK: PROTOCOL FETCH BLACKLIST START
-    internal var fetchBlacklistApiURL:String {
-        return Config.ServiceConfig.getServiceHostUri(.GetBlacklist)
-    }
-    internal func fetchBlacklistParamString(_ token: String, _ companyId: String) -> String {
-        return "token=\(token)&company_id=\(companyId)&response=array"
-    }
-    func fetchBlacklist(token:String, companyId:String, completion: @escaping APITaskCompletion) {
-        let serviceHost = fetchBlacklistApiURL
-        let paramString = fetchBlacklistParamString(token, companyId)
-        let uri = serviceHost + paramString
-        let url = URL(string: uri)!
+    func fetchBlacklist(token:String, companyId:String, completion: @escaping APICompletion) {
+        let parameters:[String:String] = [
+            "token":token,
+            "company_id":companyId,
+            "response":"array"
+        ]
+        guard let url = URLSession.shared.constructURL(path: .GetBlacklist, parameters: parameters) else {
+            print("Error: Unable to construct URL")
+            DispatchQueue.main.async {
+                completion(nil, nil, .Internal, NSError(domain: "", code: ResponseStatus.getStatusCode(by: .BadRequest), userInfo: nil))
+            }
+            return
+        }
         var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Config.ServiceConfig.timeoutInterval)
         request.httpMethod = httpMethod.GET.rawValue
         request.addValue(Header.contentType.json.rawValue, forHTTPHeaderField: Header.headerName.contentType.rawValue)
         URLSession.shared.dataTask(with: request as URLRequest) { (data, response, error) in
-            self.handleResponseData(data: data, response: response, error: error, completion: completion)
+            self.handleResponse(data: data, response: response, error: error, completion: completion)
             }.resume()
     }
     //MARK: PROTOCOL FETCH BLACKLIST END
     
     
-    //MARK: PROTOCOL HANDLE BLOCKING START
-    internal var blockNumberApiURL:String {
-        return Config.ServiceConfig.getServiceHostUri(.GetBlacklist)
-    }
-    internal var unblockNumberApiURL:String {
-        return Config.ServiceConfig.getServiceHostUri(.UnblockNumber)
-    }
-    internal func handleBlockingParamString(_ token: String, _ companyId: String, _ conversationId:String, _ number:String, _ markBlock:Bool) -> String {
-        if markBlock {
-            return "token=\(token)&company_id=\(companyId)&external_conversation_id=\(conversationId)&number=\(number)"
-        } else {
-            return "token=\(token)&company_id=\(companyId)&id=\(conversationId)&number=\(number)"
+    
+    
+    //MARK: PROTOCOL BLOCK NUMBER START
+    func blockNumber(token:String, companyId:String, conversationId:String, number:String, completion: @escaping APICompletion) {
+        let parameters:[String:String] = [
+            "token":token,
+            "company_id":companyId,
+            "external_conversation_id":conversationId,
+            "number":number
+        ]
+        guard let url = URLSession.shared.constructURL(path: .GetBlacklist, parameters: parameters) else {
+            print("Error: Unable to construct URL")
+            DispatchQueue.main.async {
+                completion(nil, nil, .Internal, NSError(domain: "", code: ResponseStatus.getStatusCode(by: .BadRequest), userInfo: nil))
+            }
+            return
         }
-    }
-    func handleBlocking(token:String, companyId:String, conversationId:String, number:String, markBlock:Bool, completion: @escaping APITaskCompletion) {
-        let serviceHost:String
-        if markBlock {
-            serviceHost = blockNumberApiURL
-        } else {
-            serviceHost = unblockNumberApiURL
-        }
-        let paramString = handleBlockingParamString(token, companyId, conversationId, number, markBlock)
-        let uri = serviceHost + paramString
-        let url = URL(string: uri)!
         var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Config.ServiceConfig.timeoutInterval)
         request.httpMethod = httpMethod.POST.rawValue
         request.addValue("XMLHttpRequest", forHTTPHeaderField: "X-Requested-With")
-        request.addValue(Header.contentType.json.rawValue, forHTTPHeaderField: Header.headerName.contentType.rawValue)
         URLSession.shared.dataTask(with: request as URLRequest) { (data, response, error) in
-            self.handleResponseData(data: data, response: response, error: error, completion: completion)
+            self.handleResponse(data: data, response: response, error: error, completion: completion)
             }.resume()
     }
-    //MARK: PROTOCOL HANDLE BLOCKING END
+    //MARK: PROTOCOL BLOCK NUMBER END
+    
+    
+    
+    
+    
+    //MARK: PROTOCOL UNBLOCK NUMBER START
+    func unblockNumber(token:String, companyId:String, id:String, number:String, completion: @escaping APICompletion) {
+        let parameters:[String:String] = [
+            "token":token,
+            "company_id":companyId,
+            "id":id,
+            "number":number
+        ]
+        guard let url = URLSession.shared.constructURL(path: .UnblockNumber, parameters: parameters) else {
+            print("Error: Unable to construct URL")
+            DispatchQueue.main.async {
+                completion(nil, nil, .Internal, NSError(domain: "", code: ResponseStatus.getStatusCode(by: .BadRequest), userInfo: nil))
+            }
+            return
+        }
+        var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Config.ServiceConfig.timeoutInterval)
+        request.httpMethod = httpMethod.POST.rawValue
+        request.addValue("XMLHttpRequest", forHTTPHeaderField: "X-Requested-With")
+        URLSession.shared.dataTask(with: request as URLRequest) { (data, response, error) in
+            self.handleResponse(data: data, response: response, error: error, completion: completion)
+            }.resume()
+    }
+    //MARK: PROTOCOL UNBLOCK NUMBER END
+    
+    
+    
     
     
     
@@ -305,6 +332,7 @@ final class ExternalConversationsAPI: NSObject, ExternalConversationsAPIProtocol
             }
         } else if let data = data,
             let response = response as? HTTPURLResponse {
+            print("Status Code => \(response.statusCode)")
             let responseStatus = ResponseStatus.getResponseStatusBy(statusCode: response.statusCode)
             completion(responseStatus, data, nil, nil)
         } else {

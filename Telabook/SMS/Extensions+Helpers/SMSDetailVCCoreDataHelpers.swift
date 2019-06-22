@@ -45,6 +45,7 @@ extension SMSDetailViewController {
 //                })
                 try managedObjectContext.save()
             }
+            
         } catch let error {
             print("Error Processing Response Data: \(error)")
             DispatchQueue.main.async {
@@ -88,13 +89,14 @@ extension SMSDetailViewController {
         let matchingRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: ExternalConversation.self))
         matchingRequest.predicate = NSPredicate(format: "externalConversationId in %@", argumentArray: [convoIds])
         do {
-            let objects  = try context.fetch(matchingRequest) as? [NSManagedObject]
+            let objects = try context.fetch(matchingRequest) as? [NSManagedObject]
             _ = objects.map{$0.map{context.delete($0)}}
             try context.save()
         } catch let error {
             print("Error deleting: \(error.localizedDescription)")
         }
         PersistenceService.shared.saveContext()
+        self.setupInboxView()
     }
     func updateConvos(fetchedConvos:[ExternalConversationsCodable], savedFilteredConvos:[ExternalConversation], context:NSManagedObjectContext) {
         
@@ -136,5 +138,6 @@ extension SMSDetailViewController {
         }
         
         PersistenceService.shared.saveContext()
+        isArchived ? self.setupArchivedView() : self.setupInboxView()
     }
 }

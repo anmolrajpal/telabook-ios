@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+/*
 class EditDetailsViewController: UIViewController {
     var customerId = Int()
     var internalBook:InternalBookCodable.InternalBook? {
@@ -428,3 +428,4 @@ extension EditDetailsViewController: UITableViewDelegate {
         }
     }
 }
+*/

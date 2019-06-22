@@ -18,7 +18,8 @@ class NewContactViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        observeKeyboardNotifications()
+        hideKeyboardWhenTappedAround()
     }
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -32,8 +33,8 @@ class NewContactViewController: UIViewController {
     fileprivate func setupConstraints() {
         cancelButton.anchor(top: view.topAnchor, left: nil, bottom: nil, right: view.rightAnchor, topConstant: 40, leftConstant: 0, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
         headingLabel.anchor(top: cancelButton.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 60, leftConstant: 20, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
-        numberTextField.anchor(top: nil, left: view.leftAnchor, bottom: view.centerYAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 60, bottomConstant: 20, rightConstant: 60, widthConstant: 0, heightConstant: 50)
-        messageButton.anchor(top: view.centerYAnchor, left: numberTextField.leftAnchor, bottom: nil, right: numberTextField.rightAnchor, topConstant: 20, leftConstant: 50, bottomConstant: 0, rightConstant: 50, widthConstant: 0, heightConstant: 35)
+        numberTextField.anchor(top: nil, left: view.leftAnchor, bottom: view.centerYAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 60, bottomConstant: 50, rightConstant: 60, widthConstant: 0, heightConstant: 50)
+        messageButton.anchor(top: view.centerYAnchor, left: numberTextField.leftAnchor, bottom: nil, right: numberTextField.rightAnchor, topConstant: 50, leftConstant: 50, bottomConstant: 0, rightConstant: 50, widthConstant: 0, heightConstant: 35)
     }
     fileprivate func observeKeyboardNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardShow), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -191,7 +192,7 @@ class NewContactViewController: UIViewController {
                     print("***Invalid Response****\nResponse Status => \(status)")
                     DispatchQueue.main.async {
                         UIAlertController.dismissModalSpinner(controller: self)
-                        UIAlertController.showTelaAlert(title: "Error", message: "Unable to start new conversation. Invalid Response: \(status)", controller: self)
+                        UIAlertController.showTelaAlert(title: "Error", message: "Unable to start new conversation. => \(status)", controller: self)
                     }
                     return
                 }

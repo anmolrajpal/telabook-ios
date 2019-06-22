@@ -100,15 +100,8 @@ class SMSDetailViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        fetchedResultsController = externalConversationsFRC
-        self.preFetchData(isArchived: false)
-        let count = self.fetchedResultsController.sections?.first?.numberOfObjects
-        if count == 0 {
-            self.startSpinner()
-        }
-        self.startNetworkSpinner()
-        
-        self.fetchDataFromAPI(isArchive: false)
+        self.segmentedControl.selectedSegmentIndex = 0
+        self.handleSegmentControls(for: .Inbox)
     }
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -357,7 +350,7 @@ class SMSDetailViewController: UIViewController {
         messages = []
         let companyId = UserDefaults.standard.getCompanyId()
         if let node = node {
-            let query = Config.DatabaseConfig.getChats(companyId: String(companyId), node: node).queryLimited(toLast: 50)
+            let query = Config.DatabaseConfig.getChats(companyId: String(companyId), node: node)
             
             query.observe(.childAdded, with: { [weak self] snapshot in
                 let messageId = snapshot.key
@@ -428,22 +421,32 @@ class SMSDetailViewController: UIViewController {
         messagesCollectionView.anchor(top: segmentedControl.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         tableView.anchor(top: segmentedControl.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         placeholderLabel.anchor(top: nil, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 20, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
-        placeholderLabel.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: -20).isActive = true
-        tryAgainButton.topAnchor.constraint(equalTo: placeholderLabel.bottomAnchor, constant: 20).isActive = true
+        placeholderLabel.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: -40).isActive = true
+        tryAgainButton.topAnchor.constraint(equalTo: view.centerYAnchor, constant: 40).isActive = true
         tryAgainButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
     }
     
-    fileprivate func startSpinner() {
+    fileprivate func startOverlaySpinner() {
         OverlaySpinner.shared.spinner(mark: .Start)
     }
-    fileprivate func stopSpinner() {
+    fileprivate func stopOverlaySpinner() {
         OverlaySpinner.shared.spinner(mark: .Stop)
     }
+    fileprivate func startSpinner() {
+        self.spinner.startAnimating()
+    }
+    fileprivate func stopSpinner() {
+        self.spinner.stopAnimating()
+    }
     fileprivate func startNetworkSpinner() {
-        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        DispatchQueue.main.async {
+            UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        }
     }
     fileprivate func stopNetworkSpinner() {
-        UIApplication.shared.isNetworkActivityIndicatorVisible = false
+        DispatchQueue.main.async {
+            UIApplication.shared.isNetworkActivityIndicatorVisible = false
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -540,7 +543,12 @@ class SMSDetailViewController: UIViewController {
         self.setPlaceholdersViewsState(isHidden: true)
         self.setViewsState(isHidden: true)
         self.startSpinner()
-//        self.fetchUserData()
+        let selectedSegment = self.segmentedControl.selectedSegmentIndex
+        if selectedSegment == 0 {
+            self.fetchDataFromAPI(isArchive: false)
+        } else if selectedSegment == 2 {
+            self.fetchDataFromAPI(isArchive: true)
+        }
     }
     fileprivate func setPlaceholdersViewsState(isHidden:Bool) {
         self.placeholderLabel.isHidden = isHidden
@@ -586,7 +594,7 @@ class SMSDetailViewController: UIViewController {
     let tryAgainButton:UIButton = {
         let button = UIButton(type: UIButton.ButtonType.roundedRect)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("TRY AGAIN", for: UIControl.State.normal)
+        button.setTitle("Refresh", for: UIControl.State.normal)
         button.setTitleColor(UIColor.telaGray6, for: UIControl.State.normal)
         button.titleLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 14)
         button.layer.borderWidth = 1
@@ -639,21 +647,59 @@ class SMSDetailViewController: UIViewController {
             messageInputBar.isHidden = true
             tableView.isHidden = false
             self.fetchedResultsController = self.externalConversationsFRC
-            self.preFetchData(isArchived: false)
+            self.setupInboxView()
+            if let count = preFetchCount(),
+                count == 0 {
+                self.startSpinner()
+            }
             self.fetchDataFromAPI(isArchive: false)
         case .DirectMessage:
             tableView.isHidden = true
-            messagesCollectionView.isHidden = false
-            messageInputBar.isHidden = false
+            setupDirectMessageView()
         case .Archived:
             messageInputBar.inputTextView.resignFirstResponder()
             messagesCollectionView.isHidden = true
             messageInputBar.isHidden = true
             tableView.isHidden = false
             self.fetchedResultsController = self.archivedConversationsFRC
-            self.preFetchData(isArchived: true)
+            self.setupArchivedView()
+            if let count = preFetchCount(),
+                count == 0 {
+                self.startSpinner()
+            }
             self.fetchDataFromAPI(isArchive: true)
         }
+    }
+    func setupInboxView() {
+        self.preFetchData(isArchived: false)
+        if let count = preFetchCount(),
+            count == 0 {
+            self.setViewsState(isHidden: true)
+            self.setPlaceholdersViewsState(isHidden: false)
+            self.placeholderLabel.text = "No Conversations"
+        } else {
+            self.setViewsState(isHidden: false)
+            self.setPlaceholdersViewsState(isHidden: true)
+        }
+    }
+    func setupDirectMessageView() {
+        messagesCollectionView.isHidden = false
+        messageInputBar.isHidden = false
+    }
+    func setupArchivedView() {
+        self.preFetchData(isArchived: true)
+        if let count = preFetchCount(),
+            count == 0 {
+            self.setViewsState(isHidden: true)
+            self.setPlaceholdersViewsState(isHidden: false)
+            self.placeholderLabel.text = "No Conversations"
+        } else {
+            self.setViewsState(isHidden: false)
+            self.setPlaceholdersViewsState(isHidden: true)
+        }
+    }
+    func preFetchCount() -> Int? {
+        return self.fetchedResultsController.sections?.first?.numberOfObjects
     }
     fileprivate func updateTableContent() {
 //        self.preFetchData()
@@ -670,6 +716,7 @@ class SMSDetailViewController: UIViewController {
     }
     
     fileprivate func fetchDataFromAPI(isArchive:Bool) {
+        self.startNetworkSpinner()
         FirebaseAuthService.shared.getCurrentToken { (token, error) in
             if let err = error {
                 print("\n***Error***\n")
@@ -715,9 +762,8 @@ class SMSDetailViewController: UIViewController {
                             self.stopSpinner()
                             self.stopNetworkSpinner()
                             print("***No Content****\nResponse Status => \(status)")
-//                            self.setViewsState(isHidden: true)
-//                            self.setPlaceholdersViewsState(isHidden: false)
-                            self.placeholderLabel.text = "No Archived Conversations"
+                            isArchived ? self.setupArchivedView()
+                            : self.setupInboxView()
                         }
                     } else {
                         print("***Invalid Response****\nResponse Status => \(status)")
@@ -964,17 +1010,20 @@ extension SMSDetailViewController : MessageInputBarDelegate {
     }
     
     fileprivate func handleSendingMessageSequence(message:String, type:ChatMessageType) {
+        self.startNetworkSpinner()
         FirebaseAuthService.shared.getCurrentToken { (token, error) in
             if let err = error {
                 print("\n***Error***\n")
                 print(err)
                 DispatchQueue.main.async {
+                    self.stopNetworkSpinner()
                     self.messageInputBar.sendButton.isEnabled = true
                 }
             } else if let token = token {
                 let id = self.internalConversation.internalConversationId
                 print("Internal Conversation ID => \(id)")
                 guard id != 0 else {
+                    self.stopNetworkSpinner()
                     print("Error: Internal Convo ID => 0")
                     self.messageInputBar.sendButton.isEnabled = true
                     return
@@ -992,6 +1041,7 @@ extension SMSDetailViewController : MessageInputBarDelegate {
     ExternalConversationsAPI.shared.sendMessage(token: token, conversationId: conversationId, message: message, type: type, isDirectMessage: true) { (responseStatus, data, serviceError, error) in
             if let err = error {
                 DispatchQueue.main.async {
+                   self.stopNetworkSpinner()
                     UIAlertController.dismissModalSpinner(controller: self)
                     print("***Error Sending Message****\n\(err.localizedDescription)")
                     self.showAlert(title: "Error", message: err.localizedDescription)
@@ -999,6 +1049,7 @@ extension SMSDetailViewController : MessageInputBarDelegate {
                 }
             } else if let serviceErr = serviceError {
                 DispatchQueue.main.async {
+                   self.stopNetworkSpinner()
                     UIAlertController.dismissModalSpinner(controller: self)
                     print("***Error Sending Message****\n\(serviceErr.localizedDescription)")
                     self.showAlert(title: "Error", message: serviceErr.localizedDescription)
@@ -1007,6 +1058,7 @@ extension SMSDetailViewController : MessageInputBarDelegate {
             } else if let status = responseStatus {
                 guard status == .Created else {
                     DispatchQueue.main.async {
+                       self.stopNetworkSpinner()
                         UIAlertController.dismissModalSpinner(controller: self)
                         print("***Error Sending Message****\nInvalid Response: \(status)")
                         self.showAlert(title: "\(status)", message: "Unable to send Message. Please try again")
@@ -1014,17 +1066,7 @@ extension SMSDetailViewController : MessageInputBarDelegate {
                     }
                     return
                 }
-                
-                DispatchQueue.main.async {
-                    print("Message sent: \(message)")
-                    //                    self.messageInputBar.inputTextView.text = ""
-                    //                    self.messagesCollectionView.scrollToBottom(animated: true)
-                    //                    self.messageInputBar.sendButton.isEnabled = true
-                }
-                if let data = data {
-                    print("Data length => \(data.count)")
-                    print("Data => \(data)")
-                }
+                self.stopNetworkSpinner()
             }
         }
     }
@@ -1064,13 +1106,19 @@ extension SMSDetailViewController: UIImagePickerControllerDelegate, UINavigation
 
 
 
-
+extension SMSDetailViewController: CustomerDetailsDelegate {
+    func triggerUpdate() {
+        DispatchQueue.global(qos: .background).async {
+            self.fetchDataFromAPI(isArchive: false)
+        }
+    }
+}
 extension SMSDetailViewController: NewConversationDelegate {
     func startConversation(dismiss vc: UIViewController, result newConversation: NewConversationCodable) {
         DispatchQueue.global(qos: .background).async {
             self.fetchDataFromAPI(isArchive: false)
         }
-
+        
         vc.dismiss(animated: true, completion: {
             if let id = newConversation.externalConversationId,
                 id != 0,

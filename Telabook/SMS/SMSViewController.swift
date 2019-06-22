@@ -29,7 +29,6 @@ class SMSViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpNavBar()
-        
         self.setupSearchBar()
     }
     
@@ -49,9 +48,16 @@ class SMSViewController: UIViewController {
         return .lightContent
     }
     fileprivate func setupViews() {
+        view.addSubview(spinner)
+        view.addSubview(placeholderLabel)
+        view.addSubview(tryAgainButton)
         view.addSubview(tableView)
     }
     fileprivate func setupConstraints() {
+        placeholderLabel.anchor(top: nil, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 20, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
+        placeholderLabel.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: -40).isActive = true
+        tryAgainButton.topAnchor.constraint(equalTo: view.centerYAnchor, constant: 40).isActive = true
+        tryAgainButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
         tableView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
     }
     fileprivate func setupTableView() {
@@ -73,18 +79,34 @@ class SMSViewController: UIViewController {
         return tv
     }()
     
-    
-    fileprivate func startSpinner() {
+    lazy var spinner:UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+        indicator.style = UIActivityIndicatorView.Style.whiteLarge
+        indicator.hidesWhenStopped = true
+        indicator.center = self.view.center
+        return indicator
+    }()
+    fileprivate func startOverlaySpinner() {
         OverlaySpinner.shared.spinner(mark: .Start)
     }
-    fileprivate func stopSpinner() {
+    fileprivate func stopOverlaySpinner() {
         OverlaySpinner.shared.spinner(mark: .Stop)
     }
+    fileprivate func startSpinner() {
+        self.spinner.startAnimating()
+    }
+    fileprivate func stopSpinner() {
+        self.spinner.stopAnimating()
+    }
     fileprivate func startNetworkSpinner() {
-        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        DispatchQueue.main.async {
+            UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        }
     }
     fileprivate func stopNetworkSpinner() {
-        UIApplication.shared.isNetworkActivityIndicatorVisible = false
+        DispatchQueue.main.async {
+            UIApplication.shared.isNetworkActivityIndicatorVisible = false
+        }
     }
     
     
@@ -114,13 +136,69 @@ class SMSViewController: UIViewController {
         }
     }
     fileprivate func updateTableContent() {
-        let count = self.fetchedhResultController.sections?.first?.numberOfObjects
-        if count == 0 {
+        self.handlePreFetchViews()
+        if let count = preFetchCount(),
+            count == 0 {
             self.startSpinner()
         }
-        self.startNetworkSpinner()
         self.fetchDataFromAPI()
     }
+    func preFetchCount() -> Int? {
+        return self.fetchedhResultController.sections?.first?.numberOfObjects
+    }
+    func handlePreFetchViews() {
+        preFetchData()
+        if let count = preFetchCount(),
+            count == 0 {
+            self.setViewsState(isHidden: true)
+            self.setPlaceholdersViewsState(isHidden: false)
+            self.placeholderLabel.text = "No Conversations"
+        } else {
+            self.setViewsState(isHidden: false)
+            self.setPlaceholdersViewsState(isHidden: true)
+        }
+    }
+    
+    @objc func handleTryAgainAction() {
+        self.setPlaceholdersViewsState(isHidden: true)
+        self.setViewsState(isHidden: true)
+        self.startSpinner()
+        self.fetchDataFromAPI()
+    }
+    fileprivate func setPlaceholdersViewsState(isHidden:Bool) {
+        self.placeholderLabel.isHidden = isHidden
+        self.tryAgainButton.isHidden = isHidden
+    }
+    fileprivate func setViewsState(isHidden: Bool) {
+        self.tableView.isHidden = isHidden
+    }
+    let placeholderLabel:UILabel = {
+        let label = UILabel()
+        label.text = "Turn on Mobile Data or Wifi to Access Telabook"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 16)
+        label.textColor = UIColor.telaGray6
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.sizeToFit()
+        label.isHidden = true
+        return label
+    }()
+    let tryAgainButton:UIButton = {
+        let button = UIButton(type: UIButton.ButtonType.roundedRect)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("TRY AGAIN", for: UIControl.State.normal)
+        button.setTitleColor(UIColor.telaGray6, for: UIControl.State.normal)
+        button.titleLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 14)
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.telaGray6.cgColor
+        button.layer.cornerRadius = 8
+        button.backgroundColor = .clear
+        button.isHidden = true
+        button.contentEdgeInsets = UIEdgeInsets(top: 6, left: 20, bottom: 6, right: 20)
+        button.addTarget(self, action: #selector(handleTryAgainAction), for: UIControl.Event.touchUpInside)
+        return button
+    }()
     fileprivate func preFetchData() {
         do {
             try self.fetchedhResultController.performFetch()
@@ -130,6 +208,7 @@ class SMSViewController: UIViewController {
         }
     }
     fileprivate func fetchDataFromAPI() {
+        startNetworkSpinner()
         FirebaseAuthService.shared.getCurrentToken { (token, error) in
             if let err = error {
                 print("\n***Error***\n")
@@ -247,6 +326,7 @@ class SMSViewController: UIViewController {
             print("Error deleting: \(error.localizedDescription)")
         }
         PersistenceService.shared.saveContext()
+        handlePreFetchViews()
     }
     func updateConvos(fetchedConvos:[InternalConversationsCodable], savedFilteredConvos:[InternalConversation], context:NSManagedObjectContext) {
         
@@ -291,6 +371,7 @@ class SMSViewController: UIViewController {
         }
         
         PersistenceService.shared.saveContext()
+        handlePreFetchViews()
     }
     
     

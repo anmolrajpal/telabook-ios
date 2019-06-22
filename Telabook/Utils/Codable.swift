@@ -646,3 +646,62 @@ struct InternalBookCodable : Codable {
         
     }
 }
+struct UpdatedInternalBookCodable : Codable {
+    
+    let activeName : String?
+    let addressOne : String?
+    let addressTwo : String?
+    let companyId : Int?
+    let createdAt : String?
+    let customerId : Int?
+    let descriptionField : String?
+    let externalConversationId : Int?
+    let id : Int?
+    let isCustumer : String?
+    let names : String?
+    let phone : String?
+    let star : String?
+    let surnames : String?
+    let updatedAt : String?
+    let workerId : Int?
+    
+    enum CodingKeys: String, CodingKey {
+        case activeName = "active_name"
+        case addressOne = "address_one"
+        case addressTwo = "address_two"
+        case companyId = "company_id"
+        case createdAt = "created_at"
+        case customerId = "customer_id"
+        case descriptionField = "description"
+        case externalConversationId = "external_conversation_id"
+        case id = "id"
+        case isCustumer = "is_custumer"
+        case names = "names"
+        case phone = "phone"
+        case star = "star"
+        case surnames = "surnames"
+        case updatedAt = "updated_at"
+        case workerId = "worker_id"
+    }
+    
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        activeName = try values.decodeIfPresent(String.self, forKey: .activeName)
+        addressOne = try values.decodeIfPresent(String.self, forKey: .addressOne)
+        addressTwo = try values.decodeIfPresent(String.self, forKey: .addressTwo)
+        companyId = try values.decodeIfPresent(Int.self, forKey: .companyId)
+        createdAt = try values.decodeIfPresent(String.self, forKey: .createdAt)
+        customerId = try values.decodeIfPresent(Int.self, forKey: .customerId)
+        descriptionField = try values.decodeIfPresent(String.self, forKey: .descriptionField)
+        externalConversationId = try values.decodeIfPresent(Int.self, forKey: .externalConversationId)
+        id = try values.decodeIfPresent(Int.self, forKey: .id)
+        isCustumer = try values.decodeIfPresent(String.self, forKey: .isCustumer)
+        names = try values.decodeIfPresent(String.self, forKey: .names)
+        phone = try values.decodeIfPresent(String.self, forKey: .phone)
+        star = try values.decodeIfPresent(String.self, forKey: .star)
+        surnames = try values.decodeIfPresent(String.self, forKey: .surnames)
+        updatedAt = try values.decodeIfPresent(String.self, forKey: .updatedAt)
+        workerId = try values.decodeIfPresent(Int.self, forKey: .workerId)
+    }
+    
+}

@@ -53,14 +53,14 @@ extension SMSDetailViewController : UITableViewDelegate {
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let archiveAction:UIContextualAction
         if self.segmentedControl.selectedSegmentIndex == 0 {
-            archiveAction = UIContextualAction(style: UIContextualAction.Style.normal, title: "Archive") { (action, view, completion) in
+            archiveAction = UIContextualAction(style: UIContextualAction.Style.destructive, title: "Archive") { (action, view, completion) in
                 DispatchQueue.main.async {
                     self.initiateChatArchivingSequence(markArchive: true, indexPath: indexPath, completion: completion)
                 }
             }
             archiveAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "archive"), text: "Archive").withRenderingMode(.alwaysOriginal)
         } else {
-            archiveAction = UIContextualAction(style: UIContextualAction.Style.normal, title: "Unarchive") { (action, view, completion) in
+            archiveAction = UIContextualAction(style: UIContextualAction.Style.destructive, title: "Unarchive") { (action, view, completion) in
                 DispatchQueue.main.async {
                     self.initiateChatArchivingSequence(markArchive: false, indexPath: indexPath, completion: completion)
                 }
@@ -84,7 +84,7 @@ extension SMSDetailViewController : UITableViewDelegate {
     @available(iOS 11.0, *)
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
-        let blockAction =  UIContextualAction(style: .normal, title: "Block", handler: { (action,view,completionHandler ) in
+        let blockAction =  UIContextualAction(style: .destructive, title: "Block", handler: { (action,view,completionHandler ) in
             //do stuff
             completionHandler(true)
         })
@@ -99,19 +99,14 @@ extension SMSDetailViewController : UITableViewDelegate {
                     print("Customer ID & Worker ID => 0")
                     return
                 }
-//                let editDetailsVC = EditDetailsViewController()
-//                editDetailsVC.customerId = customerId
-//                editDetailsVC.view.backgroundColor = UIColor.telaGray1
-//                editDetailsVC.modalPresentationStyle = .overFullScreen
-                
                 let customerDetailsVC = CustomerDetailsViewController()
+                customerDetailsVC.delegate = self
                 customerDetailsVC.customerId = customerId
                 customerDetailsVC.workerId = workerId
                 customerDetailsVC.view.backgroundColor = UIColor.telaGray1
                 customerDetailsVC.modalPresentationStyle = .overFullScreen
                 DispatchQueue.main.async {
                     self.present(customerDetailsVC, animated: true, completion: nil)
-//                    self.present(editDetailsVC, animated: true, completion: nil)
                 }
                 completionHandler(true)
             } else {

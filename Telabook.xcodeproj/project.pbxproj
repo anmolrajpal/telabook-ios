@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6F098BB922BE4E3700AF19AA /* HandleBlockingHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F098BB822BE4E3700AF19AA /* HandleBlockingHelpers.swift */; };
+		6F098BBB22BE9A4100AF19AA /* BlockedUsersVCTableViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F098BBA22BE9A4100AF19AA /* BlockedUsersVCTableViewExtensions.swift */; };
 		6F29FD4F22B7E28700BCA2AB /* OverlaySpinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F29FD4E22B7E28700BCA2AB /* OverlaySpinner.swift */; };
 		6F29FD5122B8B36400BCA2AB /* FollowUpCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F29FD5022B8B36400BCA2AB /* FollowUpCell.swift */; };
 		6F29FD5322B8FFD100BCA2AB /* CustomHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F29FD5222B8FFD100BCA2AB /* CustomHeaderView.swift */; };
@@ -73,6 +75,8 @@
 
 /* Begin PBXFileReference section */
 		1482E3F11B70E4874878A5EE /* Pods_Telabook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Telabook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6F098BB822BE4E3700AF19AA /* HandleBlockingHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandleBlockingHelpers.swift; sourceTree = "<group>"; };
+		6F098BBA22BE9A4100AF19AA /* BlockedUsersVCTableViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUsersVCTableViewExtensions.swift; sourceTree = "<group>"; };
 		6F29FD4E22B7E28700BCA2AB /* OverlaySpinner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySpinner.swift; sourceTree = "<group>"; };
 		6F29FD5022B8B36400BCA2AB /* FollowUpCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUpCell.swift; sourceTree = "<group>"; };
 		6F29FD5222B8FFD100BCA2AB /* CustomHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomHeaderView.swift; sourceTree = "<group>"; };
@@ -189,6 +193,7 @@
 				6FB8EA4022AA371900294EAC /* SMSDetailVCExtensions.swift */,
 				6FB8EA3E22AA34B600294EAC /* ChatColorHelpers.swift */,
 				6FB8EA4222AA596A00294EAC /* ChatArchivingHelpers.swift */,
+				6F098BB822BE4E3700AF19AA /* HandleBlockingHelpers.swift */,
 			);
 			path = "Extensions+Helpers";
 			sourceTree = "<group>";
@@ -297,6 +302,7 @@
 				6FB11B40229F7A290098D050 /* ManageAgentsCell.swift */,
 				6FB11B38229EF4430098D050 /* GalleryViewController.swift */,
 				6FB11B3A229EF4500098D050 /* BlockedUsersViewController.swift */,
+				6F098BBA22BE9A4100AF19AA /* BlockedUsersVCTableViewExtensions.swift */,
 				6FB11B3C229EF4690098D050 /* ArchivedSMSViewController.swift */,
 			);
 			path = More;
@@ -523,11 +529,13 @@
 				6FB11B0B229BFA3C0098D050 /* SettingsViewController.swift in Sources */,
 				6FB11B39229EF4430098D050 /* GalleryViewController.swift in Sources */,
 				6FBDEC7622B28D4D00A8511E /* NewContactViewController.swift in Sources */,
+				6F098BB922BE4E3700AF19AA /* HandleBlockingHelpers.swift in Sources */,
 				6FB11B3D229EF4690098D050 /* ArchivedSMSViewController.swift in Sources */,
 				6F9011D622ACCA900046F5E3 /* Message.swift in Sources */,
 				6FB11B09229BFA310098D050 /* SMSViewController.swift in Sources */,
 				6FB11B27229E5F6F0098D050 /* AuthenticationService.swift in Sources */,
 				6FB11B31229EB5020098D050 /* CallGroupsViewController.swift in Sources */,
+				6F098BBB22BE9A4100AF19AA /* BlockedUsersVCTableViewExtensions.swift in Sources */,
 				6FBDEC7C22B3F1DA00A8511E /* SMSDetailVC+CollectionView.swift in Sources */,
 				6FB11B1F229D88510098D050 /* SectionItem.swift in Sources */,
 				6F6EAB3122A508380096365A /* InternalConversation.swift in Sources */,

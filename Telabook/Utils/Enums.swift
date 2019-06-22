@@ -142,6 +142,17 @@ public enum ResponseStatus {
     case MethodNotAllowed
     case RequestTimeout
     case Conflict
+    case Gone
+    case PreconditionFailed
+    case PayloadTooLarge
+    case uriTooLong
+    case UnsupportedMediaType
+    case ExpectationFailed
+    case MisdirectedRequest
+    case UnprocessableEntity
+    case Locked
+    case FailedDependency
+    case TooManyRequests
     //5xx
     case InternalServerError
     case NotImplemented
@@ -165,11 +176,23 @@ public enum ResponseStatus {
         case .MethodNotAllowed: return 405
         case .RequestTimeout: return 408
         case .Conflict: return 409
+        case .Gone: return 410
+        case .PreconditionFailed: return 412
+        case .PayloadTooLarge: return 413
+        case .uriTooLong: return 414
+        case .UnsupportedMediaType: return 415
+        case .ExpectationFailed: return 417
+        case .MisdirectedRequest: return 421
+        case .UnprocessableEntity: return 422
+        case .Locked: return 423
+        case .FailedDependency: return 424
+        case .TooManyRequests: return 429
         //5xx
         case .InternalServerError: return 500
         case .NotImplemented: return 501
         case .BadGateway: return 502
         case .ServiceUnavailable: return 503
+        //Unknown
         case .UnknownResponse: return 0
         }
     }
@@ -189,6 +212,17 @@ public enum ResponseStatus {
         case 405: return .MethodNotAllowed
         case 408: return .RequestTimeout
         case 409: return .Conflict
+        case 410: return .Gone
+        case 412: return .PreconditionFailed
+        case 413: return .PayloadTooLarge
+        case 414: return .uriTooLong
+        case 415: return .UnsupportedMediaType
+        case 417: return .ExpectationFailed
+        case 421: return .MisdirectedRequest
+        case 422: return .UnprocessableEntity
+        case 423: return .Locked
+        case 424: return .FailedDependency
+        case 429: return .TooManyRequests
         //5xx
         case 500: return .InternalServerError
         case 501: return .NotImplemented

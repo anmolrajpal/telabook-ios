@@ -9,13 +9,9 @@
 import UIKit
 
 class CustomerDetailsViewController: UIViewController {
+    var delegate:CustomerDetailsDelegate?
     var customerId = Int()
     var workerId = Int()
-    var priority:ConversationPriority? {
-        didSet {
-            
-        }
-    }
     var internalBook:InternalBookCodable.InternalBook? {
         didSet {
             guard let book = internalBook else {
@@ -25,6 +21,26 @@ class CustomerDetailsViewController: UIViewController {
             }
             self.setupData(internalBook: book)
         }
+    }
+    var updatedInternalBook:UpdatedInternalBookCodable? {
+        didSet {
+            guard let book = updatedInternalBook else {
+                print("Updated Internal Book value = nil")
+                UIAlertController.showTelaAlert(title: "Error", message: "Internal Application Error", controller: self)
+                return
+            }
+            self.setupUpdatedData(internalBook: book)
+        }
+    }
+    fileprivate func setupUpdatedData(internalBook:UpdatedInternalBookCodable) {
+        self.firstName = internalBook.names
+        self.lastName = internalBook.surnames
+        self.addressOne = internalBook.addressOne
+        self.addressTwo = internalBook.addressTwo
+        self.customerDescription = internalBook.descriptionField
+        self.classificationStar = Int(internalBook.star ?? "0")
+        self.isNameActive = Int(internalBook.activeName ?? "0")
+        self.isCustomer = Int(internalBook.isCustumer ?? "0")
     }
     fileprivate func setupData(internalBook:InternalBookCodable.InternalBook) {
         self.firstName = internalBook.names
@@ -59,13 +75,20 @@ class CustomerDetailsViewController: UIViewController {
     }
     var customerDescription:String? {
         didSet {
-            descriptionLabel.text = customerDescription
+            if let desc = customerDescription {
+                if !desc.isEmpty {
+                    descriptionLabel.text = desc
+                } else {
+                    descriptionLabel.text = "None"
+                }
+            } else {
+                descriptionLabel.text = "None"
+            }
         }
     }
     var classificationStar:Int? {
         didSet {
             starImageView.image = ConversationPriority.getImage(by: ConversationPriority.getPriority(by: classificationStar ?? 0))
-            self.priority = .Medium
         }
     }
     var isNameActive:Int? {
@@ -98,7 +121,7 @@ class CustomerDetailsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupDelegates()
-        observeKeyboardNotifications()
+//        observeKeyboardNotifications()
         hideKeyboardWhenTappedAround()
         self.initiateFetchCustomerDetailsSequence()
     }
@@ -136,14 +159,14 @@ class CustomerDetailsViewController: UIViewController {
     lazy var cancelButton:UIButton = {
         let button = UIButton(type: UIButton.ButtonType.system)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setAttributedTitle(NSAttributedString(string: "Cancel", attributes: [
+        button.setAttributedTitle(NSAttributedString(string: "Done", attributes: [
             .font : UIFont(name: CustomFonts.gothamBook.rawValue, size: 15.0)!,
             .foregroundColor: UIColor.telaBlue
             ]), for: .normal)
-        button.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
         return button
     }()
-    @objc func cancelButtonTapped() {
+    @objc func doneButtonTapped() {
         self.dismiss(animated: true, completion: nil)
     }
     lazy var saveButton:UIButton = {
@@ -197,24 +220,6 @@ class CustomerDetailsViewController: UIViewController {
     lazy var lastNameTFContainerView = createTextFieldContainerView(lastNameTextField)
     lazy var addressOneTFContainerView = createTextFieldContainerView(addressOneTextField)
     lazy var addressTwoTFContainerView = createTextFieldContainerView(addressTwoTextField)
-//    let descriptionTextView:UITextView = {
-//        let textView = UITextView()
-//        textView.translatesAutoresizingMaskIntoConstraints = false
-//        textView.isEditable = true
-//        textView.textAlignment = .left
-//        textView.isSelectable = true
-//        textView.backgroundColor = UIColor.telaGray4.withAlphaComponent(0.5)
-//        textView.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 16)
-//        textView.textColor = UIColor.telaGray7
-//        textView.sizeToFit()
-//        textView.isScrollEnabled = true
-//        textView.dataDetectorTypes = .all
-//        textView.keyboardAppearance = .dark
-////        let fixedWidth = textView.frame.size.width
-////        let newSize = textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
-////        textView.frame.size = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
-//        return textView
-//    }()
     let descriptionLabel:UILabel = {
         let label = UILabel()
         label.text = "None"
@@ -240,9 +245,22 @@ class CustomerDetailsViewController: UIViewController {
         descriptionLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
         imageView.anchor(top: nil, left: nil, bottom: nil, right: containerView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 20, widthConstant: 20, heightConstant: 20)
         imageView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        
+        containerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(descriptionContainerTapped)))
+        containerView.isUserInteractionEnabled = true
         return containerView
     }
-    
+    @objc func descriptionContainerTapped() {
+        descriptionContainerView.backgroundColor = UIColor.telaGray6.withAlphaComponent(0.5)
+        let descriptionInputVC = TextViewInputController(defaultText: self.customerDescription)
+        descriptionInputVC.delegate = self
+        descriptionInputVC.view.backgroundColor = UIColor.telaGray1
+        descriptionInputVC.modalPresentationStyle = .overFullScreen
+        self.present(descriptionInputVC, animated: true, completion: nil)
+        UIView.animate(withDuration: 1.0) {
+            self.descriptionContainerView.backgroundColor = UIColor.telaGray4.withAlphaComponent(0.5)
+        }
+    }
     func createStarContainerView() -> UIView {
         let containerView = UIView(frame: CGRect.zero)
         containerView.backgroundColor = UIColor.telaGray4.withAlphaComponent(0.5)
@@ -261,7 +279,8 @@ class CustomerDetailsViewController: UIViewController {
         indicatorImageView.translatesAutoresizingMaskIntoConstraints = false
         indicatorImageView.clipsToBounds = true
         
-        
+    containerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(starContainerTapped)))
+        containerView.isUserInteractionEnabled = true
         containerView.addSubview(label)
         containerView.addSubview(starImageView)
         containerView.addSubview(indicatorImageView)
@@ -274,7 +293,38 @@ class CustomerDetailsViewController: UIViewController {
         return containerView
     }
     
-    
+    @objc func starContainerTapped() {
+        starContainerView.backgroundColor = UIColor.telaGray6.withAlphaComponent(0.5)
+        promptStarOptions()
+        UIView.animate(withDuration: 1.0) {
+            self.starContainerView.backgroundColor = UIColor.telaGray4.withAlphaComponent(0.5)
+        }
+        
+    }
+    internal func promptStarOptions() {
+        let alert = UIAlertController(title: "Select Classification Star", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+        let grayStar = UIAlertAction(title: "Low", style: UIAlertAction.Style.default, handler: { (action) in
+            self.classificationStar = ConversationPriority.getPriorityCode(by: .Low)
+        })
+        
+        let yellowStar = UIAlertAction(title: "Medium", style: UIAlertAction.Style.default, handler: { (action) in
+            self.classificationStar = ConversationPriority.getPriorityCode(by: .Medium)
+        })
+        let redAction = UIAlertAction(title: "High", style: UIAlertAction.Style.default, handler: { (action) in
+            self.classificationStar = ConversationPriority.getPriorityCode(by: .High)
+        })
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil)
+        alert.addAction(grayStar)
+        alert.addAction(yellowStar)
+        alert.addAction(redAction)
+        alert.addAction(cancelAction)
+    alert.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = UIColor.telaGray6
+        
+        alert.view.tintColor = UIColor.telaBlue
+        alert.view.subviews.first?.subviews.first?.backgroundColor = .clear
+        alert.view.subviews.first?.backgroundColor = .clear
+        self.present(alert, animated: true, completion: nil)
+    }
     func createCustomerSwitchContainerView() -> UIView {
         let containerView = UIView(frame: CGRect.zero)
         containerView.backgroundColor = UIColor.telaGray4.withAlphaComponent(0.5)
@@ -319,8 +369,13 @@ class CustomerDetailsViewController: UIViewController {
         switchButton.thumbTintColor = UIColor.telaWhite
         switchButton.onTintColor = UIColor.telaBlue
         switchButton.translatesAutoresizingMaskIntoConstraints = false
+        switchButton.addTarget(self, action: #selector(test(switchV:)), for: .allEvents)
         return switchButton
     }()
+    @objc func test(switchV: UISwitch) {
+        print(switchV.state)
+        print("isON => \(switchV.isOn)")
+    }
     let isNameActiveSwitch:UISwitch = {
         let switchButton = UISwitch()
         switchButton.tintColor = UIColor.telaGray5
@@ -357,7 +412,7 @@ class CustomerDetailsViewController: UIViewController {
         
         nameHeaderView.anchor(top: scrollView.topAnchor, left: scrollView.leftAnchor, bottom: nil, right: scrollView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: headerHeight)
         firstNameTFContainerView.anchor(top: nameHeaderView.bottomAnchor, left: scrollView.leftAnchor, bottom: nil, right: scrollView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: containerHeight)
-        lastNameTFContainerView.anchor(top: firstNameTFContainerView.bottomAnchor, left: scrollView.leftAnchor, bottom: nil, right: scrollView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: containerHeight)
+        lastNameTFContainerView.anchor(top: firstNameTFContainerView.bottomAnchor, left: scrollView.leftAnchor, bottom: nil, right: scrollView.rightAnchor, topConstant: 1, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: containerHeight)
     }
     fileprivate func setupAddressSectionConstraints() {
         let headerHeight = CustomerDetailsViewController.headerViewHeight
@@ -365,7 +420,7 @@ class CustomerDetailsViewController: UIViewController {
         
         addressHeaderView.anchor(top: lastNameTFContainerView.bottomAnchor, left: scrollView.leftAnchor, bottom: nil, right: scrollView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: headerHeight)
         addressOneTFContainerView.anchor(top: addressHeaderView.bottomAnchor, left: scrollView.leftAnchor, bottom: nil, right: scrollView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: containerHeight)
-        addressTwoTFContainerView.anchor(top: addressOneTFContainerView.bottomAnchor, left: scrollView.leftAnchor, bottom: nil, right: scrollView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: containerHeight)
+        addressTwoTFContainerView.anchor(top: addressOneTFContainerView.bottomAnchor, left: scrollView.leftAnchor, bottom: nil, right: scrollView.rightAnchor, topConstant: 1, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: containerHeight)
     }
     fileprivate func setupDescriptionSectionConstraints() {
         let headerHeight = CustomerDetailsViewController.headerViewHeight
@@ -380,8 +435,8 @@ class CustomerDetailsViewController: UIViewController {
         
         settingsHeaderView.anchor(top: descriptionContainerView.bottomAnchor, left: scrollView.leftAnchor, bottom: nil, right: scrollView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: headerHeight)
         starContainerView.anchor(top: settingsHeaderView.bottomAnchor, left: scrollView.leftAnchor, bottom: nil, right: scrollView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: containerHeight)
-        isNameActiveContainerView.anchor(top: starContainerView.bottomAnchor, left: scrollView.leftAnchor, bottom: nil, right: scrollView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: containerHeight)
-        isCustomerContainerView.anchor(top: isNameActiveContainerView.bottomAnchor, left: scrollView.leftAnchor, bottom: nil, right: scrollView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: containerHeight)
+        isNameActiveContainerView.anchor(top: starContainerView.bottomAnchor, left: scrollView.leftAnchor, bottom: nil, right: scrollView.rightAnchor, topConstant: 1, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: containerHeight)
+        isCustomerContainerView.anchor(top: isNameActiveContainerView.bottomAnchor, left: scrollView.leftAnchor, bottom: nil, right: scrollView.rightAnchor, topConstant: 1, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: containerHeight)
     }
     fileprivate func setupSubviewsConstraints() {
         setupNameSectionConstraints()
@@ -538,14 +593,23 @@ class CustomerDetailsViewController: UIViewController {
     }
     
     fileprivate func startSpinner() {
-        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        startNetworkSpinner()
         OverlaySpinner.shared.spinner(mark: .Start)
     }
     fileprivate func stopSpinner() {
-        UIApplication.shared.isNetworkActivityIndicatorVisible = false
+        stopNetworkSpinner()
         OverlaySpinner.shared.spinner(mark: .Stop)
     }
-    
+    fileprivate func startNetworkSpinner() {
+        DispatchQueue.main.async {
+            UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        }
+    }
+    fileprivate func stopNetworkSpinner() {
+        DispatchQueue.main.async {
+            UIApplication.shared.isNetworkActivityIndicatorVisible = false
+        }
+    }
     fileprivate func initiateUpdateCustomerDetailsSequence() {
         DispatchQueue.main.async {
             self.startSpinner()
@@ -575,8 +639,11 @@ class CustomerDetailsViewController: UIViewController {
         let address_one = self.addressOneTextField.text ?? ""
         let address_two = self.addressTwoTextField.text ?? ""
         let customer_description = self.customerDescription ?? ""
+        let classification_star = ConversationPriority.getPriority(by: self.classificationStar ?? ConversationPriority.getPriorityCode(by: .Low))
+        let is_customer = self.isCustomerSwitch.isOn
+        let is_name_active = self.isNameActiveSwitch.isOn
         
-        ExternalConversationsAPI.shared.updateCustomerDetails(token: token, companyId: companyId, customerId: String(self.customerId), workerId: String(self.workerId), name: first_name, surname: last_name, addressOne: address_one, addressTwo: address_two, description: customer_description, star: self.priority ?? .Low, isCustomer: true, isNameActive: true) { (responseStatus, data, serviceError, error) in
+        ExternalConversationsAPI.shared.updateCustomerDetails(token: token, companyId: companyId, customerId: String(self.customerId), workerId: String(self.workerId), name: first_name, surname: last_name, addressOne: address_one, addressTwo: address_two, description: customer_description, star: classification_star, isCustomer: is_customer, isNameActive: is_name_active) { (responseStatus, data, serviceError, error) in
             if let err = error {
                 print("***Error Updating Customer Details****\n\(err.localizedDescription)")
                 DispatchQueue.main.async {
@@ -597,14 +664,20 @@ class CustomerDetailsViewController: UIViewController {
                     }
                     return
                 }
+                DispatchQueue.main.async {
+                    self.dismiss(animated: true, completion: {
+                        self.delegate?.triggerUpdate()
+                    })
+                }
                 if let data = data {
                     let decoder = JSONDecoder()
                     do {
-                        let response = try decoder.decode(InternalBookCodable.InternalBook.self, from: data)
+                        print(data)
+                        let response = try decoder.decode(UpdatedInternalBookCodable.self, from: data)
                         print("\n\t|\n\t|\n")
                         print(response as Any)
                         DispatchQueue.main.async {
-                            self.internalBook = response
+//                            self.internalBook = response
                             self.stopSpinner()
                             
                         }
@@ -688,8 +761,6 @@ class CustomerDetailsViewController: UIViewController {
                     let decoder = JSONDecoder()
                     do {
                         let response = try decoder.decode(InternalBookCodable.self, from: data)
-                        print("\n\t|\n\t|\n")
-                        print(response.internalBook as Any)
                         DispatchQueue.main.async {
                             self.internalBook = response.internalBook
                             self.stopSpinner()
@@ -717,4 +788,128 @@ extension CustomerDetailsViewController: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField, reason: UITextField.DidEndEditingReason) {
         print("End")
     }
+}
+extension CustomerDetailsViewController: CustomerDescriptionInputDelegate {
+    func saveDescription(text: String) {
+        self.customerDescription = text
+    }
+}
+protocol CustomerDetailsDelegate {
+    func triggerUpdate()
+}
+
+
+
+class TextViewInputController:UIViewController {
+    var delegate:CustomerDescriptionInputDelegate?
+    init(defaultText:String? = nil) {
+        super.init(nibName: nil, bundle: nil)
+        if let text = defaultText {
+            self.descriptionTextView.text = text
+        }
+    }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    override func loadView() {
+        super.loadView()
+        setupViews()
+        setupConstraints()
+    }
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        descriptionTextView.becomeFirstResponder()
+//        observeKeyboardNotifications()
+    }
+    fileprivate func setupViews() {
+        view.addSubview(cancelButton)
+        view.addSubview(doneButton)
+        view.addSubview(descriptionTextView)
+    }
+    fileprivate func setupConstraints() {
+        cancelButton.topAnchor.constraint(equalTo: view.topAnchor, constant: view.layoutMargins.top + 30).isActive = true
+        cancelButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: view.layoutMargins.left + 15).isActive = true
+        doneButton.topAnchor.constraint(equalTo: view.topAnchor, constant: view.layoutMargins.top + 30).isActive = true
+        doneButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: view.layoutMargins.right - 15).isActive = true
+        descriptionTextView.anchor(top: cancelButton.bottomAnchor, left: view.leftAnchor, bottom: view.centerYAnchor, right: view.rightAnchor, topConstant: 40, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+    }
+    lazy var cancelButton:UIButton = {
+        let button = UIButton(type: UIButton.ButtonType.system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setAttributedTitle(NSAttributedString(string: "Cancel", attributes: [
+            .font : UIFont(name: CustomFonts.gothamBook.rawValue, size: 15.0)!,
+            .foregroundColor: UIColor.telaBlue
+            ]), for: .normal)
+        button.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
+        return button
+    }()
+    @objc func cancelButtonTapped() {
+        self.dismiss(animated: true, completion: nil)
+    }
+    lazy var doneButton:UIButton = {
+        let button = UIButton(type: UIButton.ButtonType.system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setAttributedTitle(NSAttributedString(string: "Save", attributes: [
+            .font : UIFont(name: CustomFonts.gothamMedium.rawValue, size: 16.0)!,
+            .foregroundColor: UIColor.telaBlue
+            ]), for: .normal)
+        button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        return button
+    }()
+    @objc func doneButtonTapped() {
+        self.delegate?.saveDescription(text: self.descriptionTextView.text)
+        self.dismiss(animated: true, completion: nil)
+    }
+    let descriptionTextView:UITextView = {
+        let textView = UITextView()
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        textView.isEditable = true
+        textView.textAlignment = .left
+        textView.isSelectable = true
+        textView.backgroundColor = UIColor.telaGray4
+        textView.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 16)
+        textView.textColor = UIColor.telaGray7
+        textView.sizeToFit()
+        textView.isScrollEnabled = true
+        textView.dataDetectorTypes = .all
+        textView.keyboardAppearance = .dark
+//        let fixedWidth = textView.frame.size.width
+//        let newSize = textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
+//        textView.frame.size = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
+        return textView
+    }()
+    fileprivate func observeKeyboardNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    @objc func keyboardHide() {
+        UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+            
+            self.view.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height)
+            
+        }, completion: nil)
+    }
+    @objc func keyboardShow() {
+        let iPhoneKeyboardHeight:CGFloat = 100
+        let iPadKeyboardHeight:CGFloat = 100
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+            
+            let y: CGFloat = UIDevice.current.orientation.isLandscape ? -iPadKeyboardHeight : -iPhoneKeyboardHeight
+            self.view.frame = CGRect(x: 0, y: y, width: self.view.frame.width, height: self.view.frame.height)
+            
+        }, completion: nil)
+    }
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        view.endEditing(true)
+    }
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+            self.view.layoutIfNeeded()
+        }, completion: nil)
+    }
+}
+protocol CustomerDescriptionInputDelegate {
+    func saveDescription(text:String)
 }

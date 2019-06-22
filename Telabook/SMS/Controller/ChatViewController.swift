@@ -17,6 +17,7 @@ final class ChatViewController : MessagesViewController {
     private let node:String
     init(conversationId: String, node: String) {
         self.conversationId = String(conversationId)
+        print("External Conversation ID => \(conversationId)")
         self.node = node
         super.init(nibName: nil, bundle: nil)
         self.loadChats(node: node)
@@ -46,8 +47,7 @@ final class ChatViewController : MessagesViewController {
         messages = []
         let companyId = UserDefaults.standard.getCompanyId()
         if let node = node {
-            let query = Config.DatabaseConfig.getChats(companyId: String(companyId), node: node).queryLimited(toLast: 50)
-            
+            let query = Config.DatabaseConfig.getChats(companyId: String(companyId), node: node)
             query.observe(.childAdded, with: { [weak self] snapshot in
                 let messageId = snapshot.key
                 if let data = snapshot.value as? [String: Any] {
@@ -100,20 +100,6 @@ final class ChatViewController : MessagesViewController {
         }
     }
     
-    /*
-    @objc
-    func loadMoreMessages() {
-        DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 1) {
-            SampleData.shared.getMessages(count: 20) { messages in
-                DispatchQueue.main.async {
-                    self.messageList.insert(contentsOf: messages, at: 0)
-                    self.messagesCollectionView.reloadDataAndKeepOffset()
-//                    self.refreshControl.endRefreshing()
-                }
-            }
-        }
-    }
-    */
     func configureMessageCollectionView() {
         messagesCollectionView.backgroundColor = .telaGray1
         messagesCollectionView.messagesDataSource = self
@@ -325,6 +311,7 @@ extension ChatViewController : MessagesDataSource {
     }
     
     func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
+        messages.sort(by: { $0.sentDate < $1.sentDate })
         return messages[indexPath.section]
     }
     
