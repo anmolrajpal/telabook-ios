@@ -89,6 +89,8 @@ class SMSDetailViewController: UIViewController {
         addMenuControllerObservers()
         addObservers()
         setupDelegates()
+        let followUpMenuItem = UIMenuItem(title: "Follow Up", action: #selector(MessageCollectionViewCell.followUp(_:)))
+        UIMenuController.shared.menuItems = [followUpMenuItem]
 //        messagesCollectionView.isHidden = true
 //        messageInputBar.isHidden = true
 //        fetchedResultsController = externalConversationsFRC
@@ -109,7 +111,9 @@ class SMSDetailViewController: UIViewController {
     private func setupDelegates() {
         messagesCollectionView.delegate = self
         messagesCollectionView.dataSource = self
+        
     }
+    
     fileprivate func setupNavBarItems() {
         let addButton = UIBarButtonItem(image: #imageLiteral(resourceName: "add").withRenderingMode(.alwaysOriginal), style: UIBarButtonItem.Style.done, target: self, action: #selector(addButtonTapped))
 //        let editButton = UIBarButtonItem(image: #imageLiteral(resourceName: "edit").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(editButtonTapped))
@@ -126,7 +130,6 @@ class SMSDetailViewController: UIViewController {
     @objc func editButtonTapped() {
         
     }
- 
     
     func configureMessageCollectionView() {
         messagesCollectionView.isHidden = true
@@ -319,8 +322,6 @@ class SMSDetailViewController: UIViewController {
     }
     func insertMessage(_ message: Message) {
         messages.append(message)
-        print(messages)
-        // Reload last section to update header/footer labels and insert a new one
         messagesCollectionView.performBatchUpdates({
             messagesCollectionView.insertSections([messages.count - 1])
             if messages.count >= 2 {
@@ -876,7 +877,6 @@ class SMSDetailViewController: UIViewController {
         alertVC.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.destructive, handler: nil))
         self.present(alertVC, animated: true, completion: nil)
     }
-    
 }
 
 extension SMSDetailViewController : MessagesDataSource {
@@ -885,6 +885,7 @@ extension SMSDetailViewController : MessagesDataSource {
     }
     
     func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
+        messages.sort(by: { $0.sentDate < $1.sentDate })
         return messages[indexPath.section]
     }
     
@@ -922,7 +923,6 @@ extension SMSDetailViewController : MessagesDataSource {
     }
 }
 extension SMSDetailViewController: MessagesDisplayDelegate {
-    
     func backgroundColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
         return isFromCurrentSender(message: message) ? .telaBlue : .telaLightYellow
     }
@@ -947,7 +947,6 @@ extension SMSDetailViewController: MessagesDisplayDelegate {
     
 }
 extension SMSDetailViewController: MessagesLayoutDelegate {
-    
     
     
     func footerViewSize(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGSize {

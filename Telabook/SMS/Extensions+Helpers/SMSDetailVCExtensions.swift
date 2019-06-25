@@ -84,9 +84,8 @@ extension SMSDetailViewController : UITableViewDelegate {
     @available(iOS 11.0, *)
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
-        let blockAction =  UIContextualAction(style: .destructive, title: "Block", handler: { (action,view,completionHandler ) in
-            //do stuff
-            completionHandler(true)
+        let blockAction =  UIContextualAction(style: .destructive, title: "Block", handler: { (action,view,completion ) in
+            self.initiateBlockNumberSequence(indexPath: indexPath, completion: completion)
         })
         blockAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "unblock"), text: "Block").withRenderingMode(.alwaysOriginal)
         blockAction.backgroundColor = .red

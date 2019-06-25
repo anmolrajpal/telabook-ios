@@ -10,9 +10,6 @@ import UIKit
 import CoreData
 extension SMSDetailViewController {
     
-    
-    
-    
     //MARK: BLOCKING HERPERS
     
     internal func initiateBlockNumberSequence(indexPath:IndexPath, completion: @escaping (Bool) -> ()) {
@@ -91,8 +88,9 @@ extension SMSDetailViewController {
                 managedObjectContext.delete(managedObject)
                 try managedObjectContext.save()
                 DispatchQueue.main.async {
-                    UIAlertController.dismissModalSpinner(controller: self)
-                    completion(true)
+                    UIAlertController.dismissModalSpinner(controller: self, completion: {
+                        completion(true)
+                    })
                 }
             }
         } catch let error {
@@ -103,8 +101,6 @@ extension SMSDetailViewController {
             }
         }
     }
-    
-    
 
 }
 
@@ -150,19 +146,42 @@ extension BlockedUsersViewController {
                 }
             } else if let status = responseStatus {
                 guard status == .OK else {
-                    DispatchQueue.main.async {    UIAlertController.dismissModalSpinner(controller: self)
-                        print("***Error Fetching Blacklist****\nInvalid Response: \(status)")
-                        UIAlertController.dismissModalSpinner(controller: self, completion: {
-                            UIAlertController.showTelaAlert(title: "Error", message: "Response => \(status)", controller: self)
-                        })
+                    if status == .NoContent {
+                        DispatchQueue.main.async {
+                            print("***No Blocked Users(Empty Response)****Response Status: \(status)")
+                            UIAlertController.dismissModalSpinner(controller: self, completion: {
+                                self.placeholderLabel.isHidden = false
+                                self.placeholderLabel.text = "No Blocked Users"
+                                self.tableView.isHidden = true
+                            })
+                        }
+                    } else {
+                        DispatchQueue.main.async {    UIAlertController.dismissModalSpinner(controller: self)
+                            print("***Error Fetching Blacklist****\nInvalid Response: \(status)")
+                            UIAlertController.dismissModalSpinner(controller: self, completion: {
+                                UIAlertController.showTelaAlert(title: "Error", message: "Response => \(status)", controller: self)
+                            })
+                        }
                     }
                     return
                 }
                 if let data = data {
-                    print(data)
-                }
-                DispatchQueue.main.async {
-                    
+                    let decoder = JSONDecoder()
+                    do {
+                        let result = try decoder.decode([BlacklistCodable].self, from: data)
+                        DispatchQueue.main.async {
+                            UIAlertController.dismissModalSpinner(controller: self, completion: {
+                                self.blacklist = result
+                            })
+                        }
+                    } catch let err {
+                        print("Error: Unable to decode data. => \(err.localizedDescription)")
+                        DispatchQueue.main.async {
+                            UIAlertController.dismissModalSpinner(controller: self, completion: {
+                                UIAlertController.showTelaAlert(title: "Error", message: err.localizedDescription, controller: self)
+                            })
+                        }
+                    }
                 }
             }
         }
@@ -172,7 +191,7 @@ extension BlockedUsersViewController {
     
     //MARK: UNBLOCKING HERLPERS
     
-    internal func initiateUnblockNumberSequence(id:String, number:String, indexPath:IndexPath, completion: @escaping (Bool) -> ()) {
+    internal func initiateUnblockNumberSequence(at indexPath:IndexPath, completion: @escaping (Bool) -> ()) {
         UIAlertController.showModalSpinner(controller: self)
         FirebaseAuthService.shared.getCurrentToken { (token, error) in
             if let err = error {
@@ -185,9 +204,19 @@ extension BlockedUsersViewController {
                     })
                     
                 }
-            } else if let token = token {
+            } else if let token = token,
+                let blacklistItem = self.blacklist?[indexPath.row],
+                let number = blacklistItem.number,
+                let id = blacklistItem.id {
                 DispatchQueue.main.async {
-                    self.unblockNumber(token:token, id:id, number:number, indexPath:indexPath, completion: completion)
+                    self.unblockNumber(token:token, id:String(id), number:number, indexPath:indexPath, completion: completion)
+                }
+            } else {
+                DispatchQueue.main.async {
+                    UIAlertController.dismissModalSpinner(controller: self, completion: {
+                        UIAlertController.showTelaAlert(title: "Error", message: "Failed to unwrap values", controller: self)
+                        completion(false)
+                    })
                 }
             }
         }
@@ -223,8 +252,10 @@ extension BlockedUsersViewController {
                     return
                 }
                 DispatchQueue.main.async {
-//                    self.tableView.deleteRows(at: [indexPath], with: .fade)
-                    completion(true)
+                    UIAlertController.dismissModalSpinner(controller: self, completion: {
+                        self.blacklist?.remove(at: indexPath.row)
+                        completion(true)
+                    })
                 }
             }
         }

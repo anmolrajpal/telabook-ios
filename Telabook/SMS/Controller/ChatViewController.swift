@@ -30,14 +30,12 @@ final class ChatViewController : MessagesViewController {
         super.viewDidLoad()
         configureMessageCollectionView()
         configureMessageInputBar()
-//        loadChats()
         print("Current Sender => \(String(describing: UserDefaults.standard.currentSender)))")
         
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-//        loadMockMessages()
-//        loadChats()
+        
     }
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -276,7 +274,6 @@ final class ChatViewController : MessagesViewController {
     
     func insertMessage(_ message: Message) {
         messages.append(message)
-        // Reload last section to update header/footer labels and insert a new one
         messagesCollectionView.performBatchUpdates({
             messagesCollectionView.insertSections([messages.count - 1])
             if messages.count >= 2 {
@@ -303,8 +300,22 @@ final class ChatViewController : MessagesViewController {
         alertVC.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.destructive, handler: nil))
         self.present(alertVC, animated: true, completion: nil)
     }
-    var davos:[Message] = []
+    override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
+        if action == NSSelectorFromString("followUp:") {
+            return true
+        } else {
+            return super.collectionView(collectionView, canPerformAction: action, forItemAt: indexPath, withSender: sender)
+        }
+    }
+    override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
+        if action == NSSelectorFromString("followUp:") {
+            print("Follow Up Tapped")
+        } else {
+            super.collectionView(collectionView, performAction: action, forItemAt: indexPath, withSender: sender)
+        }
+    }
 }
+
 extension ChatViewController : MessagesDataSource {
     func currentSender() -> Sender {
         return UserDefaults.standard.currentSender

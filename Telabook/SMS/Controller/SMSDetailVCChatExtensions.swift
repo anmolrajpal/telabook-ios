@@ -35,7 +35,6 @@ extension SMSDetailViewController {
             messagesCollectionView.scrollToBottom(animated: true)
         }
     }
-    
     @objc
     private func handleKeyboardDidChangeState(_ notification: Notification) {
         guard !isMessagesControllerBeingDismissed else { return }
@@ -180,11 +179,10 @@ extension SMSDetailViewController {
         else if selectedCellMessageBubblePlusMenuFrame.intersects(topNavigationBarFrame) {
             currentMenuController.arrowDirection = .up
         }
-        
         currentMenuController.setTargetRect(targetRect, in: view)
         currentMenuController.setMenuVisible(true, animated: true)
     }
-    
+   
     // MARK: - Helpers
     
     private var navigationBarFrame: CGRect {

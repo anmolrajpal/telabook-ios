@@ -74,13 +74,13 @@ class SMSDetailCell: UITableViewCell {
         badgeCountLabel.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor).isActive = true
         badgeCountLabel.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0).isActive = true
         
+        dateTimeLabel.centerYAnchor.constraint(equalTo: lastMessageLabel.centerYAnchor).isActive = true
+        dateTimeLabel.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0).isActive = true
+        dateTimeLabel.layoutIfNeeded()
         
         lastMessageLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: 15).isActive = true
-        
-        lastMessageLabel.anchor(top: nil, left: nameLabel.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 80, widthConstant: containerView.frame.width / 2, heightConstant: 0)
-        dateTimeLabel.centerYAnchor.constraint(equalTo: lastMessageLabel.centerYAnchor).isActive = true
-        dateTimeLabel.anchor(top: nil, left: nil, bottom: nil, right: containerView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
-        
+        lastMessageLabel.leftAnchor.constraint(equalTo: nameLabel.leftAnchor, constant: 0).isActive = true
+        lastMessageLabel.rightAnchor.constraint(equalTo: dateTimeLabel.leftAnchor, constant: -10).withPriority(999).isActive = true
     }
     let priorityImageView:UIImageView = {
         let imageView = UIImageView()
@@ -108,6 +108,7 @@ class SMSDetailCell: UITableViewCell {
         label.textAlignment = .left
         label.lineBreakMode = NSLineBreakMode.byTruncatingTail
         label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 11.0)
+        label.sizeToFit()
         return label
     }()
     let badgeCountLabel:UILabel = {
@@ -129,6 +130,7 @@ class SMSDetailCell: UITableViewCell {
         label.textColor = UIColor.telaBlue
         label.textAlignment = .right
         label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 11.0)
+        label.sizeToFit()
         return label
     }()
     let containerView:UIView = {

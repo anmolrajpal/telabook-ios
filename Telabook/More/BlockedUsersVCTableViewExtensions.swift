@@ -11,7 +11,7 @@ extension BlockedUsersViewController: UITableViewDataSource, UISearchBarDelegate
         if isSearching {
             return self.filteredSearch.count
         } else {
-            return self.blackList.count
+            return self.blacklist?.count ?? 0
         }
     }
     
@@ -26,14 +26,14 @@ extension BlockedUsersViewController: UITableViewDataSource, UISearchBarDelegate
         cell?.textLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 16)
         cell?.detailTextLabel?.textColor = UIColor.telaGray7
         cell?.detailTextLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 12)
-        var blackListItem:Blacklist?
+        var blackListItem:BlacklistCodable?
         if isSearching {
             blackListItem = self.filteredSearch[indexPath.row]
         } else {
-            blackListItem = self.blackList[indexPath.row]
+            blackListItem = self.blacklist?[indexPath.row]
         }
         cell?.textLabel?.text = blackListItem?.number
-        cell?.detailTextLabel?.text = blackListItem?.description
+        cell?.detailTextLabel?.text = blackListItem?.descriptionField
         return cell!
     }
     
@@ -54,7 +54,7 @@ extension BlockedUsersViewController: UITableViewDataSource, UISearchBarDelegate
         } else {
             searchController.view.backgroundColor = .clear
             isSearching = true
-            filteredSearch = blackList.filter({$0.number?.range(of: searchBar.text!, options: String.CompareOptions.caseInsensitive) != nil})
+            filteredSearch = blacklist?.filter({$0.number?.range(of: searchBar.text!, options: String.CompareOptions.caseInsensitive) != nil}) ?? []
             tableView.reloadData()
         }
     }
@@ -68,9 +68,7 @@ extension BlockedUsersViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         let unblockAction =  UIContextualAction(style: .destructive, title: "Unblock", handler: { (action,view,completion ) in
-            self.blackList.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.fade)
-            completion(true)
+            self.initiateUnblockNumberSequence(at: indexPath, completion: completion)
         })
         unblockAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "unblock"), text: "Unblock").withRenderingMode(.alwaysOriginal)
         unblockAction.backgroundColor = UIColor.telaIndigo

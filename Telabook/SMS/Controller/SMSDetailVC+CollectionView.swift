@@ -135,13 +135,18 @@ extension SMSDetailViewController: UICollectionViewDelegateFlowLayout, UICollect
     }
     
     func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
-        return (action == NSSelectorFromString("copy:"))
+        
+        return (action == NSSelectorFromString("copy:") || action == NSSelectorFromString("followUp:"))
     }
     
     func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
         guard let messagesDataSource = messagesCollectionView.messagesDataSource else {
             fatalError(MessageKitError.nilMessagesDataSource)
         }
+        if action == NSSelectorFromString("followUp:") {
+            print("Bam: Follow Up Tapped")
+        }
+        
         let pasteBoard = UIPasteboard.general
         let message = messagesDataSource.messageForItem(at: indexPath, in: messagesCollectionView)
         
@@ -158,4 +163,17 @@ extension SMSDetailViewController: UICollectionViewDelegateFlowLayout, UICollect
     }
     
     
+}
+extension MessageCollectionViewCell {
+    @objc func followUp(_ sender: Any?) {
+        
+        // Get the collectionView
+        if let collectionView = self.superview as? UICollectionView {
+            // Get indexPath
+            if let indexPath = collectionView.indexPath(for: self) {
+                // Trigger action
+                collectionView.delegate?.collectionView?(collectionView, performAction: #selector(MessageCollectionViewCell.followUp(_:)), forItemAt: indexPath, withSender: sender)
+            }
+        }
+    }
 }
