@@ -20,15 +20,6 @@ extension URLSession {
     }
 }
 extension URLComponents {
-//    mutating func constructURL(scheme:String = Config.ServiceConfig.serviceURLScheme, host:String = Config.ServiceConfig.serviceHost, path:Config.ServiceConfig.ServiceTypePath, parameters:[String:String]? = nil) -> URL? {
-//        self.scheme = scheme
-//        self.host = host
-//        self.path = Config.ServiceConfig.getServiceURLPath(for: path)
-//        if let parameters = parameters {
-//            self.setQueryItems(with: parameters)
-//        }
-//        return self.url
-//    }
     mutating func setQueryItems(with parameters: [String: String]) {
         self.queryItems = parameters.map { URLQueryItem(name: $0.key, value: $0.value) }
     }
@@ -97,6 +88,43 @@ extension UIView {
         anchors.forEach({$0.isActive = true})
         
 //        return anchors
+    }
+    internal func fillSuperview() {
+        guard let superview = self.superview else {
+            return
+        }
+        translatesAutoresizingMaskIntoConstraints = false
+        
+        let constraints: [NSLayoutConstraint] = [
+            leftAnchor.constraint(equalTo: superview.leftAnchor),
+            rightAnchor.constraint(equalTo: superview.rightAnchor),
+            topAnchor.constraint(equalTo: superview.topAnchor),
+            bottomAnchor.constraint(equalTo: superview.bottomAnchor)
+        ]
+        NSLayoutConstraint.activate(constraints)
+    }
+    
+    internal func centerInSuperview() {
+        guard let superview = self.superview else {
+            return
+        }
+        translatesAutoresizingMaskIntoConstraints = false
+        let constraints: [NSLayoutConstraint] = [
+            centerXAnchor.constraint(equalTo: superview.centerXAnchor),
+            centerYAnchor.constraint(equalTo: superview.centerYAnchor)
+        ]
+        NSLayoutConstraint.activate(constraints)
+    }
+    
+    internal func constraint(equalTo size: CGSize) {
+        guard superview != nil else { return }
+        translatesAutoresizingMaskIntoConstraints = false
+        let constraints: [NSLayoutConstraint] = [
+            widthAnchor.constraint(equalToConstant: size.width),
+            heightAnchor.constraint(equalToConstant: size.height)
+        ]
+        NSLayoutConstraint.activate(constraints)
+        
     }
 }
 extension UIViewController {

@@ -14,6 +14,7 @@ private struct ImageMediaItem: MediaItem {
     
     var url: URL?
     var image: UIImage?
+    var imageText:String?
     var placeholderImage: UIImage
     var size: CGSize
     
@@ -22,7 +23,23 @@ private struct ImageMediaItem: MediaItem {
         self.size = CGSize(width: 240, height: 240)
         self.placeholderImage = UIImage()
     }
-    
+    init(imageUrl: URL) {
+        self.url = imageUrl
+        self.size = CGSize(width: 240, height: 240)
+        self.placeholderImage = #imageLiteral(resourceName: "save_img")
+    }
+    init(imageUrl: URL, imageText:String) {
+        self.url = imageUrl
+        self.imageText = imageText
+        self.size = CGSize(width: 240, height: 240)
+        self.placeholderImage = #imageLiteral(resourceName: "save_img")
+    }
+    init(imageUrl:URL, image:UIImage) {
+        self.url = imageUrl
+        self.image = image
+        self.size = CGSize(width: 240, height: 240)
+        self.placeholderImage = UIImage()
+    }
 }
 //struct ChatSender {
 //    let 
@@ -51,6 +68,14 @@ struct ChatMessage: MessageType {
     
     init(image: UIImage, sender: Sender, messageId: String, date: Date) {
         let mediaItem = ImageMediaItem(image: image)
+        self.init(kind: .photo(mediaItem), sender: sender, messageId: messageId, date: date)
+    }
+    init(imageUrl: URL, sender: Sender, messageId: String, date: Date) {
+        let mediaItem = ImageMediaItem(imageUrl: imageUrl)
+        self.init(kind: .photo(mediaItem), sender: sender, messageId: messageId, date: date)
+    }
+    init(imageUrl:URL, image: UIImage, sender: Sender, messageId: String, date: Date) {
+        let mediaItem = ImageMediaItem(imageUrl: imageUrl, image: image)
         self.init(kind: .photo(mediaItem), sender: sender, messageId: messageId, date: date)
     }
     init(thumbnail: UIImage, sender: Sender, messageId: String, date: Date) {
@@ -89,7 +114,8 @@ struct Message: MessageType {
     let sentDate: Date
     let sender: Sender
     var kind: MessageKind
-//    var user:User
+    var imageURL:URL? = nil
+    var imageTEXT:String? = nil
     
     private init(kind: MessageKind, sender: Sender, messageId: String, date: Date) {
         self.kind = kind
@@ -106,6 +132,21 @@ struct Message: MessageType {
     
     init(image: UIImage, sender: Sender, messageId: String, date: Date) {
         let mediaItem = ImageMediaItem(image: image)
+        self.init(kind: .photo(mediaItem), sender: sender, messageId: messageId, date: date)
+    }
+    init(imageUrl: URL, sender: Sender, messageId: String, date: Date) {
+        let mediaItem = ImageMediaItem(imageUrl: imageUrl)
+        self.init(kind: .photo(mediaItem), sender: sender, messageId: messageId, date: date)
+        self.imageURL = imageUrl
+    }
+    init(imageUrl: URL, text:String, sender: Sender, messageId: String, date: Date) {
+        let mediaItem = ImageMediaItem(imageUrl: imageUrl, imageText: text)
+        self.init(kind: .photo(mediaItem), sender: sender, messageId: messageId, date: date)
+        self.imageURL = imageUrl
+        self.imageTEXT = text
+    }
+    init(imageUrl:URL, image: UIImage, sender: Sender, messageId: String, date: Date) {
+        let mediaItem = ImageMediaItem(imageUrl: imageUrl, image: image)
         self.init(kind: .photo(mediaItem), sender: sender, messageId: messageId, date: date)
     }
     init(thumbnail: UIImage, sender: Sender, messageId: String, date: Date) {

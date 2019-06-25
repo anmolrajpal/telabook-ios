@@ -49,9 +49,30 @@ final class ChatViewController : MessagesViewController {
             query.observe(.childAdded, with: { [weak self] snapshot in
                 let messageId = snapshot.key
                 if let data = snapshot.value as? [String: Any] {
-                    
-                    
-                    if let text = data["message"] as? String,
+                    if let imageUrl = data["img"] as? String,
+                        let text = data["message"] as? String,
+                        let senderId = data["sender"] as? Int,
+                        let senderName = data["sender_name"] as? String,
+                        let date = data["date"] as? Double {
+                        guard let url = URL(string: imageUrl) else {
+                            print("Unable to construct URL from imageURL => \(imageUrl)")
+                            return
+                        }
+                        print("Image Message with text => \(text)")
+                        let message = Message(imageUrl: url, text: text, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
+//                        let message = Message(imageUrl: url, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
+                        self?.insertMessage(message)
+                    } else if let imageUrl = data["img"] as? String,
+                        let senderId = data["sender"] as? Int,
+                        let senderName = data["sender_name"] as? String,
+                        let date = data["date"] as? Double {
+                        guard let url = URL(string: imageUrl) else {
+                            print("Unable to construct URL from imageURL => \(imageUrl)")
+                            return
+                        }
+                        let message = Message(imageUrl: url, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
+                        self?.insertMessage(message)
+                    } else if let text = data["message"] as? String,
                         let senderId = data["sender"] as? Int,
                         let senderName = data["sender_name"] as? String,
                         //                    let senderNumber = data["sender_number"] as? String,
@@ -60,27 +81,8 @@ final class ChatViewController : MessagesViewController {
                         let date = data["date"] as? Double {
                         let message = Message(text: text, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
                         self?.insertMessage(message)
-                    } else if let imageUrl = data["img"] as? String,
-                        let senderId = data["sender"] as? Int,
-                        let senderName = data["sender_name"] as? String,
-                        //                    let senderNumber = data["sender_number"] as? String,
-                        //                    let isSenderWorker = data["sender_is_worker"] as? Int,
-                        //                    let type = data["type"] as? String,
-                        let date = data["date"] as? Double {
-                        guard let url = URL(string: imageUrl) else {
-                            print("Unable to construct URL from imageURL => \(imageUrl)")
-                            return
-                        }
-                        self?.downloadImage(at: url) { [weak self] image in
-                            guard let `self` = self else {
-                                return
-                            }
-                            guard let image = image else {
-                                return
-                            }
-                            let message = Message(image: image, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
-                            self.insertMessage(message)
-                        }
+                    } else {
+                        print("Unknown Scenario")
                     }
                 }
             })
@@ -362,7 +364,13 @@ extension ChatViewController : MessagesDataSource {
 extension ChatViewController: MessagesDisplayDelegate {
     
     func backgroundColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
-        return isFromCurrentSender(message: message) ? .telaBlue : .telaGray7
+        switch message.kind {
+        case .photo:
+            return UIColor.telaGray7.withAlphaComponent(0.4)
+        default:
+            return isFromCurrentSender(message: message) ? .telaBlue : .telaGray7
+        }
+        
     }
     func textColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
         return .telaWhite
@@ -383,6 +391,30 @@ extension ChatViewController: MessagesDisplayDelegate {
 //        return CGSize.zero
 //    }
 
+    
+    func configureMediaMessageImageView(_ imageView: UIImageView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
+        guard let msg = message as? Message,
+            let url = msg.imageURL else {
+                print("Optional Message Item")
+                return
+        }
+        if let text = msg.imageTEXT,
+            !text.isEmpty {
+            let textView = UIView(frame: CGRect.zero)
+            textView.backgroundColor = isFromCurrentSender(message: message) ? .telaBlue : .telaGray7
+            textView.clipsToBounds = true
+            let label = UILabel()
+            label.text = text
+            label.numberOfLines = 2
+            label.textColor = UIColor.telaWhite
+            textView.addSubview(label)
+            label.anchor(top: textView.topAnchor, left: textView.leftAnchor, bottom: textView.bottomAnchor, right: textView.rightAnchor, topConstant: 5, leftConstant: 15, bottomConstant: 5, rightConstant: 10, widthConstant: 0, heightConstant: 0)
+            imageView.addSubview(textView)
+            textView.anchor(top: nil, left: imageView.leftAnchor, bottom: imageView.bottomAnchor, right: imageView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        }
+        
+        imageView.loadImageUsingCacheWithURLString(url.absoluteString, placeHolder: #imageLiteral(resourceName: "landing_callgroup"))
+    }
 }
 
 // MARK: - MessagesLayoutDelegate

@@ -378,16 +378,18 @@ class SMSDetailViewController: UIViewController {
                             print("Unable to construct URL from imageURL => \(imageUrl)")
                             return
                         }
-                        self?.downloadImage(at: url) { [weak self] image in
-                            guard let `self` = self else {
-                                return
-                            }
-                            guard let image = image else {
-                                return
-                            }
-                            let message = Message(image: image, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date)))
-                            self.insertMessage(message)
-                        }
+                        let message = Message(imageUrl: url, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date)))
+                        self?.insertMessage(message)
+//                        self?.downloadImage(at: url) { [weak self] image in
+//                            guard let `self` = self else {
+//                                return
+//                            }
+//                            guard let image = image else {
+//                                return
+//                            }
+//                            let message = Message(image: image, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date)))
+//                            self.insertMessage(message)
+//                        }
                     }
                 }
             })
@@ -944,6 +946,14 @@ extension SMSDetailViewController: MessagesDisplayDelegate {
     //    func avatarSize(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGSize {
     //        return CGSize.zero
     //    }
+    func configureMediaMessageImageView(_ imageView: UIImageView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
+        guard let msg = message as? Message,
+            let url = msg.imageURL else {
+                print("Optional Message Item")
+                return
+        }
+        imageView.loadImageUsingCacheWithURLString(url.absoluteString, placeHolder: #imageLiteral(resourceName: "smiley_icon"))
+    }
     
 }
 extension SMSDetailViewController: MessagesLayoutDelegate {
