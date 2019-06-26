@@ -5,6 +5,16 @@
         <attribute name="street" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="person" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Person" inverseName="address" inverseEntity="Person" syncable="YES"/>
     </entity>
+    <entity name="ExternalChat" representedClassName=".ExternalChat" syncable="YES">
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="imageURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="message" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="messageId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="senderId" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="senderName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="senderNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="externalChats" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ExternalConversation" inverseName="externalConvo" inverseEntity="ExternalConversation" syncable="YES"/>
+    </entity>
     <entity name="ExternalConversation" representedClassName=".ExternalConversation" syncable="YES">
         <attribute name="allLastMessageSeen" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="allLastMessageText" optional="YES" attributeType="String" syncable="YES"/>
@@ -24,6 +34,7 @@
         <attribute name="unreadMessages" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="workerPerson" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="workerPhoneNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="externalConvo" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ExternalChat" inverseName="externalChats" inverseEntity="ExternalChat" syncable="YES"/>
         <relationship name="internal" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="InternalConversation" inverseName="external" inverseEntity="InternalConversation" syncable="YES"/>
     </entity>
     <entity name="InternalConversation" representedClassName=".InternalConversation" syncable="YES">
@@ -77,10 +88,11 @@
     </entity>
     <elements>
         <element name="Address" positionX="-324.984375" positionY="-372.328125" width="128" height="90"/>
-        <element name="ExternalConversation" positionX="-48.703125" positionY="105.40625" width="128" height="328"/>
+        <element name="ExternalConversation" positionX="-48.703125" positionY="105.40625" width="128" height="345"/>
         <element name="InternalConversation" positionX="-241.4140625" positionY="160.12109375" width="128" height="313"/>
         <element name="Permission" positionX="-420.73828125" positionY="178.13671875" width="128" height="148"/>
         <element name="Person" positionX="-538.78515625" positionY="-276.92578125" width="128" height="105"/>
         <element name="User" positionX="-602.515625" positionY="204.3203125" width="128" height="223"/>
+        <element name="ExternalChat" positionX="-396" positionY="-216" width="128" height="165"/>
     </elements>
 </model>

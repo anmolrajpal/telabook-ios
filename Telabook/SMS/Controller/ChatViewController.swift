@@ -13,14 +13,24 @@ import MessageInputBar
 import FirebaseStorage
 final class ChatViewController : MessagesViewController {
     var messages:[Message] = []
-    private let conversationId:String
-    private let node:String
+    internal let conversationId:String
+    internal let node:String
+    internal let externalConversation:ExternalConversation?
     init(conversationId: String, node: String) {
         self.conversationId = String(conversationId)
         print("External Conversation ID => \(conversationId)")
         self.node = node
+        self.externalConversation = nil
         super.init(nibName: nil, bundle: nil)
-        self.loadChats(node: node)
+        self.preLoadMessages(node: node)
+    }
+    init(conversationId: String, node: String, conversation:ExternalConversation) {
+        self.conversationId = String(conversationId)
+        print("External Conversation ID => \(conversationId)")
+        self.node = node
+        self.externalConversation = conversation
+        super.init(nibName: nil, bundle: nil)
+        self.preLoadMessages(node: node)
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -40,12 +50,72 @@ final class ChatViewController : MessagesViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
+ 
+    func preLoadMessages(node:String?) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            self.preLoadChats(node: node, completion: { (messages) in
+                DispatchQueue.main.async {
+                    self.messages = messages
+                    self.messagesCollectionView.reloadData()
+                    self.messagesCollectionView.scrollToBottom()
+                }
+            })
+        }
+    }
     
-    func loadChats(node:String?) {
-        messages = []
+    func preLoadChats(node:String?, completion: @escaping ([Message]) -> Void) {
+        var preLoadedMessages:[Message] = []
         let companyId = UserDefaults.standard.getCompanyId()
         if let node = node {
             let query = Config.DatabaseConfig.getChats(companyId: String(companyId), node: node)
+            query.observe(.childAdded, with: { snapshot in
+                let messageId = snapshot.key
+                if let data = snapshot.value as? [String: Any] {
+                    if let imageUrl = data["img"] as? String,
+                        let text = data["message"] as? String,
+                        let senderId = data["sender"] as? Int,
+                        let senderName = data["sender_name"] as? String,
+                        let date = data["date"] as? Double {
+                        guard let url = URL(string: imageUrl) else {
+                            print("Unable to construct URL from imageURL => \(imageUrl)")
+                            return
+                        }
+                        print("Image Message with text => \(text)")
+                        let message = Message(imageUrl: url, text: text, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
+                        preLoadedMessages.append(message)
+                    } else if let imageUrl = data["img"] as? String,
+                        let senderId = data["sender"] as? Int,
+                        let senderName = data["sender_name"] as? String,
+                        let date = data["date"] as? Double {
+                        guard let url = URL(string: imageUrl) else {
+                            print("Unable to construct URL from imageURL => \(imageUrl)")
+                            return
+                        }
+                        let message = Message(imageUrl: url, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
+                        preLoadedMessages.append(message)
+                    } else if let text = data["message"] as? String,
+                        let senderId = data["sender"] as? Int,
+                        let senderName = data["sender_name"] as? String,
+                        let date = data["date"] as? Double {
+                        let message = Message(text: text, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
+                        preLoadedMessages.append(message)
+                    } else {
+                        print("Unknown Scenario")
+                    }
+                }
+                DispatchQueue.main.async {
+                    completion(preLoadedMessages)
+                }
+                query.removeAllObservers()
+            }) { (error) in
+                print("Error retrieving single event observer: \(error.localizedDescription)")
+            }
+        }
+    }
+    func loadChats(node:String?) {
+        let companyId = UserDefaults.standard.getCompanyId()
+        if let node = node {
+            let query = Config.DatabaseConfig.getChats(companyId: String(companyId), node: node).queryLimited(toLast: 5)
             query.observe(.childAdded, with: { [weak self] snapshot in
                 let messageId = snapshot.key
                 if let data = snapshot.value as? [String: Any] {
@@ -60,7 +130,7 @@ final class ChatViewController : MessagesViewController {
                         }
                         print("Image Message with text => \(text)")
                         let message = Message(imageUrl: url, text: text, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
-//                        let message = Message(imageUrl: url, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
+                        //                        let message = Message(imageUrl: url, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
                         self?.insertMessage(message)
                     } else if let imageUrl = data["img"] as? String,
                         let senderId = data["sender"] as? Int,
@@ -88,6 +158,100 @@ final class ChatViewController : MessagesViewController {
             })
         }
     }
+    
+    /*
+    func loadChatsSample(node:String?) {
+        let companyId = UserDefaults.standard.getCompanyId()
+        if let node = node {
+            var offsetKey:String? = nil
+            if offsetKey == nil {
+                let query = Config.DatabaseConfig.getChats(companyId: String(companyId), node: node).queryLimited(toLast: 5)
+                query.observe(.childAdded, with: { [weak self] snapshot in
+                    let messageId = snapshot.key
+                    if let data = snapshot.value as? [String: Any] {
+                        if let imageUrl = data["img"] as? String,
+                            let text = data["message"] as? String,
+                            let senderId = data["sender"] as? Int,
+                            let senderName = data["sender_name"] as? String,
+                            let date = data["date"] as? Double {
+                            guard let url = URL(string: imageUrl) else {
+                                print("Unable to construct URL from imageURL => \(imageUrl)")
+                                return
+                            }
+                            print("Image Message with text => \(text)")
+                            let message = Message(imageUrl: url, text: text, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
+                            //                        let message = Message(imageUrl: url, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
+                            self?.insertMessage(message)
+                        } else if let imageUrl = data["img"] as? String,
+                            let senderId = data["sender"] as? Int,
+                            let senderName = data["sender_name"] as? String,
+                            let date = data["date"] as? Double {
+                            guard let url = URL(string: imageUrl) else {
+                                print("Unable to construct URL from imageURL => \(imageUrl)")
+                                return
+                            }
+                            let message = Message(imageUrl: url, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
+                            self?.insertMessage(message)
+                        } else if let text = data["message"] as? String,
+                            let senderId = data["sender"] as? Int,
+                            let senderName = data["sender_name"] as? String,
+                            //                    let senderNumber = data["sender_number"] as? String,
+                            //                    let isSenderWorker = data["sender_is_worker"] as? Int,
+                            //                    let type = data["type"] as? String,
+                            let date = data["date"] as? Double {
+                            let message = Message(text: text, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
+                            self?.insertMessage(message)
+                        } else {
+                            print("Unknown Scenario")
+                        }
+                    }
+                })
+            } else {
+                let query = Config.DatabaseConfig.getChats(companyId: String(companyId), node: node).queryOrderedByKey().queryStarting(atValue: offsetKey).queryLimited(toLast: 6)
+                query.observe(.childAdded, with: { [weak self] snapshot in
+                    let messageId = snapshot.key
+                    if let data = snapshot.value as? [String: Any] {
+                        if let imageUrl = data["img"] as? String,
+                            let text = data["message"] as? String,
+                            let senderId = data["sender"] as? Int,
+                            let senderName = data["sender_name"] as? String,
+                            let date = data["date"] as? Double {
+                            guard let url = URL(string: imageUrl) else {
+                                print("Unable to construct URL from imageURL => \(imageUrl)")
+                                return
+                            }
+                            print("Image Message with text => \(text)")
+                            let message = Message(imageUrl: url, text: text, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
+                            //                        let message = Message(imageUrl: url, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
+                            self?.insertMessage(message)
+                        } else if let imageUrl = data["img"] as? String,
+                            let senderId = data["sender"] as? Int,
+                            let senderName = data["sender_name"] as? String,
+                            let date = data["date"] as? Double {
+                            guard let url = URL(string: imageUrl) else {
+                                print("Unable to construct URL from imageURL => \(imageUrl)")
+                                return
+                            }
+                            let message = Message(imageUrl: url, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
+                            self?.insertMessage(message)
+                        } else if let text = data["message"] as? String,
+                            let senderId = data["sender"] as? Int,
+                            let senderName = data["sender_name"] as? String,
+                            //                    let senderNumber = data["sender_number"] as? String,
+                            //                    let isSenderWorker = data["sender_is_worker"] as? Int,
+                            //                    let type = data["type"] as? String,
+                            let date = data["date"] as? Double {
+                            let message = Message(text: text, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
+                            self?.insertMessage(message)
+                        } else {
+                            print("Unknown Scenario")
+                        }
+                    }
+                })
+            }
+        }
+    }
+    */
     func loadMockMessages() {
         messages = []
         let mockUser = Sender(id: "99", displayName: "Arya Stark")
@@ -273,7 +437,57 @@ final class ChatViewController : MessagesViewController {
         }
     }
     // MARK: - Helpers
-    
+    /*
+    func loadMoreMessages() {
+
+        if !lastMessageKey {
+            // Loading messages first time
+            msgsReference.queryOrderedByKey().queryLimited(toLast: K_MESSAGES_PER_PAGE).observeSingleEventOfType(FIRDataEventTypeValue, withBlock: { snapshot in
+                if snapshot.exists {
+
+                    for child in snapshot.children {
+
+                        var dict = child.value
+                        dict["id"] = child.key
+                        messages.append(dict)
+                    }
+
+                    lastMessageKey = Array(snapshot.children).first?.key()
+                    print("\(messages)")
+                }
+            })
+        } else {
+            // Paging started
+            ((msgsReference.queryOrderedByKey().queryLimited(toLast: K_MESSAGES_PER_PAGE + 1)).queryEnding(atValue: lastMessageKey)).observeSingleEventOfType(FIRDataEventTypeValue, withBlock: { snapshot in
+
+                if snapshot.exists {
+
+                    var count = 0
+                    var newPage = []
+                    for child in snapshot.children {
+
+                        // Ignore last object because this is duplicate of last page
+                        if count == snapshot.childrenCount - 1 {
+                            break
+                        }
+
+                        count += 1
+                        var dict = child.value
+                        dict["id"] = child.key
+                        newPage.append(dict)
+                    }
+
+                    lastMessageKey = Array(snapshot.children).first?.key()
+
+                    // Insert new messages at top of old array
+                    let indexes = NSIndexSet(indexesIn: NSRange(location: 0, length: newPage.count))
+                    for (objectIndex, insertionIndex) in indexes.enumerated() { messages.insert((newPage)[objectIndex], at: insertionIndex) }
+                    print("\(messages)")
+                }
+            })
+        }
+    }
+    */
     func insertMessage(_ message: Message) {
         messages.append(message)
         messagesCollectionView.performBatchUpdates({
@@ -400,6 +614,7 @@ extension ChatViewController: MessagesDisplayDelegate {
         }
         if let text = msg.imageTEXT,
             !text.isEmpty {
+            print("Image Text here is => \(text)")
             let textView = UIView(frame: CGRect.zero)
             textView.backgroundColor = isFromCurrentSender(message: message) ? .telaBlue : .telaGray7
             textView.clipsToBounds = true

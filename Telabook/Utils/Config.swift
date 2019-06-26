@@ -48,6 +48,7 @@ struct Config {
         enum ServiceTypePath:String {
             case Authentication = "/loginfirebase.php"
             case AuthenticationViaToken = "/signin"
+            case ForgotPassword = "/password/email"
             case CheckUserExists = "/check_fbuser"
             case InternalConversations = "/internal_conversations"
             case ExternalConversations = "/external_conversations"
@@ -73,6 +74,7 @@ struct Config {
             switch type {
             case .Authentication: return "\(serviceCommonPath)\(ServiceTypePath.Authentication.rawValue)"
             case .AuthenticationViaToken: return "\(serviceCommonPath)\(ServiceTypePath.AuthenticationViaToken.rawValue)"
+            case .ForgotPassword: return "\(serviceCommonPath)\(ServiceTypePath.ForgotPassword.rawValue)"
             case .CheckUserExists: return "\(serviceCommonPath)\(ServiceTypePath.CheckUserExists.rawValue)"
             case .InternalConversations: return "\(serviceCommonPath)\(ServiceTypePath.InternalConversations.rawValue)"
             case .ExternalConversations: return "\(serviceCommonPath)\(ServiceTypePath.ExternalConversations.rawValue)"

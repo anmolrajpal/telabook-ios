@@ -156,7 +156,7 @@ extension BlockedUsersViewController {
                             })
                         }
                     } else {
-                        DispatchQueue.main.async {    UIAlertController.dismissModalSpinner(controller: self)
+                        DispatchQueue.main.async {
                             print("***Error Fetching Blacklist****\nInvalid Response: \(status)")
                             UIAlertController.dismissModalSpinner(controller: self, completion: {
                                 UIAlertController.showTelaAlert(title: "Error", message: "Response => \(status)", controller: self)

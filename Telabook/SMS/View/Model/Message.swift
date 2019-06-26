@@ -116,7 +116,7 @@ struct Message: MessageType {
     var kind: MessageKind
     var imageURL:URL? = nil
     var imageTEXT:String? = nil
-    
+    var text:String? = nil
     private init(kind: MessageKind, sender: Sender, messageId: String, date: Date) {
         self.kind = kind
 //        self.user = user
@@ -128,6 +128,7 @@ struct Message: MessageType {
     
     init(text: String, sender: Sender, messageId: String, date: Date) {
         self.init(kind: .text(text), sender: sender, messageId: messageId, date: date)
+        self.text = text
     }
     
     init(image: UIImage, sender: Sender, messageId: String, date: Date) {
@@ -142,6 +143,7 @@ struct Message: MessageType {
     init(imageUrl: URL, text:String, sender: Sender, messageId: String, date: Date) {
         let mediaItem = ImageMediaItem(imageUrl: imageUrl, imageText: text)
         self.init(kind: .photo(mediaItem), sender: sender, messageId: messageId, date: date)
+        self.text = text
         self.imageURL = imageUrl
         self.imageTEXT = text
     }

@@ -26,7 +26,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/Utils/Extensions.swift"
-            timestampString = "583183886.822171"
+            timestampString = "583271463.441951"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "524"
@@ -113,11 +113,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/LoginViewController.swift"
-            timestampString = "582822170.192112"
+            timestampString = "583271463.444764"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "346"
-            endingLineNumber = "346"
+            startingLineNumber = "422"
+            endingLineNumber = "422"
             landmarkName = "loginAndFetchUser(token:)"
             landmarkType = "7">
          </BreakpointContent>

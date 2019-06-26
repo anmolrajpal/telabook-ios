@@ -29,7 +29,7 @@ class ExternalConversation:NSManagedObject {
     @NSManaged var workerPhoneNumber : String?
     @NSManaged var `internal` : InternalConversation?
     @NSManaged var isArchived : Bool
-    
+    @NSManaged var externalChats:NSSet?
     static func update(conversation:ExternalConversation, context:NSManagedObjectContext, externalConversation:ExternalConversationsCodable) {
         conversation.setValue(externalConversation.allLastMessageSeen, forKey: "allLastMessageSeen")
         conversation.setValue(externalConversation.allLastMessageText, forKey: "allLastMessageText")

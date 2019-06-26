@@ -137,13 +137,16 @@ class LoginViewController: UIViewController {
         return textField
     }()
     
-    let passwordTextField: UITextField = {
+    lazy var passwordTextField: UITextField = {
         let textField = UITextField()
         textField.attributedPlaceholder = NSAttributedString(string: "Password", attributes: [NSAttributedString.Key.font: UIFont(name: CustomFonts.gothamBook.rawValue, size: 12)!, NSAttributedString.Key.foregroundColor: UIColor.telaGray7])
         textField.textColor = UIColor.telaWhite
         textField.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 12)
         textField.setIcon(#imageLiteral(resourceName: "password_icon"), position: .Left)
         textField.setIcon(#imageLiteral(resourceName: "visible_icon"), position: .Right)
+        
+        textField.rightView?.isUserInteractionEnabled = true
+        textField.rightView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleEyeButtton)))
         textField.layer.borderColor = UIColor.telaGray5.cgColor
         textField.layer.borderWidth = 2
         textField.layer.cornerRadius = 15
@@ -156,6 +159,10 @@ class LoginViewController: UIViewController {
         textField.addTarget(self, action: #selector(passwordFieldDidChange(textField:)), for: UIControl.Event.editingChanged)
         return textField
     }()
+    @objc func handleEyeButtton() {
+        passwordTextField.isSecureTextEntry = passwordTextField.isSecureTextEntry ? false : true
+        
+    }
     @objc func idFieldDidReturn(textField: UITextField!) {
         self.passwordTextField.becomeFirstResponder()
     }
@@ -227,6 +234,10 @@ class LoginViewController: UIViewController {
         let submitAction = UIAlertAction(title: "SUBMIT", style: UIAlertAction.Style.default) { (action) in
             let emailId = alertVC.textFields?[0].text
             print("Forgotten Email ID => \(emailId ?? "nil")")
+            if let email = emailId,
+                !email.isEmpty {
+                self.initiateForgotPasswordSequence(for: email)
+            }
         }
         submitAction.isEnabled = false
         alertVC.addAction(cancelAction)
@@ -261,6 +272,72 @@ class LoginViewController: UIViewController {
     @objc func handleLogin() {
         self.login()
     }
+    
+    
+    
+    fileprivate func initiateForgotPasswordSequence(for email:String) {
+        DispatchQueue.main.async {
+            UIAlertController.showModalSpinner(with: "Requesting...", controller: self)
+        }
+        AuthenticationService.shared.forgotPassword(for: email) { (responseStatus, data, serviceError, error) in
+            if let err = error {
+                DispatchQueue.main.async {
+                    print("***Error Sending Forgot Password Request****\n\(err.localizedDescription)")
+                    UIAlertController.dismissModalSpinner(controller: self, completion: {
+                        UIAlertController.showTelaAlert(title: "Error", message: err.localizedDescription, controller: self)
+                    })
+                }
+            } else if let serviceErr = serviceError {
+                DispatchQueue.main.async {
+                    print("***Error Sending Forgot Password Request****\n\(serviceErr.localizedDescription)")
+                    UIAlertController.dismissModalSpinner(controller: self, completion: {
+                        UIAlertController.showTelaAlert(title: "Error", message: serviceErr.localizedDescription, controller: self)
+                    })
+                }
+            } else if let status = responseStatus {
+                guard status == .OK else {
+                    DispatchQueue.main.async {
+                        print("***Error Sending Forgot Password Request****\nInvalid Response: \(status)")
+                        if let data = data {
+                            do {
+                                let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:Any]
+                                let message = json["message"] as? String ?? "Invalid Response\nStatus => \(status)"
+                                UIAlertController.dismissModalSpinner(controller: self, completion: {
+                                    UIAlertController.showTelaAlert(title: "Error", message: message, controller: self)
+                                })
+                            } catch let err {
+                                fatalError("Error decoding JSON: \(err.localizedDescription)")
+                            }
+                        } else {
+                            UIAlertController.dismissModalSpinner(controller: self, completion: {
+                                UIAlertController.showTelaAlert(title: "Error", message: "Invalid Response\nStatus => \(status)", controller: self)
+                            })
+                        }
+                    }
+                    return
+                }
+                DispatchQueue.main.async {
+                    print("***Forgot Password Request Success***")
+                    UIAlertController.dismissModalSpinner(controller: self, completion: {
+                        UIAlertController.showTelaAlert(title: "Success", message: "Request successfuly sent. Please check your mail & follow the instructions.", controller: self)
+                    })
+                }
+                if let data = data {
+                    do {
+                        let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:Any]
+                        let dict = json["data"] as! [String:Any]
+                        let token = dict["token"] as? String ?? "token: nil"
+                        //handle forgot password token
+                        print("Forgot Password Token => \(token)")
+                    } catch let err {
+                        print(print("Error decoding JSON: \(err.localizedDescription)"))
+                    }
+                }
+            }
+        }
+    }
+    
+    
     
     final private func login() {
         view.endEditing(true)
