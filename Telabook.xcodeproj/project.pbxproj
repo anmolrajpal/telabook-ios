@@ -11,6 +11,12 @@
 		6F04FFBC22C3A22C00FA467E /* ExternalChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F04FFBB22C3A22C00FA467E /* ExternalChat.swift */; };
 		6F098BB922BE4E3700AF19AA /* HandleBlockingHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F098BB822BE4E3700AF19AA /* HandleBlockingHelpers.swift */; };
 		6F098BBB22BE9A4100AF19AA /* BlockedUsersVCTableViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F098BBA22BE9A4100AF19AA /* BlockedUsersVCTableViewExtensions.swift */; };
+		6F1BD2E622C4AC9B0053D0CC /* FollowUpAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1BD2E522C4AC9B0053D0CC /* FollowUpAPI.swift */; };
+		6F1BD2EA22C4AD250053D0CC /* FollowUpsIndexCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1BD2E922C4AD250053D0CC /* FollowUpsIndexCodable.swift */; };
+		6F1BD2ED22C4ADED0053D0CC /* FollowUpVCTableViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1BD2EC22C4ADED0053D0CC /* FollowUpVCTableViewExtensions.swift */; };
+		6F1BD2EF22C4B0ED0053D0CC /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1BD2EE22C4B0ED0053D0CC /* Protocols.swift */; };
+		6F1BD2F122C4B1510053D0CC /* FollowUpAPIProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1BD2F022C4B1510053D0CC /* FollowUpAPIProtocol.swift */; };
+		6F1BD2F322C4B4CB0053D0CC /* FollowUpDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1BD2F222C4B4CB0053D0CC /* FollowUpDataProvider.swift */; };
 		6F29FD4F22B7E28700BCA2AB /* OverlaySpinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F29FD4E22B7E28700BCA2AB /* OverlaySpinner.swift */; };
 		6F29FD5122B8B36400BCA2AB /* FollowUpCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F29FD5022B8B36400BCA2AB /* FollowUpCell.swift */; };
 		6F29FD5322B8FFD100BCA2AB /* CustomHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F29FD5222B8FFD100BCA2AB /* CustomHeaderView.swift */; };
@@ -81,6 +87,12 @@
 		6F04FFBB22C3A22C00FA467E /* ExternalChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalChat.swift; sourceTree = "<group>"; };
 		6F098BB822BE4E3700AF19AA /* HandleBlockingHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandleBlockingHelpers.swift; sourceTree = "<group>"; };
 		6F098BBA22BE9A4100AF19AA /* BlockedUsersVCTableViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUsersVCTableViewExtensions.swift; sourceTree = "<group>"; };
+		6F1BD2E522C4AC9B0053D0CC /* FollowUpAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FollowUpAPI.swift; path = Telabook/SMS/View/Model/FollowUpAPI.swift; sourceTree = SOURCE_ROOT; };
+		6F1BD2E922C4AD250053D0CC /* FollowUpsIndexCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUpsIndexCodable.swift; sourceTree = "<group>"; };
+		6F1BD2EC22C4ADED0053D0CC /* FollowUpVCTableViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUpVCTableViewExtensions.swift; sourceTree = "<group>"; };
+		6F1BD2EE22C4B0ED0053D0CC /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
+		6F1BD2F022C4B1510053D0CC /* FollowUpAPIProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FollowUpAPIProtocol.swift; path = Telabook/Utils/FollowUpAPIProtocol.swift; sourceTree = SOURCE_ROOT; };
+		6F1BD2F222C4B4CB0053D0CC /* FollowUpDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUpDataProvider.swift; sourceTree = "<group>"; };
 		6F29FD4E22B7E28700BCA2AB /* OverlaySpinner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySpinner.swift; sourceTree = "<group>"; };
 		6F29FD5022B8B36400BCA2AB /* FollowUpCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUpCell.swift; sourceTree = "<group>"; };
 		6F29FD5222B8FFD100BCA2AB /* CustomHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomHeaderView.swift; sourceTree = "<group>"; };
@@ -118,7 +130,7 @@
 		6FB11B28229E75710098D050 /* FirebaseAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthService.swift; sourceTree = "<group>"; };
 		6FB11B2A229EA7C20098D050 /* Codable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Codable.swift; sourceTree = "<group>"; };
 		6FB11B2C229EB4C40098D050 /* RemindersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersViewController.swift; sourceTree = "<group>"; };
-		6FB11B2E229EB4F20098D050 /* FollowUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUpViewController.swift; sourceTree = "<group>"; };
+		6FB11B2E229EB4F20098D050 /* FollowUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FollowUpViewController.swift; path = ../../FollowUpViewController.swift; sourceTree = "<group>"; };
 		6FB11B30229EB5020098D050 /* CallGroupsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallGroupsViewController.swift; sourceTree = "<group>"; };
 		6FB11B32229EB5190098D050 /* OnlineUsersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineUsersViewController.swift; sourceTree = "<group>"; };
 		6FB11B34229ED6740098D050 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -167,6 +179,61 @@
 				1482E3F11B70E4874878A5EE /* Pods_Telabook.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		6F04FFBD22C4ABD200FA467E /* Follow Up */ = {
+			isa = PBXGroup;
+			children = (
+				6F04FFBF22C4AC0100FA467E /* API */,
+				6F1BD2E722C4ACA70053D0CC /* Model */,
+				6F1BD2E822C4ACB80053D0CC /* View */,
+				6F04FFBE22C4ABF300FA467E /* Controller */,
+				6F1BD2EB22C4AD510053D0CC /* Extensions+Helpers */,
+			);
+			path = "Follow Up";
+			sourceTree = "<group>";
+		};
+		6F04FFBE22C4ABF300FA467E /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				6FB11B2E229EB4F20098D050 /* FollowUpViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		6F04FFBF22C4AC0100FA467E /* API */ = {
+			isa = PBXGroup;
+			children = (
+				6F1BD2E522C4AC9B0053D0CC /* FollowUpAPI.swift */,
+				6F1BD2F022C4B1510053D0CC /* FollowUpAPIProtocol.swift */,
+			);
+			name = API;
+			path = "New Group/API";
+			sourceTree = "<group>";
+		};
+		6F1BD2E722C4ACA70053D0CC /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				6F1BD2E922C4AD250053D0CC /* FollowUpsIndexCodable.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		6F1BD2E822C4ACB80053D0CC /* View */ = {
+			isa = PBXGroup;
+			children = (
+				6F29FD5022B8B36400BCA2AB /* FollowUpCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		6F1BD2EB22C4AD510053D0CC /* Extensions+Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				6F1BD2EC22C4ADED0053D0CC /* FollowUpVCTableViewExtensions.swift */,
+				6F1BD2F222C4B4CB0053D0CC /* FollowUpDataProvider.swift */,
+			);
+			path = "Extensions+Helpers";
 			sourceTree = "<group>";
 		};
 		6F6EAB2E22A507920096365A /* View */ = {
@@ -263,8 +330,7 @@
 				6FB11B1E229D88510098D050 /* SectionItem.swift */,
 				6FB11B20229D894A0098D050 /* SectionItemCell.swift */,
 				6FB11B2C229EB4C40098D050 /* RemindersViewController.swift */,
-				6FB11B2E229EB4F20098D050 /* FollowUpViewController.swift */,
-				6F29FD5022B8B36400BCA2AB /* FollowUpCell.swift */,
+				6F04FFBD22C4ABD200FA467E /* Follow Up */,
 				6FB11B30229EB5020098D050 /* CallGroupsViewController.swift */,
 				6FB11B32229EB5190098D050 /* OnlineUsersViewController.swift */,
 			);
@@ -325,6 +391,7 @@
 				6FB11B13229C3FCA0098D050 /* BadgeBarItem.swift */,
 				6FB11B15229D05E00098D050 /* UserDefaults.swift */,
 				6FB11B11229C31DF0098D050 /* Enums.swift */,
+				6F1BD2EE22C4B0ED0053D0CC /* Protocols.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -539,21 +606,26 @@
 				6F04FFBA22C3A12400FA467E /* ChatVCCoreDataHelpers.swift in Sources */,
 				6FB11B3D229EF4690098D050 /* ArchivedSMSViewController.swift in Sources */,
 				6F9011D622ACCA900046F5E3 /* Message.swift in Sources */,
+				6F1BD2E622C4AC9B0053D0CC /* FollowUpAPI.swift in Sources */,
 				6FB11B09229BFA310098D050 /* SMSViewController.swift in Sources */,
 				6FB11B27229E5F6F0098D050 /* AuthenticationService.swift in Sources */,
 				6FB11B31229EB5020098D050 /* CallGroupsViewController.swift in Sources */,
 				6F098BBB22BE9A4100AF19AA /* BlockedUsersVCTableViewExtensions.swift in Sources */,
 				6FBDEC7C22B3F1DA00A8511E /* SMSDetailVC+CollectionView.swift in Sources */,
+				6F1BD2F122C4B1510053D0CC /* FollowUpAPIProtocol.swift in Sources */,
 				6FB11B1F229D88510098D050 /* SectionItem.swift in Sources */,
 				6F6EAB3122A508380096365A /* InternalConversation.swift in Sources */,
 				6F29FD5322B8FFD100BCA2AB /* CustomHeaderView.swift in Sources */,
 				6FEF96A022A50F4A00F2FF83 /* InternalConversationsAPI.swift in Sources */,
 				6FB11B25229E59F00098D050 /* Config.swift in Sources */,
 				6FB11B21229D894A0098D050 /* SectionItemCell.swift in Sources */,
+				6F1BD2EF22C4B0ED0053D0CC /* Protocols.swift in Sources */,
 				6FB11B2D229EB4C40098D050 /* RemindersViewController.swift in Sources */,
 				6FB11B4422A2A2E10098D050 /* Telabook.xcdatamodeld in Sources */,
 				6FB11B16229D05E00098D050 /* UserDefaults.swift in Sources */,
 				6FB11B10229C23840098D050 /* Extensions.swift in Sources */,
+				6F1BD2F322C4B4CB0053D0CC /* FollowUpDataProvider.swift in Sources */,
+				6F1BD2ED22C4ADED0053D0CC /* FollowUpVCTableViewExtensions.swift in Sources */,
 				6FEF96AA22A7BDCA00F2FF83 /* ExternalConversationsAPIProtocol.swift in Sources */,
 				6FB11AE4229BDDBD0098D050 /* AppDelegate.swift in Sources */,
 				6FB11B3B229EF4500098D050 /* BlockedUsersViewController.swift in Sources */,
@@ -570,6 +642,7 @@
 				6F29FD5122B8B36400BCA2AB /* FollowUpCell.swift in Sources */,
 				6FB11B41229F7A290098D050 /* ManageAgentsCell.swift in Sources */,
 				6FB11B12229C31DF0098D050 /* Enums.swift in Sources */,
+				6F1BD2EA22C4AD250053D0CC /* FollowUpsIndexCodable.swift in Sources */,
 				6FBDEC7A22B3D3C200A8511E /* SMSDetailVCChatExtensions.swift in Sources */,
 				6FB11B2F229EB4F20098D050 /* FollowUpViewController.swift in Sources */,
 				6FB11B4922A503E00098D050 /* SMSCell.swift in Sources */,

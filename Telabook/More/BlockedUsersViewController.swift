@@ -7,12 +7,6 @@
 //
 
 import UIKit
-struct Blacklist {
-    let id:Int?
-    let number:String?
-    let externalConversationId:Int?
-    let description:String?
-}
 class BlockedUsersViewController: UIViewController {
     internal var filteredSearch = [BlacklistCodable]()
     internal var searchController = UISearchController(searchResultsController: nil)
@@ -111,7 +105,6 @@ class BlockedUsersViewController: UIViewController {
     @objc func handleRefreshAction() {
         self.setPlaceholdersViewsState(isHidden: true)
         self.setViewsState(isHidden: true)
-//        self.startSpinner()
     }
     fileprivate func setPlaceholdersViewsState(isHidden:Bool) {
         self.placeholderLabel.isHidden = isHidden

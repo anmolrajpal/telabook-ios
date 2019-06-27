@@ -7,6 +7,8 @@
 //
 
 import Foundation
+
+
 protocol ExternalConversationsAPIProtocol {
     typealias APITaskCompletion = (Data?, ServiceError?, Error?) -> ()
     typealias APICompletion = (ResponseStatus?, Data?, ServiceError?, Error?) -> ()

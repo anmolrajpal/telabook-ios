@@ -15,6 +15,7 @@ final class ChatViewController : MessagesViewController {
     var messages:[Message] = []
     internal let conversationId:String
     internal let node:String
+    var workerId:Int16?
     internal let externalConversation:ExternalConversation?
     init(conversationId: String, node: String) {
         self.conversationId = String(conversationId)
@@ -26,7 +27,7 @@ final class ChatViewController : MessagesViewController {
     }
     init(conversationId: String, node: String, conversation:ExternalConversation) {
         self.conversationId = String(conversationId)
-        print("External Conversation ID => \(conversationId)")
+        print("External Conversation ID => \(conversationId)\nNode => \(node)\nWorker ID => \(self.workerId ?? 0)")
         self.node = node
         self.externalConversation = conversation
         super.init(nibName: nil, bundle: nil)
@@ -526,6 +527,8 @@ final class ChatViewController : MessagesViewController {
     override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
         if action == NSSelectorFromString("followUp:") {
             print("Follow Up Tapped")
+            let message = messages[indexPath.section]
+            print(message)
         } else {
             super.collectionView(collectionView, performAction: action, forItemAt: indexPath, withSender: sender)
         }

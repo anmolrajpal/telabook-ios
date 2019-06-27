@@ -10,22 +10,37 @@ import UIKit
 
 class FollowUpCell:UITableViewCell {
     static let cellHeight:CGFloat = 91.0
-    
+    var followUpsIndex:FollowUpsIndexCodable? {
+        didSet {
+            if let index = followUpsIndex {
+                self.setupCell(index: index)
+            }
+        }
+    }
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupViews()
         setupConstraints()
-        setupCell()
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    fileprivate func setupCell() {
-        self.priorityImageView.image = #imageLiteral(resourceName: "followup_small_high")
-        self.nameLabel.text = "+1234567890"
-        self.messageLabel.text = "Hi there!"
-        self.dateTimeLabel.text = "12 Jun, 2019 | 9:37 AM"
+    fileprivate func setupCell(index:FollowUpsIndexCodable) {
+        self.priorityImageView.image = ConversationPriority.getImage(by: ConversationPriority.getPriority(by: index.priority ?? 0))
+        if let number = index.phoneNumber {
+            if let name = index.name {
+                self.nameLabel.text = "\(name) (\(number))"
+            } else {
+                self.nameLabel.text = number
+            }
+        }
+        if let message = index.text {
+            self.messageLabel.text = message
+        }
+        if let date = index.datesms {
+            self.dateTimeLabel.text = date
+        }
     }
     fileprivate func setupViews() {
         contentView.addSubview(priorityImageView)

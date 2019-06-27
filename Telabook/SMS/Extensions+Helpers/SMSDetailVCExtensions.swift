@@ -38,6 +38,7 @@ extension SMSDetailViewController : UITableViewDelegate {
             if id != 0,
                 let node = conversation.node {
                 let chatVC = ChatViewController(conversationId: String(id), node: node, conversation: conversation)
+                chatVC.workerId = self.workerId
                 chatVC.title = conversation.internalAddressBookName?.isEmpty ?? true ? conversation.customerPhoneNumber : conversation.internalAddressBookName
                 navigationController?.pushViewController(chatVC, animated: true)
             }
