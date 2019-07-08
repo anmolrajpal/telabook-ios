@@ -20,6 +20,7 @@ class LoginViewController: UIViewController {
         view.backgroundColor = .telaGray1
         hideKeyboardWhenTappedAround()
         observeKeyboardNotifications()
+        setupCheckbox()
     }
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -29,16 +30,22 @@ class LoginViewController: UIViewController {
         view.addSubview(loginHeadingLabel)
         view.addSubview(idTextField)
         view.addSubview(passwordTextField)
+        view.addSubview(checkBox)
+        view.addSubview(rememberMeLabel)
         view.addSubview(forgotPasswordButton)
         view.addSubview(loginButton)
         loginButton.addSubview(spinner)
     }
     private func setupConstraints() {
-        logoImageView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: view.frame.height / 6, leftConstant: 40, bottomConstant: 0, rightConstant: 40, widthConstant: 0, heightConstant: 0)
-        loginHeadingLabel.anchor(top: logoImageView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: nil, topConstant: 60, leftConstant: 20, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
-        idTextField.anchor(top: loginHeadingLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 60, leftConstant: 50, bottomConstant: 0, rightConstant: 50, widthConstant: 0, heightConstant: 45)
+        logoImageView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: view.frame.height / 7, leftConstant: 40, bottomConstant: 0, rightConstant: 40, widthConstant: 0, heightConstant: 0)
+        loginHeadingLabel.anchor(top: logoImageView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: nil, topConstant: 40, leftConstant: 20, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        idTextField.anchor(top: loginHeadingLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 40, leftConstant: 50, bottomConstant: 0, rightConstant: 50, widthConstant: 0, heightConstant: 45)
         passwordTextField.anchor(top: idTextField.bottomAnchor, left: idTextField.leftAnchor, bottom: nil, right: idTextField.rightAnchor, topConstant: 20, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 45)
-        forgotPasswordButton.anchor(top: passwordTextField.bottomAnchor, left: nil, bottom: nil, right: nil, topConstant: 10, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        checkBox.anchor(top: passwordTextField.bottomAnchor, left: passwordTextField.leftAnchor, bottom: nil, right: nil, topConstant: 10, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 25, heightConstant: 25)
+        rememberMeLabel.centerYAnchor.constraint(equalTo: checkBox.centerYAnchor).isActive = true
+        rememberMeLabel.leftAnchor.constraint(equalTo: checkBox.rightAnchor, constant: 10).isActive = true
+        
+        forgotPasswordButton.anchor(top: rememberMeLabel.bottomAnchor, left: nil, bottom: nil, right: nil, topConstant: 30, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         forgotPasswordButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         loginButton.anchor(top: forgotPasswordButton.bottomAnchor, left: passwordTextField.leftAnchor, bottom: nil, right: passwordTextField.rightAnchor, topConstant: 30, leftConstant: 25, bottomConstant: 0, rightConstant: 25, widthConstant: 0, heightConstant: 40)
         spinner.centerXAnchor.constraint(equalTo: loginButton.centerXAnchor).isActive = true
@@ -154,6 +161,7 @@ class LoginViewController: UIViewController {
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.textContentType = UITextContentType.password
         textField.keyboardAppearance = UIKeyboardAppearance.dark
+        textField.keyboardType = UIKeyboardType.asciiCapable
         textField.returnKeyType = UIReturnKeyType.go
         textField.addTarget(self, action: #selector(passwordFieldDidReturn(textField:)), for: UIControl.Event.editingDidEndOnExit)
         textField.addTarget(self, action: #selector(passwordFieldDidChange(textField:)), for: UIControl.Event.editingChanged)
@@ -186,6 +194,31 @@ class LoginViewController: UIViewController {
         loginButton.isEnabled = email && password
         loginButton.backgroundColor = loginButton.isEnabled ? UIColor.telaBlue : UIColor.telaGray5
     }
+    lazy var checkBox: Checkbox = {
+        let checkbox = Checkbox(type: .custom)
+        checkbox.translatesAutoresizingMaskIntoConstraints = false
+        checkbox.tintColor = UIColor.telaBlue
+        return checkbox
+    }()
+    func setupCheckbox() {
+        if let checkBoxState = UserDefaults.standard.isRememberMeChecked {
+            self.checkBox.isChecked = checkBoxState
+            if checkBoxState {
+                self.idTextField.text = UserDefaults.standard.getEmailId()
+                self.passwordTextField.text = UserDefaults.standard.getPassword()
+                self.loginButton.isEnabled = true
+                self.loginButton.backgroundColor = UIColor.telaBlue
+            }
+        }
+    }
+    let rememberMeLabel:UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Remember Me"
+        label.textColor = UIColor.telaGray6
+        label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 12)
+        return label
+    }()
     lazy var forgotPasswordButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("FORGOT PASSWORD?", for: .normal)
@@ -435,6 +468,7 @@ class LoginViewController: UIViewController {
     fileprivate func setUserDefaults(_ token:String, _ companyId:Int, _ workerId:Int, _ roleId:Int) {
         let emailId = idTextField.text!, password = passwordTextField.text!
         UserDefaults.standard.setIsLoggedIn(value: true)
+        UserDefaults.standard.isRememberMeChecked = self.checkBox.isChecked
         UserDefaults.standard.setEmailId(emailId: emailId)
         UserDefaults.standard.setPassword(password: password)
         UserDefaults.standard.setToken(token: token)

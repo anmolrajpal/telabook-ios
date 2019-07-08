@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 class SMSViewController: UIViewController {
-    internal var filteredSearch = [InternalConversation]()
+    internal var filteredSearch:[InternalConversation] = []
     internal var searchController = UISearchController(searchResultsController: nil)
     internal var isSearching = false
     var externalConversations:[ExternalConversation]?
@@ -24,12 +24,12 @@ class SMSViewController: UIViewController {
         super.loadView()
         setupViews()
         setupConstraints()
-        setupTableView()
     }
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpNavBar()
-        self.setupSearchBar()
+        setupTableView()
+        setupSearchBar()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -48,10 +48,10 @@ class SMSViewController: UIViewController {
         return .lightContent
     }
     fileprivate func setupViews() {
+        view.addSubview(tableView)
         view.addSubview(spinner)
         view.addSubview(placeholderLabel)
         view.addSubview(tryAgainButton)
-        view.addSubview(tableView)
     }
     fileprivate func setupConstraints() {
         placeholderLabel.anchor(top: nil, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 20, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
@@ -122,7 +122,6 @@ class SMSViewController: UIViewController {
         searchController.searchBar.sizeToFit()
         searchController.dimsBackgroundDuringPresentation = false
         definesPresentationContext = true
-        //Setup cancel button in search bar
         let attributes:[NSAttributedString.Key : Any] = [
             NSAttributedString.Key.foregroundColor : UIColor.telaRed,
             NSAttributedString.Key.font : UIFont(name: CustomFonts.gothamMedium.rawValue, size: 13)!
@@ -130,7 +129,7 @@ class SMSViewController: UIViewController {
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes(attributes, for: .normal)
         if #available(iOS 11.0, *) {
             navigationItem.searchController = searchController
-            navigationItem.hidesSearchBarWhenScrolling = true
+//            navigationItem.hidesSearchBarWhenScrolling = true
         } else {
             tableView.tableHeaderView = searchController.searchBar
         }
@@ -187,7 +186,7 @@ class SMSViewController: UIViewController {
     let tryAgainButton:UIButton = {
         let button = UIButton(type: UIButton.ButtonType.roundedRect)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("TRY AGAIN", for: UIControl.State.normal)
+        button.setTitle("Refresh", for: UIControl.State.normal)
         button.setTitleColor(UIColor.telaGray6, for: UIControl.State.normal)
         button.titleLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 14)
         button.layer.borderWidth = 1

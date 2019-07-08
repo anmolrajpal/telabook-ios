@@ -23,6 +23,7 @@ extension UserDefaults {
         case userName
         case userObject
         case currentSender
+        case savedCredentials
     }
     
     var appLaunchCount:Int? {
@@ -34,7 +35,14 @@ extension UserDefaults {
             synchronize()
         }
     }
-    
+    var isRememberMeChecked:Bool? {
+        get {
+            return bool(forKey: UserDefaultsKeys.savedCredentials.rawValue)
+        }
+        set (mark) {
+            set(mark, forKey: UserDefaultsKeys.savedCredentials.rawValue)
+        }
+    }
 //    var userObject:UserInfoCodable.User? {
 //        get {
 //            return object(forKey: UserDefaultsKeys.userObject.rawValue) as? UserInfoCodable.User
@@ -128,8 +136,8 @@ extension UserDefaults {
     }
     
     static func clearUserData() {
-        UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.emailId.rawValue)
-        UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.password.rawValue)
+//        UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.emailId.rawValue)
+//        UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.password.rawValue)
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.token.rawValue)
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.isLoggedIn.rawValue)
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.companyId.rawValue)

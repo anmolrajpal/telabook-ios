@@ -107,7 +107,7 @@ final class ChatViewController : MessagesViewController {
                 DispatchQueue.main.async {
                     completion(preLoadedMessages)
                 }
-                query.removeAllObservers()
+//                query.removeAllObservers()
             }) { (error) in
                 print("Error retrieving single event observer: \(error.localizedDescription)")
             }

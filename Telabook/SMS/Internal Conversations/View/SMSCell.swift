@@ -18,6 +18,18 @@ class SMSCell: UITableViewCell {
                 let initials = CustomUtils.shared.getInitials(from: name)
                 self.profileImageView.loadImageUsingCacheWithURLString(conversation.profileImageUrl, placeHolder: UIImage.placeholderInitialsImage(text: initials))
             }
+            if let lowPriorityCheck = conversation.priority1,
+                lowPriorityCheck == "1" {
+                self.stackView.addArrangedSubview(self.lowPriorityImageView)
+            }
+            if let mediumPriorityCheck = conversation.priority2,
+                mediumPriorityCheck == "1" {
+                self.stackView.addArrangedSubview(self.mediumPriorityImageView)
+            }
+            if let highPriorityCheck = conversation.priority3,
+                highPriorityCheck == "1" {
+                self.stackView.addArrangedSubview(self.highPriorityImageView)
+            }
             let count = conversation.externalPendingMessages
             if count > 0 {
                 self.badgeCountLabel.isHidden = false
@@ -27,6 +39,9 @@ class SMSCell: UITableViewCell {
             }
             
         }
+    }
+    func check() {
+        
     }
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -41,7 +56,7 @@ class SMSCell: UITableViewCell {
     fileprivate func setupViews() {
         contentView.addSubview(profileImageView)
         containerView.addSubview(nameLabel)
-        
+        containerView.addSubview(stackView)
         contentView.addSubview(containerView)
         contentView.addSubview(badgeCountLabel)
     }
@@ -53,6 +68,8 @@ class SMSCell: UITableViewCell {
         containerView.anchor(top: contentView.topAnchor, left: profileImageView.rightAnchor, bottom: contentView.bottomAnchor, right: badgeCountLabel.leftAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
         nameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: -15).isActive = true
         nameLabel.anchor(top: nil, left: containerView.leftAnchor, bottom: nil, right: containerView.rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 10, widthConstant: 0, heightConstant: 0)
+        stackView.leftAnchor.constraint(equalTo: nameLabel.leftAnchor, constant: 0).isActive = true
+        stackView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: 15).isActive = true
 //        badgeCountLabel.leftAnchor.constraint(equalTo: containerView.rightAnchor, constant: 10).isActive = true
         
         badgeCountLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: 0).isActive = true
@@ -78,6 +95,35 @@ class SMSCell: UITableViewCell {
         label.textColor = UIColor.telaWhite
         label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 13.0)
         return label
+    }()
+    lazy var stackView:UIStackView = {
+        let view = UIStackView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.axis = NSLayoutConstraint.Axis.horizontal
+        view.alignment = UIStackView.Alignment.center
+        view.distribution = UIStackView.Distribution.equalSpacing
+        return view
+    }()
+    let lowPriorityImageView:UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = #imageLiteral(resourceName: "followup_small_low")
+        imageView.contentMode = .scaleAspectFill
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+    let mediumPriorityImageView:UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = #imageLiteral(resourceName: "followup_medium_low")
+        imageView.contentMode = .scaleAspectFill
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+    let highPriorityImageView:UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = #imageLiteral(resourceName: "followup_small_high")
+        imageView.contentMode = .scaleAspectFill
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
     }()
     let containerView:UIView = {
         let view = UIView()

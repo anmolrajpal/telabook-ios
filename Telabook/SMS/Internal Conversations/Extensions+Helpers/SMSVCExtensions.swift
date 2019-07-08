@@ -9,7 +9,8 @@
 import UIKit
 import CoreData
 
-extension SMSViewController : UITableViewDataSource, UISearchBarDelegate {
+extension SMSViewController : UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if isSearching {
             return filteredSearch.count
@@ -62,30 +63,27 @@ extension SMSViewController : UITableViewDataSource, UISearchBarDelegate {
             tableView.reloadData()
         }
     }
-}
-extension SMSViewController : UITableViewDelegate {
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let conversation = fetchedhResultController.object(at: indexPath) as? InternalConversation {
-        
+            
             let smsDetailVC = SMSDetailViewController(conversation: conversation)
             navigationController?.pushViewController(smsDetailVC, animated: true)
             /*
-            if !(self.externalConversations?.isEmpty ?? true) {
-                let smsDetailVC = SMSDetailViewController(conversation: (self.externalConversations?[indexPath.row].internal)!)
-                navigationController?.pushViewController(smsDetailVC, animated: true)
-            } else {
-                let smsDetailVC = SMSDetailViewController(conversation: conversation)
-                navigationController?.pushViewController(smsDetailVC, animated: true)
-            }
+             if !(self.externalConversations?.isEmpty ?? true) {
+             let smsDetailVC = SMSDetailViewController(conversation: (self.externalConversations?[indexPath.row].internal)!)
+             navigationController?.pushViewController(smsDetailVC, animated: true)
+             } else {
+             let smsDetailVC = SMSDetailViewController(conversation: conversation)
+             navigationController?.pushViewController(smsDetailVC, animated: true)
+             }
              */
         }
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return SMSCell.cellHeight
     }
-    
 }
+
 extension SMSViewController: NSFetchedResultsControllerDelegate {
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
