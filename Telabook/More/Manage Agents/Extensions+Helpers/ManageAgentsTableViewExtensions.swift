@@ -18,8 +18,11 @@ extension ManageAgentsViewController: UITableViewDelegate, UITableViewDataSource
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(ManageAgentsCell.self), for: indexPath) as! ManageAgentsCell
-        cell.selectionStyle = .none
         cell.backgroundColor = .clear
+        cell.accessoryType = .disclosureIndicator
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = UIColor.telaGray7.withAlphaComponent(0.2)
+        cell.selectedBackgroundView  = backgroundView
         var agentItem:InternalConversationsCodable?
         if isSearching {
             agentItem = self.filteredSearch[indexPath.row]
@@ -54,5 +57,10 @@ extension ManageAgentsViewController: UITableViewDelegate, UITableViewDataSource
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return ManageAgentsCell.cellHeight
     }
-    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if let agentDetails = self.agents?[indexPath.row] {
+            let agentDetailsVC = AgentDetailsViewController(agentDetails: agentDetails)
+            navigationController?.pushViewController(agentDetailsVC, animated: true)
+        }
+    }
 }

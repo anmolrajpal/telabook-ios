@@ -7,12 +7,35 @@
 //
 
 import UIKit
+class ClosureSleeve {
+    let closure: ()->()
+    
+    init (_ closure: @escaping ()->()) {
+        self.closure = closure
+    }
+    
+    @objc func invoke () {
+        closure()
+    }
+}
+
+extension UIControl {
+    func addAction(for controlEvents: UIControl.Event, _ closure: @escaping ()->()) {
+        let sleeve = ClosureSleeve(closure)
+        addTarget(sleeve, action: #selector(ClosureSleeve.invoke), for: controlEvents)
+        objc_setAssociatedObject(self, String(format: "[%d]", arc4random()), sleeve, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+    }
+}
 extension URLSession {
-    func constructURL(scheme:String = Config.ServiceConfig.serviceURLScheme, host:String = Config.ServiceConfig.serviceHost, path:Config.ServiceConfig.ServiceTypePath, parameters:[String:String]? = nil) -> URL? {
+    func constructURL(scheme:String = Config.ServiceConfig.serviceURLScheme, host:String = Config.ServiceConfig.serviceHost, path:Config.ServiceConfig.ServiceTypePath, withConcatenatingPath pathToJoin:String? = nil, parameters:[String:String]? = nil) -> URL? {
         var components = URLComponents()
         components.scheme = scheme
         components.host = host
-        components.path = Config.ServiceConfig.getServiceURLPath(for: path)
+        if let concatenatingPath = pathToJoin {
+            components.path = Config.ServiceConfig.getServiceURLPath(for: path) + "/\(concatenatingPath)"
+        } else {
+            components.path = Config.ServiceConfig.getServiceURLPath(for: path)
+        }
         if let parameters = parameters {
             components.setQueryItems(with: parameters)
         }
@@ -365,9 +388,7 @@ extension UIImage {
         
         return UIGraphicsGetImageFromCurrentImageContext()
     }
-    static func textImage(image:UIImage, text:String) -> UIImage {
-        let font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 10.0)!
-        let textColor = UIColor.telaWhite
+    static func textImage(image:UIImage, text:String, textColor:UIColor = .white, font:UIFont = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 10.0)!) -> UIImage {
         let expectedTextSize = (text as NSString).size(withAttributes: [.font: font])
         let width = max(expectedTextSize.width, image.size.width)
         let height = image.size.height + expectedTextSize.height + 5

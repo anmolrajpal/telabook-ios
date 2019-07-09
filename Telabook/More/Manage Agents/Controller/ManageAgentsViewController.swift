@@ -43,6 +43,12 @@ class ManageAgentsViewController: UIViewController {
         super.viewWillAppear(animated)
         self.navigationItem.title = "MANAGE AGENTS"
     }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if let selectionIndexPath = self.tableView.indexPathForSelectedRow {
+            self.tableView.deselectRow(at: selectionIndexPath, animated: animated)
+        }
+    }
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }

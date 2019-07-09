@@ -69,6 +69,7 @@ public enum httpMethod:String {
     case GET
     case POST
     case PUT
+    case DELETE
 }
 public enum UrlScheme:String {
     case http, https
