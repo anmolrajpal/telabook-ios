@@ -28,9 +28,6 @@ protocol ExternalConversationsAPIProtocol {
     func handleArchiving(token:String, companyId:String, conversationId:String, markArchive:Bool, completion: @escaping APICompletion)
     //MARK: ARCHIVE EXTERNAL CONVERSATION END
     
-    //MARK: FETCH BLACKLIST START
-    func fetchBlacklist(token:String, companyId:String, completion: @escaping APICompletion)
-    //MARK: FETCH BLACKLIST END
     
     //MARK: BLOCK NUMBER START
     func blockNumber(token:String, companyId:String, conversationId:String, number:String, completion: @escaping APICompletion)
@@ -38,7 +35,5 @@ protocol ExternalConversationsAPIProtocol {
     
     
     
-    //MARK: UNBLOCK NUMBER START
-    func unblockNumber(token:String, companyId:String, id:String, number:String, completion: @escaping APICompletion)
-    //MARK: UNBLOCK NUMBER END
+    
 }

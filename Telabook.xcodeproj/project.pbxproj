@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		07EE2475CAADE7AD32CD00F9 /* Pods_Telabook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A24D2E2A3583492FDB7723EF /* Pods_Telabook.framework */; };
 		6F04FFBA22C3A12400FA467E /* ChatVCCoreDataHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F04FFB922C3A12400FA467E /* ChatVCCoreDataHelpers.swift */; };
 		6F04FFBC22C3A22C00FA467E /* ExternalChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F04FFBB22C3A22C00FA467E /* ExternalChat.swift */; };
 		6F098BB922BE4E3700AF19AA /* HandleBlockingHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F098BB822BE4E3700AF19AA /* HandleBlockingHelpers.swift */; };
@@ -25,6 +26,14 @@
 		6F46A8B922D061EC0042A667 /* InternalConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F46A8B822D061EC0042A667 /* InternalConversation.swift */; };
 		6F46A8BB22D062750042A667 /* FollowUpAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F46A8BA22D062750042A667 /* FollowUpAPI.swift */; };
 		6F46A8BD22D39E790042A667 /* Checkbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F46A8BC22D39E790042A667 /* Checkbox.swift */; };
+		6F69BE7C22D46E9000F8903F /* BlockedUsersDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE7B22D46E9000F8903F /* BlockedUsersDataProvider.swift */; };
+		6F69BE7E22D46EF600F8903F /* BlacklistCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE7D22D46EF600F8903F /* BlacklistCodable.swift */; };
+		6F69BE8022D46F8400F8903F /* BlacklistAPIProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE7F22D46F8400F8903F /* BlacklistAPIProtocol.swift */; };
+		6F69BE8222D46F9100F8903F /* BlacklistAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE8122D46F9100F8903F /* BlacklistAPI.swift */; };
+		6F69BE8422D4742000F8903F /* ManageAgentsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE8322D4742000F8903F /* ManageAgentsAPI.swift */; };
+		6F69BE8622D4742E00F8903F /* ManageAgentsAPIProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE8522D4742E00F8903F /* ManageAgentsAPIProtocol.swift */; };
+		6F69BE8822D4780F00F8903F /* ManageAgentsDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE8722D4780F00F8903F /* ManageAgentsDataProvider.swift */; };
+		6F69BE8A22D4786300F8903F /* ManageAgentsTableViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE8922D4786300F8903F /* ManageAgentsTableViewExtensions.swift */; };
 		6F9011D422AC3B130046F5E3 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9011D322AC3B130046F5E3 /* ChatViewController.swift */; };
 		6F9011D622ACCA900046F5E3 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9011D522ACCA900046F5E3 /* Message.swift */; };
 		6F9011D822B12BC40046F5E3 /* SMSDetailVCCoreDataHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9011D722B12BC40046F5E3 /* SMSDetailVCCoreDataHelpers.swift */; };
@@ -79,11 +88,10 @@
 		6FEF96A622A67F2900F2FF83 /* SMSDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF96A522A67F2900F2FF83 /* SMSDetailViewController.swift */; };
 		6FEF96A822A682E700F2FF83 /* SMSDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF96A722A682E700F2FF83 /* SMSDetailCell.swift */; };
 		6FEF96AA22A7BDCA00F2FF83 /* ExternalConversationsAPIProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF96A922A7BDCA00F2FF83 /* ExternalConversationsAPIProtocol.swift */; };
-		75CA0A53E250757B0D89EA60 /* Pods_Telabook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1482E3F11B70E4874878A5EE /* Pods_Telabook.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		1482E3F11B70E4874878A5EE /* Pods_Telabook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Telabook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		18D4D0AF3685AEAA6D585A79 /* Pods-Telabook.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.release.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.release.xcconfig"; sourceTree = "<group>"; };
 		6F04FFB922C3A12400FA467E /* ChatVCCoreDataHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatVCCoreDataHelpers.swift; sourceTree = "<group>"; };
 		6F04FFBB22C3A22C00FA467E /* ExternalChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalChat.swift; sourceTree = "<group>"; };
 		6F098BB822BE4E3700AF19AA /* HandleBlockingHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandleBlockingHelpers.swift; sourceTree = "<group>"; };
@@ -102,6 +110,14 @@
 		6F46A8B822D061EC0042A667 /* InternalConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalConversation.swift; sourceTree = "<group>"; };
 		6F46A8BA22D062750042A667 /* FollowUpAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FollowUpAPI.swift; path = "Telabook/SMS/Internal Conversations/Model/FollowUpAPI.swift"; sourceTree = SOURCE_ROOT; };
 		6F46A8BC22D39E790042A667 /* Checkbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Checkbox.swift; sourceTree = "<group>"; };
+		6F69BE7B22D46E9000F8903F /* BlockedUsersDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUsersDataProvider.swift; sourceTree = "<group>"; };
+		6F69BE7D22D46EF600F8903F /* BlacklistCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlacklistCodable.swift; sourceTree = "<group>"; };
+		6F69BE7F22D46F8400F8903F /* BlacklistAPIProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlacklistAPIProtocol.swift; sourceTree = "<group>"; };
+		6F69BE8122D46F9100F8903F /* BlacklistAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlacklistAPI.swift; sourceTree = "<group>"; };
+		6F69BE8322D4742000F8903F /* ManageAgentsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsAPI.swift; sourceTree = "<group>"; };
+		6F69BE8522D4742E00F8903F /* ManageAgentsAPIProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsAPIProtocol.swift; sourceTree = "<group>"; };
+		6F69BE8722D4780F00F8903F /* ManageAgentsDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsDataProvider.swift; sourceTree = "<group>"; };
+		6F69BE8922D4786300F8903F /* ManageAgentsTableViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsTableViewExtensions.swift; sourceTree = "<group>"; };
 		6F9011D322AC3B130046F5E3 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		6F9011D522ACCA900046F5E3 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		6F9011D722B12BC40046F5E3 /* SMSDetailVCCoreDataHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSDetailVCCoreDataHelpers.swift; sourceTree = "<group>"; };
@@ -159,8 +175,8 @@
 		6FEF96A522A67F2900F2FF83 /* SMSDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSDetailViewController.swift; sourceTree = "<group>"; };
 		6FEF96A722A682E700F2FF83 /* SMSDetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSDetailCell.swift; sourceTree = "<group>"; };
 		6FEF96A922A7BDCA00F2FF83 /* ExternalConversationsAPIProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalConversationsAPIProtocol.swift; sourceTree = "<group>"; };
-		C2EE0DDF9E6F5A65BD369028 /* Pods-Telabook.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.debug.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.debug.xcconfig"; sourceTree = "<group>"; };
-		DD0234C0225DA725AC83D099 /* Pods-Telabook.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.release.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.release.xcconfig"; sourceTree = "<group>"; };
+		7B80F0AE73DD0782D1289F23 /* Pods-Telabook.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.debug.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.debug.xcconfig"; sourceTree = "<group>"; };
+		A24D2E2A3583492FDB7723EF /* Pods_Telabook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Telabook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -168,21 +184,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				75CA0A53E250757B0D89EA60 /* Pods_Telabook.framework in Frameworks */,
+				07EE2475CAADE7AD32CD00F9 /* Pods_Telabook.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1586A43250115E53D6CA2E61 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				1482E3F11B70E4874878A5EE /* Pods_Telabook.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		6F04FFBD22C4ABD200FA467E /* Follow Up */ = {
 			isa = PBXGroup;
 			children = (
@@ -262,6 +270,112 @@
 			path = "External Conversations";
 			sourceTree = "<group>";
 		};
+		6F69BE6F22D46CF900F8903F /* Manage Agents */ = {
+			isa = PBXGroup;
+			children = (
+				6F69BE7022D46D0600F8903F /* API */,
+				6F69BE7422D46D3B00F8903F /* Model */,
+				6F69BE7322D46D3400F8903F /* View */,
+				6F69BE7222D46D2900F8903F /* Controller */,
+				6F69BE7122D46D1B00F8903F /* Extensions+Helpers */,
+			);
+			path = "Manage Agents";
+			sourceTree = "<group>";
+		};
+		6F69BE7022D46D0600F8903F /* API */ = {
+			isa = PBXGroup;
+			children = (
+				6F69BE8322D4742000F8903F /* ManageAgentsAPI.swift */,
+				6F69BE8522D4742E00F8903F /* ManageAgentsAPIProtocol.swift */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
+		6F69BE7122D46D1B00F8903F /* Extensions+Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				6F69BE8722D4780F00F8903F /* ManageAgentsDataProvider.swift */,
+				6F69BE8922D4786300F8903F /* ManageAgentsTableViewExtensions.swift */,
+			);
+			path = "Extensions+Helpers";
+			sourceTree = "<group>";
+		};
+		6F69BE7222D46D2900F8903F /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				6FB11B36229EF42F0098D050 /* ManageAgentsViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		6F69BE7322D46D3400F8903F /* View */ = {
+			isa = PBXGroup;
+			children = (
+				6FB11B40229F7A290098D050 /* ManageAgentsCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		6F69BE7422D46D3B00F8903F /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		6F69BE7522D46D9000F8903F /* Blocked Users */ = {
+			isa = PBXGroup;
+			children = (
+				6F69BE7A22D46DBE00F8903F /* API */,
+				6F69BE7922D46DB800F8903F /* Model */,
+				6F69BE7822D46DB000F8903F /* View */,
+				6F69BE7722D46DA900F8903F /* Controller */,
+				6F69BE7622D46D9E00F8903F /* Extensions+Helpers */,
+			);
+			path = "Blocked Users";
+			sourceTree = "<group>";
+		};
+		6F69BE7622D46D9E00F8903F /* Extensions+Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				6F098BBA22BE9A4100AF19AA /* BlockedUsersVCTableViewExtensions.swift */,
+				6F69BE7B22D46E9000F8903F /* BlockedUsersDataProvider.swift */,
+			);
+			path = "Extensions+Helpers";
+			sourceTree = "<group>";
+		};
+		6F69BE7722D46DA900F8903F /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				6FB11B3A229EF4500098D050 /* BlockedUsersViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		6F69BE7822D46DB000F8903F /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		6F69BE7922D46DB800F8903F /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				6F69BE7D22D46EF600F8903F /* BlacklistCodable.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		6F69BE7A22D46DBE00F8903F /* API */ = {
+			isa = PBXGroup;
+			children = (
+				6F69BE8122D46F9100F8903F /* BlacklistAPI.swift */,
+				6F69BE7F22D46F8400F8903F /* BlacklistAPIProtocol.swift */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
 		6F6EAB2E22A507920096365A /* View */ = {
 			isa = PBXGroup;
 			children = (
@@ -298,7 +412,7 @@
 				6FB11AE2229BDDBD0098D050 /* Telabook */,
 				6FB11AE1229BDDBD0098D050 /* Products */,
 				9D78E82FCB5E6192D5C81890 /* Pods */,
-				1586A43250115E53D6CA2E61 /* Frameworks */,
+				A7DE20B2F4B9E774B2A89B74 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -388,11 +502,9 @@
 			isa = PBXGroup;
 			children = (
 				6FB11B0C229BFA430098D050 /* MoreViewController.swift */,
-				6FB11B36229EF42F0098D050 /* ManageAgentsViewController.swift */,
-				6FB11B40229F7A290098D050 /* ManageAgentsCell.swift */,
+				6F69BE6F22D46CF900F8903F /* Manage Agents */,
 				6FB11B38229EF4430098D050 /* GalleryViewController.swift */,
-				6FB11B3A229EF4500098D050 /* BlockedUsersViewController.swift */,
-				6F098BBA22BE9A4100AF19AA /* BlockedUsersVCTableViewExtensions.swift */,
+				6F69BE7522D46D9000F8903F /* Blocked Users */,
 				6FB11B3C229EF4690098D050 /* ArchivedSMSViewController.swift */,
 			);
 			path = More;
@@ -495,10 +607,18 @@
 		9D78E82FCB5E6192D5C81890 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				C2EE0DDF9E6F5A65BD369028 /* Pods-Telabook.debug.xcconfig */,
-				DD0234C0225DA725AC83D099 /* Pods-Telabook.release.xcconfig */,
+				7B80F0AE73DD0782D1289F23 /* Pods-Telabook.debug.xcconfig */,
+				18D4D0AF3685AEAA6D585A79 /* Pods-Telabook.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		A7DE20B2F4B9E774B2A89B74 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A24D2E2A3583492FDB7723EF /* Pods_Telabook.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -508,11 +628,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6FB11AF2229BDDBE0098D050 /* Build configuration list for PBXNativeTarget "Telabook" */;
 			buildPhases = (
-				926EF91E3172470E118E13FF /* [CP] Check Pods Manifest.lock */,
+				509F6DBAB8E92E189B376ABC /* [CP] Check Pods Manifest.lock */,
 				6FB11ADC229BDDBD0098D050 /* Sources */,
 				6FB11ADD229BDDBD0098D050 /* Frameworks */,
 				6FB11ADE229BDDBD0098D050 /* Resources */,
-				5646E3938B5A1BA63F7B5BC0 /* [CP] Embed Pods Frameworks */,
+				A0B9B358AB19358D241F9FE4 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -581,7 +701,29 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		5646E3938B5A1BA63F7B5BC0 /* [CP] Embed Pods Frameworks */ = {
+		509F6DBAB8E92E189B376ABC /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Telabook-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A0B9B358AB19358D241F9FE4 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -617,28 +759,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Telabook/Pods-Telabook-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		926EF91E3172470E118E13FF /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Telabook-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -650,6 +770,7 @@
 				6FB11AFB229BF0590098D050 /* TabBarController.swift in Sources */,
 				6F9011D422AC3B130046F5E3 /* ChatViewController.swift in Sources */,
 				6FB11B29229E75710098D050 /* FirebaseAuthService.swift in Sources */,
+				6F69BE8822D4780F00F8903F /* ManageAgentsDataProvider.swift in Sources */,
 				6F46A8B922D061EC0042A667 /* InternalConversation.swift in Sources */,
 				6FB8EA3F22AA34B600294EAC /* ChatColorHelpers.swift in Sources */,
 				6F29FD5522B909A600BCA2AB /* TextInputCell.swift in Sources */,
@@ -683,6 +804,7 @@
 				6F46A8BB22D062750042A667 /* FollowUpAPI.swift in Sources */,
 				6FB11B10229C23840098D050 /* Extensions.swift in Sources */,
 				6F1BD2F322C4B4CB0053D0CC /* FollowUpDataProvider.swift in Sources */,
+				6F69BE8422D4742000F8903F /* ManageAgentsAPI.swift in Sources */,
 				6F1BD2ED22C4ADED0053D0CC /* FollowUpVCTableViewExtensions.swift in Sources */,
 				6FEF96AA22A7BDCA00F2FF83 /* ExternalConversationsAPIProtocol.swift in Sources */,
 				6FB11AE4229BDDBD0098D050 /* AppDelegate.swift in Sources */,
@@ -694,17 +816,23 @@
 				6FEF96A422A6679400F2FF83 /* ExternalConversationsAPI.swift in Sources */,
 				6FB11B19229D06BB0098D050 /* CustomUtils.swift in Sources */,
 				6FB11B07229BFA240098D050 /* CallsViewController.swift in Sources */,
+				6F69BE8A22D4786300F8903F /* ManageAgentsTableViewExtensions.swift in Sources */,
 				6FB8EA4322AA596A00294EAC /* ChatArchivingHelpers.swift in Sources */,
 				6FEF96A822A682E700F2FF83 /* SMSDetailCell.swift in Sources */,
 				6FB11B1D229D19E10098D050 /* NetworkManager.swift in Sources */,
 				6F29FD5122B8B36400BCA2AB /* FollowUpCell.swift in Sources */,
+				6F69BE8222D46F9100F8903F /* BlacklistAPI.swift in Sources */,
 				6FB11B41229F7A290098D050 /* ManageAgentsCell.swift in Sources */,
 				6FB11B12229C31DF0098D050 /* Enums.swift in Sources */,
 				6F1BD2EA22C4AD250053D0CC /* FollowUpsIndexCodable.swift in Sources */,
 				6FBDEC7A22B3D3C200A8511E /* SMSDetailVCChatExtensions.swift in Sources */,
+				6F69BE7C22D46E9000F8903F /* BlockedUsersDataProvider.swift in Sources */,
 				6FB11B2F229EB4F20098D050 /* FollowUpViewController.swift in Sources */,
+				6F69BE8022D46F8400F8903F /* BlacklistAPIProtocol.swift in Sources */,
 				6FB11B4922A503E00098D050 /* SMSCell.swift in Sources */,
 				6FB11B4622A2A5110098D050 /* PersistenceService.swift in Sources */,
+				6F69BE8622D4742E00F8903F /* ManageAgentsAPIProtocol.swift in Sources */,
+				6F69BE7E22D46EF600F8903F /* BlacklistCodable.swift in Sources */,
 				6FB8EA4522AA6BCE00294EAC /* SMSVCExtensions.swift in Sources */,
 				6FB11B1B229D07050098D050 /* LoginViewController.swift in Sources */,
 				6FB11B2B229EA7C20098D050 /* Codable.swift in Sources */,
@@ -847,7 +975,7 @@
 		};
 		6FB11AF3229BDDBE0098D050 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C2EE0DDF9E6F5A65BD369028 /* Pods-Telabook.debug.xcconfig */;
+			baseConfigurationReference = 7B80F0AE73DD0782D1289F23 /* Pods-Telabook.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
@@ -868,7 +996,7 @@
 		};
 		6FB11AF4229BDDBE0098D050 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DD0234C0225DA725AC83D099 /* Pods-Telabook.release.xcconfig */;
+			baseConfigurationReference = 18D4D0AF3685AEAA6D585A79 /* Pods-Telabook.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;

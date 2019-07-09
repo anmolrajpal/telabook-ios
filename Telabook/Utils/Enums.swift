@@ -12,6 +12,25 @@ public enum UserRole {
     case Admin
     case Receptionist
     case Agent
+    
+    static func getRole(by code: Int) -> UserRole {
+        switch code {
+        case 1: return .SuperUser
+        case 2: return .Admin
+        case 3: return .Receptionist
+        case 4: return .Agent
+        default: fatalError("Invalid Role")
+        }
+    }
+    static func getCode(by role: UserRole) -> Int {
+        switch role {
+        case .SuperUser: return 1
+        case .Admin: return 2
+        case .Receptionist: return 3
+        case .Agent: return 4
+        }
+    }
+    
 }
 public enum CustomFonts:String {
     case gothamMedium = "Gotham-Medium"

@@ -9,10 +9,23 @@
 import UIKit
 
 class ManageAgentsViewController: UIViewController {
-    fileprivate var filteredSearch = [Agent]()
-    fileprivate var searchController = UISearchController(searchResultsController: nil)
-    fileprivate var isSearching = false
-    
+    internal var filteredSearch = [InternalConversationsCodable]()
+    internal var searchController = UISearchController(searchResultsController: nil)
+    internal var isSearching = false
+    internal var agents:[InternalConversationsCodable]? {
+        didSet {
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+            if let agents = agents {
+                if agents.isEmpty {
+                    self.placeholderLabel.isHidden = false
+                    self.placeholderLabel.text = "No Agents"
+                    self.tableView.isHidden = true
+                }
+            }
+        }
+    }
     override func loadView() {
         super.loadView()
         setupViews()
@@ -23,7 +36,7 @@ class ManageAgentsViewController: UIViewController {
         setUpNavBar()
         setupTableView()
         setupSearchBar()
-        
+        initiateFetchAgentsSequence()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -35,12 +48,15 @@ class ManageAgentsViewController: UIViewController {
     }
     fileprivate func setupViews() {
         view.addSubview(tableView)
+        view.addSubview(placeholderLabel)
     }
     fileprivate func setupConstraints() {
         tableView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        placeholderLabel.anchor(top: nil, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 20, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
+        placeholderLabel.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: -40).isActive = true
     }
     
-    
+    /*
     let agents:[Agent] = [
         Agent(profileImage: #imageLiteral(resourceName: "smiley_icon"), name: "Anmol Rajpal", details: "Dev Service | Mon-Fri | 10 Threads"),
         Agent(profileImage: #imageLiteral(resourceName: "landing_operators"), name: "Allan Martinez", details: "Mall Service | Mon-Fri | 5 Threads"),
@@ -49,6 +65,7 @@ class ManageAgentsViewController: UIViewController {
         Agent(profileImage: #imageLiteral(resourceName: "unblock_rounded"), name: "Khaleesi", details: "Sports Service | Mon-Fri | 9 Threads"),
         Agent(profileImage: #imageLiteral(resourceName: "landing_callgroup"), name: "Tyrion Lanister", details: "Dev Service | Mon-Fri | 7 Threads")
     ]
+    */
     fileprivate func setupTableView() {
         tableView.register(ManageAgentsCell.self, forCellReuseIdentifier: NSStringFromClass(ManageAgentsCell.self))
         tableView.delegate = self
@@ -92,58 +109,22 @@ class ManageAgentsViewController: UIViewController {
         tv.tableFooterView = UIView(frame: CGRect.zero)
         return tv
     }()
+    let placeholderLabel:UILabel = {
+        let label = UILabel()
+        label.text = "Turn on Mobile Data or Wifi to Access Telabook"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 16)
+        label.textColor = UIColor.telaGray6
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.sizeToFit()
+        label.isHidden = true
+        return label
+    }()
 }
 struct Agent {
     let profileImage:UIImage?
     let name:String?
     let details:String?
 }
-extension ManageAgentsViewController: UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if isSearching {
-            return self.filteredSearch.count
-        } else {
-            return self.agents.count
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(ManageAgentsCell.self), for: indexPath) as! ManageAgentsCell
-        cell.selectionStyle = .none
-        cell.backgroundColor = .clear
-        var agentItem:Agent?
-        if isSearching {
-            agentItem = self.filteredSearch[indexPath.row]
-        } else {
-            agentItem = self.agents[indexPath.row]
-        }
-        cell.agent = agentItem
-        return cell
-    }
-   
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        isSearching = false
-        tableView.reloadData()
-    }
-    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        searchBar.setShowsCancelButton(true, animated: true)
-        searchController.view.backgroundColor = UIColor.telaBlack.withAlphaComponent(0.6)
-    }
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchBar.text == nil || searchBar.text?.count == 0 {
-            searchController.view.backgroundColor = UIColor.telaBlack.withAlphaComponent(0.6)
-            isSearching = false
-            view.endEditing(true)
-            tableView.reloadData()
-        } else {
-            searchController.view.backgroundColor = .clear
-            isSearching = true
-            filteredSearch = agents.filter({$0.name?.range(of: searchBar.text!, options: String.CompareOptions.caseInsensitive) != nil})
-            tableView.reloadData()
-        }
-    }
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return ManageAgentsCell.cellHeight
-    }
-    
-}
+
