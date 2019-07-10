@@ -311,10 +311,10 @@ extension UIAlertController {
         alertVC.view.subviews.first?.backgroundColor = .clear
         return alertVC
     }
-    static public func showTelaAlert(title:String, message: String, actionTitle:String = "Ok", style:UIAlertAction.Style = .destructive, controller: UIViewController) {
+    static public func showTelaAlert(title:String, message: String, action:UIAlertAction = UIAlertAction(title: "Ok", style: .destructive, handler: nil), controller: UIViewController, completion: (() -> Void)? = nil) {
         let alert = UIAlertController.telaAlertController(title: title, message: message)
-        alert.addAction(UIAlertAction(title: actionTitle, style: style, handler: nil))
-        controller.present(alert, animated: true, completion: nil)
+        alert.addAction(action)
+        controller.present(alert, animated: true, completion: completion)
     }
 }
 extension NSObject {

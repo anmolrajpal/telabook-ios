@@ -9,7 +9,7 @@
 import UIKit
 
 class ManageAgentsCell: UITableViewCell {
-    static let cellHeight:CGFloat = 70.0
+    static let cellHeight:CGFloat = 80.0
     var agentDetails:InternalConversationsCodable? {
         didSet {
             guard let details = agentDetails else {return}

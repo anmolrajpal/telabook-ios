@@ -100,7 +100,7 @@ class AgentDetailsViewController: UIViewController {
     let responsesHeaderView = createHeaderView(title: "Set Auto Responses")
     let firstTimeSMSButton:UIButton = {
         let button = UIButton(type: UIButton.ButtonType.system)
-        button.setImage(UIImage.textImage(image: #imageLiteral(resourceName: "automsg_icon"), text: "First Time SMS", textColor: .telaBlue).withRenderingMode(.alwaysOriginal), for: UIControl.State.normal)
+        button.setImage(UIImage.textImage(image: #imageLiteral(resourceName: "automsg_icon"), text: "Auto Response", textColor: .telaBlue).withRenderingMode(.alwaysOriginal), for: UIControl.State.normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.contentEdgeInsets = buttonInsets
         
@@ -120,7 +120,14 @@ class AgentDetailsViewController: UIViewController {
         return button
     }()
     @objc func smsButtonTapped() {
-        
+        if let userId = self.agentDetails.userId {
+            let vc = AutoResponseViewController(userId: String(userId))
+            vc.modalPresentationStyle = .overFullScreen
+            vc.view.backgroundColor = .telaGray1
+            present(vc, animated: true, completion: nil)
+        } else {
+            fatalError("User ID not found")
+        }
     }
     let quickResponsesButton:UIButton = {
         let button = UIButton(type: UIButton.ButtonType.system)
@@ -145,7 +152,6 @@ class AgentDetailsViewController: UIViewController {
     }()
     @objc func quickResponsesButtonTapped() {
         if let userId = self.agentDetails.userId {
-            print("User ID => \(userId)")
             let vc = QuickResponsesViewController(userId: String(userId))
             vc.modalPresentationStyle = .overFullScreen
             vc.view.backgroundColor = .telaGray1
