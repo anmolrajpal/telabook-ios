@@ -18,6 +18,8 @@
 		6F1BD2F122C4B1510053D0CC /* FollowUpAPIProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1BD2F022C4B1510053D0CC /* FollowUpAPIProtocol.swift */; };
 		6F1BD2F322C4B4CB0053D0CC /* FollowUpDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1BD2F222C4B4CB0053D0CC /* FollowUpDataProvider.swift */; };
 		6F234EE822D606DB001FDAD6 /* ScheduleMessagesCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F234EE722D606DB001FDAD6 /* ScheduleMessagesCodable.swift */; };
+		6F23BCFF22D724A70001A888 /* UserProfileCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F23BCFE22D724A70001A888 /* UserProfileCodable.swift */; };
+		6F23BD0122D7299A0001A888 /* UserProfileDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F23BD0022D7299A0001A888 /* UserProfileDataProvider.swift */; };
 		6F29FD4F22B7E28700BCA2AB /* OverlaySpinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F29FD4E22B7E28700BCA2AB /* OverlaySpinner.swift */; };
 		6F29FD5122B8B36400BCA2AB /* FollowUpCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F29FD5022B8B36400BCA2AB /* FollowUpCell.swift */; };
 		6F29FD5322B8FFD100BCA2AB /* CustomHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F29FD5222B8FFD100BCA2AB /* CustomHeaderView.swift */; };
@@ -115,6 +117,8 @@
 		6F1BD2F022C4B1510053D0CC /* FollowUpAPIProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FollowUpAPIProtocol.swift; path = Telabook/Utils/FollowUpAPIProtocol.swift; sourceTree = SOURCE_ROOT; };
 		6F1BD2F222C4B4CB0053D0CC /* FollowUpDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUpDataProvider.swift; sourceTree = "<group>"; };
 		6F234EE722D606DB001FDAD6 /* ScheduleMessagesCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleMessagesCodable.swift; sourceTree = "<group>"; };
+		6F23BCFE22D724A70001A888 /* UserProfileCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileCodable.swift; sourceTree = "<group>"; };
+		6F23BD0022D7299A0001A888 /* UserProfileDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileDataProvider.swift; sourceTree = "<group>"; };
 		6F29FD4E22B7E28700BCA2AB /* OverlaySpinner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySpinner.swift; sourceTree = "<group>"; };
 		6F29FD5022B8B36400BCA2AB /* FollowUpCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUpCell.swift; sourceTree = "<group>"; };
 		6F29FD5222B8FFD100BCA2AB /* CustomHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomHeaderView.swift; sourceTree = "<group>"; };
@@ -296,6 +300,83 @@
 			path = "Auto Response";
 			sourceTree = "<group>";
 		};
+		6F23BCF222D7220C0001A888 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				6FB11B0A229BFA3C0098D050 /* SettingsViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		6F23BCF422D722270001A888 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				6F23BCFE22D724A70001A888 /* UserProfileCodable.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		6F23BCF522D7224C0001A888 /* API */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
+		6F23BCF622D722610001A888 /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		6F23BCF822D723E30001A888 /* Schedule Message */ = {
+			isa = PBXGroup;
+			children = (
+				6F23BCFD22D724200001A888 /* API */,
+				6F23BCFC22D7241D0001A888 /* Model */,
+				6F23BCFB22D724170001A888 /* View */,
+				6F23BCFA22D724120001A888 /* Controller */,
+				6F23BCF922D724070001A888 /* Extensions+Helpers */,
+			);
+			path = "Schedule Message";
+			sourceTree = "<group>";
+		};
+		6F23BCF922D724070001A888 /* Extensions+Helpers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Extensions+Helpers";
+			sourceTree = "<group>";
+		};
+		6F23BCFA22D724120001A888 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		6F23BCFB22D724170001A888 /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		6F23BCFC22D7241D0001A888 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		6F23BCFD22D724200001A888 /* API */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
 		6F425FB122D057190078F442 /* External Conversations */ = {
 			isa = PBXGroup;
 			children = (
@@ -394,6 +475,14 @@
 				6F58C33822D618C40091C785 /* AutoResponseAPIProtocol.swift */,
 			);
 			path = API;
+			sourceTree = "<group>";
+		};
+		6F58C33E22D721BA0091C785 /* Extensions+Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				6F23BD0022D7299A0001A888 /* UserProfileDataProvider.swift */,
+			);
+			path = "Extensions+Helpers";
 			sourceTree = "<group>";
 		};
 		6F69BE6F22D46CF900F8903F /* Manage Agents */ = {
@@ -628,7 +717,11 @@
 		6FB11B02229BF9B90098D050 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				6FB11B0A229BFA3C0098D050 /* SettingsViewController.swift */,
+				6F23BCF522D7224C0001A888 /* API */,
+				6F23BCF422D722270001A888 /* Model */,
+				6F23BCF622D722610001A888 /* View */,
+				6F23BCF222D7220C0001A888 /* Controller */,
+				6F58C33E22D721BA0091C785 /* Extensions+Helpers */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -636,6 +729,7 @@
 		6FB11B03229BF9DA0098D050 /* More */ = {
 			isa = PBXGroup;
 			children = (
+				6F23BCF822D723E30001A888 /* Schedule Message */,
 				6FB11B0C229BFA430098D050 /* MoreViewController.swift */,
 				6F69BE6F22D46CF900F8903F /* Manage Agents */,
 				6FB11B38229EF4430098D050 /* GalleryViewController.swift */,
@@ -925,6 +1019,7 @@
 				6FB11B09229BFA310098D050 /* SMSViewController.swift in Sources */,
 				6FB11B27229E5F6F0098D050 /* AuthenticationService.swift in Sources */,
 				6FB11B31229EB5020098D050 /* CallGroupsViewController.swift in Sources */,
+				6F23BD0122D7299A0001A888 /* UserProfileDataProvider.swift in Sources */,
 				6F098BBB22BE9A4100AF19AA /* BlockedUsersVCTableViewExtensions.swift in Sources */,
 				6FBDEC7C22B3F1DA00A8511E /* SMSDetailVC+CollectionView.swift in Sources */,
 				6F1BD2F122C4B1510053D0CC /* FollowUpAPIProtocol.swift in Sources */,
@@ -978,6 +1073,7 @@
 				6F69BE8022D46F8400F8903F /* BlacklistAPIProtocol.swift in Sources */,
 				6FB11B4922A503E00098D050 /* SMSCell.swift in Sources */,
 				6FB11B4622A2A5110098D050 /* PersistenceService.swift in Sources */,
+				6F23BCFF22D724A70001A888 /* UserProfileCodable.swift in Sources */,
 				6F69BE8622D4742E00F8903F /* ManageAgentsAPIProtocol.swift in Sources */,
 				6F69BE7E22D46EF600F8903F /* BlacklistCodable.swift in Sources */,
 				6FB8EA4522AA6BCE00294EAC /* SMSVCExtensions.swift in Sources */,

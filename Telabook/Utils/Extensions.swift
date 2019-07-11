@@ -77,6 +77,12 @@ extension NSLayoutConstraint {
         self.priority = UILayoutPriority(constant)
         return self
     }
+    func activate() {
+        self.isActive = true
+    }
+    func deactivate() {
+        self.isActive = false
+    }
 }
 extension UIView {
     func anchor(top: NSLayoutYAxisAnchor? = nil, left: NSLayoutXAxisAnchor? = nil, bottom: NSLayoutYAxisAnchor? = nil, right: NSLayoutXAxisAnchor? = nil, topConstant: CGFloat = 0, leftConstant: CGFloat = 0, bottomConstant: CGFloat = 0, rightConstant: CGFloat = 0, widthConstant: CGFloat = 0, heightConstant: CGFloat = 0) {
