@@ -44,6 +44,7 @@ public enum CustomDateFormat: String {
     /// Date with hours
     case dateWithTime = "yyyy-MM-dd HH:mm:ss"
     case dateWithTimeType1 = "dd/MM/yyyy hh:mm:ss"
+    case dateTimeType2 = "MMMM d, h:mm a"
 //    case telaDateTim = CustomDateFormat.telaDateTime()
     /// Date
     case chatHeaderDate = "EEEE, MMM d, yyyy"
@@ -256,6 +257,10 @@ public enum Header {
     enum headerName:String {
         case contentType = "Content-Type"
         case accept = "Accept"
+        case xRequestedWith = "X-Requested-With"
+    }
+    enum HeaderValue:String {
+        case XMLHttpRequest = "XMLHttpRequest"
     }
     enum contentType:String {
         case json = "application/json"

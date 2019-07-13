@@ -256,6 +256,20 @@ extension UITextField {
             rightViewMode = .always
         }
     }
+    func setIcon(_ image: UIImage, frame:CGRect = CGRect(x: 10, y: 10, width: 25, height: 25), position: TextFieldItemPosition) {
+        let iconView = UIImageView(frame: frame)
+        iconView.image = image
+//        let iconContainerView: UIView = UIView(frame:
+//            CGRect(x: 10, y: 0, width: 45, height: 45))
+//        iconContainerView.addSubview(iconView)
+        if position == .Left {
+            leftView = iconView
+            leftViewMode = .always
+        } else {
+            rightView = iconView
+            rightViewMode = .always
+        }
+    }
     func setDefault(string text:String, withFont font:UIFont = UIFont(name: CustomFonts.gothamBook.rawValue, size: 20.0)!, withColor color:UIColor = UIColor.telaWhite, at position: TextFieldItemPosition) {
         let calculatedSize = (text as NSString).size(withAttributes: [.font: font])
         let label = UILabel(frame: CGRect(x: 10, y: 10, width: calculatedSize.width, height: calculatedSize.height))
@@ -549,6 +563,16 @@ extension Date {
         } else {
             return false
         }
+    }
+    /// Returns a Date with the specified amount of components added to the one it is called with
+    func add(years: Int = 0, months: Int = 0, days: Int = 0, hours: Int = 0, minutes: Int = 0, seconds: Int = 0) -> Date? {
+        let components = DateComponents(year: years, month: months, day: days, hour: hours, minute: minutes, second: seconds)
+        return Calendar.current.date(byAdding: components, to: self)
+    }
+    
+    /// Returns a Date with the specified amount of components subtracted from the one it is called with
+    func subtract(years: Int = 0, months: Int = 0, days: Int = 0, hours: Int = 0, minutes: Int = 0, seconds: Int = 0) -> Date? {
+        return add(years: -years, months: -months, days: -days, hours: -hours, minutes: -minutes, seconds: -seconds)
     }
     static func getDateFromString(dateString:String?, dateFormat:CustomDateFormat) -> Date? {
         let dateFormatter = DateFormatter()

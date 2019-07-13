@@ -11,15 +11,18 @@ import UserNotifications
 import Firebase
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    static let shared = AppDelegate()
     let gcmMessageIDKey = "gcm.message_id"
     var window: UIWindow?
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = TabBarController()
-        window?.makeKeyAndVisible()
         FirebaseApp.configure()
+        window = UIWindow(frame: UIScreen.main.bounds)
+        let tbc = TabBarController()
+        window?.rootViewController = tbc
+        window?.makeKeyAndVisible()
+        FirebaseAuthService.shared.addObservers()
         
         
         // [START set_messaging_delegate]

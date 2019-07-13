@@ -1,14 +1,14 @@
 //
-//  UserProfileDataProvider.swift
+//  ScheduleMessageDataProvider.swift
 //  Telabook
 //
-//  Created by Anmol Rajpal on 11/07/19.
+//  Created by Anmol Rajpal on 13/07/19.
 //  Copyright © 2019 Natovi. All rights reserved.
 //
 
 import UIKit
-extension SettingsViewController {
-    internal func initiateFetchUserProfileSequence(userId:String) {
+extension ScheduleMessageViewController {
+    internal func initiateFetchScheduledMessagesSequence() {
         DispatchQueue.main.async {
             UIAlertController.showModalSpinner(with: "Loading...", controller: self)
         }
@@ -23,46 +23,61 @@ extension SettingsViewController {
                     
                 }
             } else if let token = token {
+                let userId = UserDefaults.standard.currentSender.id
                 DispatchQueue.main.async {
-                    self.fetchUserProfile(token:token, userId: userId)
+                    self.fetchScheduledMessages(token:token, userId: userId)
                 }
             }
         }
     }
-    fileprivate func fetchUserProfile(token:String, userId:String) {
-        UserProfileAPI.shared.fetchUserProfile(token: token, userId: userId) { (responseStatus, data, serviceError, error) in
+    fileprivate func fetchScheduledMessages(token:String, userId:String) {
+        QuickResponsesAPI.shared.fetchQuickResponses(token: token, userId: userId) { (responseStatus, data, serviceError, error) in
             if let err = error {
                 DispatchQueue.main.async {
-                    print("***Error Fetching User Profile****\n\(err.localizedDescription)")
+                    print("***Error Fetching Scheduled Messages****\n\(err.localizedDescription)")
                     UIAlertController.dismissModalSpinner(controller: self, completion: {
                         UIAlertController.showTelaAlert(title: "Error", message: err.localizedDescription, controller: self)
                     })
                 }
             } else if let serviceErr = serviceError {
                 DispatchQueue.main.async {
-                    print("***Error Fetching User Profile****\n\(serviceErr.localizedDescription)")
+                    print("***Error Fetching Scheduled Messages****\n\(serviceErr.localizedDescription)")
                     UIAlertController.dismissModalSpinner(controller: self, completion: {
                         UIAlertController.showTelaAlert(title: "Error", message: serviceErr.localizedDescription, controller: self)
                     })
                 }
             } else if let status = responseStatus {
                 guard status == .OK else {
-                    DispatchQueue.main.async {
-                        print("***Error Fetching User Profile****\nInvalid Response: \(status)")
-                        UIAlertController.dismissModalSpinner(controller: self, completion: {
-                            UIAlertController.showTelaAlert(title: "Error", message: "Invalid Response: Status => \(status)", controller: self)
-                        })
+                    if status == .NoContent {
+                        DispatchQueue.main.async {
+                            print("***No Scheduled Messages(Empty Response)****Response Status: \(status)")
+                            UIAlertController.dismissModalSpinner(controller: self, completion: {
+                                self.placeholderLabel.isHidden = false
+                                self.placeholderLabel.text = "No Scheduled Messages"
+                                self.tableView.isHidden = true
+                            })
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            print("***Error Fetching Scheduled Messages****\nInvalid Response: \(status)")
+                            UIAlertController.dismissModalSpinner(controller: self, completion: {
+                                UIAlertController.showTelaAlert(title: "Error", message: "Response => \(status)", controller: self)
+                            })
+                        }
                     }
                     return
                 }
                 if let data = data {
                     let decoder = JSONDecoder()
                     do {
-                        let result = try decoder.decode(UserProfileCodable.self, from: data)
+                        let result = try decoder.decode(ScheduleMessagesCodable.self, from: data)
                         DispatchQueue.main.async {
                             UIAlertController.dismissModalSpinner(controller: self, completion: {
+                                print("huh")
                                 print(result)
-                                self.userProfile = result
+                                print("umm")
+                                print(result.scheduleMessages as Any)
+                                self.scheduledMessages = result.scheduleMessages
                             })
                         }
                     } catch let err {

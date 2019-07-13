@@ -8,9 +8,13 @@
 
 import Foundation
 import Firebase
-
+import UIKit
 final class FirebaseAuthService:NSObject {
     static let shared = FirebaseAuthService()
+    var authenticationStateListener:AuthStateDidChangeListenerHandle?
+    var tokenStateListener:IDTokenDidChangeListenerHandle?
+    
+    
     typealias TokenFetchCompletion = (String?, Error?) -> ()
     func authenticateAndFetchToken(email:String, password:String, completion: @escaping TokenFetchCompletion) {
         
@@ -39,8 +43,50 @@ final class FirebaseAuthService:NSObject {
             }
         }
     }
+    
+    func addObservers() {
+        observeAuthenticationState()
+        observeTokenState()
+    }
+    func handleUserState(_ user:User?) {
+        guard user != nil else {
+            print("Calling signout sequence")
+            AuthenticationService.shared.callSignOutSequence()
+            return
+        }
+    }
+    func observeAuthenticationState() {
+        authenticationStateListener = Auth.auth().addStateDidChangeListener { (auth, user) in
+            print("AUTH STATE LISTENER")
+            self.handleUserState(user)
+        }
+    }
+    func removeAuthenticationStateObserver() {
+        if let listener = authenticationStateListener {
+            Auth.auth().removeStateDidChangeListener(listener)
+            authenticationStateListener = nil
+        }
+    }
+    func observeTokenState() {
+        tokenStateListener = Auth.auth().addIDTokenDidChangeListener { (auth, user) in
+            if user == nil {
+                print("Token Did Change")
+            } else {
+                print("Token Stable")
+            }
+        }
+    }
+    func removeTokenStateObserver() {
+        if let listener = tokenStateListener {
+            Auth.auth().removeIDTokenDidChangeListener(listener)
+            tokenStateListener = nil
+        }
+    }
     func getCurrentToken(completion: @escaping (String?, Error?) -> ()) {
+        let user = Auth.auth().currentUser
+        handleUserState(user)
         Auth.auth().currentUser?.getIDToken(completion: { (token, error) in
+            print("In closure...")
             if let err = error {
                 print("Error fetching token: \(err)")
                 DispatchQueue.main.async {
@@ -51,6 +97,8 @@ final class FirebaseAuthService:NSObject {
                 DispatchQueue.main.async {
                     completion(token, nil)
                 }
+            } else {
+                print("Hell NO")
             }
         })
     }
@@ -77,13 +125,17 @@ final class FirebaseAuthService:NSObject {
         }
     }
     
-    
+    func removeObservers() {
+        removeAuthenticationStateObserver()
+        removeTokenStateObserver()
+    }
     //MARK: SIGNOUT
     typealias SignoutCompletion = (Error?) -> ()
     func signOut(completion: @escaping SignoutCompletion) {
         let firebaseAuth = Auth.auth()
         do {
             try firebaseAuth.signOut()
+            removeObservers()
             DispatchQueue.main.async {
                 completion(nil)
             }

@@ -59,9 +59,9 @@ class PersistenceService: NSObject {
 
 
 extension PersistenceService {
-    func fetchUserFromStorage() -> User? {
+    func fetchUserFromStorage() -> UserObject? {
         let managedObjectContext = PersistenceService.shared.persistentContainer.viewContext
-        let fetchRequest = NSFetchRequest<User>(entityName: "User")
+        let fetchRequest = NSFetchRequest<UserObject>(entityName: "User")
         let sortDescriptor1 = NSSortDescriptor(key: "id", ascending: true)
         fetchRequest.sortDescriptors = [sortDescriptor1]
         

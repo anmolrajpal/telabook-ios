@@ -64,7 +64,7 @@
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="update" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="view" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="permissions" inverseEntity="User" syncable="YES"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserObject" inverseName="permissions" inverseEntity="UserObject" syncable="YES"/>
     </entity>
     <entity name="Person" representedClassName="Person" syncable="YES" codeGenerationType="class">
         <attribute name="id" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
@@ -72,7 +72,7 @@
         <attribute name="phone" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="address" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Address" inverseName="person" inverseEntity="Address" syncable="YES"/>
     </entity>
-    <entity name="User" representedClassName=".User" syncable="YES">
+    <entity name="UserObject" representedClassName=".UserObject" syncable="YES">
         <attribute name="company" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="extension" optional="YES" attributeType="String" syncable="YES"/>
@@ -88,11 +88,11 @@
     </entity>
     <elements>
         <element name="Address" positionX="-324.984375" positionY="-372.328125" width="128" height="90"/>
+        <element name="ExternalChat" positionX="-396" positionY="-216" width="128" height="165"/>
         <element name="ExternalConversation" positionX="-48.703125" positionY="105.40625" width="128" height="345"/>
         <element name="InternalConversation" positionX="-241.4140625" positionY="160.12109375" width="128" height="313"/>
         <element name="Permission" positionX="-420.73828125" positionY="178.13671875" width="128" height="148"/>
         <element name="Person" positionX="-538.78515625" positionY="-276.92578125" width="128" height="105"/>
-        <element name="User" positionX="-602.515625" positionY="204.3203125" width="128" height="223"/>
-        <element name="ExternalChat" positionX="-396" positionY="-216" width="128" height="165"/>
+        <element name="UserObject" positionX="-602.515625" positionY="204.3203125" width="128" height="225"/>
     </elements>
 </model>

@@ -49,11 +49,17 @@ class TabBarController: UITabBarController {
             setUpTabBarViewControllers()
         } else {
 //            self.spinner.stopAnimating()
-            let loginViewController = LoginViewController()
-            UserDefaults.standard.setIsLoggedIn(value: false)
-            UserDefaults.clearUserData()
-            DispatchQueue.main.async {
-                self.present(loginViewController, animated: false, completion: nil)
+            print("Presented View Controller:")
+            print(self.presentedViewController as Any)
+            guard let _ = self.presentedViewController as? LoginViewController else {
+                print("Presenting Login View Controller")
+                let loginViewController = LoginViewController()
+                UserDefaults.standard.setIsLoggedIn(value: false)
+                UserDefaults.clearUserData()
+                DispatchQueue.main.async {
+                    self.present(loginViewController, animated: false, completion: nil)
+                }
+                return
             }
         }
     }

@@ -41,15 +41,14 @@ class HomeViewController: UIViewController {
 //        setViewsState(isHidden: true)
 //        startSpinner()
         preFetchUser()
-        fetchUserData()
+//        fetchUserData()
         
-        let p = self.fetchPermissionsFromStorage()
-        p?.forEach({print($0.name ?? "nil")})
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationItem.title = "HOME"
+        fetchUserData()
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -254,6 +253,9 @@ class HomeViewController: UIViewController {
             } else if let token = token {
                 self.fetchUserInfoByToken(token)
             }
+            else {
+                print("God damn")
+            }
         }
     }
     fileprivate func fetchUserInfoByToken(_ token:String) {
@@ -287,8 +289,8 @@ class HomeViewController: UIViewController {
         self.clearStorage()
         self.saveToCoreData(userInfo: userInfoData)
     }
-    lazy var fetchedResultsController: NSFetchedResultsController<User> = {
-        let fetchRequest = NSFetchRequest<User>(entityName:"User")
+    lazy var fetchedResultsController: NSFetchedResultsController<UserObject> = {
+        let fetchRequest = NSFetchRequest<UserObject>(entityName:"UserObject")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending:true)]
         
         let controller = NSFetchedResultsController(fetchRequest: fetchRequest,
@@ -316,13 +318,13 @@ class HomeViewController: UIViewController {
         
         self.operatorDesignationLabel.text = String(describing: role)
     }
-    fileprivate func updateUI(user: User?) {
+    fileprivate func updateUI(user: UserObject?) {
         let role = CustomUtils.shared.getUserRole()
         let firstName = user?.name
         let lastName = user?.lastName
         self.operatorNameLabel.text = "\(firstName?.uppercased() ?? "") \(lastName?.uppercased() ?? "")"
         
-        let initialsText = "\(firstName?.first?.uppercased() ?? "Z")\(lastName?.first?.uppercased() ?? "Z")"
+        let initialsText = "\(firstName?.first?.uppercased() ?? "X")\(lastName?.first?.uppercased() ?? "D")"
         self.profileImageView.loadImageUsingCacheWithURLString(user?.profileImageUrl, placeHolder: UIImage.placeholderInitialsImage(text: initialsText))
         
         self.operatorDesignationLabel.text = String(describing: role)
@@ -345,7 +347,7 @@ class HomeViewController: UIViewController {
             let encoder = JSONEncoder()
             let data = try encoder.encode(userInfo.user)
             
-            _ = try decoder.decode(User.self, from: data)
+            _ = try decoder.decode(UserObject.self, from: data)
             
 //            try managedObjectContext.save()
             
@@ -364,7 +366,7 @@ class HomeViewController: UIViewController {
         }
         
         let managedObjectContext = PersistenceService.shared.persistentContainer.viewContext
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "User")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "UserObject")
         let permissionsFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Permission")
         // NSBatchDeleteRequest is not supported for in-memory stores
         if isInMemoryStore {
@@ -407,9 +409,9 @@ class HomeViewController: UIViewController {
             return nil
         }
     }
-    func fetchFromStorage() -> User? {
+    func fetchFromStorage() -> UserObject? {
         let managedObjectContext = PersistenceService.shared.persistentContainer.viewContext
-        let fetchRequest = NSFetchRequest<User>(entityName: "User")
+        let fetchRequest = NSFetchRequest<UserObject>(entityName: "UserObject")
         let sortDescriptor1 = NSSortDescriptor(key: "id", ascending: true)
         fetchRequest.sortDescriptors = [sortDescriptor1]
 

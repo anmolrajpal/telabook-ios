@@ -9,36 +9,123 @@
 import UIKit
 import Firebase
 import CoreData
+
 class SettingsViewController: UIViewController {
+    static let shared = SettingsViewController()
     internal var userProfile:UserProfileCodable? {
         didSet {
             guard let profile = userProfile else { return }
             print(profile.users?.first as Any)
+            if let userDetails = profile.users?.first {
+                self.setupData(details: userDetails)
+            } else {
+                fatalError("Fail TO unwrap user details")
+            }
+            if let dids = profile.dids {
+                let arr = dids.map { $0.number }.compactMap { $0 }
+                print(arr)
+                let didStr = arr.joined(separator: ", ")
+                assignedDIDs = didStr
+            }
+        }
+    }
+    internal var firstName:String? {
+        didSet {
+            if let text = firstName {
+                self.firstNameTextField.text = text
+            }
+        }
+    }
+    internal var lastName:String? {
+        didSet {
+            if let text = lastName {
+                self.lastNameTextField.text = text
+            }
+        }
+    }
+    internal var email:String? {
+        didSet {
+            if let text = email {
+                self.emailTextField.text = text
+            }
+        }
+    }
+    internal var assignedDIDs:String? {
+        didSet {
+            if let text = assignedDIDs {
+                self.assignDIDsTextField.text = text
+            }
+        }
+    }
+    internal var phoneNumber:String? {
+        didSet {
+            if let text = phoneNumber {
+                self.phoneNumberTextField.text = text
+            }
+        }
+    }
+    internal var contactEmail:String? {
+        didSet {
+            if let text = contactEmail {
+                self.contactEmailTextField.text = text
+            }
+        }
+    }
+    internal var address:String? {
+        didSet {
+            if let text = address {
+                self.addressTextField.text = text
+            }
         }
     }
     override func loadView() {
         super.loadView()
         setupViews()
-        setupConstraints()
+//        setupConstraints()
     }
     let userId = UserDefaults.standard.currentSender.id
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpNavBar()
         setUpNavBarItems()
-        hideKeyboardWhenTappedAround()
-        setupData()
         
-//        self.initiateFetchUserProfileSequence(userId: userId)
+        hideKeyboardWhenTappedAround()
+        setupTextFields()
+        setupTextFieldsDelegates()
+//        setupData()
+        scrollView.delegate = self
+        
+        scrollView.setContentOffset(CGPoint(x: 0, y: self.scrollView.contentOffset.y), animated: true)
+        self.initiateFetchUserProfileSequence(userId: userId)
     }
-    func setupData() {
-        profileImageView.image = #imageLiteral(resourceName: "landing_callgroup")
-        userNameLabel.text = "User Name"
-        userDesignationLabel.text = "Operator  |"
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        setupConstraints()
+    }
+    func setupData(details:UserProfileCodable.User) {
+        let role = CustomUtils.shared.getUserRole()
+        let first_name = details.name
+        let last_name = details.lastName
+        let initialsText = "\(first_name?.first?.uppercased() ?? "X")\(last_name?.first?.uppercased() ?? "D")"
+    
+    profileImageView.loadImageUsingCacheWithURLString(details.profileImageUrl, placeHolder: UIImage.placeholderInitialsImage(text: initialsText))
+        userNameLabel.text = "\(first_name?.uppercased() ?? "") \(last_name?.uppercased() ?? "")"
+        userDesignationLabel.text = "\(String(describing: role))  |"
+        firstName = first_name
+        lastName = last_name
+        email = details.email
+        phoneNumber = details.phoneNumber
+        contactEmail = details.backupEmail
+        address = details.address
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationItem.title = "SETTINGS"
+        observeKeyboardNotifications()
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        removeKeyboardNotificationsObservers()
     }
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -67,12 +154,13 @@ class SettingsViewController: UIViewController {
         view.addSubview(scrollView)
     }
     fileprivate func setupConstraints() {
+        scrollView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         placeholderLabel.anchor(top: nil, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 20, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
         placeholderLabel.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: -40).isActive = true
         refreshButton.topAnchor.constraint(equalTo: view.centerYAnchor, constant: 40).isActive = true
         refreshButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
         setupScrollViewSubviewsConstraints()
-        scrollView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        
 //        scrollView.subviews.forEach({ $0.widthAnchor.constraint(equalTo: self.view.widthAnchor).activate() })
     }
     
@@ -82,6 +170,7 @@ class SettingsViewController: UIViewController {
         UserDefaults.clearUserData()
         DispatchQueue.main.async {
             guard let tbc = self.tabBarController as? TabBarController else {
+                print("No Tab bar")
                 return
             }
             tbc.isLoaded = false
@@ -95,7 +184,7 @@ class SettingsViewController: UIViewController {
         do {
             
             let context = PersistenceService.shared.persistentContainer.viewContext
-            let entityNames = [String(describing: ExternalConversation.self), String(describing: InternalConversation.self), String(describing: Permission.self), String(describing: User.self)]
+            let entityNames = [String(describing: ExternalConversation.self), String(describing: InternalConversation.self), String(describing: Permission.self), String(describing: UserObject.self)]
             for entityName in entityNames {
                 let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
                 do {
@@ -109,6 +198,7 @@ class SettingsViewController: UIViewController {
         }
     }
     func callSignOutSequence() {
+        print("Signing out")
         FirebaseAuthService.shared.signOut { (error) in
             guard error == nil else {
                 UIAlertController.showTelaAlert(title: "Signout Failed", message: error?.localizedDescription ?? "Try again", controller: self)
@@ -156,10 +246,13 @@ class SettingsViewController: UIViewController {
     let scrollView:UIScrollView = {
         let view = UIScrollView(frame: CGRect.zero)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .clear
-        view.showsVerticalScrollIndicator = false
-        view.alwaysBounceVertical = true
-        view.bounces = true
+        view.backgroundColor = UIColor.clear
+        view.showsVerticalScrollIndicator = true
+        view.showsHorizontalScrollIndicator = false
+        view.alwaysBounceHorizontal = false
+        view.indicatorStyle = UIScrollView.IndicatorStyle.white
+        view.isDirectionalLockEnabled = true
+        view.contentInsetAdjustmentBehavior = .never
         return view
     }()
     fileprivate func setupScrollViewSubviews() {
@@ -174,6 +267,7 @@ class SettingsViewController: UIViewController {
         setupTextFieldContainerViewsConstraints()
         updateButton.topAnchor.constraint(equalTo: addressTextFieldContainerView.bottomAnchor, constant: 40).activate()
         updateButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).activate()
+        updateButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: 0).activate()
     }
     
     let profileImageView:UIImageView = {
@@ -244,8 +338,27 @@ class SettingsViewController: UIViewController {
         
     }
     
-    
-    
+    fileprivate func setupTextFields() {
+        emailTextField.keyboardType = .emailAddress
+        emailTextField.textContentType = .emailAddress
+        emailTextField.isEnabled = false
+        assignDIDsTextField.keyboardType = .phonePad
+        assignDIDsTextField.textContentType = .telephoneNumber
+        assignDIDsTextField.isEnabled = false
+        phoneNumberTextField.keyboardType = .phonePad
+        phoneNumberTextField.textContentType = .telephoneNumber
+        contactEmailTextField.keyboardType = .emailAddress
+        contactEmailTextField.textContentType = .emailAddress
+    }
+    fileprivate func setupTextFieldsDelegates() {
+        firstNameTextField.delegate = self
+        lastNameTextField.delegate = self
+        emailTextField.delegate = self
+        assignDIDsTextField.delegate = self
+        phoneNumberTextField.delegate = self
+        contactEmailTextField.delegate = self
+        addressTextField.delegate = self
+    }
     
     let firstNameTextField = createTextField(placeholder: "First Name")
     let lastNameTextField = createTextField(placeholder: "Last Name")
@@ -365,9 +478,99 @@ class SettingsViewController: UIViewController {
         label.centerYAnchor.constraint(equalTo: headerView.centerYAnchor).isActive = true
         return headerView
     }
+    
+    
+    
+    
+    
+    
+    var activeField:UITextField?
+    
+    fileprivate func observeKeyboardNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    fileprivate func removeKeyboardNotificationsObservers() {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+    }
+    @objc func keyboardHide() {
+        UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+
+            let contentInsets: UIEdgeInsets = .zero
+            
+            self.scrollView.contentInset = contentInsets
+            
+            self.scrollView.scrollIndicatorInsets = contentInsets
+            
+
+//            self.view.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height)
+            
+        }, completion: nil)
+    }
+    @objc func keyboardShow(notification:NSNotification) {
+        let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue
+        let keyboardHeight:CGFloat = keyboardSize?.height ?? 280.0
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+            
+            
+            let contentInsets: UIEdgeInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: keyboardHeight + 50.0, right: 0.0)
+            
+            self.scrollView.contentInset = contentInsets
+            self.scrollView.scrollIndicatorInsets = contentInsets
+//            self.scrollView.contentOffset = CGPoint(x: 0, y: keyboardHeight)
+            
+//            var frame: CGRect = self.view.frame
+//            frame.size.height -= keyboardHeight
+//            let activeFieldFrameOrigin:CGPoint = self.activeField!.frame.origin
+//
+//            if !frame.contains(activeFieldFrameOrigin) {
+//                print("Positive")
+//                self.scrollView.scrollRectToVisible(self.activeField!.frame, animated: true)
+//
+//            }
+//            let y: CGFloat = UIDevice.current.orientation.isLandscape ? -iPadKeyboardHeight : -keyboardHeight
+//            self.view.frame = CGRect(x: 0, y: y, width: self.view.frame.width, height: self.view.frame.height)
+            
+        }, completion: nil)
+    }
+    
 }
+extension SettingsViewController: UIScrollViewDelegate {
+//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+//        view.endEditing(true)
+//    }
+//
+//    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+//
+//        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+//            self.view.layoutIfNeeded()
+//        }, completion: nil)
+//    }
 
-
+}
+extension SettingsViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        
+        textField.resignFirstResponder()
+        
+        return true
+        
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        
+        activeField = textField
+        
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        
+        activeField = nil
+        
+    }
+}
 
 
 
@@ -385,3 +588,4 @@ class Line:UIView {
         fatalError("init coder hasn't been implemented.")
     }
 }
+

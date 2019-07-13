@@ -6,10 +6,11 @@
 //  Copyright © 2019 Natovi. All rights reserved.
 //
 
-import Foundation
-
+import UIKit
+import CoreData
 final class AuthenticationService: NSObject {
     static let shared = AuthenticationService()
+    
     typealias UserInfoFetchCompletion = (UserInfoCodable?, ServiceError?, Error?) -> ()
     
     func authenticateViaToken(token:String, completion: @escaping UserInfoFetchCompletion) {
@@ -102,4 +103,75 @@ final class AuthenticationService: NSObject {
             }
         }
     }
+    
+    
+    
+    
+    func callSignOutSequence() {
+        print("Signing out")
+        FirebaseAuthService.shared.signOut { (error) in
+            guard error == nil else {
+                self.callSignOutSequence()
+                return
+            }
+            self.dumpCoreDataStorage()
+            self.signOut()
+        }
+    }
+    fileprivate func signOut() {
+        let loginViewController = LoginViewController()
+        UserDefaults.standard.setIsLoggedIn(value: false)
+        UserDefaults.clearUserData()
+        if let rootViewController = AppDelegate.shared.window?.rootViewController {
+            print(rootViewController)
+            guard let tbc = rootViewController as? TabBarController else {
+                print("Lol")
+                return
+            }
+            let pvc = tbc.presentedViewController
+            print("Knock: Presented View Controller:")
+            print(pvc as Any)
+            DispatchQueue.main.async {
+                pvc?.dismiss(animated: true, completion: nil)
+                tbc.isLoaded = false
+                tbc.present(loginViewController, animated: true, completion: {
+                    tbc.selectedViewController?.view.isHidden = true
+                    tbc.viewControllers = nil
+                })
+            }
+        } else {
+            let tbc = TabBarController()
+            let pvc = tbc.presentedViewController
+            print("Clock: Presented View Controller:")
+            print(pvc as Any)
+            AppDelegate.shared.window?.rootViewController = tbc
+            DispatchQueue.main.async {
+                pvc?.dismiss(animated: true, completion: nil)
+                tbc.isLoaded = false
+                tbc.present(loginViewController, animated: true, completion: {
+                    tbc.selectedViewController?.view.isHidden = true
+                    tbc.viewControllers = nil
+                })
+            }
+        }
+        
+    }
+    fileprivate func dumpCoreDataStorage() {
+        do {
+            
+            let context = PersistenceService.shared.persistentContainer.viewContext
+            let entityNames = [String(describing: ExternalConversation.self), String(describing: InternalConversation.self), String(describing: Permission.self), String(describing: UserObject.self)]
+            for entityName in entityNames {
+                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+                do {
+                    let objects  = try context.fetch(fetchRequest) as? [NSManagedObject]
+                    _ = objects.map{$0.map{context.delete($0)}}
+                    PersistenceService.shared.saveContext()
+                } catch let error {
+                    print("ERROR DELETING : \(error)")
+                }
+            }
+        }
+    }
+    
 }

@@ -64,6 +64,8 @@ struct Config {
             case FollowUps = "/follow_ups"
             case QuickResponses = "/quick_answers"
             case ManageAgents = "/manage_agents"
+            case UserProfile = "/users"
+            case ScheduleMessage = "/schedule_message"
         }
         static func getAuthenticationParamString(emailId:String, password:String) -> String {
             
@@ -93,6 +95,8 @@ struct Config {
             case .FollowUps: return "\(serviceCommonPath)\(ServiceTypePath.FollowUps.rawValue)"
             case .QuickResponses: return "\(serviceCommonPath)\(ServiceTypePath.QuickResponses.rawValue)"
             case .ManageAgents: return "\(serviceCommonPath)\(ServiceTypePath.ManageAgents.rawValue)"
+            case .UserProfile: return "\(serviceCommonPath)\(ServiceTypePath.UserProfile.rawValue)"
+            case .ScheduleMessage: return "\(serviceCommonPath)\(ServiceTypePath.ScheduleMessage.rawValue)"
             }
         }
         static func getServiceHostUri(_ serviceType:ServiceType) -> String {

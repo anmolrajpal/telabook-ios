@@ -96,9 +96,9 @@ class MoreViewController: UIViewController {
     var options:[String] = {
         let role = CustomUtils.shared.getUserRole()
         if role != .Agent {
-            return ["Manage Agents", "Gallery", "Blocked Users", "Archived SMSes"]
+            return ["Manage Agents", "Gallery", "Blocked Users", "Schedule Message", "Archived SMSes"]
         } else {
-            return ["Profile Settings", "Blacklisted Numbers", "Clear Cache"]
+            return ["Profile Settings", "Blocked Users", "Schedule Message", "Clear Cache"]
         }
     }()
     
@@ -146,6 +146,9 @@ extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
                     let blockedUsersVC = BlockedUsersViewController()
                     self.show(blockedUsersVC, sender: self)
                 case 2:
+                    let scheduleMessageVC = ScheduleMessageViewController()
+                    self.show(scheduleMessageVC, sender: self)
+                case 3:
                     let galleryVC = GalleryViewController()
                     self.show(galleryVC, sender: self)
             default: break
@@ -162,6 +165,9 @@ extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
                     let blockedUsersVC = BlockedUsersViewController()
                     self.show(blockedUsersVC, sender: self)
                 case 3:
+                    let scheduleMessageVC = ScheduleMessageViewController()
+                    self.show(scheduleMessageVC, sender: self)
+                case 4:
                     let archivedSMSVC = ArchivedSMSViewController()
                     self.show(archivedSMSVC, sender: self)
                 default: break

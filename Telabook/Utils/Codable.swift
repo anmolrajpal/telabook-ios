@@ -155,7 +155,7 @@ struct UnarchiveConversationCodable : Codable {
 }
 class UserInfo:NSManagedObject, Codable {
 
-    @NSManaged var user : User?
+    @NSManaged var user : UserObject?
 //    @NSManaged var permissions : [Permission]?
 //    @NSManaged var roles : [Role]?
     enum CodingKeys: String, CodingKey {
@@ -167,14 +167,14 @@ class UserInfo:NSManagedObject, Codable {
     required convenience init(from decoder: Decoder) throws {
         guard let codingUserInfoKeyManagedObjectContext = CodingUserInfoKey.context,
             let managedObjectContext = decoder.userInfo[codingUserInfoKeyManagedObjectContext] as? NSManagedObjectContext,
-            let entity = NSEntityDescription.entity(forEntityName: "User", in: managedObjectContext) else {
+            let entity = NSEntityDescription.entity(forEntityName: "UserObject", in: managedObjectContext) else {
                 fatalError("Failed to decode User")
         }
         self.init(entity: entity, insertInto: managedObjectContext)
         let values = try decoder.container(keyedBy: CodingKeys.self)
 //        permissions = try values.decodeIfPresent([Permission].self, forKey: .permissions)
 //        roles = try values.decodeIfPresent([Role].self, forKey: .roles)
-        user = try values.decodeIfPresent(User.self, forKey: .user)
+        user = try values.decodeIfPresent(UserObject.self, forKey: .user)
     }
     // MARK: - Encodable
     public func encode(to encoder: Encoder) throws {
@@ -193,7 +193,7 @@ class UserInfo:NSManagedObject, Codable {
 }
 
 
-public class User : NSManagedObject, Codable {
+public class UserObject : NSManagedObject, Codable {
     
     @NSManaged var email : String?
     @NSManaged var id : Int16
@@ -224,7 +224,7 @@ public class User : NSManagedObject, Codable {
     required convenience public init(from decoder: Decoder) throws {
         guard let codingUserInfoKeyManagedObjectContext = CodingUserInfoKey.context,
             let managedObjectContext = decoder.userInfo[codingUserInfoKeyManagedObjectContext] as? NSManagedObjectContext,
-            let entity = NSEntityDescription.entity(forEntityName: "User", in: managedObjectContext) else {
+            let entity = NSEntityDescription.entity(forEntityName: "UserObject", in: managedObjectContext) else {
                 fatalError("Failed to decode User")
         }
         self.init(entity: entity, insertInto: managedObjectContext)
