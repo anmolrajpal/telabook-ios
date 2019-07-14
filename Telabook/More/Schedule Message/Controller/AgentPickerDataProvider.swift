@@ -1,17 +1,16 @@
 //
-//  ManageAgentsDataProvider.swift
+//  AgentPickerDataProvider.swift
 //  Telabook
 //
-//  Created by Anmol Rajpal on 09/07/19.
+//  Created by Anmol Rajpal on 14/07/19.
 //  Copyright © 2019 Natovi. All rights reserved.
 //
 
 import UIKit
-
-extension ManageAgentsViewController {
+extension AgentPickerViewController {
     internal func initiateFetchAgentsSequence() {
         DispatchQueue.main.async {
-            UIAlertController.showModalSpinner(controller: self)
+            UIAlertController.showModalSpinner(with: "Fetching Agents...", controller: self)
         }
         FirebaseAuthService.shared.getCurrentToken { (token, error) in
             if let err = error {

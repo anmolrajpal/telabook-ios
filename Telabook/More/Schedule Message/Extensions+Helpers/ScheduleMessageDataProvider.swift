@@ -31,7 +31,7 @@ extension ScheduleMessageViewController {
         }
     }
     fileprivate func fetchScheduledMessages(token:String, userId:String) {
-        QuickResponsesAPI.shared.fetchQuickResponses(token: token, userId: userId) { (responseStatus, data, serviceError, error) in
+        ScheduleMessageAPI.shared.fetchScheduledMessages(token: token, userId: userId) { (responseStatus, data, serviceError, error) in
             if let err = error {
                 DispatchQueue.main.async {
                     print("***Error Fetching Scheduled Messages****\n\(err.localizedDescription)")
@@ -73,10 +73,6 @@ extension ScheduleMessageViewController {
                         let result = try decoder.decode(ScheduleMessagesCodable.self, from: data)
                         DispatchQueue.main.async {
                             UIAlertController.dismissModalSpinner(controller: self, completion: {
-                                print("huh")
-                                print(result)
-                                print("umm")
-                                print(result.scheduleMessages as Any)
                                 self.scheduledMessages = result.scheduleMessages
                             })
                         }

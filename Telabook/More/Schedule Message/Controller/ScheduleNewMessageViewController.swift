@@ -9,6 +9,32 @@
 import UIKit
 
 class ScheduleNewMessageViewController: UIViewController {
+    var selectedAgent:InternalConversationsCodable? {
+        didSet {
+            guard let agent = selectedAgent else { return }
+            self.selectedCustomer = nil
+            self.selectedCustomerIndexPath = nil
+            self.customerTextField.text = nil
+            if let name = agent.personName,
+                !name.isEmpty {
+                self.agentTextField.text = "\(name) (\(agent.phoneNumber ?? ""))"
+            }
+        }
+    }
+    var selectedAgentIndexPath:IndexPath?
+    var selectedCustomer:ExternalConversationsCodable? {
+        didSet {
+            guard let customer = selectedCustomer else { return }
+            if let name = customer.internalAddressBookNames,
+                !name.isEmpty {
+                self.customerTextField.text = "\(name) (\(customer.customerPhoneNumber ?? ""))"
+            } else {
+                self.customerTextField.text = customer.customerPhoneNumber
+            }
+        }
+    }
+    var selectedCustomerIndexPath:IndexPath?
+    var timer = Timer()
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationItem.title = "New Message"
@@ -21,6 +47,7 @@ class ScheduleNewMessageViewController: UIViewController {
         super.viewDidLoad()
         setUpNavBar()
         setupTextFields()
+        fireTimerForValidation()
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -67,33 +94,77 @@ class ScheduleNewMessageViewController: UIViewController {
         customerContainerView.isUserInteractionEnabled = true
         customerContainerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(customerFieldTapped)))
         setupDateTimePickerTextField()
-        
+        setupMessageTextField()
+    }
+    fileprivate func setupMessageTextField() {
+        messageTextField.addTarget(self, action: #selector(didChangeMessageTextField), for: .editingChanged)
+    }
+    @objc fileprivate func didChangeMessageTextField(textField:UITextField) {
+        if let text = textField.text {
+            if text.isEmpty {
+                self.disableScheduleButton()
+            } else {
+                self.validateFields()
+            }
+        }
     }
     @objc func agentFieldTapped() {
         print("Select Agent")
+        let vc = AgentPickerViewController()
+        vc.delegate = self
+        if let agent = self.selectedAgent,
+            let indexPath = self.selectedAgentIndexPath {
+            vc.selectedAgent = agent
+            vc.selectedAgentIndexPath = indexPath
+        }
+        self.show(vc, sender: self)
     }
     @objc func customerFieldTapped() {
         print("Select Customer")
+        guard let agent = selectedAgent,
+            let workerId = agent.workerId,
+            workerId != 0 else {
+                return
+        }
+        let vc = CustomerPickerViewController(workerId: String(workerId), agent: agent)
+        vc.delegate = self
+        if let customer = self.selectedCustomer,
+            let indexPath = self.selectedCustomerIndexPath {
+            vc.selectedCustomer = customer
+            vc.selectedCustomerIndexPath = indexPath
+        }
+        self.show(vc, sender: self)
     }
     let datePicker:UIDatePicker = UIDatePicker()
     fileprivate func setupDateTimePickerTextField() {
+        setupDatePickerRange()
+        setupDefaultDate()
         dateTimeTextField.keyboardAppearance = .default
         datePicker.datePickerMode = UIDatePicker.Mode.dateAndTime
         datePicker.setValue(UIColor.white, forKey: "textColor")
-        datePicker.backgroundColor = UIColor.black.withAlphaComponent(0.9)
-        
+        datePicker.backgroundColor = UIColor.clear
+
         
         let toolbar = UIToolbar();
         toolbar.sizeToFit()
         let cancelButton = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(cancelDatePicker));
+        
+        cancelButton.setTitleTextAttributes([
+                .font: UIFont(name: CustomFonts.gothamBook.rawValue, size: 14)!,
+                .foregroundColor: UIColor.telaBlue
+            ], for: .normal)
         let spaceButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
         let doneButton = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(doneDatePicker));
+        doneButton.setTitleTextAttributes([
+            .font: UIFont(name: CustomFonts.gothamBook.rawValue, size: 14)!,
+            .foregroundColor: UIColor.telaBlue
+            ], for: .normal)
         toolbar.setItems([cancelButton,spaceButton,doneButton], animated: false)
-        toolbar.backgroundColor = UIColor.black.withAlphaComponent(0.8)
+        toolbar.barTintColor = UIColor.black.withAlphaComponent(0.8)
         dateTimeTextField.inputAccessoryView?.backgroundColor = UIColor.black.withAlphaComponent(0.8)
         dateTimeTextField.inputAccessoryView = toolbar
         dateTimeTextField.inputView = datePicker
-        
+        dateTimeTextField.inputView?.backgroundColor = UIColor.telaGray4
         datePicker.addTarget(self, action: #selector(datePickerValueChanged(sender:)), for: .valueChanged)
     }
     @objc func doneDatePicker(){
@@ -111,18 +182,75 @@ class ScheduleNewMessageViewController: UIViewController {
     @objc func cancelDatePicker(){
         self.view.endEditing(true)
     }
+    fileprivate func setupDatePickerRange() {
+        let currentDate = Date()
+        datePicker.minimumDate = currentDate.add(minutes: 1)
+        datePicker.maximumDate = currentDate.add(days: 7)
+    }
+    fileprivate func setupDefaultDate() {
+        let formatter = DateFormatter()
+        let defaultDate = Date().add(minutes: 1)!
+        datePicker.date = defaultDate
+        formatter.dateFormat = CustomDateFormat.hmma.rawValue
+        dateTimeTextField.text = "Today, \(formatter.string(from: defaultDate))"
+    }
     @objc func datePickerValueChanged(sender:UIDatePicker) {
         let formatter = DateFormatter()
 //        let weekDay = formatter.weekdaySymbols[Calendar.current.component(.weekday, from: sender.date) - 1]
         let currentDate = Date()
-        datePicker.minimumDate = currentDate.add(minutes: 1)
-        datePicker.maximumDate = currentDate.add(days: 7)
+        setupDatePickerRange()
         if Date.isDateSame(date1: currentDate, date2: sender.date) {
             formatter.dateFormat = CustomDateFormat.hmma.rawValue
             dateTimeTextField.text = "Today, \(formatter.string(from: sender.date))"
         } else {
             formatter.dateFormat = CustomDateFormat.dateTimeType2.rawValue
             dateTimeTextField.text = formatter.string(from: sender.date)
+        }
+    }
+    func fireTimerForValidation() {
+        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.validateDatePicker), userInfo: nil, repeats: true)
+    }
+    
+    @objc func validateDatePicker(){
+        if !isDatePickerDateValid() {
+            dateTimeTextField.setIcon(#imageLiteral(resourceName: "error").withRenderingMode(.alwaysTemplate), frame: CGRect(x: 0, y: 0, width: 20, height: 20), position: .Right, tintColor: UIColor.telaRed)
+            disableScheduleButton()
+        } else {
+            dateTimeTextField.rightView = nil
+            validateFields()
+        }
+    }
+    func isDatePickerDateValid() -> Bool {
+        let currentTime = Date()
+        return datePicker.date < currentTime ? false : true
+    }
+    fileprivate func isDataValid() -> Bool {
+        guard selectedAgent != nil,
+            selectedCustomer != nil,
+            isDatePickerDateValid(),
+            let text = messageTextField.text,
+            !text.isEmpty else {
+                return false
+        }
+        return true
+    }
+    fileprivate func validateFields() {
+        if isDataValid() {
+            enableScheduleButton()
+        } else {
+            disableScheduleButton()
+        }
+    }
+    fileprivate func enableScheduleButton() {
+        scheduleButton.isEnabled = true
+        UIView.animate(withDuration: 0.4) {
+            self.scheduleButton.backgroundColor = UIColor.telaBlue
+        }
+    }
+    fileprivate func disableScheduleButton() {
+        scheduleButton.isEnabled = false
+        UIView.animate(withDuration: 0.4) {
+            self.scheduleButton.backgroundColor = UIColor.telaGray6
         }
     }
     lazy var agentContainerView = self.createTextFieldContainerView(labelTitle: "Agent", self.agentTextField)
@@ -147,6 +275,20 @@ class ScheduleNewMessageViewController: UIViewController {
     }()
     @objc fileprivate func scheduleButtonTapped() {
         print("Scheduling...")
+//        timer.invalidate()
+        scheduleMessage()
+    }
+    fileprivate func scheduleMessage() {
+        guard let workerId = self.selectedAgent?.workerId,
+            let customerId = self.selectedCustomer?.customerId,
+            let text = self.messageTextField.text,
+            workerId != 0, customerId != 0, !text.isEmpty else {
+                return
+        }
+        let formatter = DateFormatter()
+        formatter.dateFormat = CustomDateFormat.dateWithTime.rawValue
+        let date = formatter.string(from: datePicker.date)
+        self.initiateScheduleNewMessageSequence(workerId: String(workerId), customerId: String(customerId), date: date, text: text)
     }
     static func createTextField(placeholder:String? = nil) -> UITextField {
         let textField = UITextField()
@@ -208,5 +350,23 @@ class ScheduleNewMessageViewController: UIViewController {
         label.anchor(top: nil, left: headerView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 20, bottomConstant: 5, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         label.centerYAnchor.constraint(equalTo: headerView.centerYAnchor).isActive = true
         return headerView
+    }
+}
+extension ScheduleNewMessageViewController: AgentPickerDelegate {
+    func didSelectAgent(at indexPath: IndexPath, selectedAgent agent: InternalConversationsCodable) {
+        self.selectedAgent = agent
+        self.selectedAgentIndexPath = indexPath
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
+            self.navigationController?.popViewController(animated: true)
+        }
+    }
+}
+extension ScheduleNewMessageViewController: CustomerPickerDelegate {
+    func didSelectCustomer(at indexPath: IndexPath, selectedCustomer customer: ExternalConversationsCodable) {
+        self.selectedCustomer = customer
+        self.selectedCustomerIndexPath = indexPath
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
+            self.navigationController?.popViewController(animated: true)
+        }
     }
 }

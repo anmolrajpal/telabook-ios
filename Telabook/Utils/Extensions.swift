@@ -52,6 +52,15 @@ public extension CodingUserInfoKey {
     static let context = CodingUserInfoKey(rawValue: "managedObjectContext")
 }
 extension UITableView {
+    func resetCheckmarks() {
+        for i in 0 ..< self.numberOfSections {
+            for j in 0 ..< self.numberOfRows(inSection: i) {
+                if let cell = self.cellForRow(at: IndexPath(row: j, section: i)) {
+                    cell.accessoryType = .none
+                }
+            }
+        }
+    }
     func reloadDataWithLayout() {
         self.reloadData()
         self.setNeedsLayout()
@@ -256,9 +265,10 @@ extension UITextField {
             rightViewMode = .always
         }
     }
-    func setIcon(_ image: UIImage, frame:CGRect = CGRect(x: 10, y: 10, width: 25, height: 25), position: TextFieldItemPosition) {
+    func setIcon(_ image: UIImage, frame:CGRect = CGRect(x: 10, y: 10, width: 25, height: 25), position: TextFieldItemPosition, tintColor:UIColor? = nil) {
         let iconView = UIImageView(frame: frame)
         iconView.image = image
+        iconView.tintColor = tintColor
 //        let iconContainerView: UIView = UIView(frame:
 //            CGRect(x: 10, y: 0, width: 45, height: 45))
 //        iconContainerView.addSubview(iconView)
@@ -304,7 +314,7 @@ extension UIAlertController {
         let loadingIndicator = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50))
         loadingIndicator.hidesWhenStopped = true
         loadingIndicator.style = UIActivityIndicatorView.Style.white
-        loadingIndicator.startAnimating();
+        loadingIndicator.startAnimating()
         alert.view.addSubview(loadingIndicator)
         controller.present(alert, animated: true, completion: nil)
     }

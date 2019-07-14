@@ -60,6 +60,13 @@
 		6F9011D422AC3B130046F5E3 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9011D322AC3B130046F5E3 /* ChatViewController.swift */; };
 		6F9011D622ACCA900046F5E3 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9011D522ACCA900046F5E3 /* Message.swift */; };
 		6F9011D822B12BC40046F5E3 /* SMSDetailVCCoreDataHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9011D722B12BC40046F5E3 /* SMSDetailVCCoreDataHelpers.swift */; };
+		6F9453BB22DB2C8200047C7F /* AgentPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9453BA22DB2C8200047C7F /* AgentPickerViewController.swift */; };
+		6F9453BD22DB2C9300047C7F /* CustomerPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9453BC22DB2C9300047C7F /* CustomerPickerViewController.swift */; };
+		6F9453BF22DB2E2F00047C7F /* AgentPickerDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9453BE22DB2E2F00047C7F /* AgentPickerDataProvider.swift */; };
+		6F9453C122DB4C1A00047C7F /* CustomerPickerDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9453C022DB4C1A00047C7F /* CustomerPickerDataProvider.swift */; };
+		6F9453C322DB53E100047C7F /* CustomerAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9453C222DB53E100047C7F /* CustomerAPI.swift */; };
+		6F9453C522DB53ED00047C7F /* CustomerAPIProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9453C422DB53ED00047C7F /* CustomerAPIProtocol.swift */; };
+		6F9453C722DBA45F00047C7F /* ScheduleNewMessageDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9453C622DBA45F00047C7F /* ScheduleNewMessageDataProvider.swift */; };
 		6FB11AE4229BDDBD0098D050 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11AE3229BDDBD0098D050 /* AppDelegate.swift */; };
 		6FB11AE9229BDDBD0098D050 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6FB11AE7229BDDBD0098D050 /* Main.storyboard */; };
 		6FB11AEB229BDDBE0098D050 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6FB11AEA229BDDBE0098D050 /* Assets.xcassets */; };
@@ -167,6 +174,13 @@
 		6F9011D322AC3B130046F5E3 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		6F9011D522ACCA900046F5E3 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		6F9011D722B12BC40046F5E3 /* SMSDetailVCCoreDataHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSDetailVCCoreDataHelpers.swift; sourceTree = "<group>"; };
+		6F9453BA22DB2C8200047C7F /* AgentPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentPickerViewController.swift; sourceTree = "<group>"; };
+		6F9453BC22DB2C9300047C7F /* CustomerPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerPickerViewController.swift; sourceTree = "<group>"; };
+		6F9453BE22DB2E2F00047C7F /* AgentPickerDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentPickerDataProvider.swift; sourceTree = "<group>"; };
+		6F9453C022DB4C1A00047C7F /* CustomerPickerDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerPickerDataProvider.swift; sourceTree = "<group>"; };
+		6F9453C222DB53E100047C7F /* CustomerAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerAPI.swift; sourceTree = "<group>"; };
+		6F9453C422DB53ED00047C7F /* CustomerAPIProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerAPIProtocol.swift; sourceTree = "<group>"; };
+		6F9453C622DBA45F00047C7F /* ScheduleNewMessageDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleNewMessageDataProvider.swift; sourceTree = "<group>"; };
 		6FB11AE0229BDDBD0098D050 /* Telabook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Telabook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6FB11AE3229BDDBD0098D050 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6FB11AE8229BDDBD0098D050 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -365,6 +379,7 @@
 			children = (
 				6F23BD0822D9F28A0001A888 /* ScheduleMessageVCTableViewExtensions.swift */,
 				6F23BD0E22D9F9610001A888 /* ScheduleMessageDataProvider.swift */,
+				6F9453C622DBA45F00047C7F /* ScheduleNewMessageDataProvider.swift */,
 			);
 			path = "Extensions+Helpers";
 			sourceTree = "<group>";
@@ -374,6 +389,12 @@
 			children = (
 				6F23BD0622D9F0570001A888 /* ScheduleMessageViewController.swift */,
 				6F23BD1022DA0D7A0001A888 /* ScheduleNewMessageViewController.swift */,
+				6F9453BA22DB2C8200047C7F /* AgentPickerViewController.swift */,
+				6F9453BE22DB2E2F00047C7F /* AgentPickerDataProvider.swift */,
+				6F9453BC22DB2C9300047C7F /* CustomerPickerViewController.swift */,
+				6F9453C022DB4C1A00047C7F /* CustomerPickerDataProvider.swift */,
+				6F9453C222DB53E100047C7F /* CustomerAPI.swift */,
+				6F9453C422DB53ED00047C7F /* CustomerAPIProtocol.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -1037,9 +1058,11 @@
 				6F23BD0322D8BB8B0001A888 /* UserProfileAPIProtocol.swift in Sources */,
 				6FEF96A622A67F2900F2FF83 /* SMSDetailViewController.swift in Sources */,
 				6FB11B0B229BFA3C0098D050 /* SettingsViewController.swift in Sources */,
+				6F9453BF22DB2E2F00047C7F /* AgentPickerDataProvider.swift in Sources */,
 				6F23BD0D22D9F3480001A888 /* ScheduleMessageAPI.swift in Sources */,
 				6FB11B39229EF4430098D050 /* GalleryViewController.swift in Sources */,
 				6FBDEC7622B28D4D00A8511E /* NewContactViewController.swift in Sources */,
+				6F9453C322DB53E100047C7F /* CustomerAPI.swift in Sources */,
 				6F098BB922BE4E3700AF19AA /* HandleBlockingHelpers.swift in Sources */,
 				6F04FFBA22C3A12400FA467E /* ChatVCCoreDataHelpers.swift in Sources */,
 				6FB11B3D229EF4690098D050 /* ArchivedSMSViewController.swift in Sources */,
@@ -1057,12 +1080,15 @@
 				6F46A8BD22D39E790042A667 /* Checkbox.swift in Sources */,
 				6F58C33322D614A10091C785 /* AgentDetailsCodable.swift in Sources */,
 				6F29FD5322B8FFD100BCA2AB /* CustomHeaderView.swift in Sources */,
+				6F9453BD22DB2C9300047C7F /* CustomerPickerViewController.swift in Sources */,
 				6FB11B25229E59F00098D050 /* Config.swift in Sources */,
 				6FB11B21229D894A0098D050 /* SectionItemCell.swift in Sources */,
 				6F1BD2EF22C4B0ED0053D0CC /* Protocols.swift in Sources */,
 				6FB11B2D229EB4C40098D050 /* RemindersViewController.swift in Sources */,
+				6F9453C522DB53ED00047C7F /* CustomerAPIProtocol.swift in Sources */,
 				6FB11B4422A2A2E10098D050 /* Telabook.xcdatamodeld in Sources */,
 				6FB11B16229D05E00098D050 /* UserDefaults.swift in Sources */,
+				6F9453BB22DB2C8200047C7F /* AgentPickerViewController.swift in Sources */,
 				6F46A8BB22D062750042A667 /* FollowUpAPI.swift in Sources */,
 				6F58C33B22D61FAE0091C785 /* AutoResponseDataProvider.swift in Sources */,
 				6FB11B10229C23840098D050 /* Extensions.swift in Sources */,
@@ -1086,6 +1112,7 @@
 				6F69BE8A22D4786300F8903F /* ManageAgentsTableViewExtensions.swift in Sources */,
 				6F69BE9422D4DCF600F8903F /* QuickResponsesAPI.swift in Sources */,
 				6F58C33522D6178B0091C785 /* AutoResponseViewController.swift in Sources */,
+				6F9453C722DBA45F00047C7F /* ScheduleNewMessageDataProvider.swift in Sources */,
 				6F69BE8C22D4A63900F8903F /* AgentDetailsViewController.swift in Sources */,
 				6FB8EA4322AA596A00294EAC /* ChatArchivingHelpers.swift in Sources */,
 				6FEF96A822A682E700F2FF83 /* SMSDetailCell.swift in Sources */,
@@ -1110,6 +1137,7 @@
 				6F69BE7E22D46EF600F8903F /* BlacklistCodable.swift in Sources */,
 				6FB8EA4522AA6BCE00294EAC /* SMSVCExtensions.swift in Sources */,
 				6FB11B1B229D07050098D050 /* LoginViewController.swift in Sources */,
+				6F9453C122DB4C1A00047C7F /* CustomerPickerDataProvider.swift in Sources */,
 				6F234EE822D606DB001FDAD6 /* ScheduleMessagesCodable.swift in Sources */,
 				6FB11B2B229EA7C20098D050 /* Codable.swift in Sources */,
 				6F29FD5722BBB1C300BCA2AB /* CustomerDetailsViewController.swift in Sources */,
