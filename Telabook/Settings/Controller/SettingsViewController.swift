@@ -311,6 +311,8 @@ class SettingsViewController: UIViewController {
     }()
     @objc fileprivate func handleChangePassword() {
         print("Change Password Called")
+        let vc = ChangePasswordViewController()
+        self.show(vc, sender: self)
     }
     let topContainerView:UIView = {
         let view = UIView(frame: CGRect.zero)

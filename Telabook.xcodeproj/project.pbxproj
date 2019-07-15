@@ -67,6 +67,10 @@
 		6F9453C322DB53E100047C7F /* CustomerAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9453C222DB53E100047C7F /* CustomerAPI.swift */; };
 		6F9453C522DB53ED00047C7F /* CustomerAPIProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9453C422DB53ED00047C7F /* CustomerAPIProtocol.swift */; };
 		6F9453C722DBA45F00047C7F /* ScheduleNewMessageDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9453C622DBA45F00047C7F /* ScheduleNewMessageDataProvider.swift */; };
+		6F9453C922DC3CA300047C7F /* ChangePasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9453C822DC3CA300047C7F /* ChangePasswordViewController.swift */; };
+		6F9453CB22DC3CBB00047C7F /* ChangePasswordDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9453CA22DC3CBB00047C7F /* ChangePasswordDataProvider.swift */; };
+		6F9453CD22DC3CCA00047C7F /* ChangePasswordAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9453CC22DC3CCA00047C7F /* ChangePasswordAPI.swift */; };
+		6F9453CF22DC3CE600047C7F /* ChangePasswordAPIProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9453CE22DC3CE600047C7F /* ChangePasswordAPIProtocol.swift */; };
 		6FB11AE4229BDDBD0098D050 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11AE3229BDDBD0098D050 /* AppDelegate.swift */; };
 		6FB11AE9229BDDBD0098D050 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6FB11AE7229BDDBD0098D050 /* Main.storyboard */; };
 		6FB11AEB229BDDBE0098D050 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6FB11AEA229BDDBE0098D050 /* Assets.xcassets */; };
@@ -181,6 +185,10 @@
 		6F9453C222DB53E100047C7F /* CustomerAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerAPI.swift; sourceTree = "<group>"; };
 		6F9453C422DB53ED00047C7F /* CustomerAPIProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerAPIProtocol.swift; sourceTree = "<group>"; };
 		6F9453C622DBA45F00047C7F /* ScheduleNewMessageDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleNewMessageDataProvider.swift; sourceTree = "<group>"; };
+		6F9453C822DC3CA300047C7F /* ChangePasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePasswordViewController.swift; sourceTree = "<group>"; };
+		6F9453CA22DC3CBB00047C7F /* ChangePasswordDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePasswordDataProvider.swift; sourceTree = "<group>"; };
+		6F9453CC22DC3CCA00047C7F /* ChangePasswordAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePasswordAPI.swift; sourceTree = "<group>"; };
+		6F9453CE22DC3CE600047C7F /* ChangePasswordAPIProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePasswordAPIProtocol.swift; sourceTree = "<group>"; };
 		6FB11AE0229BDDBD0098D050 /* Telabook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Telabook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6FB11AE3229BDDBD0098D050 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6FB11AE8229BDDBD0098D050 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -334,6 +342,7 @@
 			isa = PBXGroup;
 			children = (
 				6FB11B0A229BFA3C0098D050 /* SettingsViewController.swift */,
+				6F9453C822DC3CA300047C7F /* ChangePasswordViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -351,6 +360,8 @@
 			children = (
 				6F23BD0422D8BB9B0001A888 /* UserProfileAPI.swift */,
 				6F23BD0222D8BB8B0001A888 /* UserProfileAPIProtocol.swift */,
+				6F9453CC22DC3CCA00047C7F /* ChangePasswordAPI.swift */,
+				6F9453CE22DC3CE600047C7F /* ChangePasswordAPIProtocol.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -527,6 +538,7 @@
 			isa = PBXGroup;
 			children = (
 				6F23BD0022D7299A0001A888 /* UserProfileDataProvider.swift */,
+				6F9453CA22DC3CBB00047C7F /* ChangePasswordDataProvider.swift */,
 			);
 			path = "Extensions+Helpers";
 			sourceTree = "<group>";
@@ -1059,6 +1071,7 @@
 				6FEF96A622A67F2900F2FF83 /* SMSDetailViewController.swift in Sources */,
 				6FB11B0B229BFA3C0098D050 /* SettingsViewController.swift in Sources */,
 				6F9453BF22DB2E2F00047C7F /* AgentPickerDataProvider.swift in Sources */,
+				6F9453CD22DC3CCA00047C7F /* ChangePasswordAPI.swift in Sources */,
 				6F23BD0D22D9F3480001A888 /* ScheduleMessageAPI.swift in Sources */,
 				6FB11B39229EF4430098D050 /* GalleryViewController.swift in Sources */,
 				6FBDEC7622B28D4D00A8511E /* NewContactViewController.swift in Sources */,
@@ -1066,6 +1079,7 @@
 				6F098BB922BE4E3700AF19AA /* HandleBlockingHelpers.swift in Sources */,
 				6F04FFBA22C3A12400FA467E /* ChatVCCoreDataHelpers.swift in Sources */,
 				6FB11B3D229EF4690098D050 /* ArchivedSMSViewController.swift in Sources */,
+				6F9453CF22DC3CE600047C7F /* ChangePasswordAPIProtocol.swift in Sources */,
 				6F9011D622ACCA900046F5E3 /* Message.swift in Sources */,
 				6F23BD0722D9F0570001A888 /* ScheduleMessageViewController.swift in Sources */,
 				6F23BD0F22D9F9610001A888 /* ScheduleMessageDataProvider.swift in Sources */,
@@ -1088,6 +1102,7 @@
 				6F9453C522DB53ED00047C7F /* CustomerAPIProtocol.swift in Sources */,
 				6FB11B4422A2A2E10098D050 /* Telabook.xcdatamodeld in Sources */,
 				6FB11B16229D05E00098D050 /* UserDefaults.swift in Sources */,
+				6F9453C922DC3CA300047C7F /* ChangePasswordViewController.swift in Sources */,
 				6F9453BB22DB2C8200047C7F /* AgentPickerViewController.swift in Sources */,
 				6F46A8BB22D062750042A667 /* FollowUpAPI.swift in Sources */,
 				6F58C33B22D61FAE0091C785 /* AutoResponseDataProvider.swift in Sources */,
@@ -1125,6 +1140,7 @@
 				6FB11B12229C31DF0098D050 /* Enums.swift in Sources */,
 				6F23BD0B22D9F33A0001A888 /* ScheduleMessageAPIProtocol.swift in Sources */,
 				6F58C33722D618B30091C785 /* AutoResponseAPI.swift in Sources */,
+				6F9453CB22DC3CBB00047C7F /* ChangePasswordDataProvider.swift in Sources */,
 				6F1BD2EA22C4AD250053D0CC /* FollowUpsIndexCodable.swift in Sources */,
 				6FBDEC7A22B3D3C200A8511E /* SMSDetailVCChatExtensions.swift in Sources */,
 				6F69BE7C22D46E9000F8903F /* BlockedUsersDataProvider.swift in Sources */,
