@@ -10,6 +10,7 @@ import UIKit
 import Photos
 import MessageKit
 import MessageInputBar
+import Firebase
 import FirebaseStorage
 final class ChatViewController : MessagesViewController {
     var messages:[Message] = []
@@ -71,6 +72,7 @@ final class ChatViewController : MessagesViewController {
             let query = Config.DatabaseConfig.getChats(companyId: String(companyId), node: node)
             query.observe(.childAdded, with: { snapshot in
                 let messageId = snapshot.key
+                
                 if let data = snapshot.value as? [String: Any] {
                     if let imageUrl = data["img"] as? String,
                         let text = data["message"] as? String,
@@ -394,6 +396,7 @@ final class ChatViewController : MessagesViewController {
                 callback(nil)
                 return
             }
+           
             ref.downloadURL(completion: { (url, err) in
                 guard let downloadUrl = url else {
                     if let err = err {

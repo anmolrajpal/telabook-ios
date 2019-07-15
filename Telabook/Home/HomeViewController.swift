@@ -314,7 +314,7 @@ class HomeViewController: UIViewController {
         self.operatorNameLabel.text = "\(firstName?.uppercased() ?? "") \(lastName?.uppercased() ?? "")"
         
         let initialsText = "\(firstName?.first?.uppercased() ?? "Z")\(lastName?.first?.uppercased() ?? "Z")"
-        self.profileImageView.loadImageUsingCacheWithURLString(user?.profileImageUrl, placeHolder: UIImage.placeholderInitialsImage(text: initialsText))
+        self.profileImageView.loadImageUsingCache(with: user?.profileImageUrl, placeHolder: UIImage.placeholderInitialsImage(text: initialsText))
         
         self.operatorDesignationLabel.text = String(describing: role)
     }
@@ -325,7 +325,7 @@ class HomeViewController: UIViewController {
         self.operatorNameLabel.text = "\(firstName?.uppercased() ?? "") \(lastName?.uppercased() ?? "")"
         
         let initialsText = "\(firstName?.first?.uppercased() ?? "X")\(lastName?.first?.uppercased() ?? "D")"
-        self.profileImageView.loadImageUsingCacheWithURLString(user?.profileImageUrl, placeHolder: UIImage.placeholderInitialsImage(text: initialsText))
+        self.profileImageView.loadImageUsingCache(with: user?.profileImageUrl, placeHolder: UIImage.placeholderInitialsImage(text: initialsText))
         
         self.operatorDesignationLabel.text = String(describing: role)
     }

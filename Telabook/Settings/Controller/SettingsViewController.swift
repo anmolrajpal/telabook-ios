@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 import CoreData
-
+import Photos
 class SettingsViewController: UIViewController {
     static let shared = SettingsViewController()
     internal var userProfile:UserProfileCodable? {
@@ -269,6 +269,230 @@ class SettingsViewController: UIViewController {
         updateButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).activate()
         updateButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: 0).activate()
     }
+    func checkPhotoLibraryPermissions() {
+        let photoAuthorizationStatus = PHPhotoLibrary.authorizationStatus()
+        switch photoAuthorizationStatus {
+        case .authorized:
+            print("Access is granted by user")
+        case .notDetermined:
+            PHPhotoLibrary.requestAuthorization({
+                (newStatus) in
+                print("status is \(newStatus)")
+                if newStatus ==  PHAuthorizationStatus.authorized {
+                    /* do stuff here */
+                    print("success")
+                }
+            })
+            print("It is not determined until now")
+        case .restricted:
+            // same same
+            print("User do not have access to photo album.")
+        case .denied:
+            // same same
+            print("User has denied the permission.")
+        @unknown default: fatalError()
+        }
+    }
+    fileprivate func checkCameraPermissions() {
+        let authStatus = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
+        switch authStatus {
+            case .authorized: break
+            case .denied: alertToEncourageCameraAccessInitially()
+            case .notDetermined: alertPromptToAllowCameraAccessViaSetting()
+            default: alertToEncourageCameraAccessInitially()
+        }
+    }
+    func alertToEncourageCameraAccessInitially() {
+        let alert = UIAlertController(
+            title: "IMPORTANT",
+            message: "Camera access required for clicking photo",
+            preferredStyle: UIAlertController.Style.alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: "Allow Camera", style: .cancel, handler: { (alert) -> Void in
+            guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+                return
+            }
+            if UIApplication.shared.canOpenURL(settingsUrl) {
+                UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
+                    print("Settings opened: \(success)") // Prints true
+                })
+            }
+        }))
+        present(alert, animated: true, completion: nil)
+    }
+    
+    func alertPromptToAllowCameraAccessViaSetting() {
+        
+        let alert = UIAlertController(
+            title: "IMPORTANT",
+            message: "Please allow camera access for clicking photo",
+            preferredStyle: UIAlertController.Style.alert
+        )
+        alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel) { alert in
+            AVCaptureDevice.requestAccess(for: AVMediaType.video) { granted in
+                DispatchQueue.main.async() {
+                    self.checkCameraPermissions()
+                }
+            }
+        })
+        present(alert, animated: true, completion: nil)
+    }
+    internal func promptPhotosPickerMenu() {
+        let alert = UIAlertController(title: "Choose Image Source", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+        
+     
+        
+        let cameraAction = UIAlertAction(title: "Camera", style: UIAlertAction.Style.default, handler: { (action) in
+            self.handleSourceTypeCamera()
+        })
+        
+        let galleryAction = UIAlertAction(title: "Gallery", style: UIAlertAction.Style.default, handler: { (action) in
+            self.handleSourceTypeGallery()
+        })
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil)
+        
+        alert.addAction(cameraAction)
+        alert.addAction(galleryAction)
+        alert.addAction(cancelAction)
+        alert.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = UIColor.telaGray6
+        
+        alert.view.tintColor = UIColor.telaBlue
+        alert.view.subviews.first?.subviews.first?.backgroundColor = .clear
+        alert.view.subviews.first?.backgroundColor = .clear
+        self.present(alert, animated: true, completion: nil)
+    }
+    private func viewCurrentProfileImage() {
+        
+    }
+    private func handleSourceTypeCamera() {
+        checkCameraPermissions()
+        let picker = UIImagePickerController()
+        picker.allowsEditing = true
+        
+        picker.delegate = self
+        
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            picker.sourceType = .camera
+        } else {
+            picker.sourceType = .photoLibrary
+        }
+        picker.modalPresentationStyle = .overFullScreen
+        present(picker, animated: true, completion: nil)
+    }
+    private func handleSourceTypeGallery() {
+        checkPhotoLibraryPermissions()
+        let picker = UIImagePickerController()
+        picker.allowsEditing = true
+        picker.delegate = self
+        picker.sourceType = .photoLibrary
+        picker.modalPresentationStyle = .overFullScreen
+        present(picker, animated: true, completion: nil)
+    }
+    
+    
+    
+    
+    
+    fileprivate var uploadTask:StorageUploadTask!
+    private func uploadImage(_ image: UIImage) {
+        
+        guard let scaledImage = image.scaledToSafeUploadSize, let data = scaledImage.jpegData(compressionQuality: 0.4) else {
+            print("Unable to get scaled compressed image")
+            return
+        }
+        
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/jpeg"
+        
+        
+        
+        let imageName = [UUID().uuidString, String(Int(Date().timeIntervalSince1970)*1000)].joined(separator: "-") + ".jpg"
+        let ref = Config.StorageConfig.profileImageRef().child(imageName)
+        
+        uploadTask = ref.putData(data, metadata: metadata)
+        
+        uploadTask.observe(.resume) { snapshot in
+            print("Upload resumed, also fires when the upload starts")
+        }
+        
+        uploadTask.observe(.pause) { snapshot in
+            print("Upload paused")
+        }
+        let alertVC = UIAlertController.telaAlertController(title: "Uploading...")
+        let margin:CGFloat = 8.0
+        let alertVCWidth:CGFloat = 270.0
+        print("Alert VC width => \(alertVCWidth)")
+        let frame = CGRect(x: margin, y: 72.0, width: alertVCWidth - margin * 2.0 , height: 2.0)
+        let progressBar = UIProgressView(progressViewStyle: .default)
+        progressBar.frame = frame
+        progressBar.progressTintColor = UIColor.telaBlue
+        let cancelAction = UIAlertAction(title: "Cancel", style: .destructive) { (action) in
+            self.uploadTask.cancel()
+            
+        }
+        alertVC.addAction(cancelAction)
+        alertVC.view.addSubview(progressBar)
+        DispatchQueue.main.async {
+            UIAlertController.presentAlert(alertVC)
+        }
+        progressBar.setProgress(0.0, animated: true)
+        
+        uploadTask.observe(.progress) { snapshot in
+            let completedUnitCount = snapshot.progress!.completedUnitCount
+            let totalUnitCount = snapshot.progress!.totalUnitCount
+            let progress = Float(completedUnitCount) / Float(totalUnitCount)
+            progressBar.setProgress(progress, animated: true)
+        }
+        
+        uploadTask.observe(.success) { snapshot in
+            print("Upload completed successfully")
+            alertVC.dismiss(animated: true, completion: nil)
+            ref.downloadURL(completion: { (url, err) in
+                guard let downloadUrl = url else {
+                    if let err = err {
+                        print("Error: Unable to get download url => \(err.localizedDescription)")
+                    }
+                    return
+                }
+                self.profileImageView.loadImageUsingCacheWithURLString(downloadUrl.absoluteString, placeHolder: #imageLiteral(resourceName: "followup_high"))
+                print("Download URL => \(downloadUrl)")
+                print("Absolute String => \(downloadUrl.absoluteString)")
+                
+            })
+        }
+        
+        uploadTask.observe(.failure) { snapshot in
+            if let error = snapshot.error as NSError? {
+                switch (StorageErrorCode(rawValue: error.code)!) {
+                case .objectNotFound:
+                    print("File doesn't exist")
+                    break
+                case .unauthorized:
+                    print("User doesn't have permission to access file")
+                    break
+                case .cancelled:
+                    print("User canceled the upload")
+                    alertVC.dismiss(animated: true, completion: nil)
+                    break
+                case .unknown:
+                    print("Unknown error occurred, inspect the server response")
+                    break
+                default:
+                    print("A separate error occurred. This is a good place to retry the upload.")
+                    break
+                }
+            }
+        }
+    }
+    
+    
+    
+    
+    
+    
     
     let profileImageView:UIImageView = {
         let imageView = UIImageView()
@@ -280,6 +504,31 @@ class SettingsViewController: UIViewController {
         imageView.clipsToBounds = true
         return imageView
     }()
+    lazy var cameraIconImageView:UIImageView = {
+        let imageView = UIImageView()
+        let inset:CGFloat = 2.0
+        
+        imageView.contentMode = UIImageView.ContentMode.scaleAspectFit
+        imageView.image = #imageLiteral(resourceName: "camera_icon").withInsets(UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset))
+//        imageView.image = #imageLiteral(resourceName: "camera_icon").withAlignmentRectInsets(UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset))
+//        imageView.image = #imageLiteral(resourceName: "camera_icon").resizableImage(withCapInsets: UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset), resizingMode: UIImage.ResizingMode.stretch)
+        
+        imageView.backgroundColor = UIColor.telaGray1
+        
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.layer.cornerRadius = 14
+        imageView.layer.borderWidth = 0.8
+        imageView.layer.borderColor = UIColor.telaGray6.cgColor
+        imageView.isUserInteractionEnabled = true
+        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(camerIconTapped)))
+//        imageView.clipsToBounds = true
+//        imageView.layer.masksToBounds = true
+        return imageView
+    }()
+    @objc fileprivate func camerIconTapped() {
+        print("Camera Icon Tapped")
+        promptPhotosPickerMenu()
+    }
     let userNameLabel:UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -322,7 +571,10 @@ class SettingsViewController: UIViewController {
         return view
     }()
     fileprivate func setupTopContainerView() {
+        topContainerView.isUserInteractionEnabled = true
+        topContainerView.addSubview(cameraIconImageView)
         topContainerView.addSubview(profileImageView)
+        topContainerView.bringSubviewToFront(cameraIconImageView)
         topContainerView.addSubview(userNameLabel)
         topContainerView.addSubview(userDesignationLabel)
         topContainerView.addSubview(changePasswordButton)
@@ -330,6 +582,10 @@ class SettingsViewController: UIViewController {
     }
     fileprivate func setupTopContainerConstraints() {
         profileImageView.anchor(top: topContainerView.topAnchor, left: topContainerView.leftAnchor, bottom: topContainerView.bottomAnchor, right: nil, topConstant: 20, leftConstant: 20, bottomConstant: 20, rightConstant: 0, widthConstant: 80, heightConstant: 80)
+        cameraIconImageView.centerXAnchor.constraint(equalTo: profileImageView.centerXAnchor).activate()
+        cameraIconImageView.centerYAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: -5).activate()
+        cameraIconImageView.widthAnchor.constraint(equalToConstant: 28).activate()
+        cameraIconImageView.heightAnchor.constraint(equalToConstant: 28).activate()
         userNameLabel.anchor(top: nil, left: profileImageView.rightAnchor, bottom: nil, right: topContainerView.rightAnchor, topConstant: 0, leftConstant: 20, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
         userNameLabel.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor, constant: -15).activate()
         userDesignationLabel.anchor(top: nil, left: userNameLabel.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
@@ -589,5 +845,28 @@ class Line:UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init coder hasn't been implemented.")
     }
+}
+
+extension SettingsViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        picker.dismiss(animated: true, completion: nil)
+        
+        if let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
+            uploadImage(image)
+            
+        }
+        else if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+            uploadImage(image)
+        } else {
+            print("Unknown stuff")
+        }
+        
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true, completion: nil)
+    }
+    
 }
 

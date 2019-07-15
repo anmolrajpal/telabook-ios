@@ -27,6 +27,18 @@ extension UIControl {
     }
 }
 extension URLSession {
+    func constructURL(from string:String, withConcatenatingPath pathToJoin:String? = nil, parameters:[String:String]? = nil) -> URL? {
+        var components = URLComponents(string: string)
+        if let concatenatingPath = pathToJoin {
+            components?.path = "/\(concatenatingPath)"
+        }
+        if let parameters = parameters {
+            components?.setQueryItems(with: parameters)
+        }
+        
+        return components?.url
+    }
+    
     func constructURL(scheme:String = Config.ServiceConfig.serviceURLScheme, host:String = Config.ServiceConfig.serviceHost, path:Config.ServiceConfig.ServiceTypePath, withConcatenatingPath pathToJoin:String? = nil, parameters:[String:String]? = nil) -> URL? {
         var components = URLComponents()
         components.scheme = scheme
@@ -341,10 +353,47 @@ extension UIAlertController {
         alertVC.view.subviews.first?.backgroundColor = .clear
         return alertVC
     }
-    static public func showTelaAlert(title:String, message: String, action:UIAlertAction = UIAlertAction(title: "Ok", style: .destructive, handler: nil), controller: UIViewController, completion: (() -> Void)? = nil) {
+    static public func showTelaAlert(title:String, message: String, action:UIAlertAction = UIAlertAction(title: "Ok", style: .destructive, handler: nil), controller: UIViewController? = nil, completion: (() -> Void)? = nil) {
         let alert = UIAlertController.telaAlertController(title: title, message: message)
         alert.addAction(action)
-        controller.present(alert, animated: true, completion: completion)
+        if let vc = controller {
+            vc.present(alert, animated: true, completion: completion)
+        } else {
+            var rootViewController = UIApplication.shared.keyWindow?.rootViewController
+            if let navigationController = rootViewController as? UINavigationController {
+                rootViewController = navigationController.viewControllers.first
+            }
+            if let tabBarController = rootViewController as? UITabBarController {
+                rootViewController = tabBarController.selectedViewController
+            }
+            rootViewController?.present(alert, animated: true, completion: completion)
+        }
+    }
+    static public func showModalTelaAlert(title:String, message: String, actions:UIAlertAction..., completion: (() -> Void)? = nil) {
+        let alert = UIAlertController.telaAlertController(title: title, message: message)
+        actions.forEach({ alert.addAction($0) })
+        var rootViewController = UIApplication.shared.keyWindow?.rootViewController
+        if let navigationController = rootViewController as? UINavigationController {
+            rootViewController = navigationController.viewControllers.first
+        }
+        if let tabBarController = rootViewController as? UITabBarController {
+            rootViewController = tabBarController.selectedViewController
+        }
+        rootViewController?.present(alert, animated: true, completion: completion)
+    }
+    static public func presentAlert(_ alert: UIAlertController, on vc: UIViewController? = nil, completion: (() -> Void)? = nil) {
+        if let vc = vc {
+            vc.present(alert, animated: true, completion: completion)
+        } else {
+            var rootViewController = UIApplication.shared.keyWindow?.rootViewController
+            if let navigationController = rootViewController as? UINavigationController {
+                rootViewController = navigationController.viewControllers.first
+            }
+            if let tabBarController = rootViewController as? UITabBarController {
+                rootViewController = tabBarController.selectedViewController
+            }
+            rootViewController?.present(alert, animated: true, completion: completion)
+        }
     }
 }
 extension NSObject {
@@ -398,6 +447,21 @@ extension String {
 }
 let imageCache = NSCache<NSString, UIImage>()
 extension UIImage {
+    
+        
+    func withInsets(_ insets: UIEdgeInsets) -> UIImage? {
+        let cgSize = CGSize(width: self.size.width + insets.left * self.scale + insets.right * self.scale,
+                            height: self.size.height + insets.top * self.scale + insets.bottom * self.scale)
+        
+        UIGraphicsBeginImageContextWithOptions(cgSize, false, self.scale)
+        defer { UIGraphicsEndImageContext() }
+        
+        let origin = CGPoint(x: insets.left * self.scale, y: insets.top * self.scale)
+        self.draw(at: origin)
+        
+        return UIGraphicsGetImageFromCurrentImageContext()?.withRenderingMode(self.renderingMode)
+    }
+
     var scaledToSafeUploadSize: UIImage? {
         let maxImageSideLength: CGFloat = 480
         
@@ -520,12 +584,13 @@ extension UIImage {
         return newImage!
     }
 }
+
 extension UIImageView {
-    
     func loadImageUsingCacheWithURLString(_ URLString: String?, placeHolder: UIImage?) {
         
         self.image = nil
-        guard let urlString = URLString else {
+        guard let urlString = URLString?.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) else {
+            print("no url string")
             DispatchQueue.main.async {
                 self.image = placeHolder
             }
@@ -535,12 +600,17 @@ extension UIImageView {
         if let cachedImage = imageCache.object(forKey: NSString(string: urlString)) {
             self.image = cachedImage
             return
+        } else {
+            print("No cached image")
         }
         
-        if let url = URL(string: urlString) {
+        if let url = URLSession.shared.constructURL(from: urlString) {
+            print("image URL String => \(urlString)")
+            print("image URL => \(url)")
+            print("image URL absolute string => \(url.absoluteString)")
             URLSession.shared.dataTask(with: url, completionHandler: { (data, response, error) in
-                
-                //print("RESPONSE FROM API: \(response)")
+               
+                print("Image Fetch from URL Response: \(String(describing: response))")
                 if error != nil {
                     print("ERROR LOADING IMAGES FROM URL: \(String(describing: error))")
                     DispatchQueue.main.async {
@@ -553,10 +623,86 @@ extension UIImageView {
                         if let downloadedImage = UIImage(data: data) {
                             imageCache.setObject(downloadedImage, forKey: NSString(string: urlString))
                             self.image = downloadedImage
+                        } else {
+                            print("Failed to unwrap downloaded image data")
                         }
+                    } else {
+                        print("Failed to unwrap image data")
                     }
+                    
                 }
             }).resume()
+        } else {
+            print("Failed to unwrap url")
+        }
+    }
+}
+extension UIImageView: APIProtocol {
+    
+    func loadImageUsingCache(with URLString: String?, placeHolder: UIImage?) {
+        
+        self.image = nil
+        guard let urlString = URLString else {
+            print("no url string")
+            DispatchQueue.main.async {
+                self.image = placeHolder
+            }
+            return
+        }
+        
+        if let cachedImage = imageCache.object(forKey: NSString(string: urlString)) {
+            self.image = cachedImage
+            return
+        } else {
+            print("No cached image")
+        }
+        
+        if let url = URLSession.shared.constructURL(from: urlString) {
+            let request = NSMutableURLRequest(url: NSURL(string:urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)! as URL, cachePolicy: .useProtocolCachePolicy, timeoutInterval: Config.ServiceConfig.timeoutInterval)
+            request.httpMethod = httpMethod.GET.rawValue
+            request.setValue(Header.contentType.urlEncoded.rawValue, forHTTPHeaderField: Header.headerName.contentType.rawValue)
+            URLSession.shared.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
+                self.handleResponse(data: data, response: response, error: error, completion: { (responseStatus, data, serviceError, error) in
+                    if let err = error {
+                        DispatchQueue.main.async {
+                            print("***Error Fetching Follow Image****\n\(err.localizedDescription)")
+                            DispatchQueue.main.async {
+                                self.image = placeHolder
+                            }
+                           
+                        }
+                    } else if let serviceErr = serviceError {
+                        DispatchQueue.main.async {
+                            print("***Error Fetching Image****\n\(serviceErr.localizedDescription)")
+                            DispatchQueue.main.async {
+                                self.image = placeHolder
+                            }
+                            
+                        }
+                    } else if let status = responseStatus {
+                        print(status)
+                        guard status == .OK else {
+                            DispatchQueue.main.async {
+                                self.image = placeHolder
+                            }
+                            return
+                        }
+                        if let data = data {
+                            print(data)
+                            if let downloadedImage = UIImage(data: data) {
+                                imageCache.setObject(downloadedImage, forKey: NSString(string: urlString))
+                                self.image = downloadedImage
+                            } else {
+                                print("Failed to unwrap downloaded image data")
+                            }
+                        } else {
+                            print("Failed to unwrap image data")
+                        }
+                    }
+                })
+            }).resume()
+        } else {
+            print("Failed to unwrap url")
         }
     }
 }

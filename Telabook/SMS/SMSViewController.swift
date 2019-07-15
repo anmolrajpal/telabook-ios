@@ -257,6 +257,7 @@ class SMSViewController: UIViewController {
             //            print("check saved internal count => \(String(describing: check1?.count))")
             
             //            print(response.first?.personName ?? "nil")
+            print(response)
             DispatchQueue.main.async {
                 self.syncConversations(fetchedConvos: response, context: managedObjectContext)
                 //                try managedObjectContext.save()
