@@ -9,6 +9,16 @@
 import UIKit
 final class CustomUtils {
     static let shared = CustomUtils()
+    
+    func getSlashEncodedURL(from urlString:String) -> String? {
+        let firebaseUri = "https://firebasestorage.googleapis.com/v0/b/telebookchat.appspot.com/o/"
+        if let startRange:Range<String.Index> = urlString.range(of: firebaseUri) {
+            let range = urlString.range(of: urlString[startRange.upperBound...])
+            let url = urlString.replacingOccurrences(of: "/", with: "%2F", options: String.CompareOptions.regularExpression, range: range)
+            return url
+        }
+        return nil
+    }
     func getUserRole() -> UserRole {
         let roleId = UserDefaults.standard.getRoleId()
         switch roleId {

@@ -30,26 +30,31 @@ final class UserProfileAPI: NSObject, UserProfileAPIProtocol {
             }.resume()
     }
     
-    func updateUserProfile(token: String, companyId: String, userId: String, username: String, email: String, roleId: String, firstName: String, lastName: String, phoneNumber: String, backupEmail: String, didId: String, profileImage: String, profileImageURL: String, completion: @escaping APICompletion) {
+    func updateUserProfile(token: String, userId: String, email: String, firstName: String, lastName: String, phoneNumber: String, backupEmail: String, address: String, profileImage: String, profileImageURL: String, completion: @escaping APICompletion) {
         let parameters:[String:String] = [
             "token":token,
-            "company_id":companyId,
-            "user_id":userId
+            "email":email,
+            "name":firstName,
+            "last_name":lastName,
+            "phone_number":phoneNumber.replacingOccurrences(of: "+", with: "%2b"),
+            "backup_email":backupEmail,
+            "address":address,
+            "profile_image":profileImage,
+            "profile_image_url":profileImageURL
         ]
-        guard let url = URLSession.shared.constructURL(path: .UserProfile, withConcatenatingPath: "\(userId)/edit", parameters: parameters) else {
+        guard let url = URLSession.shared.constructURL(path: .UserProfile, withConcatenatingPath: userId, parameters: parameters) else {
             print("Error: Unable to construct URL")
             DispatchQueue.main.async {
                 completion(nil, nil, .Internal, NSError(domain: "", code: ResponseStatus.getStatusCode(by: .BadRequest), userInfo: nil))
             }
             return
         }
+        print(url)
         var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Config.ServiceConfig.timeoutInterval)
-        request.httpMethod = httpMethod.GET.rawValue
-        request.addValue(Header.contentType.json.rawValue, forHTTPHeaderField: Header.headerName.contentType.rawValue)
+        request.httpMethod = httpMethod.PUT.rawValue
+        request.addValue(Header.headerName.xRequestedWith.rawValue, forHTTPHeaderField: Header.headerName.xRequestedWith.rawValue)
         URLSession.shared.dataTask(with: request as URLRequest) { (data, response, error) in
             self.handleResponse(data: data, response: response, error: error, completion: completion)
             }.resume()
     }
-    
-    
 }

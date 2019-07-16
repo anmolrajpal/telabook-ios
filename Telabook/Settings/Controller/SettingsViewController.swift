@@ -29,6 +29,20 @@ class SettingsViewController: UIViewController {
             }
         }
     }
+    internal var profileImage:String?
+    internal var profileImageUrl:String? {
+        didSet {
+            let initialsText = "\(firstName?.first?.uppercased() ?? "")\(lastName?.first?.uppercased() ?? "")"
+            if let urlStr = profileImageUrl,
+                let url = CustomUtils.shared.getSlashEncodedURL(from: urlStr) {
+                
+                self.profileImageView.loadImageUsingCache(with: url, placeHolder: UIImage.placeholderInitialsImage(text: initialsText))
+            } else {
+                self.profileImageView.loadImageUsingCache(with: nil, placeHolder: UIImage.placeholderInitialsImage(text: initialsText))
+            }
+            validateFields()
+        }
+    }
     internal var firstName:String? {
         didSet {
             if let text = firstName {
@@ -106,10 +120,8 @@ class SettingsViewController: UIViewController {
         let role = CustomUtils.shared.getUserRole()
         let first_name = details.name
         let last_name = details.lastName
-        let initialsText = "\(first_name?.first?.uppercased() ?? "X")\(last_name?.first?.uppercased() ?? "D")"
-    
-//    profileImageView.loadImageUsingCacheWithURLString(details.profileImageUrl, placeHolder: UIImage.placeholderInitialsImage(text: initialsText))
-        profileImageView.loadImageUsingCache(with: details.profileImageUrl, placeHolder: UIImage.placeholderInitialsImage(text: initialsText))
+        profileImageUrl = details.profileImageUrl
+        profileImage = details.profileImage
         userNameLabel.text = "\(first_name?.uppercased() ?? "") \(last_name?.uppercased() ?? "")"
         userDesignationLabel.text = "\(String(describing: role))  |"
         firstName = first_name
@@ -458,11 +470,8 @@ class SettingsViewController: UIViewController {
                     }
                     return
                 }
-                self.profileImageView.loadImageUsingCacheWithURLString(downloadUrl.absoluteString, placeHolder: #imageLiteral(resourceName: "followup_high"))
-                
-                print("Download URL => \(downloadUrl)")
-                print("Absolute String => \(downloadUrl.absoluteString)")
-                
+//                self.profileImageView.loadImageUsingCache(with: downloadUrl.absoluteString)
+                self.profileImageUrl = downloadUrl.absoluteString
             })
         }
         
@@ -498,6 +507,7 @@ class SettingsViewController: UIViewController {
     
     let profileImageView:UIImageView = {
         let imageView = UIImageView()
+        imageView.image = #imageLiteral(resourceName: "placeholder.png")
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.layer.cornerRadius = 40
@@ -609,6 +619,53 @@ class SettingsViewController: UIViewController {
         phoneNumberTextField.textContentType = .telephoneNumber
         contactEmailTextField.keyboardType = .emailAddress
         contactEmailTextField.textContentType = .emailAddress
+        
+        firstNameTextField.addTarget(self, action: #selector(didChangeTextField), for: .editingChanged)
+        lastNameTextField.addTarget(self, action: #selector(didChangeTextField), for: .editingChanged)
+        phoneNumberTextField.addTarget(self, action: #selector(didChangeTextField), for: .editingChanged)
+        contactEmailTextField.addTarget(self, action: #selector(didChangeTextField), for: .editingChanged)
+        addressTextField.addTarget(self, action: #selector(didChangeTextField), for: .editingChanged)
+    }
+    
+    @objc fileprivate func didChangeTextField(textField:UITextField) {
+        if let text = textField.text {
+            if text.isEmpty {
+                self.disableUpdateButton()
+            } else {
+                self.validateFields()
+            }
+        } else { self.disableUpdateButton() }
+    }
+    fileprivate func isDataValid() -> Bool {
+        guard let first_name = self.firstNameTextField.text,
+            let last_name = self.lastNameTextField.text,
+            let user_email = self.emailTextField.text,
+            let phone_number = self.phoneNumberTextField.text,
+            let backup_email = self.contactEmailTextField.text,
+            let user_address = self.addressTextField.text,
+            !first_name.isEmpty, !last_name.isEmpty, !user_email.isEmpty, !phone_number.isEmpty, !backup_email.isEmpty, !user_address.isEmpty else {
+                return false
+            }
+        return true
+    }
+    fileprivate func validateFields() {
+        if isDataValid() {
+            enableUpdateButton()
+        } else {
+            disableUpdateButton()
+        }
+    }
+    internal func enableUpdateButton() {
+        updateButton.isEnabled = true
+        UIView.animate(withDuration: 0.4) {
+            self.updateButton.backgroundColor = UIColor.telaBlue
+        }
+    }
+    internal func disableUpdateButton() {
+        updateButton.isEnabled = false
+        UIView.animate(withDuration: 0.4) {
+            self.updateButton.backgroundColor = UIColor.telaGray6
+        }
     }
     fileprivate func setupTextFieldsDelegates() {
         firstNameTextField.delegate = self
@@ -676,6 +733,7 @@ class SettingsViewController: UIViewController {
     }()
     @objc fileprivate func updateButtonTapped() {
         print("Updating...")
+        initiateUpdateUserProfileSequence()
     }
     static func createTextField(placeholder:String? = nil) -> UITextField {
         let textField = UITextField()

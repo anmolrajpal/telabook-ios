@@ -22,8 +22,9 @@ struct Config {
         static func profileImageRef() -> StorageReference {
             let companyId = UserDefaults.standard.getCompanyId()
             let workerId = UserDefaults.standard.getWorkerId()
-            let path:String = "companies/\(companyId)/profile-images/\(workerId)"
-            return StorageConfig.storageRoot.child(path)
+            let reference = StorageConfig.storageRoot.child("companies").child(String(companyId)).child("profile-images").child(String(workerId))
+//            let path:String = "companies/\(companyId)/profile-images/\(workerId)"
+            return reference
         }
         static let messageImageRef = StorageConfig.storageRoot.child("img")
     }

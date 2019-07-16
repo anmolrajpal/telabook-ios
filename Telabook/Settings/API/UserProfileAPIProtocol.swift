@@ -9,5 +9,5 @@
 import Foundation
 protocol UserProfileAPIProtocol : APIProtocol {
     func fetchUserProfile(token:String, userId:String, completion: @escaping APICompletion)
-    func updateUserProfile(token:String, companyId:String, userId:String, username:String, email:String, roleId:String, firstName:String, lastName:String, phoneNumber:String, backupEmail:String, didId:String, profileImage:String, profileImageURL:String, completion: @escaping APICompletion)
+    func updateUserProfile(token:String, userId:String, email:String, firstName:String, lastName:String, phoneNumber:String, backupEmail:String, address:String, profileImage:String, profileImageURL:String, completion: @escaping APICompletion)
 }

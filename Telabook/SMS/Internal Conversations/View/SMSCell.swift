@@ -16,7 +16,12 @@ class SMSCell: UITableViewCell {
             if let name = conversation.personName {
                 self.nameLabel.text = name
                 let initials = CustomUtils.shared.getInitials(from: name)
-                self.profileImageView.loadImageUsingCacheWithURLString(conversation.profileImageUrl, placeHolder: UIImage.placeholderInitialsImage(text: initials))
+                if let urlStr = conversation.profileImageUrl,
+                    let url = CustomUtils.shared.getSlashEncodedURL(from: urlStr) {
+                    self.profileImageView.loadImageUsingCache(with: url, placeHolder: UIImage.placeholderInitialsImage(text: initials))
+                } else {
+                    self.profileImageView.loadImageUsingCache(with: nil, placeHolder: UIImage.placeholderInitialsImage(text: initials))
+                }
             }
             if let lowPriorityCheck = conversation.priority1,
                 lowPriorityCheck == "1" {
