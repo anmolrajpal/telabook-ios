@@ -639,7 +639,7 @@ extension UIImageView {
 }
 extension UIImageView: APIProtocol {
     
-    func loadImageUsingCache(with URLString: String?, placeHolder: UIImage?) {
+    func loadImageUsingCache(with URLString: String?, placeHolder: UIImage? = #imageLiteral(resourceName: "placeholder.png")) {
         
         self.image = nil
         guard let urlString = URLString else {
@@ -651,17 +651,16 @@ extension UIImageView: APIProtocol {
         }
         
         if let cachedImage = imageCache.object(forKey: NSString(string: urlString)) {
-            self.image = cachedImage
+            DispatchQueue.main.async {
+                self.image = cachedImage
+            }
             return
         } else {
             print("No cached image")
         }
         
-        if let url = URLSession.shared.constructURL(from: urlString) {
-            let request = NSMutableURLRequest(url: NSURL(string:urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)! as URL, cachePolicy: .useProtocolCachePolicy, timeoutInterval: Config.ServiceConfig.timeoutInterval)
-            request.httpMethod = httpMethod.GET.rawValue
-            request.setValue(Header.contentType.urlEncoded.rawValue, forHTTPHeaderField: Header.headerName.contentType.rawValue)
-            URLSession.shared.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
+        if let url = URL(string: urlString) {
+            URLSession.shared.dataTask(with: url, completionHandler: { (data, response, error) in
                 self.handleResponse(data: data, response: response, error: error, completion: { (responseStatus, data, serviceError, error) in
                     if let err = error {
                         DispatchQueue.main.async {
@@ -688,21 +687,31 @@ extension UIImageView: APIProtocol {
                             return
                         }
                         if let data = data {
-                            print(data)
                             if let downloadedImage = UIImage(data: data) {
                                 imageCache.setObject(downloadedImage, forKey: NSString(string: urlString))
-                                self.image = downloadedImage
+                                DispatchQueue.main.async {
+                                    self.image = downloadedImage
+                                }
                             } else {
-                                print("Failed to unwrap downloaded image data")
+                                print("Failed to create image from data")
+                                DispatchQueue.main.async {
+                                    self.image = placeHolder
+                                }
                             }
                         } else {
                             print("Failed to unwrap image data")
+                            DispatchQueue.main.async {
+                                self.image = placeHolder
+                            }
                         }
                     }
                 })
             }).resume()
         } else {
-            print("Failed to unwrap url")
+            print("Failed to construct url from url string => \(urlString)")
+            DispatchQueue.main.async {
+                self.image = placeHolder
+            }
         }
     }
 }
@@ -742,6 +751,21 @@ extension Date {
     static func getStringFromDate(date:Date, dateFormat:CustomDateFormat) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = dateFormat.rawValue
+        let dateString:String = dateFormatter.string(from: date)
+        return dateString
+    }
+    static func getDateFromString(dateString:String?, dateFormat:String) -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = dateFormat
+        if let string = dateString {
+            let date:Date? = dateFormatter.date(from: string)
+            return date
+        }
+        return nil
+    }
+    static func getStringFromDate(date:Date, dateFormat:String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = dateFormat
         let dateString:String = dateFormatter.string(from: date)
         return dateString
     }

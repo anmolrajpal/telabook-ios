@@ -108,7 +108,8 @@ class SettingsViewController: UIViewController {
         let last_name = details.lastName
         let initialsText = "\(first_name?.first?.uppercased() ?? "X")\(last_name?.first?.uppercased() ?? "D")"
     
-    profileImageView.loadImageUsingCacheWithURLString(details.profileImageUrl, placeHolder: UIImage.placeholderInitialsImage(text: initialsText))
+//    profileImageView.loadImageUsingCacheWithURLString(details.profileImageUrl, placeHolder: UIImage.placeholderInitialsImage(text: initialsText))
+        profileImageView.loadImageUsingCache(with: details.profileImageUrl, placeHolder: UIImage.placeholderInitialsImage(text: initialsText))
         userNameLabel.text = "\(first_name?.uppercased() ?? "") \(last_name?.uppercased() ?? "")"
         userDesignationLabel.text = "\(String(describing: role))  |"
         firstName = first_name
@@ -458,6 +459,7 @@ class SettingsViewController: UIViewController {
                     return
                 }
                 self.profileImageView.loadImageUsingCacheWithURLString(downloadUrl.absoluteString, placeHolder: #imageLiteral(resourceName: "followup_high"))
+                
                 print("Download URL => \(downloadUrl)")
                 print("Absolute String => \(downloadUrl.absoluteString)")
                 

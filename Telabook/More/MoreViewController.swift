@@ -96,7 +96,7 @@ class MoreViewController: UIViewController {
     var options:[String] = {
         let role = CustomUtils.shared.getUserRole()
         if role != .Agent {
-            return ["Manage Agents", "Gallery", "Blocked Users", "Schedule Message", "Archived SMSes"]
+            return ["Manage Agents", "Gallery", "Blocked Users", "Schedule Message", "Archived SMSes", "Clear Cache"]
         } else {
             return ["Profile Settings", "Blocked Users", "Schedule Message", "Clear Cache"]
         }
@@ -117,6 +117,22 @@ class MoreViewController: UIViewController {
         tv.tableFooterView = UIView(frame: CGRect.zero)
         return tv
     }()
+    
+    fileprivate func handleClearCache() {
+        if let selectionIndexPath = self.tableView.indexPathForSelectedRow {
+            self.tableView.deselectRow(at: selectionIndexPath, animated: true)
+        }
+        let alertVC = UIAlertController.telaAlertController(title: "Confirm clear cache?", message: "This will clear all cached images from the app")
+        alertVC.addAction(UIAlertAction(title: "Clear", style: UIAlertAction.Style.destructive) { (action:UIAlertAction) in
+            self.clearCache()
+        })
+        alertVC.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
+        self.present(alertVC, animated: true, completion: nil)
+    }
+    fileprivate func clearCache() {
+        imageCache.removeAllObjects()
+    }
+    
 }
 extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -151,6 +167,7 @@ extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
                 case 3:
                     let galleryVC = GalleryViewController()
                     self.show(galleryVC, sender: self)
+                case 4: handleClearCache()
             default: break
             }
         } else {
@@ -170,6 +187,7 @@ extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
                 case 4:
                     let archivedSMSVC = ArchivedSMSViewController()
                     self.show(archivedSMSVC, sender: self)
+                case 5: handleClearCache()
                 default: break
             }
         }

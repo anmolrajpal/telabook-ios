@@ -99,7 +99,7 @@ class ScheduleMessageViewController: UIViewController {
         return tv
     }()
     fileprivate func setupTableView() {
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(ScheduledMessageCell.self, forCellReuseIdentifier: NSStringFromClass(ScheduledMessageCell.self))
         tableView.delegate = self
         tableView.dataSource = self
     }

@@ -952,7 +952,8 @@ extension SMSDetailViewController: MessagesDisplayDelegate {
                 print("Optional Message Item")
                 return
         }
-        imageView.loadImageUsingCacheWithURLString(url.absoluteString, placeHolder: #imageLiteral(resourceName: "smiley_icon"))
+//        imageView.loadImageUsingCacheWithURLString(url.absoluteString, placeHolder: #imageLiteral(resourceName: "smiley_icon"))
+        imageView.loadImageUsingCache(with: url.absoluteString)
     }
     
 }

@@ -634,7 +634,8 @@ extension ChatViewController: MessagesDisplayDelegate {
             textView.anchor(top: nil, left: imageView.leftAnchor, bottom: imageView.bottomAnchor, right: imageView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         }
         
-        imageView.loadImageUsingCacheWithURLString(url.absoluteString, placeHolder: #imageLiteral(resourceName: "landing_callgroup"))
+//        imageView.loadImageUsingCacheWithURLString(url.absoluteString, placeHolder: #imageLiteral(resourceName: "landing_callgroup"))
+        imageView.loadImageUsingCache(with: url.absoluteString)
     }
 }
 
