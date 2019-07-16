@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Telabook/Utils/Extensions.swift"
-            timestampString = "584971155.585358"
+            timestampString = "584980300.874387"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "730"
-            endingLineNumber = "730"
+            startingLineNumber = "742"
+            endingLineNumber = "742"
             landmarkName = "isDateSame(date1:date2:)"
             landmarkType = "7">
          </BreakpointContent>

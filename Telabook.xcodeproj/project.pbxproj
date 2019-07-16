@@ -33,6 +33,13 @@
 		6F29FD5322B8FFD100BCA2AB /* CustomHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F29FD5222B8FFD100BCA2AB /* CustomHeaderView.swift */; };
 		6F29FD5522B909A600BCA2AB /* TextInputCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F29FD5422B909A600BCA2AB /* TextInputCell.swift */; };
 		6F29FD5722BBB1C300BCA2AB /* CustomerDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F29FD5622BBB1C100BCA2AB /* CustomerDetailsViewController.swift */; };
+		6F41013722DDF8950038AA76 /* CallGroupsAPIProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F41013622DDF8950038AA76 /* CallGroupsAPIProtocol.swift */; };
+		6F41013922DDF8A30038AA76 /* CallGroupsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F41013822DDF8A30038AA76 /* CallGroupsAPI.swift */; };
+		6F41013B22DDF8B50038AA76 /* CallGroupsCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F41013A22DDF8B50038AA76 /* CallGroupsCodable.swift */; };
+		6F41013D22DDF8E40038AA76 /* CallGroupsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F41013C22DDF8E40038AA76 /* CallGroupsCell.swift */; };
+		6F41013F22DDF8FB0038AA76 /* CallGroupsDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F41013E22DDF8FB0038AA76 /* CallGroupsDataProvider.swift */; };
+		6F41014122DDF9120038AA76 /* CallGroupsTableViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F41014022DDF9120038AA76 /* CallGroupsTableViewExtensions.swift */; };
+		6F41014322DE13680038AA76 /* ToggleCallGroupHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F41014222DE13680038AA76 /* ToggleCallGroupHelpers.swift */; };
 		6F46A8B722D0618B0042A667 /* InternalConversationsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F46A8B622D0618B0042A667 /* InternalConversationsAPI.swift */; };
 		6F46A8B922D061EC0042A667 /* InternalConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F46A8B822D061EC0042A667 /* InternalConversation.swift */; };
 		6F46A8BB22D062750042A667 /* FollowUpAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F46A8BA22D062750042A667 /* FollowUpAPI.swift */; };
@@ -152,6 +159,13 @@
 		6F29FD5222B8FFD100BCA2AB /* CustomHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomHeaderView.swift; sourceTree = "<group>"; };
 		6F29FD5422B909A600BCA2AB /* TextInputCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInputCell.swift; sourceTree = "<group>"; };
 		6F29FD5622BBB1C100BCA2AB /* CustomerDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerDetailsViewController.swift; sourceTree = "<group>"; };
+		6F41013622DDF8950038AA76 /* CallGroupsAPIProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallGroupsAPIProtocol.swift; sourceTree = "<group>"; };
+		6F41013822DDF8A30038AA76 /* CallGroupsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallGroupsAPI.swift; sourceTree = "<group>"; };
+		6F41013A22DDF8B50038AA76 /* CallGroupsCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallGroupsCodable.swift; sourceTree = "<group>"; };
+		6F41013C22DDF8E40038AA76 /* CallGroupsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallGroupsCell.swift; sourceTree = "<group>"; };
+		6F41013E22DDF8FB0038AA76 /* CallGroupsDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallGroupsDataProvider.swift; sourceTree = "<group>"; };
+		6F41014022DDF9120038AA76 /* CallGroupsTableViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallGroupsTableViewExtensions.swift; sourceTree = "<group>"; };
+		6F41014222DE13680038AA76 /* ToggleCallGroupHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleCallGroupHelpers.swift; sourceTree = "<group>"; };
 		6F46A8B622D0618B0042A667 /* InternalConversationsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalConversationsAPI.swift; sourceTree = "<group>"; };
 		6F46A8B822D061EC0042A667 /* InternalConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalConversation.swift; sourceTree = "<group>"; };
 		6F46A8BA22D062750042A667 /* FollowUpAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FollowUpAPI.swift; path = "Telabook/SMS/Internal Conversations/Model/FollowUpAPI.swift"; sourceTree = SOURCE_ROOT; };
@@ -435,6 +449,69 @@
 				6F23BD0C22D9F3470001A888 /* ScheduleMessageAPI.swift */,
 			);
 			path = API;
+			sourceTree = "<group>";
+		};
+		6F41012F22DDF7E00038AA76 /* Call Groups */ = {
+			isa = PBXGroup;
+			children = (
+				6F41013422DDF80A0038AA76 /* API */,
+				6F41013322DDF8060038AA76 /* Model */,
+				6F41013222DDF8000038AA76 /* View */,
+				6F41013122DDF7FA0038AA76 /* Controller */,
+				6F41013022DDF7E70038AA76 /* Extensions+Helpers */,
+			);
+			path = "Call Groups";
+			sourceTree = "<group>";
+		};
+		6F41013022DDF7E70038AA76 /* Extensions+Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				6F41013E22DDF8FB0038AA76 /* CallGroupsDataProvider.swift */,
+				6F41014022DDF9120038AA76 /* CallGroupsTableViewExtensions.swift */,
+				6F41014222DE13680038AA76 /* ToggleCallGroupHelpers.swift */,
+			);
+			path = "Extensions+Helpers";
+			sourceTree = "<group>";
+		};
+		6F41013122DDF7FA0038AA76 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				6FB11B30229EB5020098D050 /* CallGroupsViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		6F41013222DDF8000038AA76 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				6F41013C22DDF8E40038AA76 /* CallGroupsCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		6F41013322DDF8060038AA76 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				6F41013A22DDF8B50038AA76 /* CallGroupsCodable.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		6F41013422DDF80A0038AA76 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				6F41013622DDF8950038AA76 /* CallGroupsAPIProtocol.swift */,
+				6F41013822DDF8A30038AA76 /* CallGroupsAPI.swift */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
+		6F41013522DDF8380038AA76 /* Reminders */ = {
+			isa = PBXGroup;
+			children = (
+				6FB11B2C229EB4C40098D050 /* RemindersViewController.swift */,
+			);
+			path = Reminders;
 			sourceTree = "<group>";
 		};
 		6F425FB122D057190078F442 /* External Conversations */ = {
@@ -749,9 +826,9 @@
 				6FB11B04229BFA120098D050 /* HomeViewController.swift */,
 				6FB11B1E229D88510098D050 /* SectionItem.swift */,
 				6FB11B20229D894A0098D050 /* SectionItemCell.swift */,
-				6FB11B2C229EB4C40098D050 /* RemindersViewController.swift */,
+				6F41013522DDF8380038AA76 /* Reminders */,
 				6F04FFBD22C4ABD200FA467E /* Follow Up */,
-				6FB11B30229EB5020098D050 /* CallGroupsViewController.swift */,
+				6F41012F22DDF7E00038AA76 /* Call Groups */,
 				6FB11B32229EB5190098D050 /* OnlineUsersViewController.swift */,
 			);
 			path = Home;
@@ -1067,6 +1144,7 @@
 				6FBDEC7822B28D5E00A8511E /* EditDetailsViewController.swift in Sources */,
 				6FB11B37229EF4300098D050 /* ManageAgentsViewController.swift in Sources */,
 				6FEF96A222A6677900F2FF83 /* ExternalConversation.swift in Sources */,
+				6F41013F22DDF8FB0038AA76 /* CallGroupsDataProvider.swift in Sources */,
 				6F69BE9022D4C6D900F8903F /* QuickResponsesViewController.swift in Sources */,
 				6F23BD1122DA0D7A0001A888 /* ScheduleNewMessageViewController.swift in Sources */,
 				6FB8EA4122AA371900294EAC /* SMSDetailVCExtensions.swift in Sources */,
@@ -1095,6 +1173,7 @@
 				6F1BD2F122C4B1510053D0CC /* FollowUpAPIProtocol.swift in Sources */,
 				6FB11B1F229D88510098D050 /* SectionItem.swift in Sources */,
 				6F46A8BD22D39E790042A667 /* Checkbox.swift in Sources */,
+				6F41014322DE13680038AA76 /* ToggleCallGroupHelpers.swift in Sources */,
 				6F58C33322D614A10091C785 /* AgentDetailsCodable.swift in Sources */,
 				6F29FD5322B8FFD100BCA2AB /* CustomHeaderView.swift in Sources */,
 				6F9453BD22DB2C9300047C7F /* CustomerPickerViewController.swift in Sources */,
@@ -1114,6 +1193,7 @@
 				6F1BD2F322C4B4CB0053D0CC /* FollowUpDataProvider.swift in Sources */,
 				6F69BE8422D4742000F8903F /* ManageAgentsAPI.swift in Sources */,
 				6F1BD2ED22C4ADED0053D0CC /* FollowUpVCTableViewExtensions.swift in Sources */,
+				6F41013922DDF8A30038AA76 /* CallGroupsAPI.swift in Sources */,
 				6F9453D122DDDC2100047C7F /* ScheduledMessageCell.swift in Sources */,
 				6FEF96AA22A7BDCA00F2FF83 /* ExternalConversationsAPIProtocol.swift in Sources */,
 				6F58C33D22D621470091C785 /* AutoResponseControllerViews.swift in Sources */,
@@ -1127,6 +1207,7 @@
 				6FEF96A422A6679400F2FF83 /* ExternalConversationsAPI.swift in Sources */,
 				6FB11B19229D06BB0098D050 /* CustomUtils.swift in Sources */,
 				6FB11B07229BFA240098D050 /* CallsViewController.swift in Sources */,
+				6F41013722DDF8950038AA76 /* CallGroupsAPIProtocol.swift in Sources */,
 				6F23BD0922D9F28A0001A888 /* ScheduleMessageVCTableViewExtensions.swift in Sources */,
 				6F69BE8A22D4786300F8903F /* ManageAgentsTableViewExtensions.swift in Sources */,
 				6F69BE9422D4DCF600F8903F /* QuickResponsesAPI.swift in Sources */,
@@ -1154,11 +1235,14 @@
 				6FB11B4622A2A5110098D050 /* PersistenceService.swift in Sources */,
 				6F23BCFF22D724A70001A888 /* UserProfileCodable.swift in Sources */,
 				6F69BE8622D4742E00F8903F /* ManageAgentsAPIProtocol.swift in Sources */,
+				6F41013D22DDF8E40038AA76 /* CallGroupsCell.swift in Sources */,
 				6F69BE7E22D46EF600F8903F /* BlacklistCodable.swift in Sources */,
 				6FB8EA4522AA6BCE00294EAC /* SMSVCExtensions.swift in Sources */,
 				6FB11B1B229D07050098D050 /* LoginViewController.swift in Sources */,
+				6F41013B22DDF8B50038AA76 /* CallGroupsCodable.swift in Sources */,
 				6F9453C122DB4C1A00047C7F /* CustomerPickerDataProvider.swift in Sources */,
 				6F234EE822D606DB001FDAD6 /* ScheduleMessagesCodable.swift in Sources */,
+				6F41014122DDF9120038AA76 /* CallGroupsTableViewExtensions.swift in Sources */,
 				6FB11B2B229EA7C20098D050 /* Codable.swift in Sources */,
 				6F29FD5722BBB1C300BCA2AB /* CustomerDetailsViewController.swift in Sources */,
 				6F04FFBC22C3A22C00FA467E /* ExternalChat.swift in Sources */,
