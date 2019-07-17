@@ -122,39 +122,23 @@ final class AuthenticationService: NSObject {
         let loginViewController = LoginViewController()
         UserDefaults.standard.setIsLoggedIn(value: false)
         UserDefaults.clearUserData()
-        if let rootViewController = AppDelegate.shared.window?.rootViewController {
-            print(rootViewController)
-            guard let tbc = rootViewController as? TabBarController else {
-                print("Lol")
-                return
-            }
-            let pvc = tbc.presentedViewController
-            print("Knock: Presented View Controller:")
-            print(pvc as Any)
-            DispatchQueue.main.async {
-                pvc?.dismiss(animated: true, completion: nil)
+        if let rootVC = UIApplication.currentViewController() {
+            rootVC.presentedViewController?.dismiss(animated: true, completion: nil)
+            if let tbc = rootVC.tabBarController as? TabBarController {
+                print("Hurray.... I'm loving this one")
                 tbc.isLoaded = false
                 tbc.present(loginViewController, animated: true, completion: {
                     tbc.selectedViewController?.view.isHidden = true
                     tbc.viewControllers = nil
                 })
+            } else {
+                print("Holy noooooo!!!! I hate this one")
+                AppDelegate.shared.window?.rootViewController = TabBarController()
             }
         } else {
-            let tbc = TabBarController()
-            let pvc = tbc.presentedViewController
-            print("Clock: Presented View Controller:")
-            print(pvc as Any)
-            AppDelegate.shared.window?.rootViewController = tbc
-            DispatchQueue.main.async {
-                pvc?.dismiss(animated: true, completion: nil)
-                tbc.isLoaded = false
-                tbc.present(loginViewController, animated: true, completion: {
-                    tbc.selectedViewController?.view.isHidden = true
-                    tbc.viewControllers = nil
-                })
-            }
+            print("OMG I super hate this one")
+            AppDelegate.shared.window?.rootViewController = TabBarController()
         }
-        
     }
     fileprivate func dumpCoreDataStorage() {
         do {

@@ -7,9 +7,12 @@
 //
 
 import UIKit
+
 final class CustomUtils {
     static let shared = CustomUtils()
-    
+    func presentAcknowledgementModal() {
+        
+    }
     func getSlashEncodedURL(from urlString:String) -> String? {
         let firebaseUri = "https://firebasestorage.googleapis.com/v0/b/telebookchat.appspot.com/o/"
         if let startRange:Range<String.Index> = urlString.range(of: firebaseUri) {

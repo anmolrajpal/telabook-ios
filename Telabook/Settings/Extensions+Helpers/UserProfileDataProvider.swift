@@ -83,6 +83,7 @@ extension SettingsViewController {
     internal func initiateUpdateUserProfileSequence() {
         DispatchQueue.main.async {
             self.disableUpdateButton()
+            self.view.endEditing(true)
             UIAlertController.showModalSpinner(with: "Updating...", controller: self)
         }
         FirebaseAuthService.shared.getCurrentToken { (token, error) in
@@ -155,7 +156,12 @@ extension SettingsViewController {
                     return
                 }
                 DispatchQueue.main.async {
-                    UIAlertController.dismissModalSpinner(controller: self)
+                    UIAlertController.dismissModalSpinner(animated: true, controller: self, completion: {
+                        self.userNameLabel.text = "\(first_name.uppercased()) \(last_name.uppercased())"
+                        AssertionModalController(title: "Updated").show(completion: {
+                            
+                        })
+                    })
                 }
                 print("User Profile Updated Successfully")
             }

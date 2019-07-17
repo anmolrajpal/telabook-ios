@@ -41,10 +41,17 @@ class HomeViewController: UIViewController {
 //        setViewsState(isHidden: true)
 //        startSpinner()
         preFetchUser()
+        setupNavBarItems()
 //        fetchUserData()
         
     }
-    
+    fileprivate func setupNavBarItems() {
+        let addButton = UIBarButtonItem(image: #imageLiteral(resourceName: "add").withRenderingMode(.alwaysOriginal), style: UIBarButtonItem.Style.done, target: self, action: #selector(addButtonTapped))
+        navigationItem.rightBarButtonItems = [addButton]
+    }
+    @objc func addButtonTapped() {
+        AssertionModalController(title: "Updated").show()
+    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationItem.title = "HOME"

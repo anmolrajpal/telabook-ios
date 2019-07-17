@@ -14,10 +14,8 @@ final class FirebaseAuthService:NSObject {
     var authenticationStateListener:AuthStateDidChangeListenerHandle?
     var tokenStateListener:IDTokenDidChangeListenerHandle?
     
-    
     typealias TokenFetchCompletion = (String?, Error?) -> ()
     func authenticateAndFetchToken(email:String, password:String, completion: @escaping TokenFetchCompletion) {
-        
         Auth.auth().signIn(withEmail: email, password: password) { [weak self] user, error in
             guard self != nil else { return }
             if let err = error {
@@ -85,7 +83,7 @@ final class FirebaseAuthService:NSObject {
     func getCurrentToken(completion: @escaping (String?, Error?) -> ()) {
         let user = Auth.auth().currentUser
         handleUserState(user)
-        Auth.auth().currentUser?.getIDToken(completion: { (token, error) in
+        user?.getIDToken(completion: { (token, error) in
             print("In closure...")
             if let err = error {
                 print("Error fetching token: \(err)")

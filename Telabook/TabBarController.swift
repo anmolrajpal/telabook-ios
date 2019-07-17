@@ -9,6 +9,8 @@
 import UIKit
 
 class TabBarController: UITabBarController {
+    static let shared = TabBarController()
+    
     var isLoaded:Bool = false
     override func viewDidLoad() {
         super.viewDidLoad()

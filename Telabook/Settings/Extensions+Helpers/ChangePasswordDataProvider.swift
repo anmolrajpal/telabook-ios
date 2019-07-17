@@ -10,6 +10,7 @@ import UIKit
 extension ChangePasswordViewController {
     internal func initiateChangePasswordSequence(currentPassword:String, newPassword:String, confirmationPassword:String) {
         DispatchQueue.main.async {
+            self.view.endEditing(true)
             UIAlertController.showModalSpinner(with: "Updating...", controller: self)
         }
         FirebaseAuthService.shared.getCurrentToken { (token, error) in
@@ -57,9 +58,9 @@ extension ChangePasswordViewController {
                 }
                 DispatchQueue.main.async {
                     UIAlertController.dismissModalSpinner(controller: self, completion: {
-                        UIAlertController.showTelaAlert(title: "Password Changed", message: "Your password has been updated successfully", action: UIAlertAction(title: "OK", style: .default, handler: { (action) in
+                        AssertionModalController(title: "Updated").show(completion: {
                             self.navigationController?.popViewController(animated: true)
-                        }), controller: self)
+                        })
                     })
                 }
             }

@@ -18,6 +18,35 @@ class ClosureSleeve {
         closure()
     }
 }
+extension UIViewController {
+    func topMostViewController() -> UIViewController {
+        if self.presentedViewController == nil {
+            return self
+        }
+        if let navigation = self.presentedViewController as? UINavigationController {
+            return (navigation.visibleViewController?.topMostViewController())!
+        }
+        if let tab = self.presentedViewController as? UITabBarController {
+            if let selectedTab = tab.selectedViewController {
+                return selectedTab.topMostViewController()
+            }
+            return tab.topMostViewController()
+        }
+        return self.presentedViewController!.topMostViewController()
+    }
+}
+extension UIApplication {
+    static func currentViewController() -> UIViewController? {
+        var rootViewController = UIApplication.shared.keyWindow?.rootViewController
+        if let navigationController = rootViewController as? UINavigationController {
+            rootViewController = navigationController.viewControllers.first
+        }
+        if let tabBarController = rootViewController as? UITabBarController {
+            rootViewController = tabBarController.selectedViewController
+        }
+        return rootViewController
+    }
+}
 extension UISwitch {
     
     func set(width: CGFloat, height: CGFloat) {
@@ -342,8 +371,8 @@ extension UIAlertController {
         alert.view.addSubview(loadingIndicator)
         controller.present(alert, animated: true, completion: nil)
     }
-    static func dismissModalSpinner(controller:UIViewController, completion: (() -> Void)? = nil) {
-        controller.dismiss(animated: true, completion: completion)
+    static func dismissModalSpinner(animated:Bool = true, controller:UIViewController, completion: (() -> Void)? = nil) {
+        controller.dismiss(animated: animated, completion: completion)
     }
     static public func telaAlertController(title:String, message:String = "\n") -> UIAlertController {
         
