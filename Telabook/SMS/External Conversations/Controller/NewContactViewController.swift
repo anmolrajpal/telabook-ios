@@ -95,7 +95,7 @@ class NewContactViewController: UIViewController {
     }()
     let numberTextField:UITextField = {
         let textField = UITextField()
-        textField.attributedPlaceholder = NSAttributedString(string: "Phone Number", attributes: [NSAttributedString.Key.font: UIFont(name: CustomFonts.gothamBook.rawValue, size: 18)!, NSAttributedString.Key.foregroundColor: UIColor.telaGray7])
+        textField.attributedPlaceholder = NSAttributedString(string: "10 digit Mobile Number", attributes: [NSAttributedString.Key.font: UIFont(name: CustomFonts.gothamBook.rawValue, size: 18)!, NSAttributedString.Key.foregroundColor: UIColor.telaGray7])
         textField.textColor = UIColor.telaWhite
         textField.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 20)
         textField.setDefault(string: "+1", at: .Left)

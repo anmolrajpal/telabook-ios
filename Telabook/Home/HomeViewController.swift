@@ -22,10 +22,10 @@ class HomeViewController: UIViewController {
         }
     }
     let sectionItems:[SectionItem] = [
-        SectionItem(image: #imageLiteral(resourceName: "landing_reminder"), title: "REMINDERS", subTitle: "5 Reminders"),
+        SectionItem(image: #imageLiteral(resourceName: "landing_operators"), title: "USERS ONLINE", subTitle: "5 Online Users"),
         SectionItem(image: #imageLiteral(resourceName: "landing_followup"), title: "FOLLOW UP", subTitle: "5 Users to Follow Up"),
         SectionItem(image: #imageLiteral(resourceName: "landing_callgroup"), title: "CALL GROUPS", subTitle: "2 Groups"),
-        SectionItem(image: #imageLiteral(resourceName: "landing_operators"), title: "USERS ONLINE", subTitle: "5 Online Users")
+        SectionItem(image: #imageLiteral(resourceName: "landing_reminder"), title: "SCHEDULED", subTitle: "5 Reminders")
     ]
     let calculatedInset:CGFloat = 20
    
@@ -41,7 +41,7 @@ class HomeViewController: UIViewController {
 //        setViewsState(isHidden: true)
 //        startSpinner()
         preFetchUser()
-        setupNavBarItems()
+//        setupNavBarItems()
 //        fetchUserData()
         
     }
@@ -470,8 +470,8 @@ extension HomeViewController:UICollectionViewDelegate, UICollectionViewDataSourc
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch indexPath.row {
             case 0:
-                let remindersViewController = RemindersViewController()
-                self.show(remindersViewController, sender: self)
+                let onlineUsersViewController = OnlineUsersViewController()
+                self.show(onlineUsersViewController, sender: self)
             case 1:
                 let followUpViewController = FollowUpViewController()
                 self.show(followUpViewController, sender: self)
@@ -479,8 +479,25 @@ extension HomeViewController:UICollectionViewDelegate, UICollectionViewDataSourc
                 let callGroupsViewController = CallGroupsViewController()
                 self.show(callGroupsViewController, sender: self)
             case 3:
-                let onlineUsersViewController = OnlineUsersViewController()
-                self.show(onlineUsersViewController, sender: self)
+                let role = CustomUtils.shared.getUserRole()
+                let indexPath:IndexPath
+                if role == .Agent {
+                    indexPath = IndexPath(row: 2, section: 0)
+                } else {
+                    indexPath = IndexPath(row: 3, section: 0)
+                }
+                if let tbc = tabBarController as? TabBarController {
+                    tbc.selectedIndex = 4
+                    let navigationController = tbc.selectedViewController as! UINavigationController
+                    navigationController.popToRootViewController(animated: true)
+                    if let vc = navigationController.topViewController as? MoreViewController {
+                        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.3) {
+                            vc.tableView.selectRow(at: indexPath, animated: false, scrollPosition: UITableView.ScrollPosition.none)
+                            vc.tableView(vc.tableView, didSelectRowAt: indexPath)
+                        }
+                    } else { print("Failed to unwrap topViewController") }
+                } else { print("Failed to unwrap tabBarController") }
+            
             default: break
         }
     }

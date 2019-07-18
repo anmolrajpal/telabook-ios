@@ -16,6 +16,11 @@ struct Config {
             let path = "companies/\(companyId)/conversations/\(node)"
             return databaseRoot.child(path)
         }
+        static func onlineUsersReference() -> DatabaseReference {
+            let companyId = UserDefaults.standard.getCompanyId()
+            let reference = databaseRoot.child("companies").child(String(companyId)).child("online")
+            return reference
+        }
     }
     struct StorageConfig {
         static let storageRoot = Storage.storage().reference()
@@ -23,9 +28,9 @@ struct Config {
             let companyId = UserDefaults.standard.getCompanyId()
             let workerId = UserDefaults.standard.getWorkerId()
             let reference = StorageConfig.storageRoot.child("companies").child(String(companyId)).child("profile-images").child(String(workerId))
-//            let path:String = "companies/\(companyId)/profile-images/\(workerId)"
             return reference
         }
+        
         static let messageImageRef = StorageConfig.storageRoot.child("img")
     }
     struct ServiceConfig {

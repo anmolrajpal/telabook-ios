@@ -41,7 +41,7 @@ extension UIApplication {
         if let navigationController = rootViewController as? UINavigationController {
             rootViewController = navigationController.viewControllers.first
         }
-        if let tabBarController = rootViewController as? UITabBarController {
+        if let tabBarController = rootViewController as? TabBarController {
             rootViewController = tabBarController.selectedViewController
         }
         return rootViewController

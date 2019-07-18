@@ -15,8 +15,14 @@ class ManageAgentsCell: UITableViewCell {
             guard let details = agentDetails else {return}
             if let name = details.personName {
                 self.agentNameLabel.text = name
-                let initials = CustomUtils.shared.getInitials(from: name)
-                self.profileImageView.loadImageUsingCacheWithURLString(details.profileImageUrl, placeHolder: UIImage.placeholderInitialsImage(text: initials))
+                let initialsText = CustomUtils.shared.getInitials(from: name)
+                if let urlStr = details.profileImageUrl,
+                    let url = CustomUtils.shared.getSlashEncodedURL(from: urlStr) {
+                    
+                    self.profileImageView.loadImageUsingCache(with: url, placeHolder: UIImage.placeholderInitialsImage(text: initialsText))
+                } else {
+                    self.profileImageView.loadImageUsingCache(with: nil, placeHolder: UIImage.placeholderInitialsImage(text: initialsText))
+                }
             }
             if let roleId = details.roleId {
                 let designation = UserRole.getRole(by: roleId)

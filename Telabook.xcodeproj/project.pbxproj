@@ -11,6 +11,12 @@
 		6F02E9AC22DF45BF005708B0 /* AssertionModalController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F02E9AB22DF45BF005708B0 /* AssertionModalController.swift */; };
 		6F04FFBA22C3A12400FA467E /* ChatVCCoreDataHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F04FFB922C3A12400FA467E /* ChatVCCoreDataHelpers.swift */; };
 		6F04FFBC22C3A22C00FA467E /* ExternalChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F04FFBB22C3A22C00FA467E /* ExternalChat.swift */; };
+		6F05627F22E0882A00424BF5 /* ChatVCMessageKitExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F05627E22E0882A00424BF5 /* ChatVCMessageKitExtensions.swift */; };
+		6F05628122E08EF500424BF5 /* ChatVCHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F05628022E08EF500424BF5 /* ChatVCHelpers.swift */; };
+		6F087DCD22E0DF3D00CAD840 /* OnlineUsersTableViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F087DCC22E0DF3D00CAD840 /* OnlineUsersTableViewExtensions.swift */; };
+		6F087DCF22E0E40E00CAD840 /* OnlineUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F087DCE22E0E40E00CAD840 /* OnlineUser.swift */; };
+		6F087DD122E0EFFD00CAD840 /* OnlineUsersAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F087DD022E0EFFD00CAD840 /* OnlineUsersAPI.swift */; };
+		6F087DD322E0F1D600CAD840 /* OnlineUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F087DD222E0F1D600CAD840 /* OnlineUserCell.swift */; };
 		6F098BB922BE4E3700AF19AA /* HandleBlockingHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F098BB822BE4E3700AF19AA /* HandleBlockingHelpers.swift */; };
 		6F098BBB22BE9A4100AF19AA /* BlockedUsersVCTableViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F098BBA22BE9A4100AF19AA /* BlockedUsersVCTableViewExtensions.swift */; };
 		6F1BD2EA22C4AD250053D0CC /* FollowUpsIndexCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1BD2E922C4AD250053D0CC /* FollowUpsIndexCodable.swift */; };
@@ -138,6 +144,12 @@
 		6F02E9AB22DF45BF005708B0 /* AssertionModalController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssertionModalController.swift; sourceTree = "<group>"; };
 		6F04FFB922C3A12400FA467E /* ChatVCCoreDataHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatVCCoreDataHelpers.swift; sourceTree = "<group>"; };
 		6F04FFBB22C3A22C00FA467E /* ExternalChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalChat.swift; sourceTree = "<group>"; };
+		6F05627E22E0882A00424BF5 /* ChatVCMessageKitExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatVCMessageKitExtensions.swift; sourceTree = "<group>"; };
+		6F05628022E08EF500424BF5 /* ChatVCHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatVCHelpers.swift; sourceTree = "<group>"; };
+		6F087DCC22E0DF3D00CAD840 /* OnlineUsersTableViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineUsersTableViewExtensions.swift; sourceTree = "<group>"; };
+		6F087DCE22E0E40E00CAD840 /* OnlineUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineUser.swift; sourceTree = "<group>"; };
+		6F087DD022E0EFFD00CAD840 /* OnlineUsersAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineUsersAPI.swift; sourceTree = "<group>"; };
+		6F087DD222E0F1D600CAD840 /* OnlineUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineUserCell.swift; sourceTree = "<group>"; };
 		6F098BB822BE4E3700AF19AA /* HandleBlockingHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandleBlockingHelpers.swift; sourceTree = "<group>"; };
 		6F098BBA22BE9A4100AF19AA /* BlockedUsersVCTableViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUsersVCTableViewExtensions.swift; sourceTree = "<group>"; };
 		6F1BD2E922C4AD250053D0CC /* FollowUpsIndexCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUpsIndexCodable.swift; sourceTree = "<group>"; };
@@ -305,6 +317,58 @@
 			);
 			name = API;
 			path = "New Group/API";
+			sourceTree = "<group>";
+		};
+		6F087DC622E0DEDD00CAD840 /* Online Users */ = {
+			isa = PBXGroup;
+			children = (
+				6F087DCB22E0DF1500CAD840 /* API */,
+				6F087DCA22E0DF0400CAD840 /* Model */,
+				6F087DC922E0DEF300CAD840 /* View */,
+				6F087DC822E0DEEF00CAD840 /* Controller */,
+				6F087DC722E0DEE500CAD840 /* Extensions+Helpers */,
+			);
+			path = "Online Users";
+			sourceTree = "<group>";
+		};
+		6F087DC722E0DEE500CAD840 /* Extensions+Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				6F087DCC22E0DF3D00CAD840 /* OnlineUsersTableViewExtensions.swift */,
+			);
+			path = "Extensions+Helpers";
+			sourceTree = "<group>";
+		};
+		6F087DC822E0DEEF00CAD840 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				6FB11B32229EB5190098D050 /* OnlineUsersViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		6F087DC922E0DEF300CAD840 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				6F087DD222E0F1D600CAD840 /* OnlineUserCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		6F087DCA22E0DF0400CAD840 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				6F087DCE22E0E40E00CAD840 /* OnlineUser.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		6F087DCB22E0DF1500CAD840 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				6F087DD022E0EFFD00CAD840 /* OnlineUsersAPI.swift */,
+			);
+			path = API;
 			sourceTree = "<group>";
 		};
 		6F1BD2E722C4ACA70053D0CC /* Model */ = {
@@ -831,7 +895,7 @@
 				6F41013522DDF8380038AA76 /* Reminders */,
 				6F04FFBD22C4ABD200FA467E /* Follow Up */,
 				6F41012F22DDF7E00038AA76 /* Call Groups */,
-				6FB11B32229EB5190098D050 /* OnlineUsersViewController.swift */,
+				6F087DC622E0DEDD00CAD840 /* Online Users */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -919,6 +983,8 @@
 				6F29FD5222B8FFD100BCA2AB /* CustomHeaderView.swift */,
 				6F29FD5422B909A600BCA2AB /* TextInputCell.swift */,
 				6F9011D322AC3B130046F5E3 /* ChatViewController.swift */,
+				6F05628022E08EF500424BF5 /* ChatVCHelpers.swift */,
+				6F05627E22E0882A00424BF5 /* ChatVCMessageKitExtensions.swift */,
 				6F04FFB922C3A12400FA467E /* ChatVCCoreDataHelpers.swift */,
 			);
 			path = Controller;
@@ -1147,6 +1213,7 @@
 				6FBDEC7822B28D5E00A8511E /* EditDetailsViewController.swift in Sources */,
 				6FB11B37229EF4300098D050 /* ManageAgentsViewController.swift in Sources */,
 				6FEF96A222A6677900F2FF83 /* ExternalConversation.swift in Sources */,
+				6F087DD122E0EFFD00CAD840 /* OnlineUsersAPI.swift in Sources */,
 				6F41013F22DDF8FB0038AA76 /* CallGroupsDataProvider.swift in Sources */,
 				6F69BE9022D4C6D900F8903F /* QuickResponsesViewController.swift in Sources */,
 				6F23BD1122DA0D7A0001A888 /* ScheduleNewMessageViewController.swift in Sources */,
@@ -1160,6 +1227,7 @@
 				6FB11B39229EF4430098D050 /* GalleryViewController.swift in Sources */,
 				6FBDEC7622B28D4D00A8511E /* NewContactViewController.swift in Sources */,
 				6F9453C322DB53E100047C7F /* CustomerAPI.swift in Sources */,
+				6F087DCD22E0DF3D00CAD840 /* OnlineUsersTableViewExtensions.swift in Sources */,
 				6F098BB922BE4E3700AF19AA /* HandleBlockingHelpers.swift in Sources */,
 				6F04FFBA22C3A12400FA467E /* ChatVCCoreDataHelpers.swift in Sources */,
 				6FB11B3D229EF4690098D050 /* ArchivedSMSViewController.swift in Sources */,
@@ -1175,6 +1243,7 @@
 				6FBDEC7C22B3F1DA00A8511E /* SMSDetailVC+CollectionView.swift in Sources */,
 				6F1BD2F122C4B1510053D0CC /* FollowUpAPIProtocol.swift in Sources */,
 				6FB11B1F229D88510098D050 /* SectionItem.swift in Sources */,
+				6F087DCF22E0E40E00CAD840 /* OnlineUser.swift in Sources */,
 				6F46A8BD22D39E790042A667 /* Checkbox.swift in Sources */,
 				6F41014322DE13680038AA76 /* ToggleCallGroupHelpers.swift in Sources */,
 				6F58C33322D614A10091C785 /* AgentDetailsCodable.swift in Sources */,
@@ -1187,6 +1256,7 @@
 				6F9453C522DB53ED00047C7F /* CustomerAPIProtocol.swift in Sources */,
 				6FB11B4422A2A2E10098D050 /* Telabook.xcdatamodeld in Sources */,
 				6FB11B16229D05E00098D050 /* UserDefaults.swift in Sources */,
+				6F05627F22E0882A00424BF5 /* ChatVCMessageKitExtensions.swift in Sources */,
 				6F9453C922DC3CA300047C7F /* ChangePasswordViewController.swift in Sources */,
 				6F9453BB22DB2C8200047C7F /* AgentPickerViewController.swift in Sources */,
 				6F46A8BB22D062750042A667 /* FollowUpAPI.swift in Sources */,
@@ -1198,6 +1268,7 @@
 				6F1BD2ED22C4ADED0053D0CC /* FollowUpVCTableViewExtensions.swift in Sources */,
 				6F41013922DDF8A30038AA76 /* CallGroupsAPI.swift in Sources */,
 				6F9453D122DDDC2100047C7F /* ScheduledMessageCell.swift in Sources */,
+				6F087DD322E0F1D600CAD840 /* OnlineUserCell.swift in Sources */,
 				6FEF96AA22A7BDCA00F2FF83 /* ExternalConversationsAPIProtocol.swift in Sources */,
 				6F58C33D22D621470091C785 /* AutoResponseControllerViews.swift in Sources */,
 				6FB11AE4229BDDBD0098D050 /* AppDelegate.swift in Sources */,
@@ -1227,6 +1298,7 @@
 				6F69BE9622D4DE4900F8903F /* QuickResponsesDataProvider.swift in Sources */,
 				6FB11B12229C31DF0098D050 /* Enums.swift in Sources */,
 				6F23BD0B22D9F33A0001A888 /* ScheduleMessageAPIProtocol.swift in Sources */,
+				6F05628122E08EF500424BF5 /* ChatVCHelpers.swift in Sources */,
 				6F58C33722D618B30091C785 /* AutoResponseAPI.swift in Sources */,
 				6F9453CB22DC3CBB00047C7F /* ChangePasswordDataProvider.swift in Sources */,
 				6F1BD2EA22C4AD250053D0CC /* FollowUpsIndexCodable.swift in Sources */,
