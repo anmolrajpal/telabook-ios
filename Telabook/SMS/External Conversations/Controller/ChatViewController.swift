@@ -388,18 +388,30 @@ final class ChatViewController : MessagesViewController {
 extension ChatViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        picker.dismiss(animated: true, completion: nil)
+//        picker.dismiss(animated: true, completion: nil)
         
-        if let asset = info[.phAsset] as? PHAsset { // 1
-            let size = CGSize(width: 500, height: 500)
-            PHImageManager.default().requestImage(for: asset, targetSize: size, contentMode: .aspectFit, options: nil) { result, info in
-                guard let image = result else {
-                    return
-                }
-                self.sendPhoto(image)
-            }
-        } else if let image = info[.originalImage] as? UIImage {
-            sendPhoto(image)
+        if let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
+            let vc = ImageAssertionViewController(image)
+            vc.delegate = self
+            picker.show(vc, sender: self)
+//            vc.modalPresentationStyle = .overFullScreen
+//            vc.modalTransitionStyle = .crossDissolve
+//            picker.dismiss(animated: false) {
+//                self.navigationController?.present(vc, animated: true, completion: nil)
+//            }
+        }
+        else if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+            let vc = ImageAssertionViewController(image)
+            vc.delegate = self
+            picker.show(vc, sender: self)
+//            vc.modalPresentationStyle = .overFullScreen
+//            vc.modalTransitionStyle = .crossDissolve
+//            picker.dismiss(animated: false) {
+//                self.navigationController?.present(vc, animated: true, completion: nil)
+//            }
+            
+        } else {
+            print("Unknown stuff")
         }
     }
     

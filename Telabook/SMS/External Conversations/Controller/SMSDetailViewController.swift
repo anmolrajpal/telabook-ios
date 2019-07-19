@@ -658,6 +658,8 @@ class SMSDetailViewController: UIViewController {
             self.fetchDataFromAPI(isArchive: false)
         case .DirectMessage:
             tableView.isHidden = true
+            self.stopSpinner()
+            self.setPlaceholdersViewsState(isHidden: true)
             setupDirectMessageView()
         case .Archived:
             messageInputBar.inputTextView.resignFirstResponder()
@@ -677,9 +679,11 @@ class SMSDetailViewController: UIViewController {
         self.preFetchData(isArchived: false)
         if let count = preFetchCount(),
             count == 0 {
-            self.setViewsState(isHidden: true)
-            self.setPlaceholdersViewsState(isHidden: false)
-            self.placeholderLabel.text = "No Conversations"
+            if segmentedControl.selectedSegmentIndex == 2 {
+                self.setViewsState(isHidden: true)
+                self.setPlaceholdersViewsState(isHidden: false)
+                self.placeholderLabel.text = "No Conversations"
+            }
         } else {
             self.setViewsState(isHidden: false)
             self.setPlaceholdersViewsState(isHidden: true)

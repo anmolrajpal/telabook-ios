@@ -470,7 +470,6 @@ class SettingsViewController: UIViewController {
                     }
                     return
                 }
-//                self.profileImageView.loadImageUsingCache(with: downloadUrl.absoluteString)
                 self.profileImageUrl = downloadUrl.absoluteString
             })
         }

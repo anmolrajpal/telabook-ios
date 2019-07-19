@@ -39,6 +39,7 @@ class OnlineUsersViewController: UIViewController {
         setUpNavBar()
         setupTableView()
         fetchOnlineUsers()
+        OnlineUsersAPI.shared.observeOnlineUsers()
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()

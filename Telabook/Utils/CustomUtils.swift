@@ -13,11 +13,12 @@ final class CustomUtils {
     func presentAcknowledgementModal() {
         
     }
-    func getSlashEncodedURL(from urlString:String) -> String? {
+    func getSlashEncodedURL(from urlString:String?) -> String? {
         let firebaseUri = "https://firebasestorage.googleapis.com/v0/b/telebookchat.appspot.com/o/"
-        if let startRange:Range<String.Index> = urlString.range(of: firebaseUri) {
-            let range = urlString.range(of: urlString[startRange.upperBound...])
-            let url = urlString.replacingOccurrences(of: "/", with: "%2F", options: String.CompareOptions.regularExpression, range: range)
+        if let string = urlString,
+            let startRange:Range<String.Index> = string.range(of: firebaseUri) {
+            let range = string.range(of: string[startRange.upperBound...])
+            let url = string.replacingOccurrences(of: "/", with: "%2F", options: String.CompareOptions.regularExpression, range: range)
             return url
         }
         return nil

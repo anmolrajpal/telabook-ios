@@ -175,6 +175,11 @@ extension ChatViewController : MessageInputBarDelegate {
                 print(err)
                 DispatchQueue.main.async {
                     self.messageInputBar.sendButton.isEnabled = true
+                    if type == .MMS {
+                        UIAlertController.dismissModalSpinner(animated: true, controller: self, completion: {
+                            UIAlertController.showTelaAlert(title: "Error", message: err.localizedDescription)
+                        })
+                    }
                 }
             } else if let token = token {
                 let id = self.conversationId
@@ -182,6 +187,11 @@ extension ChatViewController : MessageInputBarDelegate {
                 guard id != "0" else {
                     print("Error: External Convo ID => 0")
                     self.messageInputBar.sendButton.isEnabled = true
+                    if type == .MMS {
+                        UIAlertController.dismissModalSpinner(animated: true, controller: self, completion: {
+                            UIAlertController.showTelaAlert(title: "Error", message: "Internal Application Error")
+                        })
+                    }
                     return
                 }
                 DispatchQueue.main.async {
@@ -195,38 +205,32 @@ extension ChatViewController : MessageInputBarDelegate {
         ExternalConversationsAPI.shared.sendMessage(token: token, conversationId: conversationId, message: message, type: type, isDirectMessage: false) { (responseStatus, data, serviceError, error) in
             if let err = error {
                 DispatchQueue.main.async {
-                    UIAlertController.dismissModalSpinner(controller: self)
-                    print("***Error Sending Message****\n\(err.localizedDescription)")
-                    self.showAlert(title: "Error", message: err.localizedDescription)
+                    UIAlertController.dismissModalSpinner(animated: true, controller: self, completion: {
+                        UIAlertController.showTelaAlert(title: "Error", message: err.localizedDescription)
+                    })
                     self.messageInputBar.sendButton.isEnabled = true
                 }
             } else if let serviceErr = serviceError {
                 DispatchQueue.main.async {
-                    UIAlertController.dismissModalSpinner(controller: self)
-                    print("***Error Sending Message****\n\(serviceErr.localizedDescription)")
-                    self.showAlert(title: "Error", message: serviceErr.localizedDescription)
+                    UIAlertController.dismissModalSpinner(animated: true, controller: self, completion: {
+                        UIAlertController.showTelaAlert(title: "Error", message: serviceErr.localizedDescription)
+                    })
                     self.messageInputBar.sendButton.isEnabled = true
                 }
             } else if let status = responseStatus {
                 guard status == .Created else {
                     DispatchQueue.main.async {
-                        UIAlertController.dismissModalSpinner(controller: self)
-                        print("***Error Sending Message****\nInvalid Response: \(status)")
-                        self.showAlert(title: "\(status)", message: "Unable to send Message. Please try again")
+                        UIAlertController.dismissModalSpinner(animated: true, controller: self, completion: {
+                            UIAlertController.showTelaAlert(title: "Message not sent", message: "Invalid Response. Status: \(status)")
+                        })
                         self.messageInputBar.sendButton.isEnabled = true
                     }
                     return
                 }
-                
                 DispatchQueue.main.async {
-                    print("Message sent: \(message)")
-                    //                    self.messageInputBar.inputTextView.text = ""
-                    //                    self.messagesCollectionView.scrollToBottom(animated: true)
-                    //                    self.messageInputBar.sendButton.isEnabled = true
-                }
-                if let data = data {
-                    print("Data length => \(data.count)")
-                    print("Data => \(data)")
+                    UIAlertController.dismissModalSpinner(animated: true, controller: self, completion: {
+                        AssertionModalController(title: "Message Sent").show()
+                    })
                 }
             }
         }

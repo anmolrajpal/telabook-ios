@@ -18,6 +18,33 @@ class ClosureSleeve {
         closure()
     }
 }
+extension UIScrollView {
+    func scrollToBottom(_ animated: Bool) {
+        if self.contentSize.height < self.bounds.size.height { return }
+        let bottomOffset = CGPoint(x: 0, y: self.contentSize.height - self.bounds.size.height)
+        self.setContentOffset(bottomOffset, animated: animated)
+    }
+}
+extension ApplicationError: LocalizedError {
+    public var localizedDescription: String? {
+        switch self {
+        case let .Internal(status, message): return "Error \(status), \(message)"
+        }
+    }
+}
+extension ServiceError: LocalizedError {
+    public var localizedDescription: String {
+        switch self {
+        case .FailedRequest:
+            return NSLocalizedString("Failed to create request", comment: "Failed Request")
+        case .Internal:
+            return NSLocalizedString("An internal error caused by the application", comment: "Internal Error")
+        case .InvalidResponse:
+            return NSLocalizedString("Invalid response received", comment: "Invalid Response")
+        case .Unknown: return NSLocalizedString("An Unknown Error occured", comment: "Unknown Error")
+        }
+    }
+}
 extension UIViewController {
     func topMostViewController() -> UIViewController {
         if self.presentedViewController == nil {
@@ -404,7 +431,7 @@ extension UIAlertController {
             if let navigationController = rootViewController as? UINavigationController {
                 rootViewController = navigationController.viewControllers.first
             }
-            if let tabBarController = rootViewController as? UITabBarController {
+            if let tabBarController = rootViewController as? TabBarController {
                 rootViewController = tabBarController.selectedViewController
             }
             rootViewController?.present(alert, animated: true, completion: completion)

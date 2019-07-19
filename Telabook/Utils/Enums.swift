@@ -82,6 +82,9 @@ public enum ServiceError:Error {
     case Internal
     
 }
+public enum ApplicationError:Error {
+    case Internal(status:Int, message:String)
+}
 public enum ChatMessageType {
     case SMS
     case MMS

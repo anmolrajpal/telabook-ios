@@ -34,29 +34,47 @@ class OnlineUserCell: UITableViewCell {
         contentView.addSubview(containerView)
     }
     fileprivate func setupConstraints() {
-        profileImageView.anchor(top: contentView.topAnchor, left: contentView.leftAnchor, bottom: nil, right: nil, topConstant: 10, leftConstant: 20, bottomConstant: 0, rightConstant: 0, widthConstant: 60, heightConstant: 60)
+        profileImageView.anchor(top: nil, left: contentView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 20, bottomConstant: 0, rightConstant: 0, widthConstant: 60, heightConstant: 60)
+        profileImageView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).activate()
         onlineStatusImageView.centerXAnchor.constraint(equalTo: profileImageView.centerXAnchor).activate()
         onlineStatusImageView.centerYAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: -2).activate()
         onlineStatusImageView.widthAnchor.constraint(equalToConstant: 28).activate()
         onlineStatusImageView.heightAnchor.constraint(equalToConstant: 28).activate()
         
-        containerView.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor).activate()
-        containerView.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 10).activate()
-        containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0).activate()
-        containerView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: 0).activate()
         
+        containerView.anchor(top: contentView.topAnchor, left: profileImageView.rightAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         agentNameLabel.anchor(top: nil, left: containerView.leftAnchor, bottom: onlineStatusLabel.topAnchor, right: containerView.rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 10, rightConstant: 20, widthConstant: 0, heightConstant: 0)
         onlineStatusLabel.anchor(top: nil, left: agentNameLabel.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 10, widthConstant: 0, heightConstant: 0)
         onlineStatusLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).activate()
-        dateTimeLabel.anchor(top: onlineStatusLabel.bottomAnchor, left: agentNameLabel.leftAnchor, bottom: nil, right: lastEventLabel.leftAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 0, rightConstant: 10, widthConstant: 0, heightConstant: 0)
-        lastEventLabel.anchor(top: onlineStatusLabel.centerYAnchor, left: nil, bottom: containerView.bottomAnchor, right: containerView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 10, rightConstant: 20, widthConstant: 0, heightConstant: 0)
+        dateTimeLabel.centerYAnchor.constraint(equalTo: onlineStatusLabel.centerYAnchor).activate()
+        dateTimeLabel.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -20).activate()
+        lastEventLabel.anchor(top: onlineStatusLabel.bottomAnchor, left: onlineStatusLabel.leftAnchor, bottom: containerView.bottomAnchor, right: containerView.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 10, rightConstant: 20, widthConstant: 0, heightConstant: 0)
     }
     fileprivate func setupCell(with data: OnlineUser) {
-        profileImageView.loadImageUsingCache(with: data.profileImageURL)
+        profileImageView.loadImageUsingCache(with: CustomUtils.shared.getSlashEncodedURL(from: data.profileImageURL))
         agentNameLabel.text = data.personName
-        dateTimeLabel.text = Date.getStringFromDate(date: data.date ?? Date(), dateFormat: "MMM d, h:mm a")
+        let currentDate = Date()
+        let date = data.date ?? currentDate
+        let dateString = Date.getStringFromDate(date: date, dateFormat: "MMM d, h:mm a")
+        dateTimeLabel.text = dateString
+        if date > currentDate.subtract(minutes: 3)! {
+            print("Online")
+            onlineStatusLabel.text = "Online"
+            onlineStatusImageView.image = #imageLiteral(resourceName: "radio_active")
+        } else if date > currentDate.subtract(minutes: 5)! {
+            print("Idle")
+            onlineStatusLabel.text = "Idle"
+            onlineStatusImageView.image = #imageLiteral(resourceName: "online")
+        } else {
+            print("Offline")
+            onlineStatusLabel.text = "Offline"
+            onlineStatusImageView.image = #imageLiteral(resourceName: "idle")
+        }
         
-        let lastEventTitleAttributedString = NSAttributedString(string: "Last Event:\n", attributes: [
+        
+        
+        
+        let lastEventTitleAttributedString = NSAttributedString(string: "Last Event: ", attributes: [
             .foregroundColor : UIColor.telaGray7
             ])
         let lastEventNameAttributedString = NSAttributedString(string: data.lastEvent ?? "", attributes: [
@@ -66,7 +84,7 @@ class OnlineUserCell: UITableViewCell {
         lastEventAttributedString.append(lastEventTitleAttributedString)
         lastEventAttributedString.append(lastEventNameAttributedString)
         lastEventLabel.attributedText = lastEventAttributedString
-        onlineStatusLabel.text = "Online"
+        
     }
     
     
@@ -102,6 +120,7 @@ class OnlineUserCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 1
         label.textColor = UIColor.telaGray6
+        label.textAlignment = .right
         label.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 12.0)
         return label
     }()
@@ -110,7 +129,7 @@ class OnlineUserCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         label.lineBreakMode = .byWordWrapping
-        label.textAlignment = .right
+        label.textAlignment = .left
         label.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 12.0)
         return label
     }()
