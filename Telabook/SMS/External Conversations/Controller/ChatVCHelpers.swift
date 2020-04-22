@@ -8,7 +8,7 @@
 
 import UIKit
 import MessageKit
-import MessageInputBar
+import InputBarAccessoryView
 import FirebaseStorage
 import Photos
 extension ChatViewController {
@@ -43,6 +43,7 @@ extension ChatViewController {
         messageInputBar.inputTextView.textContainerInset = UIEdgeInsets(top: 8, left: 10, bottom: 8, right: 10)
         messageInputBar.inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 15, bottom: 8, right: 36)
         messageInputBar.inputTextView.scrollIndicatorInsets = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
+
         let cameraItem = InputBarButtonItem(type: .custom) // 1
         cameraItem.image = #imageLiteral(resourceName: "camera_icon")
         cameraItem.addTarget(

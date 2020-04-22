@@ -9,15 +9,20 @@
 import UIKit
 import CoreData
 import MessageKit
-import MessageInputBar
+import InputBarAccessoryView
 import Photos
 import FirebaseStorage
 
 class SMSDetailViewController: UIViewController {
-    
+    var currentUser:Sender {
+        guard let userId = AppData.userId else {
+            fatalError("currentUser: UserID not found in UserDefaults")
+        }
+        return Sender(senderId: userId, displayName: "")
+    }
     
     var messages:[Message] = []
-    var messageInputBar = MessageInputBar()
+    var messageInputBar = InputBarAccessoryView()
     var messagesCollectionView = MessagesCollectionView()
     internal let internalConversation:InternalConversation
     internal let workerId:Int16
@@ -365,7 +370,7 @@ class SMSDetailViewController: UIViewController {
     //                    let isSenderWorker = data["sender_is_worker"] as? Int,
     //                    let type = data["type"] as? String,
                         let date = data["date"] as? Double {
-                        let message = Message(text: text, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date)))
+                        let message = Message(text: text, sender: Sender(senderId: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date)))
                         self?.insertMessage(message)
                     } else if let imageUrl = data["img"] as? String,
                         let senderId = data["sender"] as? Int,
@@ -378,7 +383,7 @@ class SMSDetailViewController: UIViewController {
                             print("Unable to construct URL from imageURL => \(imageUrl)")
                             return
                         }
-                        let message = Message(imageUrl: url, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date)))
+                        let message = Message(imageUrl: url, sender: Sender(senderId: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date)))
                         self?.insertMessage(message)
 //                        self?.downloadImage(at: url) { [weak self] image in
 //                            guard let `self` = self else {
@@ -398,8 +403,8 @@ class SMSDetailViewController: UIViewController {
     
      func loadMockMessages() {
         messages = []
-        let mockUser = Sender(id: "99", displayName: "Arya Stark")
-        let message = Message(text: "Valar Morghulis!", sender: currentSender(), messageId: UUID().uuidString, date: Date())
+        let mockUser = Sender(senderId: "99", displayName: "Arya Stark")
+        let message = Message(text: "Valar Morghulis!", sender: currentUser, messageId: UUID().uuidString, date: Date())
 //        self.insert(message)
          self.insertMessage(message)
         
@@ -441,16 +446,7 @@ class SMSDetailViewController: UIViewController {
     fileprivate func stopSpinner() {
         self.spinner.stopAnimating()
     }
-    fileprivate func startNetworkSpinner() {
-        DispatchQueue.main.async {
-            UIApplication.shared.isNetworkActivityIndicatorVisible = true
-        }
-    }
-    fileprivate func stopNetworkSpinner() {
-        DispatchQueue.main.async {
-            UIApplication.shared.isNetworkActivityIndicatorVisible = false
-        }
-    }
+    
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -563,7 +559,7 @@ class SMSDetailViewController: UIViewController {
     
     lazy var spinner:UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView()
-        indicator.style = UIActivityIndicatorView.Style.whiteLarge
+        indicator.style = .large
         indicator.hidesWhenStopped = true
         indicator.center = self.view.center
         //        indicator.backgroundColor = .black
@@ -723,14 +719,14 @@ class SMSDetailViewController: UIViewController {
     }
     
     fileprivate func fetchDataFromAPI(isArchive:Bool) {
-        self.startNetworkSpinner()
+        
         FirebaseAuthService.shared.getCurrentToken { (token, error) in
             if let err = error {
                 print("\n***Error***\n")
                 print(err)
                 DispatchQueue.main.async {
                     self.stopSpinner()
-                    self.stopNetworkSpinner()
+                    
                     UIAlertController.showTelaAlert(title: "Error", message: err.localizedDescription, controller: self)
                 }
             } else if let token = token {
@@ -751,14 +747,14 @@ class SMSDetailViewController: UIViewController {
                 print("***Error Fetching Conversations****\n\(err.localizedDescription)")
                 DispatchQueue.main.async {
                     self.stopSpinner()
-                    self.stopNetworkSpinner()
+                    
                     self.showAlert(title: "Error", message: err.localizedDescription)
                 }
             } else if let serviceErr = serviceError {
                 print("***Error Fetching Conversations****\n\(serviceErr.localizedDescription)")
                 DispatchQueue.main.async {
                     self.stopSpinner()
-                    self.stopNetworkSpinner()
+                    
                     self.showAlert(title: "Error", message: serviceErr.localizedDescription)
                 }
             } else if let status = responseStatus {
@@ -767,7 +763,7 @@ class SMSDetailViewController: UIViewController {
                         DispatchQueue.main.async {
 //                            self.stopSpinner()
                             self.stopSpinner()
-                            self.stopNetworkSpinner()
+                            
                             print("***No Content****\nResponse Status => \(status)")
                             isArchived ? self.setupArchivedView()
                             : self.setupInboxView()
@@ -776,7 +772,7 @@ class SMSDetailViewController: UIViewController {
                         print("***Invalid Response****\nResponse Status => \(status)")
                         DispatchQueue.main.async {
                             self.stopSpinner()
-                            self.stopNetworkSpinner()
+                            
                             self.showAlert(title: "Error", message: "Unable to fetch conversations. Please try again.")
                         }
                     }
@@ -786,7 +782,7 @@ class SMSDetailViewController: UIViewController {
                     DispatchQueue.main.async {
 //                        self.clearConversationData()
                         self.stopSpinner()
-                        self.stopNetworkSpinner()
+                        
                         self.saveToCoreData(data: data, isArchived: isArchived)
                     }
                 }
@@ -886,10 +882,12 @@ class SMSDetailViewController: UIViewController {
 }
 
 extension SMSDetailViewController : MessagesDataSource {
-    func currentSender() -> Sender {
-        return UserDefaults.standard.currentSender
+    func currentSender() -> SenderType {
+        guard let userId = AppData.userId else {
+            fatalError("currentSender(): UserID not found in UserDefaults")
+        }
+        return Sender(senderId: userId, displayName: "")
     }
-    
     func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
         messages.sort(by: { $0.sentDate < $1.sentDate })
         return messages[indexPath.section]
@@ -985,9 +983,9 @@ extension SMSDetailViewController: MessagesLayoutDelegate {
     
     
 }
-extension SMSDetailViewController : MessageInputBarDelegate {
+extension SMSDetailViewController : InputBarAccessoryViewDelegate {
     
-    func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
+    func messageInputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
         let components = inputBar.inputTextView.components
         //        messageInputBar.inputTextView.text = String()
         //        messageInputBar.invalidatePlugins()
@@ -1024,20 +1022,20 @@ extension SMSDetailViewController : MessageInputBarDelegate {
     }
     
     fileprivate func handleSendingMessageSequence(message:String, type:ChatMessageType) {
-        self.startNetworkSpinner()
+        
         FirebaseAuthService.shared.getCurrentToken { (token, error) in
             if let err = error {
                 print("\n***Error***\n")
                 print(err)
                 DispatchQueue.main.async {
-                    self.stopNetworkSpinner()
+                    
                     self.messageInputBar.sendButton.isEnabled = true
                 }
             } else if let token = token {
                 let id = self.internalConversation.internalConversationId
                 print("Internal Conversation ID => \(id)")
                 guard id != 0 else {
-                    self.stopNetworkSpinner()
+                    
                     print("Error: Internal Convo ID => 0")
                     self.messageInputBar.sendButton.isEnabled = true
                     return
@@ -1055,7 +1053,7 @@ extension SMSDetailViewController : MessageInputBarDelegate {
     ExternalConversationsAPI.shared.sendMessage(token: token, conversationId: conversationId, message: message, type: type, isDirectMessage: true) { (responseStatus, data, serviceError, error) in
             if let err = error {
                 DispatchQueue.main.async {
-                   self.stopNetworkSpinner()
+                   
                     UIAlertController.dismissModalSpinner(controller: self)
                     print("***Error Sending Message****\n\(err.localizedDescription)")
                     self.showAlert(title: "Error", message: err.localizedDescription)
@@ -1063,7 +1061,7 @@ extension SMSDetailViewController : MessageInputBarDelegate {
                 }
             } else if let serviceErr = serviceError {
                 DispatchQueue.main.async {
-                   self.stopNetworkSpinner()
+                   
                     UIAlertController.dismissModalSpinner(controller: self)
                     print("***Error Sending Message****\n\(serviceErr.localizedDescription)")
                     self.showAlert(title: "Error", message: serviceErr.localizedDescription)
@@ -1072,7 +1070,7 @@ extension SMSDetailViewController : MessageInputBarDelegate {
             } else if let status = responseStatus {
                 guard status == .Created else {
                     DispatchQueue.main.async {
-                       self.stopNetworkSpinner()
+                       
                         UIAlertController.dismissModalSpinner(controller: self)
                         print("***Error Sending Message****\nInvalid Response: \(status)")
                         self.showAlert(title: "\(status)", message: "Unable to send Message. Please try again")
@@ -1080,7 +1078,7 @@ extension SMSDetailViewController : MessageInputBarDelegate {
                     }
                     return
                 }
-                self.stopNetworkSpinner()
+                
             }
         }
     }

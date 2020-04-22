@@ -97,7 +97,7 @@ class SettingsViewController: UIViewController {
         setupViews()
 //        setupConstraints()
     }
-    let userId = UserDefaults.standard.currentSender.id
+    let userId = AppData.userId!
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpNavBar()
@@ -179,6 +179,7 @@ class SettingsViewController: UIViewController {
     
     private func signOut() {
         let loginViewController = LoginViewController()
+        loginViewController.isModalInPresentation = true
         UserDefaults.standard.setIsLoggedIn(value: false)
         UserDefaults.clearUserData()
         DispatchQueue.main.async {

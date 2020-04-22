@@ -64,12 +64,14 @@ extension UIViewController {
 }
 extension UIApplication {
     static func currentViewController() -> UIViewController? {
-        var rootViewController = UIApplication.shared.keyWindow?.rootViewController
+        var rootViewController = UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.rootViewController
         if let navigationController = rootViewController as? UINavigationController {
             rootViewController = navigationController.viewControllers.first
+            print("Current View Controller is: Navigation Controller")
         }
         if let tabBarController = rootViewController as? TabBarController {
             rootViewController = tabBarController.selectedViewController
+            print("Current View Controller is: Tab Bar Controller")
         }
         return rootViewController
     }
@@ -393,7 +395,7 @@ extension UIAlertController {
         alert.view.subviews.first?.subviews.first?.backgroundColor = .clear
         let loadingIndicator = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50))
         loadingIndicator.hidesWhenStopped = true
-        loadingIndicator.style = UIActivityIndicatorView.Style.white
+        loadingIndicator.style = UIActivityIndicatorView.Style.medium
         loadingIndicator.startAnimating()
         alert.view.addSubview(loadingIndicator)
         controller.present(alert, animated: true, completion: nil)
@@ -427,7 +429,7 @@ extension UIAlertController {
         if let vc = controller {
             vc.present(alert, animated: true, completion: completion)
         } else {
-            var rootViewController = UIApplication.shared.keyWindow?.rootViewController
+            var rootViewController = UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.rootViewController
             if let navigationController = rootViewController as? UINavigationController {
                 rootViewController = navigationController.viewControllers.first
             }
@@ -440,7 +442,7 @@ extension UIAlertController {
     static public func showModalTelaAlert(title:String, message: String, actions:UIAlertAction..., completion: (() -> Void)? = nil) {
         let alert = UIAlertController.telaAlertController(title: title, message: message)
         actions.forEach({ alert.addAction($0) })
-        var rootViewController = UIApplication.shared.keyWindow?.rootViewController
+        var rootViewController = UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.rootViewController
         if let navigationController = rootViewController as? UINavigationController {
             rootViewController = navigationController.viewControllers.first
         }
@@ -453,7 +455,7 @@ extension UIAlertController {
         if let vc = vc {
             vc.present(alert, animated: true, completion: completion)
         } else {
-            var rootViewController = UIApplication.shared.keyWindow?.rootViewController
+            var rootViewController = UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.rootViewController
             if let navigationController = rootViewController as? UINavigationController {
                 rootViewController = navigationController.viewControllers.first
             }

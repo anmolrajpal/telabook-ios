@@ -103,7 +103,7 @@ class HomeViewController: UIViewController {
     }
     lazy var spinner:UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView()
-        indicator.style = UIActivityIndicatorView.Style.whiteLarge
+        indicator.style = UIActivityIndicatorView.Style.large
         indicator.hidesWhenStopped = true
         indicator.center = self.view.center
 //        indicator.backgroundColor = .black
@@ -267,7 +267,7 @@ class HomeViewController: UIViewController {
     }
     fileprivate func fetchUserInfoByToken(_ token:String) {
         print("Token => \n\(token)")
-        print("Company => \(UserDefaults.standard.getCompanyId()) & Worker ID => \(UserDefaults.standard.getWorkerId()) & Current Sender => \(String(describing: UserDefaults.standard.currentSender))")
+        print("Company => \(UserDefaults.standard.getCompanyId()) & Worker ID => \(UserDefaults.standard.getWorkerId())")
         AuthenticationService.shared.authenticateViaToken(token: token) { (data, serviceError, error) in
             guard serviceError == nil else {
                 if let err = serviceError {

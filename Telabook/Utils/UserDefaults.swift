@@ -51,15 +51,7 @@ extension UserDefaults {
 //            set(user, forKey: UserDefaultsKeys.userObject.rawValue)
 //        }
 //    }
-    var currentSender:Sender! {
-        get {
-            return Sender(id: string(forKey: UserDefaultsKeys.userId.rawValue)!, displayName: string(forKey: UserDefaultsKeys.userName.rawValue)!)
-        }
-        set (sender) {
-            set(sender.id, forKey: UserDefaultsKeys.userId.rawValue)
-            set(sender.displayName, forKey: UserDefaultsKeys.userName.rawValue)
-        }
-    }
+    
 //    func getCurrentSender() -> Sender {
 //        return Sender(id: "123", displayName: "Anmol Rajpal")
 ////        return Sender(id: String(userObject?.id ?? 0), displayName:
@@ -98,14 +90,6 @@ extension UserDefaults {
         return UserDefaults.standard.string(forKey: UserDefaultsKeys.emailId.rawValue)!
     }
     
-    
-    //MARK: GET-SET PASSWORD
-    func setPassword(password: String) {
-        set(password, forKey: UserDefaultsKeys.password.rawValue)
-    }
-    func getPassword() -> String {
-        return UserDefaults.standard.string(forKey: UserDefaultsKeys.password.rawValue)!
-    }
     
     
     //MARK: GET-SET COMPANY ID

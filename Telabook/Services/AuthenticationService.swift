@@ -15,12 +15,12 @@ final class AuthenticationService: NSObject {
     
     func authenticateViaToken(token:String, completion: @escaping UserInfoFetchCompletion) {
         let serviceHost:String = Config.ServiceConfig.getServiceHostUri(.AuthenticationViaToken)
-        let paramString = Config.ServiceConfig.getAuthViaTokenParamString(token: token)
-        let uri = serviceHost + paramString
-        let url = URL(string: uri)!
+//        let paramString = Config.ServiceConfig.getAuthViaTokenParamString(token: token)
+        let authorizationHeader = "Bearer \(token)"
+        let url = URL(string: serviceHost)!
         var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Config.ServiceConfig.timeoutInterval)
         request.httpMethod = httpMethod.POST.rawValue
-        request.addValue(Header.contentType.json.rawValue, forHTTPHeaderField: Header.headerName.contentType.rawValue)
+        request.setValue(authorizationHeader, forHTTPHeaderField: Header.headerName.Authorization.rawValue)
         URLSession.shared.dataTask(with: request as URLRequest) { (data, response, error) in
             self.validateResponseData(data: data, response: response, error: error, completion: completion)
             }.resume()
@@ -120,9 +120,16 @@ final class AuthenticationService: NSObject {
     }
     fileprivate func signOut() {
         let loginViewController = LoginViewController()
-        UserDefaults.standard.setIsLoggedIn(value: false)
-        UserDefaults.clearUserData()
-        if let rootVC = UIApplication.currentViewController() {
+        loginViewController.isModalInPresentation = true
+        AppData.clear()
+        AppData.isLoggedIn = false
+        let rootVC = UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.rootViewController
+        guard (rootVC?.presentedViewController as? LoginViewController) == nil else {
+            print("RootVC presentedviewcontroller is a Login View Controller")
+            return
+        }
+        print("Root VC isn't Login VC")
+        if let rootVC = rootVC {
             rootVC.presentedViewController?.dismiss(animated: true, completion: nil)
             if let tbc = rootVC.tabBarController as? TabBarController {
                 print("Hurray.... I'm loving this one")
@@ -133,11 +140,11 @@ final class AuthenticationService: NSObject {
                 })
             } else {
                 print("Holy noooooo!!!! I hate this one")
-                AppDelegate.shared.window?.rootViewController = TabBarController()
+                UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.rootViewController = TabBarController()
             }
         } else {
             print("OMG I super hate this one")
-            AppDelegate.shared.window?.rootViewController = TabBarController()
+            UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.rootViewController = TabBarController()
         }
     }
     fileprivate func dumpCoreDataStorage() {

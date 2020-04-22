@@ -65,13 +65,14 @@ class BlockedUsersViewController: UIViewController {
         searchController.searchBar.delegate = self
         searchController.searchBar.autocapitalizationType = .none
         searchController.searchBar.placeholder = "Search Blacklist"
-        searchController.searchBar.barStyle = .blackTranslucent
+        searchController.searchBar.barStyle = .black
+        searchController.searchBar.isTranslucent = true
         searchController.searchBar.searchBarStyle = .prominent
         searchController.searchBar.returnKeyType = .done
         searchController.searchBar.backgroundImage = UIImage()
         searchController.searchBar.keyboardAppearance = .dark
         searchController.searchBar.sizeToFit()
-        searchController.dimsBackgroundDuringPresentation = false
+
         definesPresentationContext = true
         //Setup cancel button in search bar
         let attributes:[NSAttributedString.Key : Any] = [

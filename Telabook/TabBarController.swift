@@ -27,13 +27,14 @@ class TabBarController: UITabBarController {
 //        setUpTabBarViewControllers()
 //        authenticate()
     }
-    fileprivate func isLoggedIn() -> Bool {
-        return UserDefaults.standard.isLoggedIn()
-    }
+    
     func showLoginController() {
         let loginViewController = LoginViewController()
-        UserDefaults.standard.setIsLoggedIn(value: false)
-        UserDefaults.clearUserData()
+        loginViewController.isModalInPresentation = true
+        
+        AppData.clear()
+        AppData.isLoggedIn = false
+        
         tabBarController?.present(loginViewController, animated: true, completion: nil)
         //        present(loginController, animated: false, completion: {
         //            UserDefaults.standard.setIsLoggedIn(value: false)
@@ -44,9 +45,9 @@ class TabBarController: UITabBarController {
         self.showLoginController()
     }
     func authenticate() {
-        if isLoggedIn() {
-            let emailId = UserDefaults.standard.getEmailId()
-            let password = UserDefaults.standard.getPassword()
+        if AppData.isLoggedIn {
+            let emailId = AppData.email!
+            let password = AppData.password!
             print("Email => \(emailId)\nPassword => \(password)")
             setUpTabBarViewControllers()
         } else {
@@ -56,8 +57,10 @@ class TabBarController: UITabBarController {
             guard let _ = self.presentedViewController as? LoginViewController else {
                 print("Presenting Login View Controller")
                 let loginViewController = LoginViewController()
-                UserDefaults.standard.setIsLoggedIn(value: false)
-                UserDefaults.clearUserData()
+                loginViewController.isModalInPresentation = true
+                AppData.clear()
+                AppData.isLoggedIn = false
+                
                 DispatchQueue.main.async {
                     self.present(loginViewController, animated: false, completion: nil)
                 }

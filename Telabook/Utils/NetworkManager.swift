@@ -9,7 +9,7 @@
 import UIKit
 import Reachability
 final class NetworkManager: NSObject {
-    let reachability = Reachability()!
+    let reachability = try! Reachability()
     static let shared:NetworkManager = { return NetworkManager() }()
     override init() {
         super.init()
@@ -27,7 +27,8 @@ final class NetworkManager: NSObject {
         switch reachability.connection {
         case .wifi: break
         case .cellular: break
-        case .none: break
+        case .unavailable: break
+        default: break
         }
     }
     static func stopNotifier() -> Void {
@@ -36,12 +37,12 @@ final class NetworkManager: NSObject {
     }
     // Network is reachable
     static func isReachable() -> Bool {
-        return (NetworkManager.shared.reachability).connection != .none
+        return (NetworkManager.shared.reachability).connection != .unavailable
     }
     
     // Network is unreachable
     static func isUnreachable() -> Bool {
-        return (NetworkManager.shared.reachability).connection == .none
+        return (NetworkManager.shared.reachability).connection == .unavailable
     }
     
     // Network is reachable via WWAN/Cellular

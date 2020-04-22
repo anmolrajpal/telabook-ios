@@ -98,7 +98,7 @@ class LoginViewController: UIViewController {
     }
     
     let spinner:UIActivityIndicatorView = {
-        let spinner = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.white)
+        let spinner = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
         spinner.backgroundColor = UIColor.telaBlue
         spinner.hidesWhenStopped = true
         spinner.clipsToBounds = true
@@ -204,8 +204,8 @@ class LoginViewController: UIViewController {
         if let checkBoxState = UserDefaults.standard.isRememberMeChecked {
             self.checkBox.isChecked = checkBoxState
             if checkBoxState {
-                self.idTextField.text = UserDefaults.standard.getEmailId()
-                self.passwordTextField.text = UserDefaults.standard.getPassword()
+                self.idTextField.text = AppData.email ?? ""
+                self.passwordTextField.text = AppData.password ?? ""
                 self.loginButton.isEnabled = true
                 self.loginButton.backgroundColor = UIColor.telaBlue
             }
@@ -451,9 +451,9 @@ class LoginViewController: UIViewController {
                         return
                 }
                 print(userObject)
-                let currentSender = Sender(id: String(userObject.id ?? 0), displayName: (!(userObject.lastName?.isEmpty ?? true)) ? "\(userObject.name ?? "nil") \(userObject.lastName ?? "nil")" : userObject.name ?? "nil")
+                AppData.userInfo = userData
+//                let currentSender = Sender(senderId: String(userObject.id ?? 0), displayName: (!(userObject.lastName?.isEmpty ?? true)) ? "\(userObject.name ?? "nil") \(userObject.lastName ?? "nil")" : userObject.name ?? "nil")
                 
-                UserDefaults.standard.currentSender = currentSender
 
                 
                 print("Signing in - USER: \(userObject.name ?? "") \(userObject.lastName ?? "") \nRole ID => \(roleId)")

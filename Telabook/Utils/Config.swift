@@ -10,6 +10,49 @@ import Foundation
 import Firebase
 import FirebaseStorage
 struct Config {
+    internal enum Environment { case Development, Staging, Production }
+    
+    static let environment:Environment = .Development
+    
+    struct APIConfig {
+        static var baseURL:String {
+            switch Config.environment {
+                case .Development: return "https://fornax.aimservices.tech"
+                case .Staging: return "https://fornax.aimservices.tech"
+                case .Production: return "https://fornax.aimservices.tech"
+            }
+        }
+        static var urlScheme:String {
+            switch Config.environment {
+                case .Development: return URLScheme.https.rawValue
+                case .Staging: return URLScheme.https.rawValue
+                case .Production: return URLScheme.https.rawValue
+            }
+        }
+        static var apiHost:String {
+            switch Config.environment {
+                case .Development: return "fornax.aimservices.tech"
+                case .Staging: return "fornax.aimservices.tech"
+                case .Production: return "fornax.aimservices.tech"
+            }
+        }
+        static var port:Int? {
+            switch Config.environment {
+                case .Development: return nil
+                case .Staging: return nil
+                case .Production: return nil
+            }
+        }
+        static var urlPrefix:String {
+            switch Config.environment {
+                case .Development: return "/api"
+                case .Staging: return "/api"
+                case .Production: return "/api"
+            }
+        }
+    }
+    
+    
     struct DatabaseConfig {
         static let databaseRoot = Database.database().reference()
         static func getChats(companyId:String, node:String) -> DatabaseReference {
@@ -36,13 +79,13 @@ struct Config {
     struct ServiceConfig {
         static let timeoutInterval:TimeInterval = 16.0
         static let serviceBaseURL = "https://fornax.aimservices.tech/"
-        static let serviceBasePublicAPI = "https://fornax.aimservices.tech/testtelabook/the-firm-api/public/api/"
+        static let serviceBasePublicAPI = "https://fornax.aimservices.tech/api/"
         static let serviceURLScheme = UrlScheme.https.rawValue
         static let serviceHost = "fornax.aimservices.tech"
-        static let serviceCommonPath = "/testtelabook/the-firm-api/public/api"
+        static let serviceCommonPath = "/api"
         enum ServiceType:String {
             case Authentication = "loginfirebase.php?"
-            case AuthenticationViaToken = "signin?"
+            case AuthenticationViaToken = "android/signin"
             case CheckUserExists = "check_fbuser?"
             case InternalConversations = "internal_conversations?"
             case ExternalConversations = "external_conversations?"

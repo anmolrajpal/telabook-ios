@@ -593,22 +593,10 @@ class CustomerDetailsViewController: UIViewController {
     }
     
     fileprivate func startSpinner() {
-        startNetworkSpinner()
         OverlaySpinner.shared.spinner(mark: .Start)
     }
     fileprivate func stopSpinner() {
-        stopNetworkSpinner()
         OverlaySpinner.shared.spinner(mark: .Stop)
-    }
-    fileprivate func startNetworkSpinner() {
-        DispatchQueue.main.async {
-            UIApplication.shared.isNetworkActivityIndicatorVisible = true
-        }
-    }
-    fileprivate func stopNetworkSpinner() {
-        DispatchQueue.main.async {
-            UIApplication.shared.isNetworkActivityIndicatorVisible = false
-        }
     }
     fileprivate func initiateUpdateCustomerDetailsSequence() {
         DispatchQueue.main.async {

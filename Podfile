@@ -1,5 +1,5 @@
 # Uncomment the next line to define a global platform for your project
-# platform :ios, '11.0'
+ platform :ios, '13.0'
 
 target 'Telabook' do
 	use_frameworks!
@@ -10,5 +10,6 @@ target 'Telabook' do
 	pod 'Firebase/Auth'
   pod 'Firebase/Messaging'
 	pod 'ReachabilitySwift'
+  # Swift 5.0
   pod 'MessageKit'
 end

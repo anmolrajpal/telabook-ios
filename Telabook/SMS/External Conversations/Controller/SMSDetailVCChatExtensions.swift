@@ -8,7 +8,7 @@
 
 import Foundation
 import MessageKit
-import MessageInputBar
+import InputBarAccessoryView
 
 extension SMSDetailViewController {
     

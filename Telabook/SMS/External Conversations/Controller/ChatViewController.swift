@@ -9,11 +9,16 @@
 import UIKit
 import Photos
 import MessageKit
-import MessageInputBar
 import Firebase
 import FirebaseStorage
 final class ChatViewController : MessagesViewController {
     var messages:[Message] = []
+    var currentUser:Sender {
+        guard let userId = AppData.userId else {
+            fatalError("currentUser: UserID not found in UserDefaults")
+        }
+        return Sender(senderId: userId, displayName: "")
+    }
     internal var isSendingPhoto = false {
         didSet {
             DispatchQueue.main.async {
@@ -53,7 +58,7 @@ final class ChatViewController : MessagesViewController {
         super.viewDidLoad()
         configureMessageCollectionView()
         configureMessageInputBar()
-        print("Current Sender => \(String(describing: UserDefaults.standard.currentSender)))")
+        print("Current Sender => \(currentUser)")
         
     }
     override func viewDidAppear(_ animated: Bool) {
@@ -94,7 +99,7 @@ final class ChatViewController : MessagesViewController {
                             return
                         }
                         print("Image Message with text => \(text)")
-                        let message = Message(imageUrl: url, text: text, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
+                        let message = Message(imageUrl: url, text: text, sender: Sender(senderId: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
                         preLoadedMessages.append(message)
                     } else if let imageUrl = data["img"] as? String,
                         let senderId = data["sender"] as? Int,
@@ -104,13 +109,13 @@ final class ChatViewController : MessagesViewController {
                             print("Unable to construct URL from imageURL => \(imageUrl)")
                             return
                         }
-                        let message = Message(imageUrl: url, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
+                        let message = Message(imageUrl: url, sender: Sender(senderId: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
                         preLoadedMessages.append(message)
                     } else if let text = data["message"] as? String,
                         let senderId = data["sender"] as? Int,
                         let senderName = data["sender_name"] as? String,
                         let date = data["date"] as? Double {
-                        let message = Message(text: text, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
+                        let message = Message(text: text, sender: Sender(senderId: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
                         preLoadedMessages.append(message)
                     } else {
                         print("Unknown Scenario : ")
@@ -142,7 +147,7 @@ final class ChatViewController : MessagesViewController {
                             return
                         }
                         print("Image Message with text => \(text)")
-                        let message = Message(imageUrl: url, text: text, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
+                        let message = Message(imageUrl: url, text: text, sender: Sender(senderId: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
                         //                        let message = Message(imageUrl: url, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
                         self?.insertMessage(message)
                     } else if let imageUrl = data["img"] as? String,
@@ -153,7 +158,7 @@ final class ChatViewController : MessagesViewController {
                             print("Unable to construct URL from imageURL => \(imageUrl)")
                             return
                         }
-                        let message = Message(imageUrl: url, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
+                        let message = Message(imageUrl: url, sender: Sender(senderId: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
                         self?.insertMessage(message)
                     } else if let text = data["message"] as? String,
                         let senderId = data["sender"] as? Int,
@@ -162,7 +167,7 @@ final class ChatViewController : MessagesViewController {
                         //                    let isSenderWorker = data["sender_is_worker"] as? Int,
                         //                    let type = data["type"] as? String,
                         let date = data["date"] as? Double {
-                        let message = Message(text: text, sender: Sender(id: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
+                        let message = Message(text: text, sender: Sender(senderId: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
                         self?.insertMessage(message)
                     } else {
                         print("Unknown Scenario")
@@ -267,8 +272,8 @@ final class ChatViewController : MessagesViewController {
     */
     func loadMockMessages() {
         messages = []
-        let mockUser = Sender(id: "99", displayName: "Arya Stark")
-        let message = Message(text: "Valar Morghulis!", sender: currentSender(), messageId: UUID().uuidString, date: Date())
+        let mockUser = Sender(senderId: "99", displayName: "Arya Stark")
+        let message = Message(text: "Valar Morghulis!", sender: currentUser, messageId: UUID().uuidString, date: Date())
         self.insertMessage(message)
         DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
             let replyMessage = Message(text: "Valar Dohaeris!", sender: mockUser, messageId: UUID().uuidString, date: Date())

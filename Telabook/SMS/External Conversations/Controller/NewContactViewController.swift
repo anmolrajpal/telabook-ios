@@ -172,7 +172,7 @@ class NewContactViewController: UIViewController {
     
     fileprivate func startNewConversation(token:String, phoneNumber:String) {
         let companyId = String(UserDefaults.standard.getCompanyId())
-        let senderId = UserDefaults.standard.currentSender.id
+        let senderId = AppData.userId!
         print("Sender Id => \(senderId)")
         ExternalConversationsAPI.shared.startNewConversation(token: token, companyId: companyId, phoneNumber: phoneNumber, senderId: senderId) { (responseStatus, data, serviceError, error) in
             if let err = error {

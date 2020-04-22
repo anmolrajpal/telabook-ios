@@ -8,11 +8,14 @@
 
 import UIKit
 import MessageKit
-import MessageInputBar
+import InputBarAccessoryView
 
 extension ChatViewController : MessagesDataSource {
-    func currentSender() -> Sender {
-        return UserDefaults.standard.currentSender
+    func currentSender() -> SenderType {
+        guard let userId = AppData.userId else {
+            fatalError("currentSender(): UserID not found in UserDefaults")
+        }
+        return Sender(senderId: userId, displayName: "")
     }
     
     func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
@@ -131,9 +134,9 @@ extension ChatViewController: MessagesLayoutDelegate {
 
 
 
-extension ChatViewController : MessageInputBarDelegate {
+extension ChatViewController : InputBarAccessoryViewDelegate {
     
-    func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
+    func messageInputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
         let components = inputBar.inputTextView.components
         //        messageInputBar.inputTextView.text = String()
         //        messageInputBar.invalidatePlugins()

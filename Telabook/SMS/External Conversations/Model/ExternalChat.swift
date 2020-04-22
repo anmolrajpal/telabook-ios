@@ -23,7 +23,7 @@ class ExternalChat: NSManagedObject {
         chat.setValue(fetchedChat.messageId, forKey: "messageId")
         chat.setValue(fetchedChat.text, forKey: "message")
         chat.setValue(fetchedChat.sentDate, forKey: "date")
-        chat.setValue(fetchedChat.sender.id, forKey: "senderId")
+        chat.setValue(fetchedChat.sender.senderId, forKey: "senderId")
         chat.setValue(fetchedChat.sender.displayName, forKey: "senderName")
         chat.setValue(fetchedChat.imageURL, forKey: "imageURL")
         chat.setValue(conversation, forKey: "externalConvo")
@@ -38,7 +38,7 @@ class ExternalChat: NSManagedObject {
         chat.setValue(fetchedChat.messageId, forKey: "messageId")
         chat.setValue(fetchedChat.text, forKey: "message")
         chat.setValue(fetchedChat.sentDate, forKey: "date")
-        chat.setValue(fetchedChat.sender.id, forKey: "senderId")
+        chat.setValue(fetchedChat.sender.senderId, forKey: "senderId")
         chat.setValue(fetchedChat.sender.displayName, forKey: "senderName")
         chat.setValue(fetchedChat.imageURL, forKey: "imageURL")
         do {

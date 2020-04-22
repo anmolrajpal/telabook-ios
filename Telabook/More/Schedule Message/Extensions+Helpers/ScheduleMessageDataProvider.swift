@@ -23,7 +23,7 @@ extension ScheduleMessageViewController {
                     
                 }
             } else if let token = token {
-                let userId = UserDefaults.standard.currentSender.id
+                let userId = AppData.userId!
                 DispatchQueue.main.async {
                     self.fetchScheduledMessages(token:token, userId: userId)
                 }

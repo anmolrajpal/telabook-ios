@@ -32,6 +32,21 @@ public enum UserRole {
     }
     
 }
+
+public enum URLScheme:String {
+    case http, https
+}
+public enum APIServiceError:Error {
+    case apiError, InvalidEndpoint, InvalidResponse, FailedRequest, NoData, Internal, DecodeError, Unknown
+}
+public enum HTTPMethod:String {
+    case GET, POST, PUT, DELETE
+}
+public enum ApplicationError:Error {
+    case Internal(status:Int, message:String)
+}
+
+
 public enum CustomFonts:String {
     case gothamMedium = "Gotham-Medium"
     case gothamBook = "Gotham-Book"
@@ -81,9 +96,6 @@ public enum ServiceError:Error {
     case InvalidResponse
     case Internal
     
-}
-public enum ApplicationError:Error {
-    case Internal(status:Int, message:String)
 }
 public enum ChatMessageType {
     case SMS
@@ -261,6 +273,7 @@ public enum Header {
         case contentType = "Content-Type"
         case accept = "Accept"
         case xRequestedWith = "X-Requested-With"
+        case Authorization
     }
     enum HeaderValue:String {
         case XMLHttpRequest = "XMLHttpRequest"

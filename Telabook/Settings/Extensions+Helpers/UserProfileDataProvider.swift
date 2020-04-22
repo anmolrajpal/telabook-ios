@@ -105,7 +105,7 @@ extension SettingsViewController {
         }
     }
     fileprivate func updateUserProfile(_ token:String) {
-        let userId = UserDefaults.standard.currentSender.id
+        let userId = AppData.userId!
         guard let first_name = self.firstNameTextField.text,
             let last_name = self.lastNameTextField.text,
             let user_email = self.emailTextField.text,
