@@ -14,10 +14,11 @@ import FirebaseStorage
 final class ChatViewController : MessagesViewController {
     var messages:[Message] = []
     var currentUser:Sender {
-        guard let userId = AppData.userId else {
-            fatalError("currentUser: UserID not found in UserDefaults")
+        let userId = AppData.userId
+        guard userId != 0 else {
+            fatalError("currentSender(): UserID not found in UserDefaults")
         }
-        return Sender(senderId: userId, displayName: "")
+        return Sender(senderId: String(userId), displayName: "")
     }
     internal var isSendingPhoto = false {
         didSet {
@@ -83,7 +84,7 @@ final class ChatViewController : MessagesViewController {
     
     func preLoadChats(node:String?, completion: @escaping ([Message]) -> Void) {
         var preLoadedMessages:[Message] = []
-        let companyId = UserDefaults.standard.getCompanyId()
+        let companyId = AppData.companyId
         if let node = node {
             let query = Config.DatabaseConfig.getChats(companyId: String(companyId), node: node)
             query.observe(.childAdded, with: { snapshot in
@@ -131,7 +132,7 @@ final class ChatViewController : MessagesViewController {
         }
     }
     func loadChats(node:String?) {
-        let companyId = UserDefaults.standard.getCompanyId()
+        let companyId = AppData.companyId
         if let node = node {
             let query = Config.DatabaseConfig.getChats(companyId: String(companyId), node: node).queryLimited(toLast: 5)
             query.observe(.childAdded, with: { [weak self] snapshot in

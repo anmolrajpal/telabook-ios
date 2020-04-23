@@ -621,7 +621,7 @@ class CustomerDetailsViewController: UIViewController {
     fileprivate func updateCustomerDetails(token:String) {
         print(self.workerId)
         print(self.customerId)
-        let companyId = String(UserDefaults.standard.getCompanyId())
+        let companyId = String(AppData.companyId)
         let first_name = self.firstNameTextField.text ?? ""
         let last_name = self.lastNameTextField.text ?? ""
         let address_one = self.addressOneTextField.text ?? ""
@@ -709,7 +709,7 @@ class CustomerDetailsViewController: UIViewController {
     
     
     fileprivate func fetchCustomerDetails(token:String, customerId:String) {
-        let companyId = String(UserDefaults.standard.getCompanyId())
+        let companyId = String(AppData.companyId)
         ExternalConversationsAPI.shared.getCustomerDetails(token: token, companyId: companyId, customerId: customerId) { (responseStatus, data, serviceError, error) in
             if let err = error {
                 print("***Error Fetching Customer Details****\n\(err.localizedDescription)")

@@ -267,7 +267,7 @@ class HomeViewController: UIViewController {
     }
     fileprivate func fetchUserInfoByToken(_ token:String) {
         print("Token => \n\(token)")
-        print("Company => \(UserDefaults.standard.getCompanyId()) & Worker ID => \(UserDefaults.standard.getWorkerId())")
+        print("Company => \(AppData.companyId) & Worker ID => \(AppData.workerId)")
         AuthenticationService.shared.authenticateViaToken(token: token) { (data, serviceError, error) in
             guard serviceError == nil else {
                 if let err = serviceError {

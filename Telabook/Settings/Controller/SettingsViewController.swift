@@ -97,7 +97,7 @@ class SettingsViewController: UIViewController {
         setupViews()
 //        setupConstraints()
     }
-    let userId = AppData.userId!
+    let userId = String(AppData.userId)
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpNavBar()
@@ -180,13 +180,14 @@ class SettingsViewController: UIViewController {
     private func signOut() {
         let loginViewController = LoginViewController()
         loginViewController.isModalInPresentation = true
-        UserDefaults.standard.setIsLoggedIn(value: false)
-        UserDefaults.clearUserData()
+        AppData.isLoggedIn = false
+        AppData.clearData()
         DispatchQueue.main.async {
             guard let tbc = self.tabBarController as? TabBarController else {
                 print("No Tab bar")
                 return
             }
+            loginViewController.delegate = tbc
             tbc.isLoaded = false
             tbc.present(loginViewController, animated: true, completion: {
                 tbc.selectedViewController?.view.isHidden = true

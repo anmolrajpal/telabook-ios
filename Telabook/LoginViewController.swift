@@ -8,7 +8,12 @@
 
 import UIKit
 import MessageKit
+
+protocol LoginDelegate {
+    func didLoginIWithSuccess()
+}
 class LoginViewController: UIViewController {
+    var delegate:LoginDelegate?
     var token:String?
     override func loadView() {
         super.loadView()
@@ -201,14 +206,12 @@ class LoginViewController: UIViewController {
         return checkbox
     }()
     func setupCheckbox() {
-        if let checkBoxState = UserDefaults.standard.isRememberMeChecked {
-            self.checkBox.isChecked = checkBoxState
-            if checkBoxState {
-                self.idTextField.text = AppData.email ?? ""
-                self.passwordTextField.text = AppData.password ?? ""
-                self.loginButton.isEnabled = true
-                self.loginButton.backgroundColor = UIColor.telaBlue
-            }
+        self.checkBox.isChecked = AppData.isRememberMeChecked
+        if AppData.isRememberMeChecked {
+            self.idTextField.text = AppData.email
+            self.passwordTextField.text = AppData.password
+            self.loginButton.isEnabled = true
+            self.loginButton.backgroundColor = UIColor.telaBlue
         }
     }
     let rememberMeLabel:UILabel = {
@@ -439,6 +442,7 @@ class LoginViewController: UIViewController {
             if let userData = data {
                 self.userInfo = userData
                 guard let userObject = userData.user,
+                    let userId = userObject.id,
                     let userRole = userData.roles,
                     let roleId = userRole.first?.id,
                     let companyId = userObject.company,
@@ -451,30 +455,28 @@ class LoginViewController: UIViewController {
                         return
                 }
                 print(userObject)
-                AppData.userInfo = userData
-//                let currentSender = Sender(senderId: String(userObject.id ?? 0), displayName: (!(userObject.lastName?.isEmpty ?? true)) ? "\(userObject.name ?? "nil") \(userObject.lastName ?? "nil")" : userObject.name ?? "nil")
-                
-
-                
                 print("Signing in - USER: \(userObject.name ?? "") \(userObject.lastName ?? "") \nRole ID => \(roleId)")
-                self.setUserDefaults(token, companyId, workerId, roleId)
+                self.setAppPreferences(token, userId, companyId, workerId, roleId, userData)
                 DispatchQueue.main.async {
                     self.stopButtonSpinner()
+                    self.delegate?.didLoginIWithSuccess()
                     self.dismiss(animated: true, completion: nil)
                 }
             }
         }
     }
-    fileprivate func setUserDefaults(_ token:String, _ companyId:Int, _ workerId:Int, _ roleId:Int) {
+    fileprivate func setAppPreferences(_ token:String, _ userId:Int, _ companyId:Int, _ workerId:Int, _ roleId:Int, _ userInfo: UserInfoCodable) {
         let emailId = idTextField.text!, password = passwordTextField.text!
-        UserDefaults.standard.setIsLoggedIn(value: true)
-        UserDefaults.standard.isRememberMeChecked = self.checkBox.isChecked
-        UserDefaults.standard.setEmailId(emailId: emailId)
-        UserDefaults.standard.setPassword(password: password)
-        UserDefaults.standard.setToken(token: token)
-        UserDefaults.standard.setCompanyId(companyId: companyId)
-        UserDefaults.standard.setWorkerId(workerId: workerId)
-        UserDefaults.standard.setRoleId(roleId: roleId)
+        AppData.isRememberMeChecked = self.checkBox.isChecked
+        AppData.userId = userId
+        AppData.email = emailId
+        AppData.password = password
+        AppData.firebaseToken = token
+        AppData.companyId = companyId
+        AppData.workerId = workerId
+        AppData.roleId = roleId
+        AppData.userInfo = userInfo
+        AppData.isLoggedIn = true
     }
 }
 

@@ -60,7 +60,7 @@ struct Config {
             return databaseRoot.child(path)
         }
         static func onlineUsersReference() -> DatabaseReference {
-            let companyId = UserDefaults.standard.getCompanyId()
+            let companyId = AppData.companyId
             let reference = databaseRoot.child("companies").child(String(companyId)).child("online")
             return reference
         }
@@ -68,8 +68,8 @@ struct Config {
     struct StorageConfig {
         static let storageRoot = Storage.storage().reference()
         static func profileImageRef() -> StorageReference {
-            let companyId = UserDefaults.standard.getCompanyId()
-            let workerId = UserDefaults.standard.getWorkerId()
+            let companyId = AppData.companyId
+            let workerId = AppData.workerId
             let reference = StorageConfig.storageRoot.child("companies").child(String(companyId)).child("profile-images").child(String(workerId))
             return reference
         }

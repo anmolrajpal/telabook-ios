@@ -16,19 +16,38 @@ struct AppData {
     @UserDefaultsWrapper(key: .isLoggedIn, defaultValue: false)
     static var isLoggedIn:Bool
     
-    @UserDefaultsWrapper(key: .userId, defaultValue: nil)
-    static var userId: String?
+    @UserDefaultsWrapper(key: .isRememberMeChecked, defaultValue: false)
+    static var isRememberMeChecked:Bool
+    
+    @UserDefaultsWrapper(key: .userId, defaultValue: 0)
+    static var userId: Int
     
     @UserDefaultsWrapper(key: .userInfo, defaultValue: nil)
     static var userInfo: UserInfoCodable?
     
-    @UserDefaultsWrapper(key: .email, defaultValue: nil)
-    static var email: String?
+    @UserDefaultsWrapper(key: .encryptionKey, defaultValue: "")
+    static var encryptionKey: String
     
-    @UserDefaultsWrapper(key: .password, defaultValue: nil)
-    static var password: String?
-    //    @UserDefaultsWrapper(key: .selectedTab, defaultValue: TabBarView.Tab.tab1)
-    //    static var selectedTab:TabBarView.Tab
+    @UserDefaultsWrapper(key: .email, defaultValue: "")
+    static var email: String
+    
+    @UserDefaultsEncryptionWrapper(key: .password)
+    static var password: String
+    
+    @UserDefaultsWrapper(key: .firebaseToken, defaultValue: "")
+    static var firebaseToken: String
+
+    @UserDefaultsWrapper(key: .companyId, defaultValue: 0)
+    static var companyId:Int
+    
+    @UserDefaultsWrapper(key: .roleId, defaultValue: 0)
+    static var roleId:Int
+    
+    @UserDefaultsWrapper(key: .workerId, defaultValue: 0)
+    static var workerId:Int
+    
+    @UserDefaultsWrapper(key: .selectedTab, defaultValue: .tab1)
+    static var selectedTab:TabBarController.Tabs
     
     @UserDefaultsWrapper(key: .appFirstLaunchDate, defaultValue: nil)
     static var appFirstLaunchDate:Date?
@@ -41,9 +60,29 @@ struct AppData {
     
     
     
-    static func clear() {
-        AppDataKey.allCases.forEach({ removeObject(forKey: $0) })
+    static func clearData() {
+        for `case` in AppDataKey.allCases {
+            if (`case` != .appFirstLaunchDate) &&
+                (`case` != .appLaunchCount) &&
+                (`case` != .email) &&
+                (`case` != .password) &&
+                (`case` != .isLoggedIn) &&
+                (`case` != .encryptionKey) &&
+                (`case` != .isRememberMeChecked) {
+                removeObject(forKey: `case`)
+            }
+        }
     }
+    
+    static func clearAll() {
+        for `case` in AppDataKey.allCases {
+            if (`case` != .appFirstLaunchDate) &&
+                (`case` != .appLaunchCount) {
+                removeObject(forKey: `case`)
+            }
+        }
+    }
+    
     static func removeObject(forKey key: AppDataKey) {
         userDefaults.removeObject(forKey: key.rawValue)
     }

@@ -121,7 +121,7 @@ final class AuthenticationService: NSObject {
     fileprivate func signOut() {
         let loginViewController = LoginViewController()
         loginViewController.isModalInPresentation = true
-        AppData.clear()
+        AppData.clearData()
         AppData.isLoggedIn = false
         let rootVC = UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.rootViewController
         guard (rootVC?.presentedViewController as? LoginViewController) == nil else {

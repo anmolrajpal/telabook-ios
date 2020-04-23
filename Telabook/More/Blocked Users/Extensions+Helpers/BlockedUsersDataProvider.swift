@@ -30,7 +30,7 @@ extension BlockedUsersViewController {
         }
     }
     fileprivate func fetchBlacklist(token:String) {
-        let companyId = UserDefaults.standard.getCompanyId()
+        let companyId = AppData.companyId
         BlacklistAPI.shared.fetchBlacklist(token: token, companyId: String(companyId)) { (responseStatus, data, serviceError, error) in
             if let err = error {
                 DispatchQueue.main.async {
@@ -124,7 +124,7 @@ extension BlockedUsersViewController {
         }
     }
     fileprivate func unblockNumber(token:String, id:String, number:String, indexPath:IndexPath, completion: @escaping (Bool) -> ()) {
-        let companyId = UserDefaults.standard.getCompanyId()
+        let companyId = AppData.companyId
         BlacklistAPI.shared.unblockNumber(token: token, companyId: String(companyId), id: id, number: number) { (responseStatus, data, serviceError, error) in
             if let err = error {
                 DispatchQueue.main.async {

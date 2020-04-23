@@ -212,7 +212,7 @@ class SMSViewController: UIViewController {
         }
     }
     fileprivate func fetchInternalConversations(token:String) {
-        let companyId = UserDefaults.standard.getCompanyId()
+        let companyId = AppData.companyId
         InternalConversationsAPI.shared.fetch(token: token, companyId: String(companyId)) { (data, serviceError, error) in
             if let serviceErr = serviceError {
                 self.stopSpinner()

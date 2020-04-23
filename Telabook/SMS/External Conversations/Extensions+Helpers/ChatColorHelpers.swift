@@ -56,7 +56,7 @@ extension SMSDetailViewController {
     }
     
     fileprivate func changeChatColor(token:String, color:ConversationColor, indexPath:IndexPath) {
-        let companyId = UserDefaults.standard.getCompanyId()
+        let companyId = AppData.companyId
         if let conversation = self.fetchedResultsController.object(at: indexPath) as? ExternalConversation {
             let conversationId = conversation.externalConversationId
             let colorCode = ConversationColor.getColorCodeBy(color: color)

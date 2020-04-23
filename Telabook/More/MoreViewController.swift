@@ -60,7 +60,7 @@ class MoreViewController: UIViewController {
     private func signOut() {
         let loginViewController = LoginViewController()
         loginViewController.isModalInPresentation = true
-        AppData.clear()
+        AppData.clearData()
         AppData.isLoggedIn = false
         DispatchQueue.main.async {
             guard let tbc = self.tabBarController as? TabBarController else {

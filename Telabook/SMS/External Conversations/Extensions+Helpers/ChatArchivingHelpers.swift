@@ -28,7 +28,7 @@ extension SMSDetailViewController {
         }
     }
     fileprivate func handleChatArchiving(token:String, markArchive:Bool, indexPath:IndexPath, completion: @escaping (Bool) -> ()) {
-        let companyId = UserDefaults.standard.getCompanyId()
+        let companyId = AppData.companyId
         if let conversation = self.fetchedResultsController.object(at: indexPath) as? ExternalConversation {
             let conversationId = conversation.externalConversationId
             ExternalConversationsAPI.shared.handleArchiving(token: token, companyId: String(companyId), conversationId: String(conversationId), markArchive: markArchive) { (responseStatus, data, serviceError, error) in

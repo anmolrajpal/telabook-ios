@@ -31,7 +31,7 @@ extension FollowUpViewController {
         }
     }
     fileprivate func fetchFollowUpsIndex(token:String) {
-        let companyId = UserDefaults.standard.getCompanyId()
+        let companyId = AppData.companyId
         FollowUpAPI.shared.fetchFollowUpsIndex(token: token, companyId: String(companyId)) { (responseStatus, data, serviceError, error) in
             if let err = error {
                 DispatchQueue.main.async {

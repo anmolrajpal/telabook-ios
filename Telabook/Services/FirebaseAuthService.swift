@@ -96,7 +96,10 @@ final class FirebaseAuthService:NSObject {
                     completion(token, nil)
                 }
             } else {
-                print("Hell NO")
+                print("getCurrentToken: Failed to unwrap optional")
+                DispatchQueue.main.async {
+                    completion(nil, nil)
+                }
             }
         })
     }

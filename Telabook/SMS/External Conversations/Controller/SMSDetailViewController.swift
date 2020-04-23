@@ -15,10 +15,11 @@ import FirebaseStorage
 
 class SMSDetailViewController: UIViewController {
     var currentUser:Sender {
-        guard let userId = AppData.userId else {
-            fatalError("currentUser: UserID not found in UserDefaults")
+        let userId = AppData.userId
+        guard userId != 0 else {
+            fatalError("currentSender(): UserID not found in UserDefaults")
         }
-        return Sender(senderId: userId, displayName: "")
+        return Sender(senderId: String(userId), displayName: "")
     }
     
     var messages:[Message] = []
@@ -354,7 +355,7 @@ class SMSDetailViewController: UIViewController {
     
     func loadChats(node:String?) {
         messages = []
-        let companyId = UserDefaults.standard.getCompanyId()
+        let companyId = AppData.companyId
         if let node = node {
             let query = Config.DatabaseConfig.getChats(companyId: String(companyId), node: node)
             
@@ -739,7 +740,7 @@ class SMSDetailViewController: UIViewController {
     
     
     fileprivate func fetchExternalConversations(token:String, isArchived:Bool) {
-        let companyId = UserDefaults.standard.getCompanyId()
+        let companyId = AppData.companyId
         
         print("Worker ID => \(String(self.workerId))")
         ExternalConversationsAPI.shared.fetch(token: token, companyId: String(companyId), workerId: String(workerId), isArchived: isArchived) { (responseStatus, data, serviceError, error) in
@@ -883,10 +884,11 @@ class SMSDetailViewController: UIViewController {
 
 extension SMSDetailViewController : MessagesDataSource {
     func currentSender() -> SenderType {
-        guard let userId = AppData.userId else {
+        let userId = AppData.userId
+        guard userId != 0 else {
             fatalError("currentSender(): UserID not found in UserDefaults")
         }
-        return Sender(senderId: userId, displayName: "")
+        return Sender(senderId: String(userId), displayName: "")
     }
     func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
         messages.sort(by: { $0.sentDate < $1.sentDate })

@@ -9,13 +9,19 @@
 import Foundation
 public enum AppDataKey:String, CaseIterable {
     case isLoggedIn,
+    isRememberMeChecked,
     userId,
     userInfo,
     email,
     password,
+    firebaseToken,
+    companyId,
+    workerId,
+    roleId,
     appFirstLaunchDate,
     isOnboardingComplete,
     appLaunchCount,
     selectedTab,
-    isHapticsEnabled
+    isHapticsEnabled,
+    encryptionKey
 }

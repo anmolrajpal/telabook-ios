@@ -24,7 +24,7 @@ final class CustomUtils {
         return nil
     }
     func getUserRole() -> UserRole {
-        let roleId = UserDefaults.standard.getRoleId()
+        let roleId = AppData.roleId
         switch roleId {
         case 1: return .SuperUser
         case 2: return .Admin

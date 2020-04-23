@@ -30,7 +30,7 @@ extension CustomerPickerViewController {
         }
     }
     fileprivate func fetchCustomers(token:String, workerId:String) {
-        let companyId = UserDefaults.standard.getCompanyId()
+        let companyId = AppData.companyId
         CustomerAPI.shared.fetchCustomers(token: token, companyId: String(companyId), workerId: workerId) { (responseStatus, data, serviceError, error) in
             if let err = error {
                 DispatchQueue.main.async {

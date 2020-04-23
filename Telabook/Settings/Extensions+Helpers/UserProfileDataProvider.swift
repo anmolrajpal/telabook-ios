@@ -105,7 +105,7 @@ extension SettingsViewController {
         }
     }
     fileprivate func updateUserProfile(_ token:String) {
-        let userId = AppData.userId!
+        let userId = AppData.userId
         guard let first_name = self.firstNameTextField.text,
             let last_name = self.lastNameTextField.text,
             let user_email = self.emailTextField.text,
@@ -127,7 +127,7 @@ extension SettingsViewController {
         let profile_image_url = self.profileImageUrl ?? ""
             
         
-        UserProfileAPI.shared.updateUserProfile(token: token, userId: userId, email: user_email, firstName: first_name, lastName: last_name, phoneNumber: phone_number, backupEmail: backup_email, address: user_address, profileImage: profile_image, profileImageURL: profile_image_url) { (responseStatus, data, serviceError, error) in
+        UserProfileAPI.shared.updateUserProfile(token: token, userId: String(userId), email: user_email, firstName: first_name, lastName: last_name, phoneNumber: phone_number, backupEmail: backup_email, address: user_address, profileImage: profile_image, profileImageURL: profile_image_url) { (responseStatus, data, serviceError, error) in
             if let err = error {
                 DispatchQueue.main.async {
                     print("***Error Updating User Profile****\n\(err.localizedDescription)")

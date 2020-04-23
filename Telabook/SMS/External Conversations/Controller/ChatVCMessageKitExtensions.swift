@@ -12,10 +12,11 @@ import InputBarAccessoryView
 
 extension ChatViewController : MessagesDataSource {
     func currentSender() -> SenderType {
-        guard let userId = AppData.userId else {
+        let userId = AppData.userId
+        guard userId != 0 else {
             fatalError("currentSender(): UserID not found in UserDefaults")
         }
-        return Sender(senderId: userId, displayName: "")
+        return Sender(senderId: String(userId), displayName: "")
     }
     
     func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {

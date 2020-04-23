@@ -31,7 +31,7 @@ extension SMSDetailViewController {
         }
     }
     fileprivate func blockNumber(token:String, indexPath:IndexPath, completion: @escaping (Bool) -> ()) {
-        let companyId = UserDefaults.standard.getCompanyId()
+        let companyId = AppData.companyId
         if let conversation = self.fetchedResultsController.object(at: indexPath) as? ExternalConversation {
             let conversationId = conversation.externalConversationId
             guard let number = conversation.customerPhoneNumber else {

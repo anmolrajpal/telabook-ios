@@ -30,7 +30,7 @@ extension AgentPickerViewController {
         }
     }
     fileprivate func fetchAgents(token:String) {
-        let companyId = UserDefaults.standard.getCompanyId()
+        let companyId = AppData.companyId
         ManageAgentsAPI.shared.fetchAgents(token: token, companyId: String(companyId)) { (responseStatus, data, serviceError, error) in
             if let err = error {
                 DispatchQueue.main.async {
