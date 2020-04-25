@@ -382,7 +382,8 @@ class LoginViewController: UIViewController {
         handleLoginSequence(emailId, password)
     }
     fileprivate func handleLoginSequence(_ emailId:String, _ password:String) {
-        self.fetchTokenAndLogin(emailId, password)
+//        self.fetchTokenAndLogin(emailId, password)
+        self.signInWithCredentials(email: emailId, password: password)
     }
     
 }

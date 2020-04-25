@@ -13,26 +13,31 @@ final class FirebaseAuthService:NSObject {
     static let shared = FirebaseAuthService()
     var authenticationStateListener:AuthStateDidChangeListenerHandle?
     var tokenStateListener:IDTokenDidChangeListenerHandle?
-    
-    typealias TokenFetchCompletion = (String?, Error?) -> ()
+    enum FirebaseError:Error {
+        case referenceError
+        case authenticationError(Error)
+        case noIDToken(Error)
+    }
+    typealias TokenFetchCompletion = (String?, FirebaseError?) -> ()
     func authenticateAndFetchToken(email:String, password:String, completion: @escaping TokenFetchCompletion) {
         Auth.auth().signIn(withEmail: email, password: password) { [weak self] user, error in
-            guard self != nil else { return }
-            if let err = error {
-                print("Error Catched at Firebase Auth => \(err.localizedDescription)")
+            guard self != nil else {
                 DispatchQueue.main.async {
-                    completion(nil, err)
+                    completion(nil, .referenceError)
                 }
+                return
             }
-            if let data = user {
-                data.user.getIDToken(completion: { (token, err) in
+            if let err = error {
+                DispatchQueue.main.async {
+                    completion(nil, .authenticationError(err))
+                }
+            } else if let userData = user {
+                userData.user.getIDToken(completion: { (token, err) in
                     if let e = err {
-                        print("Error Catched at Firebase Fetch Id => \(e.localizedDescription)")
                         DispatchQueue.main.async {
-                            completion(nil, e)
+                            completion(nil, .noIDToken(e))
                         }
-                    }
-                    if let t = token {
+                    } else if let t = token {
                         DispatchQueue.main.async {
                             completion(t, nil)
                         }
@@ -52,6 +57,7 @@ final class FirebaseAuthService:NSObject {
             AuthenticationService.shared.callSignOutSequence()
             return
         }
+        print("Firebase User exists:\(String(describing: user))")
     }
     func observeAuthenticationState() {
         authenticationStateListener = Auth.auth().addStateDidChangeListener { (auth, user) in

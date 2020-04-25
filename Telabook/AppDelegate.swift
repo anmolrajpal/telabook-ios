@@ -19,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         FirebaseApp.configure()
-        FirebaseAuthService.shared.addObservers()
+//        FirebaseAuthService.shared.addObservers()
         
         
         // [START set_messaging_delegate]
@@ -47,7 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // [END register_for_notifications]
  
         
-        FirebaseAuthService.shared.monitorAndSaveToken()
+//        FirebaseAuthService.shared.monitorAndSaveToken()
         PersistenceService.shared.applicationDocumentsDirectory()
         return true
     }

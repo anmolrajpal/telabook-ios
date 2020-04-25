@@ -8,12 +8,12 @@
 
 import Foundation
 protocol APIServiceProtocol {
-    func loginWithCredentials<T: Codable>(endpoint: APIService.Endpoint, email: String, password: String, params: [String: String]?, completion: @escaping APIService.APICompletion<T>)
+    func loginWithCredentials<T: Codable>(endpoint: APIService.Endpoint, email: String, password: String, params: [String: String]?, guardResponse: ResponseStatus?, completion: @escaping APIService.APICompletion<T>)
     func GET<T: Codable>(endpoint: APIService.Endpoint, params: [String: String]?, completion: @escaping APIService.APICompletion<T>)
     func POST<T: Codable>(endpoint: APIService.Endpoint, params: [String: String]?, completion: @escaping APIService.APICompletion<T>)
     func PUT<T: Codable>(endpoint: APIService.Endpoint, params: [String: String]?, completion: @escaping APIService.APICompletion<T>)
     func DELETE<T: Codable>(endpoint: APIService.Endpoint, params: [String: String]?, completion: @escaping APIService.APICompletion<T>)
-    func constructURL(scheme:String, host:String, port:Int?, forEndpoint endpoint:APIService.Endpoint, withConcatenatingPath pathToJoin:String?, parameters:[String:String]?) -> URL?
+    func constructURL(scheme:String, host:String, port:Int?, forEndpoint endpoint:APIService.Endpoint, urlPrefix:String, withConcatenatingPath pathToJoin:String?, parameters:[String:String]?) -> URL?
 }
 
 struct APIService: APIServiceProtocol {
@@ -21,7 +21,7 @@ struct APIService: APIServiceProtocol {
     static let shared = APIService()
     struct Configuration {
         static let timeOutInterval:TimeInterval = 15.0
-        static let apiURLScheme = URLScheme.http.rawValue
+        static let apiURLScheme = Config.APIConfig.urlScheme
         static let baseURL = Config.APIConfig.baseURL
         static let apiHost = Config.APIConfig.apiHost
         static let port:Int? = Config.APIConfig.port
@@ -34,6 +34,7 @@ struct APIService: APIServiceProtocol {
         case invalidURL
         case noFirebaseToken(error: Error)
         case noResponse
+        case unexptectedResponse(response:ResponseStatus)
         case noData(response:ResponseStatus)
         case jsonDecodingError(error: Error)
         case networkError(error: Error)
@@ -44,14 +45,14 @@ struct APIService: APIServiceProtocol {
         
         func path() -> String {
             switch self {
-                case .SignIn: return ""
+                case .SignIn: return "/android/signin"
             }
         }
     }
     
     
     
-    func loginWithCredentials<T: Codable>(endpoint: Endpoint = .SignIn, email: String, password: String, params: [String: String]?, completion: @escaping APICompletion<T>) {
+    func loginWithCredentials<T: Codable>(endpoint: Endpoint = .SignIn, email: String, password: String, params: [String: String]?, guardResponse: ResponseStatus? = nil, completion: @escaping APICompletion<T>) {
         FirebaseAuthService.shared.authenticateAndFetchToken(email: email, password: password) { (token, error) in
             guard let bearerToken = token else {
                 DispatchQueue.main.async {
@@ -59,14 +60,20 @@ struct APIService: APIServiceProtocol {
                 }
                 return
             }
-            guard let url = self.constructURL(forEndpoint: endpoint, parameters: params) else {
+            #if DEBUG
+            print("\n\n------------------------------------------------ Firebase Token: BEGIN ------------------------------------------------\n\nFirebase Bearer Token: \(bearerToken)\n\n--------------------------------------------------- Firebase Token: END ------------------------------------------------\n\n")
+            #endif
+            guard let url = self.constructURL(forEndpoint: endpoint) else {
                 print("Error Log: Unable to Construct URL")
                 completion(.failure(.invalidURL))
                 return
             }
+            #if DEBUG
+            print("URL= \(url)")
+            #endif
             var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.timeOutInterval)
             request.httpMethod = HTTPMethod.POST.rawValue
-            request.setValue(bearerToken, forHTTPHeaderField: Header.headerName.Authorization.rawValue)
+            request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: Header.headerName.Authorization.rawValue)
             
             let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
                 guard error == nil else {
@@ -81,13 +88,36 @@ struct APIService: APIServiceProtocol {
                     }
                     return
                 }
+                let responseCode = (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)
+                let responseStatus = ResponseStatus.getResponseStatusBy(statusCode: responseCode)
+                #if DEBUG
+                print("\n\n------------------------------------------------ Response: BEGIN ------------------------------------------------\n\nResponse Status => \(responseStatus)\nResponse Code => \(responseCode)\n\n--------------------------------------------------- Response: END ------------------------------------------------\n\n")
+                #endif
+                if let expectedResponse = guardResponse {
+                    guard responseStatus == expectedResponse else {
+                        DispatchQueue.main.async {
+                            completion(.failure(.unexptectedResponse(response: responseStatus)))
+                        }
+                        return
+                    }
+                } else {
+                    guard responseStatus == .OK || responseStatus == .Created || responseStatus == .Accepted || responseStatus == .NoContent else {
+                        DispatchQueue.main.async {
+                            completion(.failure(.unexptectedResponse(response: responseStatus)))
+                        }
+                        return
+                    }
+                }
                 guard let data = data else {
                     DispatchQueue.main.async {
                         completion(.failure(.noData(response: ResponseStatus.getResponseStatusBy(statusCode: (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)))))
                     }
                     return
                 }
-                
+                #if DEBUG
+                let jsonString = String(data: data, encoding: .utf8)!
+                print("\n\n------------------------------------------------ Raw JSON Object: BEGIN ------------------------------------------------\n\n"+jsonString+"\n\n--------------------------------------------------- Raw JSON Object: END ------------------------------------------------\n\n")
+                #endif
                 do {
                     let object = try self.decoder.decode(T.self, from: data)
                     DispatchQueue.main.async {
@@ -332,7 +362,7 @@ struct APIService: APIServiceProtocol {
     
     
     
-    internal func constructURL(scheme:String = Configuration.apiURLScheme, host:String = Configuration.apiHost, port:Int? = Configuration.port, forEndpoint endpoint:Endpoint, withConcatenatingPath pathToJoin:String? = nil, parameters:[String:String]? = nil) -> URL? {
+    internal func constructURL(scheme:String = Configuration.apiURLScheme, host:String = Configuration.apiHost, port:Int? = Configuration.port, forEndpoint endpoint:Endpoint, urlPrefix:String = Configuration.apiCommonPath, withConcatenatingPath pathToJoin:String? = nil, parameters:[String:String]? = nil) -> URL? {
         var components = URLComponents()
         components.scheme = scheme
         components.host = host
@@ -340,9 +370,9 @@ struct APIService: APIServiceProtocol {
             components.port = port
         }
         if let concatenatingPath = pathToJoin {
-            components.path = endpoint.path() + "/\(concatenatingPath)"
+            components.path = urlPrefix + endpoint.path() + "/\(concatenatingPath)"
         } else {
-            components.path = endpoint.path()
+            components.path = urlPrefix + endpoint.path()
         }
         if let parameters = parameters {
             components.setQueryItems(with: parameters)
@@ -355,7 +385,8 @@ extension APIService.APIError: LocalizedError {
         switch self {
             case .invalidURL: return "Failed to create URL"
             case .noResponse: return "No Response from Server"
-            case let .noData(response): return "No Data from Server. Response Status - \(response)"
+            case let .unexptectedResponse(response): return "Unexptected Response. Response Status: \(response) | Code- \(ResponseStatus.getStatusCode(by: response))"
+            case let .noData(response): return "No Data from Server. Response Status - \(response)| Code- \(ResponseStatus.getStatusCode(by: response))"
             case let .networkError(error): return "Network Error: \(error.localizedDescription)"
             case let .jsonDecodingError(error): return "Failed to Decode data. Error: \(error.localizedDescription)"
             case let .noFirebaseToken(error): return "Firebase Error: \(error.localizedDescription)"
