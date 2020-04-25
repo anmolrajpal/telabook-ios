@@ -88,6 +88,7 @@
 		6F9453CD22DC3CCA00047C7F /* ChangePasswordAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9453CC22DC3CCA00047C7F /* ChangePasswordAPI.swift */; };
 		6F9453CF22DC3CE600047C7F /* ChangePasswordAPIProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9453CE22DC3CE600047C7F /* ChangePasswordAPIProtocol.swift */; };
 		6F9453D122DDDC2100047C7F /* ScheduledMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9453D022DDDC2100047C7F /* ScheduledMessageCell.swift */; };
+		6F987A462454AB5D00C6046E /* LoginServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A452454AB5C00C6046E /* LoginServiceProvider.swift */; };
 		6FAD46E1245041390050F7F2 /* SMSViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FAD46E0245041390050F7F2 /* SMSViewController.swift */; };
 		6FAD46E6245054020050F7F2 /* AppData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FAD46E3245054020050F7F2 /* AppData.swift */; };
 		6FAD46E7245054020050F7F2 /* UserDefaultsWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FAD46E4245054020050F7F2 /* UserDefaultsWrapper.swift */; };
@@ -228,6 +229,7 @@
 		6F9453CC22DC3CCA00047C7F /* ChangePasswordAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePasswordAPI.swift; sourceTree = "<group>"; };
 		6F9453CE22DC3CE600047C7F /* ChangePasswordAPIProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePasswordAPIProtocol.swift; sourceTree = "<group>"; };
 		6F9453D022DDDC2100047C7F /* ScheduledMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduledMessageCell.swift; sourceTree = "<group>"; };
+		6F987A452454AB5C00C6046E /* LoginServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginServiceProvider.swift; sourceTree = "<group>"; };
 		6FAD46E0245041390050F7F2 /* SMSViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SMSViewController.swift; sourceTree = "<group>"; };
 		6FAD46E3245054020050F7F2 /* AppData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppData.swift; sourceTree = "<group>"; };
 		6FAD46E4245054020050F7F2 /* UserDefaultsWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaultsWrapper.swift; sourceTree = "<group>"; };
@@ -847,6 +849,55 @@
 			path = "Extensions+Helpers";
 			sourceTree = "<group>";
 		};
+		6F987A3F2454AAB700C6046E /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				6F987A402454AAC900C6046E /* API */,
+				6F987A422454AAD900C6046E /* Model */,
+				6F987A412454AAD000C6046E /* View */,
+				6F987A432454AADD00C6046E /* Controller */,
+				6F987A442454AAF000C6046E /* Extensions+Helpers */,
+			);
+			path = Authentication;
+			sourceTree = "<group>";
+		};
+		6F987A402454AAC900C6046E /* API */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
+		6F987A412454AAD000C6046E /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		6F987A422454AAD900C6046E /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		6F987A432454AADD00C6046E /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				6FB11B1A229D07050098D050 /* LoginViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		6F987A442454AAF000C6046E /* Extensions+Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				6F987A452454AB5C00C6046E /* LoginServiceProvider.swift */,
+			);
+			path = "Extensions+Helpers";
+			sourceTree = "<group>";
+		};
 		6FAD46E2245054020050F7F2 /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
@@ -887,7 +938,7 @@
 				6FB11AE3229BDDBD0098D050 /* AppDelegate.swift */,
 				6FAD46E9245066F10050F7F2 /* SceneDelegate.swift */,
 				6FB11AFA229BF0590098D050 /* TabBarController.swift */,
-				6FB11B1A229D07050098D050 /* LoginViewController.swift */,
+				6F987A3F2454AAB700C6046E /* Authentication */,
 				6FB11B17229D06880098D050 /* Services */,
 				6FB11B0E229C236B0098D050 /* Utils */,
 				6FB11AFE229BF9680098D050 /* Home */,
@@ -1272,6 +1323,7 @@
 				6F9453BB22DB2C8200047C7F /* AgentPickerViewController.swift in Sources */,
 				6F46A8BB22D062750042A667 /* FollowUpAPI.swift in Sources */,
 				6F58C33B22D61FAE0091C785 /* AutoResponseDataProvider.swift in Sources */,
+				6F987A462454AB5D00C6046E /* LoginServiceProvider.swift in Sources */,
 				6FB11B10229C23840098D050 /* Extensions.swift in Sources */,
 				6F58C33922D618C40091C785 /* AutoResponseAPIProtocol.swift in Sources */,
 				6F1BD2F322C4B4CB0053D0CC /* FollowUpDataProvider.swift in Sources */,
@@ -1472,7 +1524,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 14;
+				CURRENT_PROJECT_VERSION = 15;
 				DEVELOPMENT_TEAM = 7QD3V9UN4D;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -1494,7 +1546,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 14;
+				CURRENT_PROJECT_VERSION = 15;
 				DEVELOPMENT_TEAM = 7QD3V9UN4D;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;

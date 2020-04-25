@@ -84,23 +84,24 @@ final class FirebaseAuthService:NSObject {
         let user = Auth.auth().currentUser
         handleUserState(user)
         user?.getIDToken(completion: { (token, error) in
-            print("In closure...")
-            if let err = error {
-                print("Error fetching token: \(err)")
-                DispatchQueue.main.async {
-                    completion(nil, err)
-                }
-            } else if let token = token {
-//                print("Current Token: \(token)")
+            if let token = token {
                 DispatchQueue.main.async {
                     completion(token, nil)
                 }
-            } else {
+            } else if let err = error {
+                print("Error fetching token: \(err.localizedDescription)")
+                DispatchQueue.main.async {
+                    completion(nil, err)
+                }
+            }
+                /*
+            else {
                 print("getCurrentToken: Failed to unwrap optional")
                 DispatchQueue.main.async {
                     completion(nil, nil)
                 }
             }
+            */
         })
     }
     func monitorAndSaveToken() {

@@ -11,6 +11,9 @@ import CoreData
 final class AuthenticationService: NSObject {
     static let shared = AuthenticationService()
     
+    
+    
+    
     typealias UserInfoFetchCompletion = (UserInfoCodable?, ServiceError?, Error?) -> ()
     
     func authenticateViaToken(token:String, completion: @escaping UserInfoFetchCompletion) {
@@ -131,7 +134,7 @@ final class AuthenticationService: NSObject {
         print("Root VC isn't Login VC")
         if let rootVC = rootVC {
             rootVC.presentedViewController?.dismiss(animated: true, completion: nil)
-            if let tbc = rootVC.tabBarController as? TabBarController {
+            if let tbc = rootVC .tabBarController as? TabBarController {
                 print("Hurray.... I'm loving this one")
                 tbc.isLoaded = false
                 tbc.present(loginViewController, animated: true, completion: {

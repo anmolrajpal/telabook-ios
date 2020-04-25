@@ -66,29 +66,19 @@ struct UserDefaultsEncryptionWrapper {
     }
 
     private func encrypt(value: String) -> Data {
-    
-        print("Password = \(value)")
-        // Encryption logic here
         let encryptedData = value.data(using: .utf8)!
-        print(encryptedData)
         let encryptionKey = SymmetricKey(size: .bits256)
         let encryptionKeyData = encryptionKey.withUnsafeBytes {Data(Array($0)).base64EncodedString()}
         AppData.encryptionKey = encryptionKeyData
         let sealedBox = try! ChaChaPoly.seal(encryptedData, using: encryptionKey)
-        print(sealedBox)
         let encryptedContent = sealedBox.combined
-        print(encryptedContent)
         return encryptedContent
     }
     private func decrypt(cipher: Data) -> String {
-        print("Cipher= \(cipher)")
         let sealedBox = try! ChaChaPoly.SealedBox(combined: cipher)
-        print(sealedBox)
         let encryptionKeyData = Data(base64Encoded: AppData.encryptionKey)!
-        print("Encryption Key Data= \(encryptionKeyData)")
         let encryptionKey = SymmetricKey(data: encryptionKeyData)
         let decryptedData = try! ChaChaPoly.open(sealedBox, using: encryptionKey)
-        print(decryptedData)
         let deccryptedString = String(data: decryptedData, encoding: .utf8)!
         return deccryptedString
     }

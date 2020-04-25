@@ -8,8 +8,11 @@
 
 import Foundation
 protocol APIServiceProtocol {
+    func loginWithCredentials<T: Codable>(endpoint: APIService.Endpoint, email: String, password: String, params: [String: String]?, completion: @escaping APIService.APICompletion<T>)
     func GET<T: Codable>(endpoint: APIService.Endpoint, params: [String: String]?, completion: @escaping APIService.APICompletion<T>)
     func POST<T: Codable>(endpoint: APIService.Endpoint, params: [String: String]?, completion: @escaping APIService.APICompletion<T>)
+    func PUT<T: Codable>(endpoint: APIService.Endpoint, params: [String: String]?, completion: @escaping APIService.APICompletion<T>)
+    func DELETE<T: Codable>(endpoint: APIService.Endpoint, params: [String: String]?, completion: @escaping APIService.APICompletion<T>)
     func constructURL(scheme:String, host:String, port:Int?, forEndpoint endpoint:APIService.Endpoint, withConcatenatingPath pathToJoin:String?, parameters:[String:String]?) -> URL?
 }
 
@@ -29,6 +32,7 @@ struct APIService: APIServiceProtocol {
     
     enum APIError: Error {
         case invalidURL
+        case noFirebaseToken(error: Error)
         case noResponse
         case noData(response:ResponseStatus)
         case jsonDecodingError(error: Error)
@@ -46,105 +50,286 @@ struct APIService: APIServiceProtocol {
     }
     
     
-    func GET<T: Codable>(endpoint: Endpoint,
-                         params: [String: String]?,
-                         completion: @escaping APICompletion<T>) {
-        
-        guard let url = constructURL(forEndpoint: .SignIn, parameters: params) else {
-            print("Error Log: Unable to Construct URL")
-            completion(.failure(.invalidURL))
-            return
-        }
-        var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.timeOutInterval)
-        request.httpMethod = HTTPMethod.GET.rawValue
-        
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            guard error == nil else {
+    
+    func loginWithCredentials<T: Codable>(endpoint: Endpoint = .SignIn, email: String, password: String, params: [String: String]?, completion: @escaping APICompletion<T>) {
+        FirebaseAuthService.shared.authenticateAndFetchToken(email: email, password: password) { (token, error) in
+            guard let bearerToken = token else {
                 DispatchQueue.main.async {
-                    completion(.failure(.networkError(error: error!)))
+                    completion(.failure(.noFirebaseToken(error: error!)))
                 }
                 return
             }
-            guard let response = response else {
-                DispatchQueue.main.async {
-                    completion(.failure(.noResponse))
-                }
+            guard let url = self.constructURL(forEndpoint: endpoint, parameters: params) else {
+                print("Error Log: Unable to Construct URL")
+                completion(.failure(.invalidURL))
                 return
             }
-            guard let data = data else {
-                DispatchQueue.main.async {
-                    completion(.failure(.noData(response: ResponseStatus.getResponseStatusBy(statusCode: (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)))))
-                }
-                return
-            }
+            var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.timeOutInterval)
+            request.httpMethod = HTTPMethod.POST.rawValue
+            request.setValue(bearerToken, forHTTPHeaderField: Header.headerName.Authorization.rawValue)
             
-            do {
-                let object = try self.decoder.decode(T.self, from: data)
-                DispatchQueue.main.async {
-                    completion(.success(object))
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                guard error == nil else {
+                    DispatchQueue.main.async {
+                        completion(.failure(.networkError(error: error!)))
+                    }
+                    return
                 }
-            } catch let error {
-                DispatchQueue.main.async {
-                    #if DEBUG
-                    print("JSON Decoding Error: \(error.localizedDescription)")
-                    #endif
-                    completion(.failure(.jsonDecodingError(error: error)))
+                guard let response = response else {
+                    DispatchQueue.main.async {
+                        completion(.failure(.noResponse))
+                    }
+                    return
+                }
+                guard let data = data else {
+                    DispatchQueue.main.async {
+                        completion(.failure(.noData(response: ResponseStatus.getResponseStatusBy(statusCode: (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)))))
+                    }
+                    return
+                }
+                
+                do {
+                    let object = try self.decoder.decode(T.self, from: data)
+                    DispatchQueue.main.async {
+                        completion(.success(object))
+                    }
+                } catch let error {
+                    DispatchQueue.main.async {
+                        #if DEBUG
+                        print("JSON Decoding Error: \(error.localizedDescription)")
+                        #endif
+                        completion(.failure(.jsonDecodingError(error: error)))
+                    }
                 }
             }
+            task.resume()
         }
-        task.resume()
+        
     }
     
     
-    
-    func POST<T: Codable>(endpoint: Endpoint,
-                         params: [String: String]?,
-                         completion: @escaping APICompletion<T>) {
-        
-        guard let url = constructURL(forEndpoint: .SignIn, parameters: params) else {
-            print("Error Log: Unable to Construct URL")
-            completion(.failure(.invalidURL))
-            return
-        }
-        var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.timeOutInterval)
-        request.httpMethod = HTTPMethod.POST.rawValue
-        
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            guard error == nil else {
+    func GET<T: Codable>(endpoint: Endpoint, params: [String: String]?, completion: @escaping APICompletion<T>) {
+        FirebaseAuthService.shared.getCurrentToken { (token, error) in
+            guard let bearerToken = token else {
                 DispatchQueue.main.async {
-                    completion(.failure(.networkError(error: error!)))
+                    completion(.failure(.noFirebaseToken(error: error!)))
                 }
                 return
             }
-            guard let response = response else {
-                DispatchQueue.main.async {
-                    completion(.failure(.noResponse))
-                }
+            guard let url = self.constructURL(forEndpoint: .SignIn, parameters: params) else {
+                print("Error Log: Unable to Construct URL")
+                completion(.failure(.invalidURL))
                 return
             }
-            guard let data = data else {
-                DispatchQueue.main.async {
-                    completion(.failure(.noData(response: ResponseStatus.getResponseStatusBy(statusCode: (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)))))
-                }
-                return
-            }
+            var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.timeOutInterval)
+            request.httpMethod = HTTPMethod.GET.rawValue
+            request.setValue(bearerToken, forHTTPHeaderField: Header.headerName.Authorization.rawValue)
             
-            do {
-                let object = try self.decoder.decode(T.self, from: data)
-                DispatchQueue.main.async {
-                    completion(.success(object))
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                guard error == nil else {
+                    DispatchQueue.main.async {
+                        completion(.failure(.networkError(error: error!)))
+                    }
+                    return
                 }
-            } catch let error {
-                DispatchQueue.main.async {
-                    #if DEBUG
-                    print("JSON Decoding Error: \(error.localizedDescription)")
-                    #endif
-                    completion(.failure(.jsonDecodingError(error: error)))
+                guard let response = response else {
+                    DispatchQueue.main.async {
+                        completion(.failure(.noResponse))
+                    }
+                    return
+                }
+                guard let data = data else {
+                    DispatchQueue.main.async {
+                        completion(.failure(.noData(response: ResponseStatus.getResponseStatusBy(statusCode: (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)))))
+                    }
+                    return
+                }
+                do {
+                    let object = try self.decoder.decode(T.self, from: data)
+                    DispatchQueue.main.async {
+                        completion(.success(object))
+                    }
+                } catch let error {
+                    DispatchQueue.main.async {
+                        #if DEBUG
+                        print("JSON Decoding Error: \(error.localizedDescription)")
+                        #endif
+                        completion(.failure(.jsonDecodingError(error: error)))
+                    }
                 }
             }
+            task.resume()
         }
-        task.resume()
     }
+    
+    func POST<T: Codable>(endpoint: Endpoint, params: [String: String]?, completion: @escaping APICompletion<T>) {
+        FirebaseAuthService.shared.getCurrentToken { (token, error) in
+            guard let bearerToken = token else {
+                DispatchQueue.main.async {
+                    completion(.failure(.noFirebaseToken(error: error!)))
+                }
+                return
+            }
+            guard let url = self.constructURL(forEndpoint: endpoint, parameters: params) else {
+                print("Error Log: Unable to Construct URL")
+                completion(.failure(.invalidURL))
+                return
+            }
+            var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.timeOutInterval)
+            request.httpMethod = HTTPMethod.POST.rawValue
+            request.setValue(bearerToken, forHTTPHeaderField: Header.headerName.Authorization.rawValue)
+            
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                guard error == nil else {
+                    DispatchQueue.main.async {
+                        completion(.failure(.networkError(error: error!)))
+                    }
+                    return
+                }
+                guard let response = response else {
+                    DispatchQueue.main.async {
+                        completion(.failure(.noResponse))
+                    }
+                    return
+                }
+                guard let data = data else {
+                    DispatchQueue.main.async {
+                        completion(.failure(.noData(response: ResponseStatus.getResponseStatusBy(statusCode: (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)))))
+                    }
+                    return
+                }
+                
+                do {
+                    let object = try self.decoder.decode(T.self, from: data)
+                    DispatchQueue.main.async {
+                        completion(.success(object))
+                    }
+                } catch let error {
+                    DispatchQueue.main.async {
+                        #if DEBUG
+                        print("JSON Decoding Error: \(error.localizedDescription)")
+                        #endif
+                        completion(.failure(.jsonDecodingError(error: error)))
+                    }
+                }
+            }
+            task.resume()
+        }
+        
+    }
+    
+    func PUT<T: Codable>(endpoint: Endpoint, params: [String: String]?, completion: @escaping APICompletion<T>) {
+        FirebaseAuthService.shared.getCurrentToken { (token, error) in
+            guard let bearerToken = token else {
+                DispatchQueue.main.async {
+                    completion(.failure(.noFirebaseToken(error: error!)))
+                }
+                return
+            }
+            guard let url = self.constructURL(forEndpoint: endpoint, parameters: params) else {
+                print("Error Log: Unable to Construct URL")
+                completion(.failure(.invalidURL))
+                return
+            }
+            var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.timeOutInterval)
+            request.httpMethod = HTTPMethod.PUT.rawValue
+            request.setValue(bearerToken, forHTTPHeaderField: Header.headerName.Authorization.rawValue)
+            
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                guard error == nil else {
+                    DispatchQueue.main.async {
+                        completion(.failure(.networkError(error: error!)))
+                    }
+                    return
+                }
+                guard let response = response else {
+                    DispatchQueue.main.async {
+                        completion(.failure(.noResponse))
+                    }
+                    return
+                }
+                guard let data = data else {
+                    DispatchQueue.main.async {
+                        completion(.failure(.noData(response: ResponseStatus.getResponseStatusBy(statusCode: (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)))))
+                    }
+                    return
+                }
+                
+                do {
+                    let object = try self.decoder.decode(T.self, from: data)
+                    DispatchQueue.main.async {
+                        completion(.success(object))
+                    }
+                } catch let error {
+                    DispatchQueue.main.async {
+                        #if DEBUG
+                        print("JSON Decoding Error: \(error.localizedDescription)")
+                        #endif
+                        completion(.failure(.jsonDecodingError(error: error)))
+                    }
+                }
+            }
+            task.resume()
+        }
+        
+    }
+    
+    func DELETE<T: Codable>(endpoint: Endpoint, params: [String: String]?, completion: @escaping APICompletion<T>) {
+        FirebaseAuthService.shared.getCurrentToken { (token, error) in
+            guard let bearerToken = token else {
+                DispatchQueue.main.async {
+                    completion(.failure(.noFirebaseToken(error: error!)))
+                }
+                return
+            }
+            guard let url = self.constructURL(forEndpoint: endpoint, parameters: params) else {
+                print("Error Log: Unable to Construct URL")
+                completion(.failure(.invalidURL))
+                return
+            }
+            var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.timeOutInterval)
+            request.httpMethod = HTTPMethod.DELETE.rawValue
+            request.setValue(bearerToken, forHTTPHeaderField: Header.headerName.Authorization.rawValue)
+            
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                guard error == nil else {
+                    DispatchQueue.main.async {
+                        completion(.failure(.networkError(error: error!)))
+                    }
+                    return
+                }
+                guard let response = response else {
+                    DispatchQueue.main.async {
+                        completion(.failure(.noResponse))
+                    }
+                    return
+                }
+                guard let data = data else {
+                    DispatchQueue.main.async {
+                        completion(.failure(.noData(response: ResponseStatus.getResponseStatusBy(statusCode: (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)))))
+                    }
+                    return
+                }
+                
+                do {
+                    let object = try self.decoder.decode(T.self, from: data)
+                    DispatchQueue.main.async {
+                        completion(.success(object))
+                    }
+                } catch let error {
+                    DispatchQueue.main.async {
+                        #if DEBUG
+                        print("JSON Decoding Error: \(error.localizedDescription)")
+                        #endif
+                        completion(.failure(.jsonDecodingError(error: error)))
+                    }
+                }
+            }
+            task.resume()
+        }
+        
+    }
+    
     
     
     internal func constructURL(scheme:String = Configuration.apiURLScheme, host:String = Configuration.apiHost, port:Int? = Configuration.port, forEndpoint endpoint:Endpoint, withConcatenatingPath pathToJoin:String? = nil, parameters:[String:String]? = nil) -> URL? {
@@ -173,6 +358,7 @@ extension APIService.APIError: LocalizedError {
             case let .noData(response): return "No Data from Server. Response Status - \(response)"
             case let .networkError(error): return "Network Error: \(error.localizedDescription)"
             case let .jsonDecodingError(error): return "Failed to Decode data. Error: \(error.localizedDescription)"
+            case let .noFirebaseToken(error): return "Firebase Error: \(error.localizedDescription)"
         }
     }
 }
