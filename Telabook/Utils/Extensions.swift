@@ -206,15 +206,10 @@ extension UIView {
         }
         
         anchors.forEach({$0.isActive = true})
-        
-//        return anchors
     }
     internal func fillSuperview() {
-        guard let superview = self.superview else {
-            return
-        }
+        guard let superview = self.superview else { return }
         translatesAutoresizingMaskIntoConstraints = false
-        
         let constraints: [NSLayoutConstraint] = [
             leftAnchor.constraint(equalTo: superview.leftAnchor),
             rightAnchor.constraint(equalTo: superview.rightAnchor),

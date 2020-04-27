@@ -32,11 +32,28 @@ extension LoginViewController {
                     }
                     return
             }
+            
             self.setAppPreferences(userId, companyId, workerId, roleId, userInfo)
-            DispatchQueue.main.async {
-                self.stopButtonSpinner()
-                self.delegate?.didLoginIWithSuccess()
-                self.dismiss(animated: true, completion: nil)
+            
+            let appUserRole:AppUserRole = AppUserRole.getUserRole(byRoleCode: roleId)
+            
+            if appUserRole == .Owner {
+                #if DEBUG
+                print("Owner")
+                #endif
+                let vc = SelectCompanyViewController()
+                vc.isModalInPresentation = true
+                vc.delegate = self
+                self.present(vc, animated: true, completion: nil)
+            } else {
+                #if DEBUG
+                print("Not an Owner")
+                #endif
+                DispatchQueue.main.async {
+                    self.stopButtonSpinner()
+                    self.delegate?.didLoginIWithSuccess()
+                    self.dismiss(animated: true, completion: nil)
+                }
             }
         }
     }
@@ -49,12 +66,7 @@ extension LoginViewController {
     
     
     
-    
-    
-    
-    
-    
-    
+
     
     internal func fetchTokenAndLogin(_ emailId:String, _ password:String) {
         FirebaseAuthService.shared.authenticateAndFetchToken(email: emailId, password: password) { (token, error) in
@@ -153,5 +165,16 @@ extension LoginViewController {
         AppData.roleId = roleId
         AppData.userInfo = userInfo
         AppData.isLoggedIn = true
+    }
+}
+
+
+extension LoginViewController: SelectCompanyDelegate {
+    func didSelectCompany() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            self.stopButtonSpinner()
+            self.delegate?.didLoginIWithSuccess()
+            self.dismiss(animated: true, completion: nil)
+        }
     }
 }

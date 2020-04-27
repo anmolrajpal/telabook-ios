@@ -60,6 +60,13 @@ struct AppData {
     
     
     
+    /// Returns the App User Role from the saved `roleID` in App UserDefaults
+    /// - Returns: App User Role as `AppUserRole`
+    static func getUserRole() -> AppUserRole {
+        AppUserRole.getUserRole(byRoleCode: roleId)
+    }
+    
+    
     static func clearData() {
         for `case` in AppDataKey.allCases {
             if (`case` != .appFirstLaunchDate) &&

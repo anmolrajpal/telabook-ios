@@ -1,6 +1,6 @@
 //
 //  APIService.swift
-//  matchbook
+//  Telabook
 //
 //  Created by Anmol Rajpal on 29/01/20.
 //  Copyright © 2020 Anmol Rajpal. All rights reserved.
@@ -33,6 +33,8 @@ public struct APIService: APIServiceProtocol {
         /// Endpoint for User Login
         case SignIn
      
+        /// Endpoint for fetching all companies belonging to the Owner
+        case FetchUserCompanies
         
         
         
@@ -51,6 +53,7 @@ public struct APIService: APIServiceProtocol {
         func path() -> String {
             switch self {
                 case .SignIn: return "/android/signin"
+                case .FetchUserCompanies: return "/user/companies"
             }
         }
     }

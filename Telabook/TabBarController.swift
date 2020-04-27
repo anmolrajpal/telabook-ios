@@ -92,7 +92,7 @@ class TabBarController: UITabBarController {
             print(self.presentedViewController as Any)
             guard let _ = self.presentedViewController as? LoginViewController else {
                 print("Presenting Login View Controller")
-                let loginViewController = LoginViewController()
+                let loginViewController = LoginViewController()                
                 loginViewController.delegate = self
                 loginViewController.isModalInPresentation = true
                 AppData.clearData()

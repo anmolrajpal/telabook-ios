@@ -36,7 +36,7 @@ class MoreViewController: UIViewController {
         return .lightContent
     }
     fileprivate func setupAgentLogoutButton() {
-        let role = CustomUtils.shared.getUserRole()
+        let role = AppData.getUserRole()
         if role == .Agent {
             setupNavBarItems()
         }
@@ -50,6 +50,9 @@ class MoreViewController: UIViewController {
         navigationItem.rightBarButtonItem?.setTitleTextAttributes(normalStateAttributes, for: .selected)
     }
     @objc func handleRightBarButtonItem() {
+        alertLogout()
+    }
+    private func alertLogout() {
         let alertVC = UIAlertController.telaAlertController(title: "Confirm Logout", message: "Are you sure you want to log out?")
         alertVC.addAction(UIAlertAction(title: "Log Out", style: UIAlertAction.Style.destructive) { (action:UIAlertAction) in
             self.callSignOutSequence()
@@ -95,12 +98,18 @@ class MoreViewController: UIViewController {
     }
     
     var options:[String] = {
-        let role = CustomUtils.shared.getUserRole()
-        if role != .Agent {
-            return ["Manage Agents", "Gallery", "Blocked Users", "Schedule Message", "Archived SMSes", "Clear Cache"]
-        } else {
-            return ["Profile Settings", "Blocked Users", "Schedule Message", "Clear Cache"]
+        let role = AppData.getUserRole()
+        switch role {
+            case .Developer: return ["Profile Settings", "Companies", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "Application Information", "Log Out"]
+            case .Owner: return ["Profile Settings", "Companies", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "Application Information", "Log Out"]
+            case .Operator: return ["Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Archived SMSes", "Clear Cache"]
+            case .Agent: return ["Profile Settings", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Clear Cache"]
         }
+//        if role != .Agent {
+//            return ["Manage Agents", "Gallery", "Blocked Users", "Schedule Message", "Archived SMSes", "Clear Cache"]
+//        } else {
+//            return ["Profile Settings", "Blocked Users", "Schedule Message", "Clear Cache"]
+//        }
     }()
     
 
@@ -149,11 +158,85 @@ extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
         cell.selectedBackgroundView  = backgroundView
         cell.textLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 13)
         cell.accessoryType = .disclosureIndicator
-        cell.textLabel?.text = options[indexPath.row]
+        let option = options[indexPath.row]
+        cell.textLabel?.text = option
+        if option == "Log Out" {
+            cell.textLabel?.textColor = UIColor.telaRed
+        }
         return cell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let role = CustomUtils.shared.getUserRole()
+        let role = AppData.getUserRole()
+        
+        switch role {
+            case .Developer, .Owner:
+                switch indexPath.row {
+                    case 0:
+                        let vc = SettingsViewController()
+                        self.show(vc, sender: self)
+                    case 1:
+                        let vc = SelectCompanyViewController()
+                        self.present(vc, animated: true, completion: nil)
+                    case 2:
+                        let vc = ManageAgentsViewController()
+                        self.show(vc, sender: self)
+                    case 3:
+                        let vc = GalleryViewController()
+                        self.show(vc, sender: self)
+                    case 4:
+                        let vc = BlockedUsersViewController()
+                        self.show(vc, sender: self)
+                    case 5:
+                        let vc = ScheduleMessageViewController()
+                        self.show(vc, sender: self)
+                    case 6:
+                        let vc = ScheduleMessageViewController()
+                        self.show(vc, sender: self)
+                    case 7:
+                        let vc = ScheduleMessageViewController()
+                        self.show(vc, sender: self)
+                    default: alertLogout()
+            }
+            case .Operator:
+                switch indexPath.row {
+                        case 0:
+                            let vc = ManageAgentsViewController()
+                            self.show(vc, sender: self)
+                        case 1:
+                            let vc = GalleryViewController()
+                            self.show(vc, sender: self)
+                        case 2:
+                            let vc = BlockedUsersViewController()
+                            self.show(vc, sender: self)
+                        case 3:
+                            let vc = ScheduleMessageViewController()
+                            self.show(vc, sender: self)
+                        case 4:
+                            let vc = ArchivedSMSViewController()
+                            self.show(vc, sender: self)
+                        default: handleClearCache()
+                }
+            case .Agent:
+                switch indexPath.row {
+                        case 0:
+                            let vc = SettingsViewController()
+                            self.show(vc, sender: self)
+                        case 1:
+                            let vc = GalleryViewController()
+                            self.show(vc, sender: self)
+                        case 2:
+                            let vc = BlockedUsersViewController()
+                            self.show(vc, sender: self)
+                        case 3:
+                            let vc = ScheduleMessageViewController()
+                            self.show(vc, sender: self)
+                        default: handleClearCache()
+                }
+        }
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        /*
+        
         if role == .Agent {
             switch indexPath.row {
                 case 0:
@@ -192,9 +275,11 @@ extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
                 default: break
             }
         }
+        
+        */
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 70.0
+        return 50.0
     }
     
 }

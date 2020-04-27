@@ -7,6 +7,30 @@
 //
 
 import UIKit
+
+
+public enum AppUserRole {
+    case Developer, Owner, Operator, Agent
+    
+    static func getUserRole(byRoleCode code: Int) -> AppUserRole {
+        switch code {
+            case 1: return .Developer
+            case 2: return .Owner
+            case 3: return .Operator
+            case 4: return .Agent
+            default: fatalError("Invalid or Unhandled Role")
+        }
+    }
+    static func getUserRoleCode(byUserRole role: AppUserRole) -> Int {
+        switch role {
+            case .Developer: return 1
+            case .Owner: return 2
+            case .Operator: return 3
+            case .Agent: return 4
+        }
+    }
+}
+
 public enum UserRole {
     case SuperUser
     case Admin

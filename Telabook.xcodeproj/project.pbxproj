@@ -93,6 +93,12 @@
 		6F987A4A2456C8FA00C6046E /* APIServiceMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A492456C8FA00C6046E /* APIServiceMethods.swift */; };
 		6F987A4C2456C99100C6046E /* APIService+Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A4B2456C99100C6046E /* APIService+Errors.swift */; };
 		6F987A4E2456CAE800C6046E /* APIServiceURLConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A4D2456CAE800C6046E /* APIServiceURLConstructor.swift */; };
+		6F987A5724570EDA00C6046E /* SelectCompanyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A5624570EDA00C6046E /* SelectCompanyViewController.swift */; };
+		6F987A5924570EED00C6046E /* SelectCompanyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A5824570EED00C6046E /* SelectCompanyView.swift */; };
+		6F987A5B24571C2300C6046E /* SelectCompanyHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A5A24571C2300C6046E /* SelectCompanyHelpers.swift */; };
+		6F987A5D2457313C00C6046E /* SelectCompanyServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A5C2457313C00C6046E /* SelectCompanyServiceProvider.swift */; };
+		6F987A5F245751AB00C6046E /* UserCompaniesCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A5E245751AA00C6046E /* UserCompaniesCodable.swift */; };
+		6F987A612457529600C6046E /* SelectCompanyTableViewHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A602457529600C6046E /* SelectCompanyTableViewHelpers.swift */; };
 		6FAD46E1245041390050F7F2 /* SMSViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FAD46E0245041390050F7F2 /* SMSViewController.swift */; };
 		6FAD46E6245054020050F7F2 /* AppData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FAD46E3245054020050F7F2 /* AppData.swift */; };
 		6FAD46E7245054020050F7F2 /* UserDefaultsWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FAD46E4245054020050F7F2 /* UserDefaultsWrapper.swift */; };
@@ -238,6 +244,12 @@
 		6F987A492456C8FA00C6046E /* APIServiceMethods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIServiceMethods.swift; sourceTree = "<group>"; };
 		6F987A4B2456C99100C6046E /* APIService+Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "APIService+Errors.swift"; sourceTree = "<group>"; };
 		6F987A4D2456CAE800C6046E /* APIServiceURLConstructor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIServiceURLConstructor.swift; sourceTree = "<group>"; };
+		6F987A5624570EDA00C6046E /* SelectCompanyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCompanyViewController.swift; sourceTree = "<group>"; };
+		6F987A5824570EED00C6046E /* SelectCompanyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCompanyView.swift; sourceTree = "<group>"; };
+		6F987A5A24571C2300C6046E /* SelectCompanyHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCompanyHelpers.swift; sourceTree = "<group>"; };
+		6F987A5C2457313C00C6046E /* SelectCompanyServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCompanyServiceProvider.swift; sourceTree = "<group>"; };
+		6F987A5E245751AA00C6046E /* UserCompaniesCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCompaniesCodable.swift; sourceTree = "<group>"; };
+		6F987A602457529600C6046E /* SelectCompanyTableViewHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCompanyTableViewHelpers.swift; sourceTree = "<group>"; };
 		6FAD46E0245041390050F7F2 /* SMSViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SMSViewController.swift; sourceTree = "<group>"; };
 		6FAD46E3245054020050F7F2 /* AppData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppData.swift; sourceTree = "<group>"; };
 		6FAD46E4245054020050F7F2 /* UserDefaultsWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaultsWrapper.swift; sourceTree = "<group>"; };
@@ -918,6 +930,51 @@
 			path = "API Service";
 			sourceTree = "<group>";
 		};
+		6F987A5024570E8D00C6046E /* Select Company */ = {
+			isa = PBXGroup;
+			children = (
+				6F987A5424570EBE00C6046E /* Model */,
+				6F987A5324570EBB00C6046E /* View */,
+				6F987A5224570EB400C6046E /* Controller */,
+				6F987A5124570EAD00C6046E /* Extensions+Helpers */,
+			);
+			path = "Select Company";
+			sourceTree = "<group>";
+		};
+		6F987A5124570EAD00C6046E /* Extensions+Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				6F987A5A24571C2300C6046E /* SelectCompanyHelpers.swift */,
+				6F987A602457529600C6046E /* SelectCompanyTableViewHelpers.swift */,
+				6F987A5C2457313C00C6046E /* SelectCompanyServiceProvider.swift */,
+			);
+			path = "Extensions+Helpers";
+			sourceTree = "<group>";
+		};
+		6F987A5224570EB400C6046E /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				6F987A5624570EDA00C6046E /* SelectCompanyViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		6F987A5324570EBB00C6046E /* View */ = {
+			isa = PBXGroup;
+			children = (
+				6F987A5824570EED00C6046E /* SelectCompanyView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		6F987A5424570EBE00C6046E /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				6F987A5E245751AA00C6046E /* UserCompaniesCodable.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		6FAD46E2245054020050F7F2 /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
@@ -1028,6 +1085,7 @@
 			isa = PBXGroup;
 			children = (
 				6FB11B0C229BFA430098D050 /* MoreViewController.swift */,
+				6F987A5024570E8D00C6046E /* Select Company */,
 				6F23BCF822D723E30001A888 /* Schedule Message */,
 				6F69BE6F22D46CF900F8903F /* Manage Agents */,
 				6FB11B38229EF4430098D050 /* GalleryViewController.swift */,
@@ -1286,6 +1344,7 @@
 				6F9011D422AC3B130046F5E3 /* ChatViewController.swift in Sources */,
 				6FB11B29229E75710098D050 /* FirebaseAuthService.swift in Sources */,
 				6F69BE8822D4780F00F8903F /* ManageAgentsDataProvider.swift in Sources */,
+				6F987A5724570EDA00C6046E /* SelectCompanyViewController.swift in Sources */,
 				6F987A4E2456CAE800C6046E /* APIServiceURLConstructor.swift in Sources */,
 				6F46A8B922D061EC0042A667 /* InternalConversation.swift in Sources */,
 				6FB8EA3F22AA34B600294EAC /* ChatColorHelpers.swift in Sources */,
@@ -1308,6 +1367,7 @@
 				6F9453CD22DC3CCA00047C7F /* ChangePasswordAPI.swift in Sources */,
 				6F23BD0D22D9F3480001A888 /* ScheduleMessageAPI.swift in Sources */,
 				6FB11B39229EF4430098D050 /* GalleryViewController.swift in Sources */,
+				6F987A5B24571C2300C6046E /* SelectCompanyHelpers.swift in Sources */,
 				6FBDEC7622B28D4D00A8511E /* NewContactViewController.swift in Sources */,
 				6F9453C322DB53E100047C7F /* CustomerAPI.swift in Sources */,
 				6F087DCD22E0DF3D00CAD840 /* OnlineUsersTableViewExtensions.swift in Sources */,
@@ -1368,6 +1428,7 @@
 				6FEF96A422A6679400F2FF83 /* ExternalConversationsAPI.swift in Sources */,
 				6FB11B19229D06BB0098D050 /* CustomUtils.swift in Sources */,
 				6F987A4C2456C99100C6046E /* APIService+Errors.swift in Sources */,
+				6F987A612457529600C6046E /* SelectCompanyTableViewHelpers.swift in Sources */,
 				6FB11B07229BFA240098D050 /* CallsViewController.swift in Sources */,
 				6F41013722DDF8950038AA76 /* CallGroupsAPIProtocol.swift in Sources */,
 				6F23BD0922D9F28A0001A888 /* ScheduleMessageVCTableViewExtensions.swift in Sources */,
@@ -1380,6 +1441,7 @@
 				6FAD46EA245066F10050F7F2 /* SceneDelegate.swift in Sources */,
 				6FB8EA4322AA596A00294EAC /* ChatArchivingHelpers.swift in Sources */,
 				6FEF96A822A682E700F2FF83 /* SMSDetailCell.swift in Sources */,
+				6F987A5F245751AB00C6046E /* UserCompaniesCodable.swift in Sources */,
 				6FB11B1D229D19E10098D050 /* NetworkManager.swift in Sources */,
 				6F69BE9222D4DCE600F8903F /* QuickResponsesAPIProtocol.swift in Sources */,
 				6F29FD5122B8B36400BCA2AB /* FollowUpCell.swift in Sources */,
@@ -1387,6 +1449,7 @@
 				6FB11B41229F7A290098D050 /* ManageAgentsCell.swift in Sources */,
 				6F69BE9622D4DE4900F8903F /* QuickResponsesDataProvider.swift in Sources */,
 				6FB11B12229C31DF0098D050 /* Enums.swift in Sources */,
+				6F987A5D2457313C00C6046E /* SelectCompanyServiceProvider.swift in Sources */,
 				6F23BD0B22D9F33A0001A888 /* ScheduleMessageAPIProtocol.swift in Sources */,
 				6F05628122E08EF500424BF5 /* ChatVCHelpers.swift in Sources */,
 				6F58C33722D618B30091C785 /* AutoResponseAPI.swift in Sources */,
@@ -1394,6 +1457,7 @@
 				6F1BD2EA22C4AD250053D0CC /* FollowUpsIndexCodable.swift in Sources */,
 				6FBDEC7A22B3D3C200A8511E /* SMSDetailVCChatExtensions.swift in Sources */,
 				6F69BE7C22D46E9000F8903F /* BlockedUsersDataProvider.swift in Sources */,
+				6F987A5924570EED00C6046E /* SelectCompanyView.swift in Sources */,
 				6FB11B2F229EB4F20098D050 /* FollowUpViewController.swift in Sources */,
 				6F69BE8022D46F8400F8903F /* BlacklistAPIProtocol.swift in Sources */,
 				6FB11B4922A503E00098D050 /* SMSCell.swift in Sources */,
