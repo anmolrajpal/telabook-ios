@@ -842,3 +842,24 @@ extension Date {
         return dateString
     }
 }
+
+
+
+extension Bundle {
+    enum Identifiers {
+        case version, build
+        
+        var keyIdentifier:String {
+            switch self {
+                case .version: return "CFBundleShortVersionString"
+                case .build: return "CFBundleVersion"
+            }
+        }
+    }
+    static var versionNumber:String? {
+        Bundle.main.infoDictionary?[Identifiers.version.keyIdentifier] as? String
+    }
+    static var buildNumber:String? {
+        Bundle.main.infoDictionary?[Identifiers.build.keyIdentifier] as? String
+    }
+}

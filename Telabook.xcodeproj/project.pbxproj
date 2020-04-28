@@ -99,6 +99,8 @@
 		6F987A5D2457313C00C6046E /* SelectCompanyServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A5C2457313C00C6046E /* SelectCompanyServiceProvider.swift */; };
 		6F987A5F245751AB00C6046E /* UserCompaniesCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A5E245751AA00C6046E /* UserCompaniesCodable.swift */; };
 		6F987A612457529600C6046E /* SelectCompanyTableViewHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A602457529600C6046E /* SelectCompanyTableViewHelpers.swift */; };
+		6F987A6724587F9700C6046E /* AppInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A6624587F9600C6046E /* AppInfoViewController.swift */; };
+		6F987A6924587FA300C6046E /* AppInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A6824587FA300C6046E /* AppInfoView.swift */; };
 		6FAD46E1245041390050F7F2 /* SMSViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FAD46E0245041390050F7F2 /* SMSViewController.swift */; };
 		6FAD46E6245054020050F7F2 /* AppData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FAD46E3245054020050F7F2 /* AppData.swift */; };
 		6FAD46E7245054020050F7F2 /* UserDefaultsWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FAD46E4245054020050F7F2 /* UserDefaultsWrapper.swift */; };
@@ -250,6 +252,8 @@
 		6F987A5C2457313C00C6046E /* SelectCompanyServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCompanyServiceProvider.swift; sourceTree = "<group>"; };
 		6F987A5E245751AA00C6046E /* UserCompaniesCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCompaniesCodable.swift; sourceTree = "<group>"; };
 		6F987A602457529600C6046E /* SelectCompanyTableViewHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCompanyTableViewHelpers.swift; sourceTree = "<group>"; };
+		6F987A6624587F9600C6046E /* AppInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInfoViewController.swift; sourceTree = "<group>"; };
+		6F987A6824587FA300C6046E /* AppInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInfoView.swift; sourceTree = "<group>"; };
 		6FAD46E0245041390050F7F2 /* SMSViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SMSViewController.swift; sourceTree = "<group>"; };
 		6FAD46E3245054020050F7F2 /* AppData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppData.swift; sourceTree = "<group>"; };
 		6FAD46E4245054020050F7F2 /* UserDefaultsWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaultsWrapper.swift; sourceTree = "<group>"; };
@@ -975,6 +979,31 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		6F987A6224587F6700C6046E /* App Info */ = {
+			isa = PBXGroup;
+			children = (
+				6F987A6524587F8200C6046E /* View */,
+				6F987A6424587F7E00C6046E /* Controller */,
+			);
+			path = "App Info";
+			sourceTree = "<group>";
+		};
+		6F987A6424587F7E00C6046E /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				6F987A6624587F9600C6046E /* AppInfoViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		6F987A6524587F8200C6046E /* View */ = {
+			isa = PBXGroup;
+			children = (
+				6F987A6824587FA300C6046E /* AppInfoView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		6FAD46E2245054020050F7F2 /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
@@ -1085,6 +1114,7 @@
 			isa = PBXGroup;
 			children = (
 				6FB11B0C229BFA430098D050 /* MoreViewController.swift */,
+				6F987A6224587F6700C6046E /* App Info */,
 				6F987A5024570E8D00C6046E /* Select Company */,
 				6F23BCF822D723E30001A888 /* Schedule Message */,
 				6F69BE6F22D46CF900F8903F /* Manage Agents */,
@@ -1423,6 +1453,7 @@
 				6F69BE8E22D4C66800F8903F /* QuickResponsesCodable.swift in Sources */,
 				6F9011D822B12BC40046F5E3 /* SMSDetailVCCoreDataHelpers.swift in Sources */,
 				6F29FD4F22B7E28700BCA2AB /* OverlaySpinner.swift in Sources */,
+				6F987A6924587FA300C6046E /* AppInfoView.swift in Sources */,
 				6FB11B0D229BFA430098D050 /* MoreViewController.swift in Sources */,
 				6FB11B14229C3FCA0098D050 /* BadgeBarItem.swift in Sources */,
 				6FEF96A422A6679400F2FF83 /* ExternalConversationsAPI.swift in Sources */,
@@ -1433,6 +1464,7 @@
 				6F41013722DDF8950038AA76 /* CallGroupsAPIProtocol.swift in Sources */,
 				6F23BD0922D9F28A0001A888 /* ScheduleMessageVCTableViewExtensions.swift in Sources */,
 				6F69BE8A22D4786300F8903F /* ManageAgentsTableViewExtensions.swift in Sources */,
+				6F987A6724587F9700C6046E /* AppInfoViewController.swift in Sources */,
 				6F69BE9422D4DCF600F8903F /* QuickResponsesAPI.swift in Sources */,
 				6F58C33522D6178B0091C785 /* AutoResponseViewController.swift in Sources */,
 				6F9453C722DBA45F00047C7F /* ScheduleNewMessageDataProvider.swift in Sources */,
@@ -1612,7 +1644,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 16;
 				DEVELOPMENT_TEAM = 7QD3V9UN4D;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -1634,7 +1666,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 16;
 				DEVELOPMENT_TEAM = 7QD3V9UN4D;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;

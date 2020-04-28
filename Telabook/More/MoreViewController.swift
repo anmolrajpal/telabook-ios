@@ -193,7 +193,7 @@ extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
                         let vc = ScheduleMessageViewController()
                         self.show(vc, sender: self)
                     case 7:
-                        let vc = ScheduleMessageViewController()
+                        let vc = AppInfoViewController()
                         self.show(vc, sender: self)
                     default: alertLogout()
             }
