@@ -24,7 +24,10 @@ public struct APIService: APIServiceProtocol {
         static let apiCommonPath:String = Config.APIConfig.urlPrefix
     }
     
-    
+    struct EmptyData:Codable {
+        let result:String
+        let message:String
+    }
     
     /// All API Endpoints options used in the app.
     /// - Note: `path()` function is required to return the Path of the specified Endpoint as a `String`
@@ -36,7 +39,14 @@ public struct APIService: APIServiceProtocol {
         /// Endpoint for fetching all companies belonging to the Owner
         case FetchUserCompanies
         
+        /// Endpoint for updating user password
+        case UpdatePassword
         
+        /// Endpoint for updating user profile
+        case UpdateUserProfile(userId:Int)
+        
+        /// Endpoint to fetch user profile
+        case ViewUserProfile
         
         
         
@@ -53,7 +63,10 @@ public struct APIService: APIServiceProtocol {
         func path() -> String {
             switch self {
                 case .SignIn: return "/android/signin"
-                case .FetchUserCompanies: return "/user/companies"
+                case .FetchUserCompanies: return "/android/user/companies"
+                case .UpdatePassword: return "/android/profile/password"
+                case let .UpdateUserProfile(userId): return "/android/users/\(String(userId))"
+                case .ViewUserProfile: return "/android/signin"
             }
         }
     }

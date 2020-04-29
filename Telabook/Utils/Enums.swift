@@ -313,3 +313,23 @@ public enum Header {
         case xml = "application/xml"
     }
 }
+
+
+struct HTTPHeader {
+    let key:HeaderKey
+    let value:String
+    
+    enum HeaderKey:String {
+        case Authorization
+        case cacheControl = "Cache-Control"
+        case postmanToken = "Postman-Token"
+        case xRequestedWith = "X-Requested-With"
+        case contentType = "Content-Type"
+        case contentLength = "Content-Length"
+        case Host
+        case userAgent = "User-Agent"
+        case Accept
+        case acceptEncoding = "Accept-Encoding"
+        case Connection
+    }
+}

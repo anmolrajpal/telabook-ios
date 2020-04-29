@@ -331,7 +331,7 @@ struct UserInfoCodable : Codable {
         let email : String?
         let id : Int?
         let lastName : String?
-        let name : String?
+        var name : String?
         let phone : String?
         let profileImage : String?
         let profileImageUrl : String?
@@ -344,7 +344,7 @@ struct UserInfoCodable : Codable {
         let address : String?
         let defaultCompany : DefaultCompany?
         let role : Role?
-        let did : Did?
+        let did : [Did]?
         
         enum CodingKeys: String, CodingKey {
             case email = "email"
@@ -384,7 +384,7 @@ struct UserInfoCodable : Codable {
             address = try values.decodeIfPresent(String.self, forKey: .address)
             defaultCompany = try values.decodeIfPresent(DefaultCompany.self, forKey: .defaultCompany)
             role = try values.decodeIfPresent(Role.self, forKey: .role)
-            did = try values.decodeIfPresent(Did.self, forKey: .did)
+            did = try values.decodeIfPresent([Did].self, forKey: .did)
         }
         struct Extension : Codable {
             

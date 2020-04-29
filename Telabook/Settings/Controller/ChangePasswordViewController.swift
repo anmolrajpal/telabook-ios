@@ -11,7 +11,7 @@ import UIKit
 class ChangePasswordViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationItem.title = "Change Password"
+        navigationItem.title = "CHANGE PASSWORD"
     }
     override func loadView() {
         super.loadView()
@@ -76,7 +76,8 @@ class ChangePasswordViewController: UIViewController {
             }
             return
         }
-        self.initiateChangePasswordSequence(currentPassword: currentPassword, newPassword: newPassword, confirmationPassword: confirmationPassword)
+//        self.initiateChangePasswordSequence(currentPassword: currentPassword, newPassword: newPassword, confirmationPassword: confirmationPassword)
+        self.updatePassword(currentPassword: currentPassword, newPassword: newPassword, confirmationPassword: confirmationPassword)
     }
     
     func setupViews() {

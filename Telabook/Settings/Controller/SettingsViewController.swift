@@ -12,18 +12,19 @@ import CoreData
 import Photos
 class SettingsViewController: UIViewController {
     static let shared = SettingsViewController()
-    internal var userProfile:UserProfileCodable? {
+    internal var userProfile:UserInfoCodable? {
         didSet {
             guard let profile = userProfile else { return }
-            print(profile.users?.first as Any)
-            if let userDetails = profile.users?.first {
+            if let userDetails = profile.user {
                 self.setupData(details: userDetails)
             } else {
-                fatalError("Fail TO unwrap user details")
+                fatalError("Fail to unwrap user details")
             }
-            if let dids = profile.dids {
+            if let dids = profile.user?.did {
                 let arr = dids.map { $0.number }.compactMap { $0 }
-                print(arr)
+                #if DEBUG
+                print("Assigned DIDs: \(arr)")
+                #endif
                 let didStr = arr.joined(separator: ", ")
                 assignedDIDs = didStr
             }
@@ -40,7 +41,7 @@ class SettingsViewController: UIViewController {
             } else {
                 self.profileImageView.loadImageUsingCache(with: nil, placeHolder: UIImage.placeholderInitialsImage(text: initialsText))
             }
-            validateFields()
+//            validateFields()
         }
     }
     internal var firstName:String? {
@@ -110,13 +111,16 @@ class SettingsViewController: UIViewController {
         scrollView.delegate = self
         
         scrollView.setContentOffset(CGPoint(x: 0, y: self.scrollView.contentOffset.y), animated: true)
-        self.initiateFetchUserProfileSequence(userId: userId)
+        self.userProfile = AppData.userInfo
+        self.fetchUserProfile()
+//        self.initiateFetchUserProfileSequence(userId: userId)
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         setupConstraints()
     }
-    func setupData(details:UserProfileCodable.User) {
+    
+    func setupUserData(details:UserProfileCodable.User) {
         let role = CustomUtils.shared.getUserRole()
         let first_name = details.name
         let last_name = details.lastName
@@ -129,6 +133,22 @@ class SettingsViewController: UIViewController {
         email = details.email
         phoneNumber = details.phoneNumber
         contactEmail = details.backupEmail
+        address = details.address
+    }
+    
+    func setupData(details:UserInfoCodable.User) {
+        let role = AppData.getUserRole()
+        let first_name = details.name
+        let last_name = details.lastName
+        profileImageUrl = details.profileImageUrl
+        profileImage = details.profileImage
+        userNameLabel.text = "\(first_name?.uppercased() ?? "") \(last_name?.uppercased() ?? "")"
+        userDesignationLabel.text = "\(String(describing: role))  |"
+        firstName = first_name
+        lastName = last_name
+        email = details.email
+        phoneNumber = details.phone
+        contactEmail = details.contactEmail
         address = details.address
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -255,7 +275,8 @@ class SettingsViewController: UIViewController {
     @objc func handleRefreshAction() {
         self.placeholderLabel.isHidden = true
         self.refreshButton.isHidden = true
-        self.initiateFetchUserProfileSequence(userId: userId) 
+//        self.initiateFetchUserProfileSequence(userId: userId)
+        self.fetchUserProfile()
     }
     
     let scrollView:UIScrollView = {
@@ -275,6 +296,7 @@ class SettingsViewController: UIViewController {
         scrollView.addSubview(profileHeaderView)
         setupTextFieldContainerViews()
         scrollView.addSubview(updateButton)
+        scrollView.addSubview(spinner)
     }
     fileprivate func setupScrollViewSubviewsConstraints() {
         setupTopContainerConstraints()
@@ -283,6 +305,8 @@ class SettingsViewController: UIViewController {
         updateButton.topAnchor.constraint(equalTo: addressTextFieldContainerView.bottomAnchor, constant: 40).activate()
         updateButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).activate()
         updateButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: 0).activate()
+        spinner.centerXAnchor.constraint(equalTo: updateButton.centerXAnchor).activate()
+        spinner.centerYAnchor.constraint(equalTo: updateButton.centerYAnchor).activate()
     }
     func checkPhotoLibraryPermissions() {
         let photoAuthorizationStatus = PHPhotoLibrary.authorizationStatus()
@@ -473,6 +497,7 @@ class SettingsViewController: UIViewController {
                     return
                 }
                 self.profileImageUrl = downloadUrl.absoluteString
+                self.updateUserProfile()
             })
         }
         
@@ -504,7 +529,15 @@ class SettingsViewController: UIViewController {
     
     
     
-    
+    lazy var spinner: UIActivityIndicatorView = {
+        let aiView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
+        aiView.backgroundColor = .clear
+        aiView.hidesWhenStopped = true
+        aiView.color = UIColor.telaGray6
+        aiView.clipsToBounds = true
+        aiView.translatesAutoresizingMaskIntoConstraints = false
+        return aiView
+    }()
     
     let profileImageView:UIImageView = {
         let imageView = UIImageView()
@@ -733,8 +766,8 @@ class SettingsViewController: UIViewController {
         return button
     }()
     @objc fileprivate func updateButtonTapped() {
-        print("Updating...")
-        initiateUpdateUserProfileSequence()
+        self.updateUserProfile()
+//        initiateUpdateUserProfileSequence()
     }
     static func createTextField(placeholder:String? = nil) -> UITextField {
         let textField = UITextField()

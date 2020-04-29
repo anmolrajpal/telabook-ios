@@ -101,6 +101,7 @@
 		6F987A612457529600C6046E /* SelectCompanyTableViewHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A602457529600C6046E /* SelectCompanyTableViewHelpers.swift */; };
 		6F987A6724587F9700C6046E /* AppInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A6624587F9600C6046E /* AppInfoViewController.swift */; };
 		6F987A6924587FA300C6046E /* AppInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A6824587FA300C6046E /* AppInfoView.swift */; };
+		6F987A6B2459C64400C6046E /* UpdateUserProfileCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A6A2459C64300C6046E /* UpdateUserProfileCodable.swift */; };
 		6FAD46E1245041390050F7F2 /* SMSViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FAD46E0245041390050F7F2 /* SMSViewController.swift */; };
 		6FAD46E6245054020050F7F2 /* AppData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FAD46E3245054020050F7F2 /* AppData.swift */; };
 		6FAD46E7245054020050F7F2 /* UserDefaultsWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FAD46E4245054020050F7F2 /* UserDefaultsWrapper.swift */; };
@@ -254,6 +255,7 @@
 		6F987A602457529600C6046E /* SelectCompanyTableViewHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCompanyTableViewHelpers.swift; sourceTree = "<group>"; };
 		6F987A6624587F9600C6046E /* AppInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInfoViewController.swift; sourceTree = "<group>"; };
 		6F987A6824587FA300C6046E /* AppInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInfoView.swift; sourceTree = "<group>"; };
+		6F987A6A2459C64300C6046E /* UpdateUserProfileCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateUserProfileCodable.swift; sourceTree = "<group>"; };
 		6FAD46E0245041390050F7F2 /* SMSViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SMSViewController.swift; sourceTree = "<group>"; };
 		6FAD46E3245054020050F7F2 /* AppData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppData.swift; sourceTree = "<group>"; };
 		6FAD46E4245054020050F7F2 /* UserDefaultsWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaultsWrapper.swift; sourceTree = "<group>"; };
@@ -473,6 +475,7 @@
 			isa = PBXGroup;
 			children = (
 				6F23BCFE22D724A70001A888 /* UserProfileCodable.swift */,
+				6F987A6A2459C64300C6046E /* UpdateUserProfileCodable.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1491,6 +1494,7 @@
 				6F69BE7C22D46E9000F8903F /* BlockedUsersDataProvider.swift in Sources */,
 				6F987A5924570EED00C6046E /* SelectCompanyView.swift in Sources */,
 				6FB11B2F229EB4F20098D050 /* FollowUpViewController.swift in Sources */,
+				6F987A6B2459C64400C6046E /* UpdateUserProfileCodable.swift in Sources */,
 				6F69BE8022D46F8400F8903F /* BlacklistAPIProtocol.swift in Sources */,
 				6FB11B4922A503E00098D050 /* SMSCell.swift in Sources */,
 				6FB11B4622A2A5110098D050 /* PersistenceService.swift in Sources */,
