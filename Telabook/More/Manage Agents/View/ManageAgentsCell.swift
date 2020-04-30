@@ -42,7 +42,7 @@ class ManageAgentsCell: UITableViewCell {
             }
         }
     }
-    var agent:Agent? {
+    var agent:UserAgent? {
         didSet {
             guard let agentItem = agent else {return}
             if let image = agentItem.profileImage {

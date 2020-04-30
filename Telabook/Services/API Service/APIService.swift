@@ -48,6 +48,9 @@ public struct APIService: APIServiceProtocol {
         /// Endpoint to fetch user profile
         case ViewUserProfile
         
+        /// Enpoint to fetch all agents list
+        case FetchAgents
+        
         
         
         /**
@@ -67,6 +70,7 @@ public struct APIService: APIServiceProtocol {
                 case .UpdatePassword: return "/android/profile/password"
                 case let .UpdateUserProfile(userId): return "/android/users/\(String(userId))"
                 case .ViewUserProfile: return "/android/signin"
+                case .FetchAgents: return "/agents"
             }
         }
     }

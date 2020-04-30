@@ -128,7 +128,7 @@ class ManageAgentsViewController: UIViewController {
         return label
     }()
 }
-struct Agent {
+struct UserAgent {
     let profileImage:UIImage?
     let name:String?
     let details:String?
