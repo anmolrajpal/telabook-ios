@@ -107,6 +107,10 @@
 		6F987A73245B159500C6046E /* TapticEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A71245B159400C6046E /* TapticEngine.swift */; };
 		6F987A76245B556600C6046E /* PersistenceContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A75245B556600C6046E /* PersistenceContainer.swift */; };
 		6F987A78245B6BE700C6046E /* CustomerCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A77245B6BE600C6046E /* CustomerCodable.swift */; };
+		6F987A7A245C27B600C6046E /* AgentOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A79245C27B500C6046E /* AgentOperations.swift */; };
+		6F987A7C245C93D900C6046E /* ManageAgentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A7B245C93D800C6046E /* ManageAgentsView.swift */; };
+		6F987A7E245C9B9000C6046E /* ManageAgentsCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A7D245C9B8F00C6046E /* ManageAgentsCellView.swift */; };
+		6F987A80245CC1B500C6046E /* FirebaseOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A7F245CC1B500C6046E /* FirebaseOperations.swift */; };
 		6FAD46E1245041390050F7F2 /* SMSViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FAD46E0245041390050F7F2 /* SMSViewController.swift */; };
 		6FAD46E6245054020050F7F2 /* AppData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FAD46E3245054020050F7F2 /* AppData.swift */; };
 		6FAD46E7245054020050F7F2 /* UserDefaultsWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FAD46E4245054020050F7F2 /* UserDefaultsWrapper.swift */; };
@@ -266,6 +270,10 @@
 		6F987A71245B159400C6046E /* TapticEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TapticEngine.swift; sourceTree = "<group>"; };
 		6F987A75245B556600C6046E /* PersistenceContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceContainer.swift; sourceTree = "<group>"; };
 		6F987A77245B6BE600C6046E /* CustomerCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerCodable.swift; sourceTree = "<group>"; };
+		6F987A79245C27B500C6046E /* AgentOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentOperations.swift; sourceTree = "<group>"; };
+		6F987A7B245C93D800C6046E /* ManageAgentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsView.swift; sourceTree = "<group>"; };
+		6F987A7D245C9B8F00C6046E /* ManageAgentsCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsCellView.swift; sourceTree = "<group>"; };
+		6F987A7F245CC1B500C6046E /* FirebaseOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseOperations.swift; sourceTree = "<group>"; };
 		6FAD46E0245041390050F7F2 /* SMSViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SMSViewController.swift; sourceTree = "<group>"; };
 		6FAD46E3245054020050F7F2 /* AppData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppData.swift; sourceTree = "<group>"; };
 		6FAD46E4245054020050F7F2 /* UserDefaultsWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaultsWrapper.swift; sourceTree = "<group>"; };
@@ -773,6 +781,7 @@
 				6F69BE8722D4780F00F8903F /* ManageAgentsDataProvider.swift */,
 				6F69BE8922D4786300F8903F /* ManageAgentsTableViewExtensions.swift */,
 				6F69BE9522D4DE4900F8903F /* QuickResponsesDataProvider.swift */,
+				6F987A79245C27B500C6046E /* AgentOperations.swift */,
 			);
 			path = "Extensions+Helpers";
 			sourceTree = "<group>";
@@ -791,6 +800,8 @@
 			isa = PBXGroup;
 			children = (
 				6FB11B40229F7A290098D050 /* ManageAgentsCell.swift */,
+				6F987A7D245C9B8F00C6046E /* ManageAgentsCellView.swift */,
+				6F987A7B245C93D800C6046E /* ManageAgentsView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1195,6 +1206,7 @@
 				6FAD46EB245098CD0050F7F2 /* ImageService.swift */,
 				6FB11B26229E5F6F0098D050 /* AuthenticationService.swift */,
 				6FB11B28229E75710098D050 /* FirebaseAuthService.swift */,
+				6F987A7F245CC1B500C6046E /* FirebaseOperations.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -1427,6 +1439,7 @@
 				6F987A72245B159500C6046E /* LaunchCounter.swift in Sources */,
 				6F23BD0522D8BB9B0001A888 /* UserProfileAPI.swift in Sources */,
 				6FBDEC7822B28D5E00A8511E /* EditDetailsViewController.swift in Sources */,
+				6F987A80245CC1B500C6046E /* FirebaseOperations.swift in Sources */,
 				6FB11B37229EF4300098D050 /* ManageAgentsViewController.swift in Sources */,
 				6FEF96A222A6677900F2FF83 /* ExternalConversation.swift in Sources */,
 				6F087DD122E0EFFD00CAD840 /* OnlineUsersAPI.swift in Sources */,
@@ -1439,6 +1452,7 @@
 				6FEF96A622A67F2900F2FF83 /* SMSDetailViewController.swift in Sources */,
 				6FB11B0B229BFA3C0098D050 /* SettingsViewController.swift in Sources */,
 				6F9453BF22DB2E2F00047C7F /* AgentPickerDataProvider.swift in Sources */,
+				6F987A7E245C9B9000C6046E /* ManageAgentsCellView.swift in Sources */,
 				6F9453CD22DC3CCA00047C7F /* ChangePasswordAPI.swift in Sources */,
 				6F23BD0D22D9F3480001A888 /* ScheduleMessageAPI.swift in Sources */,
 				6FB11B39229EF4430098D050 /* GalleryViewController.swift in Sources */,
@@ -1503,6 +1517,7 @@
 				6FB11B0D229BFA430098D050 /* MoreViewController.swift in Sources */,
 				6FB11B14229C3FCA0098D050 /* BadgeBarItem.swift in Sources */,
 				6FEF96A422A6679400F2FF83 /* ExternalConversationsAPI.swift in Sources */,
+				6F987A7A245C27B600C6046E /* AgentOperations.swift in Sources */,
 				6FB11B19229D06BB0098D050 /* CustomUtils.swift in Sources */,
 				6F987A4C2456C99100C6046E /* APIService+Errors.swift in Sources */,
 				6F987A612457529600C6046E /* SelectCompanyTableViewHelpers.swift in Sources */,
@@ -1553,6 +1568,7 @@
 				6F41014122DDF9120038AA76 /* CallGroupsTableViewExtensions.swift in Sources */,
 				6FB11B2B229EA7C20098D050 /* Codable.swift in Sources */,
 				6F29FD5722BBB1C300BCA2AB /* CustomerDetailsViewController.swift in Sources */,
+				6F987A7C245C93D900C6046E /* ManageAgentsView.swift in Sources */,
 				6F04FFBC22C3A22C00FA467E /* ExternalChat.swift in Sources */,
 				6F02E9AC22DF45BF005708B0 /* AssertionModalController.swift in Sources */,
 				6F087DD522E1DFFE00CAD840 /* MessageSendingAPI.swift in Sources */,

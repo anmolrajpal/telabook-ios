@@ -10,6 +10,14 @@ import Foundation
 protocol APIServiceProtocol {
     func hit<T: Codable>(endpoint: APIService.Endpoint, httpMethod:HTTPMethod, params: [String: String]?, httpBody: Data?, headers: [HTTPHeader]?, guardResponse: ResponseStatus?, completion: @escaping APIService.APICompletion<T>)
     func hit<T: Codable>(endpoint: APIService.Endpoint, httpMethod:HTTPMethod, params: [String: String]?, httpBody: Data?, headers: [HTTPHeader]?, guardResponse: ResponseStatus?, expectData:Bool, completion: @escaping APIService.APICompletion<T>)
+    
+    @discardableResult
+    func hitEndpoint<T: Codable>(endpoint: APIService.Endpoint, httpMethod:HTTPMethod, params: [String: String]?, httpBody: Data?, headers: [HTTPHeader]?, guardResponse: ResponseStatus?, completion: @escaping APIService.APICompletion<T>) -> URLSessionDataTask?
+    
+    @discardableResult
+    func hitEndpoint<T: Codable>(endpoint: APIService.Endpoint, httpMethod:HTTPMethod, params: [String: String]?, httpBody: Data?, headers: [HTTPHeader]?, guardResponse: ResponseStatus?, expectData:Bool, completion: @escaping APIService.APICompletion<T>) -> URLSessionDataTask?
+    
+    
     func loginWithCredentials<T: Codable>(endpoint: APIService.Endpoint, email: String, password: String, params: [String: String]?, httpBody: Data?, headers: [HTTPHeader]?, guardResponse: ResponseStatus?, completion: @escaping APIService.APICompletion<T>)
     func GET<T: Codable>(endpoint: APIService.Endpoint, params: [String: String]?, httpBody: Data?, headers: [HTTPHeader]?, guardResponse: ResponseStatus?, completion: @escaping APIService.APICompletion<T>)
     func POST<T: Codable>(endpoint: APIService.Endpoint, params: [String: String]?, httpBody: Data?, headers: [HTTPHeader]?, guardResponse: ResponseStatus?, completion: @escaping APIService.APICompletion<T>)

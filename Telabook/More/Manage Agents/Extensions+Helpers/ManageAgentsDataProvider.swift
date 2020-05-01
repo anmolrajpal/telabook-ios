@@ -8,6 +8,8 @@
 
 import UIKit
 
+
+/*
 extension ManageAgentsViewController {
     internal func initiateFetchAgentsSequence() {
         DispatchQueue.main.async {
@@ -30,6 +32,8 @@ extension ManageAgentsViewController {
             }
         }
     }
+    
+    
     fileprivate func fetchAgents(token:String) {
         let companyId = AppData.companyId
         ManageAgentsAPI.shared.fetchAgents(token: token, companyId: String(companyId)) { (responseStatus, data, serviceError, error) in
@@ -90,3 +94,4 @@ extension ManageAgentsViewController {
         }
     }
 }
+*/

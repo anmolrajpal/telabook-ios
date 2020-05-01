@@ -11,8 +11,11 @@ import Firebase
 import UIKit
 final class FirebaseAuthService:NSObject {
     static let shared = FirebaseAuthService()
+    
     var authenticationStateListener:AuthStateDidChangeListenerHandle?
     var tokenStateListener:IDTokenDidChangeListenerHandle?
+    
+    typealias FirebaseTokenFetchCompletion<String> = (Result<String, FirebaseError>) -> Void
     enum FirebaseError:Error {
         case referenceError
         case authenticationError(Error)
@@ -86,6 +89,7 @@ final class FirebaseAuthService:NSObject {
             tokenStateListener = nil
         }
     }
+    /*
     func getCurrentToken(completion: @escaping (String?, Error?) -> ()) {
         let user = Auth.auth().currentUser
         handleUserState(user)
@@ -109,6 +113,53 @@ final class FirebaseAuthService:NSObject {
             }
             */
         })
+    }
+    */
+    func getCurrentToken(completion: @escaping (String?, Error?) -> Void) {
+        let user = Auth.auth().currentUser
+        handleUserState(user)
+        user?.getIDToken(completion: { (token, error) in
+            if let token = token {
+                DispatchQueue.main.async {
+                    completion(token, nil)
+                }
+            } else if let err = error {
+                print("Error fetching token: \(err.localizedDescription)")
+                DispatchQueue.main.async {
+                    completion(nil, err)
+                }
+            }
+        })
+    }
+    func getCurrentToken(completion: @escaping FirebaseTokenFetchCompletion<String>) {
+        let user = Auth.auth().currentUser
+        handleUserState(user)
+        
+        user?.getIDToken(completion: { (token, error) in
+            if let token = token {
+                DispatchQueue.main.async {
+                    completion(.success(token))
+                }
+            } else if let err = error {
+                print("Error fetching token: \(err.localizedDescription)")
+                DispatchQueue.main.async {
+                    completion(.failure(.noIDToken(err)))
+                }
+            }
+        })
+    }
+    func getCurrentToken() -> String? {
+        let user = Auth.auth().currentUser
+        handleUserState(user)
+        var firebaseAuthToken:String?
+        user?.getIDToken(completion: { (token, _ ) in
+            if let token = token {
+                firebaseAuthToken = token
+                print("Token exists")
+            }
+        })
+        print("Token check: \(firebaseAuthToken)")
+        return firebaseAuthToken
     }
     func monitorAndSaveToken() {
         Auth.auth().currentUser?.getIDToken(completion: { (token, error) in
