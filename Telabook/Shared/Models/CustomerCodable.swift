@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreData
 
 struct CustomerCodable : Codable {
     
@@ -109,5 +110,54 @@ struct CustomerCodable : Codable {
         updatedAt = try values.decodeIfPresent(Int.self, forKey: .updatedAt)
         workerPerson = try values.decodeIfPresent(String.self, forKey: .workerPerson)
         workerPhoneNumber = try values.decodeIfPresent(String.self, forKey: .workerPhoneNumber)
+    }
+}
+
+// MARK: An extension to create Customer Object Core Data Entity from CustomerCodable Server Response Data
+extension Customer {
+    convenience init(context: NSManagedObjectContext, customerEntryFromServer customerEntry: CustomerCodable) {
+        self.init(context: context)
+        self.lastMessageSeenDate = customerEntry.allLastMessageSeen != nil ? Date.getDateFromString(dateString: customerEntry.allLastMessageSeen!, dateFormat: "yyyy-MM-dd HH:mm:ss") : nil
+        self.lastMessageText = customerEntry.allLastMessageText
+        self.isArchived = customerEntry.archive ?? false
+        self.blacklistReason = customerEntry.blacklistReason
+        self.colorCode = customerEntry.colour != nil ? Int16(customerEntry.colour!) : 0
+        self.customerID = customerEntry.customerId != nil ? Int32(customerEntry.customerId!) : 0
+        self.name = customerEntry.customerPerson
+        self.phoneNumber = customerEntry.customerPhoneNumber
+        self.isCustomerDeleted = customerEntry.deleted ?? false
+        self.deliveredByProviderAt = customerEntry.deliveredByProvider != nil ? Date(milliSecondsSince1970: Int64(customerEntry.deliveredByProvider!)) : nil
+        self.customerBlacklist = customerEntry.externalConversationBlackList != nil ? Int16(customerEntry.externalConversationBlackList!) : 0
+        self.id = customerEntry.externalConversationId != nil ? Int32(customerEntry.externalConversationId!) : 0
+        self.isIncoming = customerEntry.incoming ?? false
+        self.addressBookID = customerEntry.internalAddressBookId != nil ? Int32(customerEntry.internalAddressBookId!) : 0
+        self.isAddressBookNameActive = customerEntry.internalAddressBookNameActive != nil ? customerEntry.internalAddressBookNameActive!.boolValue : false
+        self.addressBookName = customerEntry.internalAddressBookNames
+        self.lastMessageDate = customerEntry.lastMessageDate != nil ? Date(timeIntervalSince1970: TimeInterval(customerEntry.lastMessageDate!)) : nil
+        self.lastMessageDateTime = customerEntry.lastMessageDatetime != nil ? Date(timeIntervalSince1970: TimeInterval(customerEntry.lastMessageDatetime!)) : nil
+        self.lastMessageKey = customerEntry.lastMessageKey
+        self.messageType = customerEntry.messageType
+        self.node = customerEntry.node
+        self.priority = customerEntry.priority != nil ? Int16(customerEntry.priority!) : 0
+        self.senderID = customerEntry.senderId != nil ? Int32(customerEntry.senderId!) : 0
+        self.sentByApiAt = customerEntry.sentByApi != nil ? Date(milliSecondsSince1970: Int64(customerEntry.sentByApi!)) : nil
+        self.sentByAppAt = customerEntry.sentByApp != nil ? Date(milliSecondsSince1970: Int64(customerEntry.sentByApp!)) : nil
+        self.sentByProviderAt = customerEntry.sentByProvider != nil ? Date(milliSecondsSince1970: Int64(customerEntry.sentByProvider!)) : nil
+        self.unreadMessagesCount = customerEntry.unreadMessages != nil ? Int16(customerEntry.unreadMessages!) : 0
+        self.updatedAt = customerEntry.updatedAt != nil ? Date(milliSecondsSince1970: Int64(customerEntry.updatedAt!)) : nil
+        self.workerPersonName = customerEntry.workerPerson
+        self.workerPhoneNumber = customerEntry.workerPhoneNumber
+    }
+}
+
+
+extension Date {
+    var milliSecondsSince1970:Int64 {
+        return Int64((self.timeIntervalSince1970 * 1000).rounded())
+    }
+
+    init(milliSecondsSince1970: Int64) {
+        self = Date(timeIntervalSince1970: TimeInterval(milliSecondsSince1970 / 1000))
+        self.addTimeInterval(TimeInterval(Double(milliSecondsSince1970 % 1000) / 1000 ))
     }
 }

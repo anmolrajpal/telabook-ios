@@ -75,8 +75,6 @@ struct AgentCodable : Codable {
     }
 }
 
-// Tag: fasdf
-
 // MARK: An extension to create Agent Object Core Data Entity from AgentCodable Server Response Data
 extension Agent {
     convenience init(context:NSManagedObjectContext, agentEntryFromServer agentEntry:AgentCodable) {
