@@ -101,7 +101,7 @@ extension APIService {
         FirebaseAuthService.shared.getCurrentToken { (token, error) in
             guard let bearerToken = token else {
                 DispatchQueue.main.async {
-                    completion(.failure(.noFirebaseToken(error: error!)))
+                    completion(.failure(.noFirebaseToken(error: error)))
                 }
                 return
             }

@@ -111,6 +111,7 @@
 		6F987A7C245C93D900C6046E /* ManageAgentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A7B245C93D800C6046E /* ManageAgentsView.swift */; };
 		6F987A7E245C9B9000C6046E /* ManageAgentsCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A7D245C9B8F00C6046E /* ManageAgentsCellView.swift */; };
 		6F987A80245CC1B500C6046E /* FirebaseOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A7F245CC1B500C6046E /* FirebaseOperations.swift */; };
+		6F987A82245CCA9100C6046E /* APIOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A81245CCA9000C6046E /* APIOperations.swift */; };
 		6FAD46E1245041390050F7F2 /* SMSViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FAD46E0245041390050F7F2 /* SMSViewController.swift */; };
 		6FAD46E6245054020050F7F2 /* AppData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FAD46E3245054020050F7F2 /* AppData.swift */; };
 		6FAD46E7245054020050F7F2 /* UserDefaultsWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FAD46E4245054020050F7F2 /* UserDefaultsWrapper.swift */; };
@@ -274,6 +275,7 @@
 		6F987A7B245C93D800C6046E /* ManageAgentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsView.swift; sourceTree = "<group>"; };
 		6F987A7D245C9B8F00C6046E /* ManageAgentsCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsCellView.swift; sourceTree = "<group>"; };
 		6F987A7F245CC1B500C6046E /* FirebaseOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseOperations.swift; sourceTree = "<group>"; };
+		6F987A81245CCA9000C6046E /* APIOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIOperations.swift; sourceTree = "<group>"; };
 		6FAD46E0245041390050F7F2 /* SMSViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SMSViewController.swift; sourceTree = "<group>"; };
 		6FAD46E3245054020050F7F2 /* AppData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppData.swift; sourceTree = "<group>"; };
 		6FAD46E4245054020050F7F2 /* UserDefaultsWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaultsWrapper.swift; sourceTree = "<group>"; };
@@ -954,6 +956,7 @@
 				6F987A4B2456C99100C6046E /* APIService+Errors.swift */,
 				6F987A492456C8FA00C6046E /* APIServiceMethods.swift */,
 				6F987A472456C8B900C6046E /* APIServiceProtocol.swift */,
+				6F987A81245CCA9000C6046E /* APIOperations.swift */,
 			);
 			path = "API Service";
 			sourceTree = "<group>";
@@ -1520,6 +1523,7 @@
 				6F987A7A245C27B600C6046E /* AgentOperations.swift in Sources */,
 				6FB11B19229D06BB0098D050 /* CustomUtils.swift in Sources */,
 				6F987A4C2456C99100C6046E /* APIService+Errors.swift in Sources */,
+				6F987A82245CCA9100C6046E /* APIOperations.swift in Sources */,
 				6F987A612457529600C6046E /* SelectCompanyTableViewHelpers.swift in Sources */,
 				6FB11B07229BFA240098D050 /* CallsViewController.swift in Sources */,
 				6F41013722DDF8950038AA76 /* CallGroupsAPIProtocol.swift in Sources */,

@@ -15,28 +15,41 @@ final class FirebaseAuthService:NSObject {
     var authenticationStateListener:AuthStateDidChangeListenerHandle?
     var tokenStateListener:IDTokenDidChangeListenerHandle?
     
-    typealias FirebaseTokenFetchCompletion<String> = (Result<String, FirebaseError>) -> Void
-    enum FirebaseError:Error {
+    typealias FirebaseTokenFetchCompletion = (Result<String, FirebaseError>) -> Void
+    enum FirebaseError:Error, LocalizedError {
+        case cancelled
         case referenceError
         case authenticationError(Error)
         case noIDToken(Error)
+        
+        var localizedDescription: String {
+            switch self {
+                case .cancelled: return "Firebase Error: Operation Cancelled"
+                case .referenceError: return "Firebase Internal Error"
+                case let .authenticationError(error): return "Firebase Authentication Error: \(error.localizedDescription)"
+                case let .noIDToken(error): return "Firebase No ID Token Error: \(error.localizedDescription)"
+            }
+        }
     }
     typealias TokenFetchCompletion = (String?, FirebaseError?) -> ()
     func authenticateAndFetchToken(email:String, password:String, completion: @escaping TokenFetchCompletion) {
         Auth.auth().signIn(withEmail: email, password: password) { [weak self] user, error in
             guard self != nil else {
                 DispatchQueue.main.async {
+                    print(FirebaseError.referenceError.localizedDescription)
                     completion(nil, .referenceError)
                 }
                 return
             }
             if let err = error {
                 DispatchQueue.main.async {
+                    print(FirebaseError.authenticationError(err))
                     completion(nil, .authenticationError(err))
                 }
             } else if let userData = user {
                 userData.user.getIDToken(completion: { (token, err) in
                     if let e = err {
+                        print(FirebaseError.noIDToken(e))
                         DispatchQueue.main.async {
                             completion(nil, .noIDToken(e))
                         }
@@ -115,7 +128,7 @@ final class FirebaseAuthService:NSObject {
         })
     }
     */
-    func getCurrentToken(completion: @escaping (String?, Error?) -> Void) {
+    func getCurrentToken(completion: @escaping (String?, FirebaseError?) -> Void) {
         let user = Auth.auth().currentUser
         handleUserState(user)
         user?.getIDToken(completion: { (token, error) in
@@ -126,15 +139,14 @@ final class FirebaseAuthService:NSObject {
             } else if let err = error {
                 print("Error fetching token: \(err.localizedDescription)")
                 DispatchQueue.main.async {
-                    completion(nil, err)
+                    completion(nil, .noIDToken(err))
                 }
             }
         })
     }
-    func getCurrentToken(completion: @escaping FirebaseTokenFetchCompletion<String>) {
+    func getCurrentToken(completion: @escaping FirebaseTokenFetchCompletion) {
         let user = Auth.auth().currentUser
         handleUserState(user)
-        
         user?.getIDToken(completion: { (token, error) in
             if let token = token {
                 DispatchQueue.main.async {
@@ -158,7 +170,7 @@ final class FirebaseAuthService:NSObject {
                 print("Token exists")
             }
         })
-        print("Token check: \(firebaseAuthToken)")
+        print("Token check: \(String(describing: firebaseAuthToken))")
         return firebaseAuthToken
     }
     func monitorAndSaveToken() {

@@ -8,7 +8,9 @@
 
 import UIKit
 import CoreData
-
+public enum RefreshMode {
+    case spinner, refreshControl
+}
 class ManageAgentsViewController: UIViewController {
     lazy private(set) var subview: ManageAgentsView = {
       return ManageAgentsView(frame: UIScreen.main.bounds)
@@ -19,7 +21,7 @@ class ManageAgentsViewController: UIViewController {
     private var fetchedResultsController: NSFetchedResultsController<Agent>!
     
     enum Section { case main }
-    var diffableDataSource: UITableViewDiffableDataSource<Section, Agent>!
+    var diffableDataSource: UITableViewDiffableDataSource<Section, Agent>?
     var snapshot: NSDiffableDataSourceSnapshot<Section, Agent>!
     
     internal var filteredSearch = [InternalConversationsCodable]()
@@ -40,19 +42,19 @@ class ManageAgentsViewController: UIViewController {
 //        }
 //    }
     override func loadView() {
-        super.loadView()
         view = subview
-//        setupViews()
-//        setupConstraints()
     }
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpNavBar()
-        setupTableView()
-        setupSearchBar()
         setupFetchedResultsController()
+        setupTableView()
+        setupTargetActions()
+        setupSearchBar()
+        
 //        initiateFetchAgentsSequence()
-        fetchAgents()
+//        fetchAgents()
+        fetchedResultsController.sections?.first?.numberOfObjects == 0 ? initiateFetchAgentsSequence(withRefreshMode: .spinner) : initiateFetchAgentsSequence(withRefreshMode: .refreshControl)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -87,48 +89,33 @@ class ManageAgentsViewController: UIViewController {
         }
     }
     
-    
-    /*
-//    fileprivate func setupViews() {
-//        view.addSubview(tableView)
-//        view.addSubview(placeholderLabel)
-//    }
-//    fileprivate func setupConstraints() {
-//        tableView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
-//        placeholderLabel.anchor(top: nil, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 20, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
-//        placeholderLabel.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: -40).isActive = true
-//    }
-    
-    /*
-    let agents:[Agent] = [
-        Agent(profileImage: #imageLiteral(resourceName: "smiley_icon"), name: "Anmol Rajpal", details: "Dev Service | Mon-Fri | 10 Threads"),
-        Agent(profileImage: #imageLiteral(resourceName: "landing_operators"), name: "Allan Martinez", details: "Mall Service | Mon-Fri | 5 Threads"),
-        Agent(profileImage: #imageLiteral(resourceName: "tab_home_active"), name: "Nicole Cooper", details: "Wedding Service | Mon-Fri | 20 Threads"),
-        Agent(profileImage: #imageLiteral(resourceName: "block_rounded"), name: "Jon Snow", details: "Night Service | Mon-Fri | 2 Threads"),
-        Agent(profileImage: #imageLiteral(resourceName: "unblock_rounded"), name: "Khaleesi", details: "Sports Service | Mon-Fri | 9 Threads"),
-        Agent(profileImage: #imageLiteral(resourceName: "landing_callgroup"), name: "Tyrion Lanister", details: "Dev Service | Mon-Fri | 7 Threads")
-    ]
-    */
- */
-    
-    
+    @objc private func refreshData(_ sender: Any) {
+        
+            fetchAgents()
+        
+    }
+    fileprivate func setupTargetActions() {
+        subview.refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
+    }
     fileprivate func setupTableView() {
+        subview.tableView.refreshControl = subview.refreshControl
         subview.tableView.register(ManageAgentsCell.self, forCellReuseIdentifier: NSStringFromClass(ManageAgentsCell.self))
         subview.tableView.delegate = self
 //        subview.tableView.dataSource = self
         self.diffableDataSource = UITableViewDiffableDataSource<Section, Agent>(tableView: self.subview.tableView, cellProvider: { (tableView, indexPath, agent) -> UITableViewCell? in
             let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(ManageAgentsCell.self), for: indexPath) as! ManageAgentsCell
+            cell.backgroundColor = .clear
             cell.agentDetails = agent
             return cell
         })
-        
+        updateSnapshot()
     }
     /// Create a `NSDiffableDataSourceSnapshot` with the table view data
     private func updateSnapshot() {
         snapshot = NSDiffableDataSourceSnapshot<Section, Agent>()
         snapshot.appendSections([.main])
-        snapshot.appendItems(fetchedResultsController.fetchedObjects ?? [], toSection: .main)
-        diffableDataSource.apply(snapshot, animatingDifferences: true, completion: {
+        snapshot.appendItems(fetchedResultsController.fetchedObjects ?? [])
+        diffableDataSource?.apply(snapshot, animatingDifferences: true, completion: {
             self.handleState()
         })
     }
@@ -136,17 +123,36 @@ class ManageAgentsViewController: UIViewController {
     
     func handleState() {
         if self.fetchedResultsController.sections?.first?.numberOfObjects == 0 {
-            self.subview.placeholderLabel.text = "Fetching"
-            self.subview.placeholderLabel.isHidden = false
-            self.subview.tableView.isHidden = true
+            DispatchQueue.main.async {
+//                self.subview.tableView.isHidden = true
+                self.subview.placeholderLabel.text = "Fetching"
+                self.subview.placeholderLabel.isHidden = false
+            }
         } else {
-            self.subview.placeholderLabel.isHidden = true
-            self.subview.tableView.isHidden = false
+            DispatchQueue.main.async {
+//                self.subview.tableView.isHidden = false
+                self.subview.placeholderLabel.isHidden = true
+            }
         }
     }
+    func stopRefreshers() {
+        self.subview.spinner.stopAnimating()
+        self.subview.tableView.refreshControl?.endRefreshing()
+    }
     
+    func initiateFetchAgentsSequence(withRefreshMode refreshMode: RefreshMode) {
+        if refreshMode == .spinner {
+            DispatchQueue.main.async {
+                self.subview.spinner.startAnimating()
+                self.fetchAgents()
+            }
+        } else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                self.subview.tableView.refreshControl?.beginExplicitRefreshing()
+            }
+        }
+    }
     func fetchAgents() {
-        subview.spinner.startAnimating()
         
         let queue = OperationQueue()
         queue.qualityOfService = .userInitiated
@@ -154,26 +160,63 @@ class ManageAgentsViewController: UIViewController {
         
         let context = PersistentContainer.shared.newBackgroundContext()
         let operations = AgentOperations.getOperationsToFetchLatestEntries(using: context)
-        if let operation = operations[1] as? DownloadAgentsEntriesFromServerOperation {
-            guard case let .failure(error)? = operation.result else {
-                return
-            }
-            DispatchQueue.main.async {
-                UIAlertController.showTelaAlert(title: "Error", message: error.localizedDescription, controller: self, completion: {
-                    queue.cancelAllOperations()
-                })
-            }
-        }
-        operations.last?.completionBlock = {
-            DispatchQueue.main.async {
-                self.subview.spinner.stopAnimating()
-            }
-        }
+        handleViewsStateForOperations(operations: operations, onOperationQueue: queue)
         
         queue.addOperations(operations, waitUntilFinished: false)
     }
     
-    
+    private func handleViewsStateForOperations(operations:[Operation], onOperationQueue queue:OperationQueue) {
+        print("Entering Operations loop")
+        operations.forEach { operation in
+            if let operation = operation as? FetchMostRecentAgentsEntryOperation {
+                operation.completionBlock = {
+                    if let error = operation.error {
+                        DispatchQueue.main.async {
+                            UIAlertController.showTelaAlert(title: "Error", message: error.localizedDescription, action: UIAlertAction(title: "OK", style: .destructive, handler: { action in
+                                self.navigationController?.popViewController(animated: true)
+                            }), controller: self, completion: {
+                                queue.cancelAllOperations()
+                                self.stopRefreshers()
+                            })
+                        }
+                    }
+                }
+            } else if let operation = operation as? DownloadAgentsEntriesFromServerOperation {
+                operation.completionBlock = {
+                    guard case let .failure(error) = operation.result else { return }
+                    DispatchQueue.main.async {
+                        UIAlertController.showTelaAlert(title: "Error", message: error.localizedDescription, action: UIAlertAction(title: "OK", style: .destructive, handler: { action in
+                            self.navigationController?.popViewController(animated: true)
+                        }), controller: self, completion: {
+                            queue.cancelAllOperations()
+                            self.stopRefreshers()
+                        })
+                    }
+                }
+            } else if let operation = operation as? AddAgentsEntriesToStoreOperation {
+                print("AddAgentsOperation - : \(operation)")
+                operation.completionBlock = {
+                    print("Reached Add Agents Completion Block")
+                    if let error = operation.error {
+                        DispatchQueue.main.async {
+                            UIAlertController.showTelaAlert(title: "Error", message: error.localizedDescription, action: UIAlertAction(title: "OK", style: .destructive, handler: { action in
+                                self.navigationController?.popViewController(animated: true)
+                            }), controller: self, completion: {
+                                queue.cancelAllOperations()
+                                self.stopRefreshers()
+                            })
+                        }
+                    } else {
+                        print("No Error")
+                        DispatchQueue.main.async {
+                            self.stopRefreshers()
+                            self.updateSnapshot()
+                        }
+                    }
+                }
+            }
+        }
+    }
     fileprivate func setupSearchBar() {
         searchController.searchBar.delegate = self
         searchController.searchBar.autocapitalizationType = .none

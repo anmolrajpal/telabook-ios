@@ -76,6 +76,7 @@ struct AgentCodable : Codable {
 }
 
 // MARK: An extension to create Agent Object Core Data Entity from AgentCodable Server Response Data
+// Must be modified only when you change core data model
 extension Agent {
     convenience init(context:NSManagedObjectContext, agentEntryFromServer agentEntry:AgentCodable) {
         self.init(context: context)
@@ -83,15 +84,15 @@ extension Agent {
         self.isAgentDeleted = agentEntry.deleted != nil ? agentEntry.deleted!.boolValue : false
         self.didNumber = agentEntry.didNumber
         self.externalPendingMessagesCount = agentEntry.externalPendingMessages != nil ? Int16(agentEntry.externalPendingMessages!) : 0
-        self.id = agentEntry.internalConversationId != nil ? Int32(agentEntry.internalConversationId!) : 0
-        self.lastMessageDate = (agentEntry.internalLastMessageDate != nil) ? Date(timeIntervalSince1970: TimeInterval(agentEntry.internalLastMessageDate!)!) : nil
-        self.lastMessageSeenDate = (agentEntry.internalLastMessageSeen != nil) ? Date(timeIntervalSince1970: TimeInterval(agentEntry.internalLastMessageSeen!)!) : nil
+        self.internalConversationID = agentEntry.internalConversationId != nil ? Int32(agentEntry.internalConversationId!) : 0
+        self.lastMessageDate = (agentEntry.internalLastMessageDate != nil) ? Date.getDateFromString(dateString: agentEntry.internalLastMessageDate, dateFormat: "yyyy-MM-dd HH:mm:ss") : nil
+        self.lastMessageSeenDate = (agentEntry.internalLastMessageSeen != nil) ? Date.getDateFromString(dateString: agentEntry.internalLastMessageSeen, dateFormat: "yyyy-MM-dd HH:mm:ss") : nil
         self.internalNode = agentEntry.internalNode
         self.personName = agentEntry.personName
         self.phoneNumber = agentEntry.phoneNumber
-        self.priority1 = (agentEntry.priority1 != nil) ? Int16(agentEntry.priority1!) ?? 0 : 0
-        self.priority2 = (agentEntry.priority1 != nil) ? Int16(agentEntry.priority2!) ?? 0 : 0
-        self.priority3 = (agentEntry.priority1 != nil) ? Int16(agentEntry.priority3!) ?? 0 : 0
+        self.priority1 = (agentEntry.priority1 != nil) ? Int(agentEntry.priority1 ?? "0")!.boolValue : false
+        self.priority2 = (agentEntry.priority1 != nil) ? Int(agentEntry.priority2 ?? "0")!.boolValue : false
+        self.priority3 = (agentEntry.priority1 != nil) ? Int(agentEntry.priority3 ?? "0")!.boolValue : false
         self.profileImageName = agentEntry.profileImage
         self.profileImageURL = agentEntry.profileImageUrl != nil ? URL(string: agentEntry.profileImageUrl!) : nil
         self.roleID = agentEntry.roleId != nil ? Int16(agentEntry.roleId!) : 0

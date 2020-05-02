@@ -20,14 +20,18 @@ class SettingsViewController: UIViewController {
             } else {
                 fatalError("Fail to unwrap user details")
             }
-            if let dids = profile.user?.did {
-                let arr = dids.map { $0.number }.compactMap { $0 }
-                #if DEBUG
-                print("Assigned DIDs: \(arr)")
-                #endif
-                let didStr = arr.joined(separator: ", ")
-                assignedDIDs = didStr
+            if let did = profile.user?.did {
+//                let arr = dids.map { $0.number }.compactMap { $0 }
+                assignedDIDs = did.number
             }
+//            if let dids = profile.user?.did {
+//                let arr = dids.map { $0.number }.compactMap { $0 }
+//                #if DEBUG
+//                print("Assigned DIDs: \(arr)")
+//                #endif
+//                let didStr = arr.joined(separator: ", ")
+//                assignedDIDs = didStr
+//            }
         }
     }
     internal var profileImage:String?

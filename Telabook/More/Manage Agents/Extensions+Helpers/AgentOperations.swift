@@ -12,17 +12,9 @@ import CoreData
 struct AgentOperations {
     // Returns an array of operations for fetching the latest entries and then adding them to the Core Data store.
     static func getOperationsToFetchLatestEntries(using context: NSManagedObjectContext) -> [Operation] {
+        print("Entered")
         let fetchMostRecentEntry = FetchMostRecentAgentsEntryOperation(context: context)
         let downloadFromServer = DownloadAgentsEntriesFromServerOperation()
-//        let passTimestampToServer = BlockOperation { [unowned fetchMostRecentEntry, unowned downloadFromServer] in
-//            guard let timestamp = fetchMostRecentEntry.result?.timestamp else {
-//                downloadFromServer.cancel()
-//                return
-//            }
-//            downloadFromServer.sinceDate = timestamp
-//        }
-//        passTimestampToServer.addDependency(fetchMostRecentEntry)
-//        downloadFromServer.addDependency(passTimestampToServer)
         
         let addToStore = AddAgentsEntriesToStoreOperation(context: context)
         let passServerResultsToStore = BlockOperation { [unowned downloadFromServer, unowned addToStore] in
@@ -46,15 +38,27 @@ struct AgentOperations {
 
 /// Fetches the most recent Agents entry from the Core Data store.
 class FetchMostRecentAgentsEntryOperation: Operation {
+    enum OperationError: Error, LocalizedError {
+        case coreDataError(error:Error)
+        
+        var localizedDescription: String {
+            switch self {
+                case let .coreDataError(error): return "Core Data Error: \(error.localizedDescription)"
+            }
+        }
+    }
+    var error:OperationError?
     private let context: NSManagedObjectContext
     
     var result: Agent?
     
     init(context: NSManagedObjectContext) {
+        print("Operation 1 init")
         self.context = context
     }
     
     override func main() {
+        print("Operation 1 main")
         let request: NSFetchRequest<Agent> = Agent.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(key: #keyPath(Agent.date), ascending: false)]
         request.fetchLimit = 1
@@ -67,29 +71,22 @@ class FetchMostRecentAgentsEntryOperation: Operation {
                 result = fetchResult[0]
             } catch {
                 print("Error fetching from context: \(error)")
+                self.error = .coreDataError(error: error)
             }
         }
     }
 }
 
 
-// Downloads entries created after the specified date.
+/// Downloads Agents entries from the server.
 class DownloadAgentsEntriesFromServerOperation: Operation {
     var result: Result<[AgentCodable], APIService.APIError>?
-    
+
     private var downloading = false
-    private var session = URLSession.shared
-    private var dataTask: URLSessionDataTask!
-    
+  
     private let params:[String:String] = [
         "company_id":String(AppData.companyId)
     ]
-    
-    override init() {
-        super.init()
-        print("About to Hit Endpoint")
-        dataTask = APIService.shared.hitEndpoint(endpoint: .FetchAgents, httpMethod: .GET, params: params, completion: finish)
-    }
     
     
     override var isAsynchronous: Bool {
@@ -106,9 +103,7 @@ class DownloadAgentsEntriesFromServerOperation: Operation {
     
     override func cancel() {
         super.cancel()
-        if let dataTask = dataTask {
-            dataTask.cancel()
-        }
+        
     }
     
     func finish(result: Result<[AgentCodable], APIService.APIError>) {
@@ -119,13 +114,14 @@ class DownloadAgentsEntriesFromServerOperation: Operation {
         
         downloading = false
         self.result = result
-        dataTask = nil
+        print("Operation 2 finish")
         
         didChangeValue(forKey: #keyPath(isFinished))
         didChangeValue(forKey: #keyPath(isExecuting))
     }
 
     override func start() {
+        print("Operation 2 start")
         willChangeValue(forKey: #keyPath(isExecuting))
         downloading = true
         didChangeValue(forKey: #keyPath(isExecuting))
@@ -134,7 +130,8 @@ class DownloadAgentsEntriesFromServerOperation: Operation {
             finish(result: .failure(.cancelled))
             return
         }
-        dataTask.resume()
+        print("Ready to trigger API Endpoint Operations")
+        APIOperations.triggerAPIEndpointOperations(endpoint: .FetchAgents, httpMethod: .GET, params: params, completion: finish)
     }
 }
 
@@ -143,15 +140,27 @@ class DownloadAgentsEntriesFromServerOperation: Operation {
 
 /// Add Agents entries returned from the server to the Core Data store.
 class AddAgentsEntriesToStoreOperation: Operation {
+    enum OperationError: Error, LocalizedError {
+        case coreDataError(error:Error)
+        
+        var localizedDescription: String {
+            switch self {
+                case let .coreDataError(error): return "Core Data Error: \(error.localizedDescription)"
+            }
+        }
+    }
+    var error:OperationError?
     private let context: NSManagedObjectContext
     var entries: [AgentCodable]?
     var delay: TimeInterval = 0
 
     init(context: NSManagedObjectContext) {
+        print("Operation 3 init")
         self.context = context
     }
     
     convenience init(context: NSManagedObjectContext, entries: [AgentCodable], delay: TimeInterval? = nil) {
+        print("Operation 3 init")
         self.init(context: context)
         self.entries = entries
         if let delay = delay {
@@ -160,6 +169,7 @@ class AddAgentsEntriesToStoreOperation: Operation {
     }
     
     override func main() {
+        print("Operation 3 main")
         guard let entries = entries else { return }
 
         context.performAndWait {
@@ -174,13 +184,13 @@ class AddAgentsEntriesToStoreOperation: Operation {
                         Thread.sleep(forTimeInterval: delay)
                     }
                     try context.save()
-
                     if isCancelled {
                         break
                     }
                 }
             } catch {
-                print("Error adding entries to store: \(error)")
+                print("Error adding entries to store: \(error))")
+                self.error = .coreDataError(error: error)
             }
         }
     }
@@ -193,10 +203,12 @@ class DeleteAgentEntriesOperation: Operation {
     var delay: TimeInterval = 0.0005
     
     init(context: NSManagedObjectContext) {
+        print("Operation 4 init")
         self.context = context
     }
     
     convenience init(context: NSManagedObjectContext, predicate: NSPredicate?, delay: TimeInterval? = nil) {
+        print("Operation 4 init")
         self.init(context: context)
         self.predicate = predicate
         if let delay = delay {
@@ -205,6 +217,7 @@ class DeleteAgentEntriesOperation: Operation {
     }
     
     override func main() {
+        print("Operation 4 main")
         let fetchRequest: NSFetchRequest<Agent> = Agent.fetchRequest()
         fetchRequest.predicate = predicate
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(Agent.date), ascending: true)]

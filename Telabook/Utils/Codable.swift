@@ -309,7 +309,6 @@ public class Permission : NSManagedObject, Codable {
 
 
 struct UserInfoCodable : Codable {
-    
     let permissions : [Permission]?
     let roles : [Roles]?
     let user : User?
@@ -319,7 +318,6 @@ struct UserInfoCodable : Codable {
         case roles = "roles"
         case user = "user"
     }
-    
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         permissions = try values.decodeIfPresent([Permission].self, forKey: .permissions)
@@ -327,82 +325,80 @@ struct UserInfoCodable : Codable {
         user = try values.decodeIfPresent(User.self, forKey: .user)
     }
     struct User : Codable {
-        
-        let email : String?
-        let id : Int?
-        let lastName : String?
-        var name : String?
-        let phone : String?
-        let profileImage : String?
-        let profileImageUrl : String?
-        let username : String?
-        let workerId : Int?
-        let `extension` : Extension?
+        let address : String?
         let company : Int?
         let companyName : String?
         let contactEmail : String?
-        let address : String?
         let defaultCompany : DefaultCompany?
+        let did : Did?
+        let email : String?
+        let `extension` : Extension?
+        let id : Int?
+        let lastName : String?
+        let name : String?
+        let phone : String?
+        let profileImage : String?
+        let profileImageUrl : String?
         let role : Role?
-        let did : [Did]?
+        let username : String?
+        let workerId : Int?
         
         enum CodingKeys: String, CodingKey {
+            case address = "address"
+            case company = "company"
+            case companyName = "company_name"
+            case contactEmail = "contact_email"
+            case defaultCompany = "default_company"
+            case did = "did"
             case email = "email"
+            case `extension` = "extension"
             case id = "id"
             case lastName = "last_name"
             case name = "name"
             case phone = "phone"
             case profileImage = "profile_image"
             case profileImageUrl = "profile_image_url"
+            case role = "role"
             case username = "username"
             case workerId = "worker_id"
-            case company = "company"
-            case companyName = "company_name"
-            case `extension` = "extension"
-            case contactEmail = "contact_email"
-            case address = "address"
-            case defaultCompany = "default_company"
-            case role = "role"
-            case did = "did"
         }
         
         init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: CodingKeys.self)
+            address = try values.decodeIfPresent(String.self, forKey: .address)
+            company = try values.decodeIfPresent(Int.self, forKey: .company)
+            companyName = try values.decodeIfPresent(String.self, forKey: .companyName)
+            contactEmail = try values.decodeIfPresent(String.self, forKey: .contactEmail)
+            defaultCompany = try values.decodeIfPresent(DefaultCompany.self, forKey: .defaultCompany)
+            did = try values.decodeIfPresent(Did.self, forKey: .did)
             email = try values.decodeIfPresent(String.self, forKey: .email)
+            `extension` = try values.decodeIfPresent(Extension.self, forKey: .extension)
             id = try values.decodeIfPresent(Int.self, forKey: .id)
             lastName = try values.decodeIfPresent(String.self, forKey: .lastName)
             name = try values.decodeIfPresent(String.self, forKey: .name)
             phone = try values.decodeIfPresent(String.self, forKey: .phone)
             profileImage = try values.decodeIfPresent(String.self, forKey: .profileImage)
             profileImageUrl = try values.decodeIfPresent(String.self, forKey: .profileImageUrl)
+            role = try values.decodeIfPresent(Role.self, forKey: .role)
             username = try values.decodeIfPresent(String.self, forKey: .username)
             workerId = try values.decodeIfPresent(Int.self, forKey: .workerId)
-            `extension` = try values.decodeIfPresent(Extension.self, forKey: .`extension`)
-            company = try values.decodeIfPresent(Int.self, forKey: .company)
-            companyName = try values.decodeIfPresent(String.self, forKey: .companyName)
-            contactEmail = try values.decodeIfPresent(String.self, forKey: .contactEmail)
-            address = try values.decodeIfPresent(String.self, forKey: .address)
-            defaultCompany = try values.decodeIfPresent(DefaultCompany.self, forKey: .defaultCompany)
-            role = try values.decodeIfPresent(Role.self, forKey: .role)
-            did = try values.decodeIfPresent([Did].self, forKey: .did)
         }
         struct Extension : Codable {
-            
+            let domain : String?
             let number : String?
             let password : String?
-            let domain : String?
             
             enum CodingKeys: String, CodingKey {
+                case domain = "domain"
                 case number = "number"
                 case password = "password"
-                case domain = "domain"
             }
             
             init(from decoder: Decoder) throws {
                 let values = try decoder.container(keyedBy: CodingKeys.self)
+                domain = try values.decodeIfPresent(String.self, forKey: .domain)
                 number = try values.decodeIfPresent(String.self, forKey: .number)
                 password = try values.decodeIfPresent(String.self, forKey: .password)
-                domain = try values.decodeIfPresent(String.self, forKey: .domain)
             }
         }
         
@@ -504,7 +500,6 @@ struct UserInfoCodable : Codable {
                 case sid = "sid"
                 case updatedAt = "updated_at"
             }
-            
             init(from decoder: Decoder) throws {
                 let values = try decoder.container(keyedBy: CodingKeys.self)
                 companyId = try values.decodeIfPresent(Int.self, forKey: .companyId)
@@ -521,7 +516,6 @@ struct UserInfoCodable : Codable {
     }
     
     struct Roles : Codable {
-        
         let id : Int?
         let name : String?
         
@@ -529,16 +523,13 @@ struct UserInfoCodable : Codable {
             case id = "id"
             case name = "name"
         }
-        
         init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: CodingKeys.self)
             id = try values.decodeIfPresent(Int.self, forKey: .id)
             name = try values.decodeIfPresent(String.self, forKey: .name)
         }
-        
     }
     struct Permission : Codable {
-        
         let create : Int?
         let delete : Int?
         let id : Int?
@@ -564,9 +555,7 @@ struct UserInfoCodable : Codable {
             update = try values.decodeIfPresent(Int.self, forKey: .update)
             view = try values.decodeIfPresent(Int.self, forKey: .view)
         }
-        
     }
-
 }
 
 

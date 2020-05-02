@@ -34,7 +34,6 @@ class ManageAgentsCellView: UIView {
         }
         
         guard let parameters = parameters else { return }
-        
         let operation = BlockOperation()
         
         operation.addExecutionBlock() { [weak self, weak operation] in
@@ -51,8 +50,9 @@ class ManageAgentsCellView: UIView {
         queue.addOperation(operation)
     }
     private func setupData(parameters:Parameters?, animated:Bool) {
+        print("\n--------- Parameter Person Name: \(parameters?.name as Any) --------------- \n")
         agentNameLabel.text = parameters?.name
-        agentDesignationLabel.text = String(describing: parameters?.role)
+        agentDesignationLabel.text = parameters?.role.stringValue
         if parameters?.lowPriorityCheck == true { stackView.addArrangedSubview(lowPriorityImageView) }
         if parameters?.mediumPriorityCheck == true { stackView.addArrangedSubview(mediumPriorityImageView) }
         if parameters?.highPriorityCheck == true { stackView.addArrangedSubview(highPriorityImageView) }
@@ -62,6 +62,7 @@ class ManageAgentsCellView: UIView {
             self.profileImageView.loadImageUsingCache(with: nil, placeHolder: UIImage.placeholderInitialsImage(text: parameters?.initials ?? "NN"))
         }
         guard !animated else {
+            self.alpha = 0.1
             UIView.transition(with: self,
                               duration: 0.2,
                               options: [.transitionCrossDissolve, .beginFromCurrentState, .allowUserInteraction],
@@ -87,33 +88,44 @@ class ManageAgentsCellView: UIView {
         super.init(frame: frame)
         setupViews()
     }
-    
     override func layoutSubviews() {
         super.layoutSubviews()
         layoutConstraints()
+        updateContents()
     }
-
+//    override func updateConstraints() {
+//        layoutConstraints()
+//        super.updateConstraints()
+//    }
     fileprivate func setupViews() {
+//        backgroundColor = UIColor.yellow.withAlphaComponent(0.4)
         addSubview(profileImageView)
+        addSubview(containerView)
         containerView.addSubview(agentNameLabel)
         containerView.addSubview(agentDesignationLabel)
         containerView.addSubview(stackView)
-        addSubview(containerView)
     }
     fileprivate func layoutConstraints() {
-        profileImageView.centerYAnchor.constraint(equalTo:self.centerYAnchor).isActive = true
-        profileImageView.leadingAnchor.constraint(equalTo:self.leadingAnchor, constant:10).isActive = true
-        profileImageView.widthAnchor.constraint(equalToConstant:60).isActive = true
-        profileImageView.heightAnchor.constraint(equalToConstant:60).isActive = true
-        containerView.anchor(top: topAnchor, left: rightAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 10, widthConstant: 0, heightConstant: 0)
-        agentNameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: -15).isActive = true
-        agentNameLabel.anchor(top: nil, left: containerView.leftAnchor, bottom: nil, right: containerView.rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 10, widthConstant: 0, heightConstant: 0)
-        agentDesignationLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: 15).isActive = true
-        agentDesignationLabel.anchor(top: nil, left: agentNameLabel.leftAnchor, bottom: nil, right: agentNameLabel.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
-        stackView.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0).isActive = true
-        stackView.centerYAnchor.constraint(equalTo: agentDesignationLabel.centerYAnchor).isActive = true
+        let imageViewHeight:CGFloat = 60
+        profileImageView.anchor(top: nil, left: safeAreaLayoutGuide.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 0, widthConstant: imageViewHeight, heightConstant: imageViewHeight)
+        profileImageView.centerYAnchor.constraint(equalTo: centerYAnchor).activate()
+        
+        containerView.anchor(top: topAnchor, left: profileImageView.rightAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 10)
+        
+        
+        agentNameLabel.anchor(top: nil, left: containerView.leftAnchor, bottom: containerView.centerYAnchor, right: containerView.rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 8, rightConstant: 10)
+//        agentNameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: -15).activate()
+        
+        
+        
+        agentDesignationLabel.anchor(top: containerView.centerYAnchor, left: agentNameLabel.leftAnchor, bottom: nil, right: agentNameLabel.rightAnchor, topConstant: 8, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
+//        agentDesignationLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: 15).activate()
+        
+        
+        stackView.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0).activate()
+        stackView.centerYAnchor.constraint(equalTo: agentDesignationLabel.centerYAnchor).activate()
     }
-    let profileImageView:UIImageView = {
+    lazy var profileImageView:UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -123,7 +135,7 @@ class ManageAgentsCellView: UIView {
         imageView.clipsToBounds = true
         return imageView
     }()
-    let agentNameLabel:UILabel = {
+    lazy var agentNameLabel:UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 1
@@ -131,7 +143,7 @@ class ManageAgentsCellView: UIView {
         label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 13.0)
         return label
     }()
-    let agentDesignationLabel:UILabel = {
+    lazy var agentDesignationLabel:UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
@@ -148,28 +160,28 @@ class ManageAgentsCellView: UIView {
         view.distribution = UIStackView.Distribution.equalSpacing
         return view
     }()
-    let lowPriorityImageView:UIImageView = {
+    lazy var lowPriorityImageView:UIImageView = {
         let imageView = UIImageView()
         imageView.image = #imageLiteral(resourceName: "followup_small_low")
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
-    let mediumPriorityImageView:UIImageView = {
+    lazy var mediumPriorityImageView:UIImageView = {
         let imageView = UIImageView()
         imageView.image = #imageLiteral(resourceName: "followup_medium_low")
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
-    let highPriorityImageView:UIImageView = {
+    lazy var highPriorityImageView:UIImageView = {
         let imageView = UIImageView()
         imageView.image = #imageLiteral(resourceName: "followup_small_high")
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
-    let containerView:UIView = {
+    lazy var containerView:UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.clipsToBounds = true

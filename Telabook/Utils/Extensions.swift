@@ -875,3 +875,17 @@ extension Int {
         return self != 0
     }
 }
+
+
+
+extension UIRefreshControl {
+
+    func beginExplicitRefreshing() {
+        if let scrollView = superview as? UIScrollView {
+            scrollView.setContentOffset(CGPoint(x: 0, y: scrollView.contentOffset.y - frame.height), animated: true)
+        }
+        beginRefreshing()
+        sendActions(for: .valueChanged)
+    }
+
+}

@@ -23,9 +23,9 @@ class ManageAgentsCell: UITableViewCell {
         let name = details.personName ?? "No Name"
         let initialsText = CustomUtils.shared.getInitials(from: name)
         let role = AppUserRole.getUserRole(byRoleCode: roleID)
-        let lowPriorityCheck = Int(details.priority1).boolValue
-        let mediumPriorityCheck = Int(details.priority2).boolValue
-        let highPriorityCheck = Int(details.priority3).boolValue
+        let lowPriorityCheck = details.priority1
+        let mediumPriorityCheck = details.priority2
+        let highPriorityCheck = details.priority3
         let urlString = details.profileImageURL?.absoluteString
         let profileImageURLString = CustomUtils.shared.getSlashEncodedURL(from: urlString)
         
@@ -49,5 +49,4 @@ class ManageAgentsCell: UITableViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
 }

@@ -9,16 +9,16 @@
         <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="didNumber" optional="YES" attributeType="String"/>
         <attribute name="externalPendingMessagesCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="id" optional="YES" attributeType="Integer 32" minValueString="1" usesScalarValueType="YES"/>
+        <attribute name="internalConversationID" optional="YES" attributeType="Integer 32" usesScalarValueType="YES"/>
         <attribute name="internalNode" optional="YES" attributeType="String"/>
         <attribute name="isAgentDeleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="lastMessageDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="lastMessageSeenDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="personName" optional="YES" attributeType="String"/>
         <attribute name="phoneNumber" optional="YES" attributeType="String"/>
-        <attribute name="priority1" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="priority2" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="priority3" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="priority1" optional="YES" attributeType="Boolean" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="priority2" optional="YES" attributeType="Boolean" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="priority3" optional="YES" attributeType="Boolean" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="profileImageName" optional="YES" attributeType="String"/>
         <attribute name="profileImageURL" optional="YES" attributeType="URI"/>
         <attribute name="roleID" optional="YES" attributeType="Integer 16" minValueString="1" usesScalarValueType="YES"/>
@@ -26,6 +26,11 @@
         <attribute name="username" optional="YES" attributeType="String"/>
         <attribute name="workerID" optional="YES" attributeType="Integer 32" minValueString="1" usesScalarValueType="YES"/>
         <relationship name="customer" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Customer" inverseName="agent" inverseEntity="Customer"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="userID"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
     <entity name="Customer" representedClassName=".Customer" syncable="YES" codeGenerationType="class">
         <attribute name="addressBookID" optional="YES" attributeType="Integer 32" minValueString="1" usesScalarValueType="YES"/>

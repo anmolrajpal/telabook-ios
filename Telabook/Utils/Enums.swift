@@ -29,6 +29,10 @@ public enum AppUserRole {
             case .Agent: return 4
         }
     }
+    
+    var stringValue:String {
+        String(describing: self)
+    }
 }
 
 public enum UserRole {
