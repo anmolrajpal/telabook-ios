@@ -16,15 +16,17 @@ extension ManageAgentsViewController {
         if !currentSearchText.isEmpty {
             fetchRequest.predicate = NSPredicate(format: "\(#keyPath(Agent.personName)) CONTAINS[c] %@", currentSearchText)
             fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(Agent.personName), ascending: true)]
+            fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
+                                                                  managedObjectContext: PersistentContainer.shared.viewContext,
+                                                                  sectionNameKeyPath: nil,
+                                                                  cacheName: nil)
         } else {
             fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(Agent.date), ascending: false)]
+            fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
+                                                                  managedObjectContext: PersistentContainer.shared.viewContext,
+                                                                  sectionNameKeyPath: nil,
+                                                                  cacheName: String(describing: self))
         }
-        
-        
-        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
-                                                              managedObjectContext: PersistentContainer.shared.viewContext,
-                                                              sectionNameKeyPath: nil,
-                                                              cacheName: String(describing: self))
         fetchedResultsController.delegate = self
         do {
             try fetchedResultsController.performFetch()
@@ -57,53 +59,11 @@ extension ManageAgentsViewController {
         })
     }
     
-    
-    /// Setup the `UISearchController` to let users search through the list of colors
-    internal func setupSearchController() {
-        let searchController = UISearchController(searchResultsController: nil)
-        searchController.searchResultsUpdater = self
-        searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Search Agents"
-        searchController.searchBar.keyboardAppearance = .dark
-        let attributes:[NSAttributedString.Key : Any] = [
-            NSAttributedString.Key.foregroundColor : UIColor.telaRed,
-            NSAttributedString.Key.font : UIFont(name: CustomFonts.gothamMedium.rawValue, size: 13)!
-        ]
-        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes(attributes, for: .normal)
-        navigationItem.searchController = searchController
-        navigationItem.hidesSearchBarWhenScrolling = true
-    }
-    /*
-    internal func setupSearchBar() {
-        searchController.searchBar.delegate = self
-        searchController.searchBar.autocapitalizationType = .none
-        searchController.searchBar.placeholder = "Search Agents"
-        searchController.searchBar.barStyle = .black
-        searchController.searchBar.isTranslucent = true
-        searchController.searchBar.searchBarStyle = .prominent
-        searchController.searchBar.returnKeyType = .done
-        searchController.searchBar.backgroundImage = UIImage()
-        searchController.searchBar.keyboardAppearance = .dark
-        searchController.searchBar.sizeToFit()
-        definesPresentationContext = true
-        //Setup cancel button in search bar
-        let attributes:[NSAttributedString.Key : Any] = [
-            NSAttributedString.Key.foregroundColor : UIColor.telaRed,
-            NSAttributedString.Key.font : UIFont(name: CustomFonts.gothamMedium.rawValue, size: 13)!
-        ]
-        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes(attributes, for: .normal)
-        if #available(iOS 11.0, *) {
-            navigationItem.searchController = searchController
-            navigationItem.hidesSearchBarWhenScrolling = true
-        } else {
-            subview.tableView.tableHeaderView = searchController.searchBar
-        }
-    }
-    */
+    /// Manages the UI state based on the fetched results available
     internal func handleState() {
         if self.fetchedResultsController.sections?.first?.numberOfObjects == 0 {
             DispatchQueue.main.async {
-                self.subview.placeholderLabel.text = "Fetching"
+                self.subview.placeholderLabel.text = self.isFiltering ? "No Agent Found" : "Loading"
                 self.subview.placeholderLabel.isHidden = false
             }
         } else {
@@ -123,6 +83,30 @@ extension ManageAgentsViewController {
         fetchAgents()
     }
     
+    
+    
+    /// Setup the `UISearchController` to let users search through the list of colors
+    internal func setupSearchController() {
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.hidesNavigationBarDuringPresentation = false
+        searchController.searchBar.placeholder = "Search Agents"
+        searchController.searchBar.barStyle = .black
+        searchController.searchBar.isTranslucent = true
+        searchController.searchBar.searchBarStyle = .prominent
+        searchController.searchBar.returnKeyType = .done
+        searchController.searchBar.returnKeyType = .done
+        searchController.searchBar.keyboardAppearance = .dark
+        searchController.searchBar.sizeToFit()
+        definesPresentationContext = true
+        let attributes:[NSAttributedString.Key : Any] = [
+            NSAttributedString.Key.foregroundColor : UIColor.telaRed,
+            NSAttributedString.Key.font : UIFont(name: CustomFonts.gothamMedium.rawValue, size: 13)!
+        ]
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes(attributes, for: .normal)
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = true
+    }
     
     
     

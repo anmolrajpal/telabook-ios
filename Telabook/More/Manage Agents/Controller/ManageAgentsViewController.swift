@@ -32,6 +32,13 @@ class ManageAgentsViewController: UIViewController {
     internal var isFetchedResultsAvailable:Bool {
         return fetchedResultsController.sections?.first?.numberOfObjects == 0 ? false : true
     }
+    let searchController = UISearchController(searchResultsController: nil)
+    var isSearchBarEmpty: Bool {
+        return searchController.searchBar.text?.isEmpty ?? true
+    }
+    var isFiltering: Bool {
+        return searchController.isActive && !isSearchBarEmpty
+    }
     
     //MARK: init
     override func loadView() {
