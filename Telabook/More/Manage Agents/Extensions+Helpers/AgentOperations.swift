@@ -235,7 +235,7 @@ class UpdateAgentEntriesOperation: Operation {
     
     init(context: NSManagedObjectContext) {
         self.context = context
-        self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
+//        self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
     }
     
     
