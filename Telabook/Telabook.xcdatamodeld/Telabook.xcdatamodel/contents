@@ -5,7 +5,7 @@
         <attribute name="street" optional="YES" attributeType="String"/>
         <relationship name="person" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Person" inverseName="address" inverseEntity="Person"/>
     </entity>
-    <entity name="Agent" representedClassName=".Agent" syncable="YES" codeGenerationType="class">
+    <entity name="Agent" representedClassName="Agent" syncable="YES" codeGenerationType="class">
         <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="didNumber" optional="YES" attributeType="String"/>
         <attribute name="externalPendingMessagesCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
@@ -26,14 +26,15 @@
         <attribute name="userID" optional="YES" attributeType="Integer 32" minValueString="1" usesScalarValueType="YES"/>
         <attribute name="username" optional="YES" attributeType="String"/>
         <attribute name="workerID" optional="YES" attributeType="Integer 32" minValueString="1" usesScalarValueType="YES"/>
-        <relationship name="customer" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Customer" inverseName="agent" inverseEntity="Customer"/>
+        <relationship name="customers" toMany="YES" deletionRule="Cascade" destinationEntity="Customer" inverseName="agent" inverseEntity="Customer"/>
+        <relationship name="quickResponses" toMany="YES" deletionRule="Cascade" destinationEntity="QuickResponse" inverseName="sender" inverseEntity="QuickResponse"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="userID"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
-    <entity name="Customer" representedClassName=".Customer" syncable="YES" codeGenerationType="class">
+    <entity name="Customer" representedClassName="Customer" syncable="YES" codeGenerationType="class">
         <attribute name="addressBookID" optional="YES" attributeType="Integer 32" minValueString="1" usesScalarValueType="YES"/>
         <attribute name="addressBookName" optional="YES" attributeType="String"/>
         <attribute name="blacklistReason" optional="YES" attributeType="String"/>
@@ -64,7 +65,7 @@
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="workerPersonName" optional="YES" attributeType="String"/>
         <attribute name="workerPhoneNumber" optional="YES" attributeType="String"/>
-        <relationship name="agent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Agent" inverseName="customer" inverseEntity="Agent"/>
+        <relationship name="agent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Agent" inverseName="customers" inverseEntity="Agent"/>
     </entity>
     <entity name="ExternalChat" representedClassName=".ExternalChat" syncable="YES">
         <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -133,6 +134,15 @@
         <attribute name="phone" optional="YES" attributeType="String"/>
         <relationship name="address" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Address" inverseName="person" inverseEntity="Address"/>
     </entity>
+    <entity name="QuickResponse" representedClassName="QuickResponse" syncable="YES" codeGenerationType="class">
+        <attribute name="answer" optional="YES" attributeType="String"/>
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="lastRefreshedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="userID" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="sender" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Agent" inverseName="quickResponses" inverseEntity="Agent"/>
+    </entity>
     <entity name="UserObject" representedClassName=".UserObject" syncable="YES">
         <attribute name="company" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="email" optional="YES" attributeType="String"/>
@@ -149,13 +159,14 @@
     </entity>
     <elements>
         <element name="Address" positionX="-324.984375" positionY="-372.328125" width="128" height="90"/>
-        <element name="Agent" positionX="-73.41015625" positionY="-152.30078125" width="128" height="358"/>
-        <element name="Customer" positionX="-315" positionY="18" width="128" height="508"/>
-        <element name="ExternalChat" positionX="-396" positionY="-216" width="128" height="165"/>
-        <element name="ExternalConversation" positionX="-48.703125" positionY="105.40625" width="128" height="345"/>
-        <element name="InternalConversation" positionX="-241.4140625" positionY="160.12109375" width="128" height="313"/>
-        <element name="Permission" positionX="-420.73828125" positionY="178.13671875" width="128" height="148"/>
+        <element name="Agent" positionX="-718.6484375" positionY="-34.9140625" width="128" height="373"/>
+        <element name="Customer" positionX="-453.58984375" positionY="100.859375" width="128" height="508"/>
+        <element name="ExternalChat" positionX="-310.7109375" positionY="-196.6796875" width="128" height="165"/>
+        <element name="ExternalConversation" positionX="140.44140625" positionY="-192.74609375" width="128" height="345"/>
+        <element name="InternalConversation" positionX="171.46484375" positionY="271.6328125" width="128" height="313"/>
+        <element name="Permission" positionX="15.27734375" positionY="732.56640625" width="128" height="148"/>
         <element name="Person" positionX="-538.78515625" positionY="-276.92578125" width="128" height="105"/>
-        <element name="UserObject" positionX="-602.515625" positionY="204.3203125" width="128" height="225"/>
+        <element name="UserObject" positionX="-263.36328125" positionY="581.5" width="128" height="225"/>
+        <element name="QuickResponse" positionX="-739.09765625" positionY="406.52734375" width="128" height="148"/>
     </elements>
 </model>
