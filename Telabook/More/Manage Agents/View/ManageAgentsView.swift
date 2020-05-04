@@ -13,23 +13,20 @@ class ManageAgentsView: UIView {
     
     // MARK: Setup Views
     fileprivate func setupViews() {
+        addSubview(tableView)
         addSubview(spinner)
         addSubview(placeholderLabel)
-        addSubview(tableView)
         layoutConstraints()
     }
     
     
     // MARK: Layout Methods for views
     fileprivate func layoutConstraints() {
-        spinner.layoutIfNeeded()
+        tableView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
         spinner.centerXAnchor.constraint(equalTo: centerXAnchor).activate()
         spinner.centerYAnchor.constraint(equalTo: centerYAnchor).activate()
-        placeholderLabel.layoutIfNeeded()
         placeholderLabel.anchor(top: nil, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 20, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
-        placeholderLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -40).isActive = true
-        tableView.layoutIfNeeded()
-        tableView.anchor(top: safeAreaLayoutGuide.topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
+        placeholderLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -40).activate()
     }
     
     
@@ -45,7 +42,6 @@ class ManageAgentsView: UIView {
         tv.showsHorizontalScrollIndicator = false
         tv.showsVerticalScrollIndicator = true
         tv.tableFooterView = UIView(frame: CGRect.zero)
-        tv.isHidden = false
         return tv
     }()
     lazy var placeholderLabel:UILabel = {

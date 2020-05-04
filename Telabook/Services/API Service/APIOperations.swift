@@ -15,35 +15,38 @@ struct APIOperations {
 
     /// Returns an array of operations for creating and hitting API Endpoint
     static func triggerAPIEndpointOperations<T:Codable>(endpoint:APIService.Endpoint, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, completion: @escaping APIService.APICompletion<T>) {
-        print("Triggering API Endpoint Operations")
+
         let queue = OperationQueue()
         queue.name = "Endpoint Queue"
         queue.maxConcurrentOperationCount = 1
+        
         let fetchFirebaseTokenOperation = FetchTokenOperation()
         
         let hitEndpointOperation = HitEndpointOperation<T>(endpoint: endpoint, httpMethod: httpMethod, params: params, httpBody: httpBody, headers: headers, guardResponse: guardResponse, expectData: expectData)
         
         let passFirebaseTokenToAPIEndpointOperation = BlockOperation { [unowned fetchFirebaseTokenOperation, unowned hitEndpointOperation] in
             guard case let .success(bearerToken)? = fetchFirebaseTokenOperation.result else {
+                if case let .failure(error) = fetchFirebaseTokenOperation.result {
+                    completion(.failure(.noFirebaseToken(error: error)))
+                }
                 hitEndpointOperation.cancel()
                 return
             }
             hitEndpointOperation.bearerToken = bearerToken
+            #if DEBUG
+            print("\n\n------------------------------------------------ Firebase Token: BEGIN ------------------------------------------------\n\nFirebase Bearer Token: \(bearerToken)\n\n--------------------------------------------------- Firebase Token: END ------------------------------------------------\n\n")
+            #endif
         }
         passFirebaseTokenToAPIEndpointOperation.addDependency(fetchFirebaseTokenOperation)
         hitEndpointOperation.addDependency(passFirebaseTokenToAPIEndpointOperation)
         
         hitEndpointOperation.completionBlock = {
             guard let result = hitEndpointOperation.result else {
-                print("Darn it. There's no Result in last operation")
-                return
+                fatalError("Operation Error: HitEndpointOperation must return a result.")
             }
             completion(result)
         }
-        
         queue.addOperations([fetchFirebaseTokenOperation, passFirebaseTokenToAPIEndpointOperation, hitEndpointOperation], waitUntilFinished: false)
-        
-//        return [fetchFirebaseTokenOperation, passFirebaseTokenToAPIEndpointOperation, hitEndpointOperation]
     }
 }
 
@@ -68,7 +71,6 @@ class HitEndpointOperation<T:Codable>: Operation {
     var bearerToken:String?
     
     init(endpoint:APIService.Endpoint, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true) {
-        print("Hit Endpoint Operation init")
         self.endpoint = endpoint
         self.httpMethod = httpMethod
         self.params = params
@@ -108,14 +110,12 @@ class HitEndpointOperation<T:Codable>: Operation {
         downloading = false
         self.result = result
         dataTask = nil
-        print("API Operation finish")
         
         didChangeValue(forKey: #keyPath(isFinished))
         didChangeValue(forKey: #keyPath(isExecuting))
     }
     
     override func start() {
-        print("API Operation Start")
         willChangeValue(forKey: #keyPath(isExecuting))
         downloading = true
         didChangeValue(forKey: #keyPath(isExecuting))
@@ -124,12 +124,7 @@ class HitEndpointOperation<T:Codable>: Operation {
             finish(result: .failure(.cancelled))
             return
         }
-        guard !isCancelled else {
-            finish(result: .failure(.cancelled))
-            return
-        }
         guard let url = APIService.shared.constructURL(forEndpoint: endpoint, parameters: params) else {
-            print("Error Log: Unable to Construct URL")
             finish(result: .failure(.invalidURL))
             return
         }
@@ -138,7 +133,7 @@ class HitEndpointOperation<T:Codable>: Operation {
             return
         }
         #if DEBUG
-        print("Endpoint URL= \(url)")
+        print("Endpoint URL => \(url)")
         #endif
         var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: APIService.Configuration.timeOutInterval)
         guard !isCancelled else {
@@ -209,14 +204,14 @@ class HitEndpointOperation<T:Codable>: Operation {
                     self.finish(result: .success(object))
                 } catch let error {
                     #if DEBUG
-                    print("JSON Decoding Error: \(error.localizedDescription)")
+                    print("JSON Decoding Error: \(error)")
                     #endif
                     self.finish(result: .failure(.jsonDecodingError(error: error)))
                 }
             } else {
                 let customObjectString = "{\"result\":\"success\",\"message\":\"Success. Empty Data or Data not required.\",\"data\":{}}"
-                let customObject = try! self.decoder.decode(T.self, from: customObjectString.data(using: .utf8)!)
-                self.finish(result: .success(customObject))
+                let customObject = try! self.decoder.decode(T.self, from: customObjectString.data(using: .utf8)!) // Explicit unwrapping because jsonString is static so the result is known and should
+                self.finish(result: .success(customObject))                                                       // be decoded to (EmptyData) - Codable result type
             }
         }
         dataTask.resume()

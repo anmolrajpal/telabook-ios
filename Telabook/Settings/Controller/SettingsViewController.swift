@@ -223,7 +223,7 @@ class SettingsViewController: UIViewController {
         do {
             
             let context = PersistenceService.shared.persistentContainer.viewContext
-            let entityNames = [String(describing: ExternalConversation.self), String(describing: InternalConversation.self), String(describing: Permission.self), String(describing: UserObject.self)]
+            let entityNames = [String(describing: ExternalConversation.self), String(describing: InternalConversation.self), String(describing: Permission.self), String(describing: UserObject.self), String(describing: Agent.self), String(describing: Customer.self)]
             for entityName in entityNames {
                 let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
                 do {

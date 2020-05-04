@@ -14,6 +14,7 @@
         <attribute name="isAgentDeleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="lastMessageDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="lastMessageSeenDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastRefreshedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="personName" optional="YES" attributeType="String"/>
         <attribute name="phoneNumber" optional="YES" attributeType="String"/>
         <attribute name="priority1" optional="YES" attributeType="Boolean" defaultValueString="0" usesScalarValueType="YES"/>
@@ -148,7 +149,7 @@
     </entity>
     <elements>
         <element name="Address" positionX="-324.984375" positionY="-372.328125" width="128" height="90"/>
-        <element name="Agent" positionX="-73.41015625" positionY="-152.30078125" width="128" height="343"/>
+        <element name="Agent" positionX="-73.41015625" positionY="-152.30078125" width="128" height="358"/>
         <element name="Customer" positionX="-315" positionY="18" width="128" height="508"/>
         <element name="ExternalChat" positionX="-396" positionY="-216" width="128" height="165"/>
         <element name="ExternalConversation" positionX="-48.703125" positionY="105.40625" width="128" height="345"/>

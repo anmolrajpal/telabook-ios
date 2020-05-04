@@ -11,7 +11,6 @@ import Foundation
 struct FirebaseOperations {
     /// Returns an array of operations for fetching the Firebase Auth Token used in API Calls as Bearer Token..
     static func getOperationsToFetchFirebaseToken() -> [Operation] {
-        print("Entering Firebase Operations")
         let fetchTokenOperation = FetchTokenOperation()
         return [fetchTokenOperation]
     }
@@ -48,13 +47,12 @@ class FetchTokenOperation: Operation {
         
         fetching = false
         self.result = result
-        print("Firebase Fetch Token Operation finish")
+
         didChangeValue(forKey: #keyPath(isFinished))
         didChangeValue(forKey: #keyPath(isExecuting))
     }
 
     override func start() {
-        print("Firebase Fetch Token Operation start")
         willChangeValue(forKey: #keyPath(isExecuting))
         fetching = true
         didChangeValue(forKey: #keyPath(isExecuting))
@@ -63,7 +61,6 @@ class FetchTokenOperation: Operation {
             finish(result: .failure(.cancelled))
             return
         }
-        print("Fetching Firebase Token")
         FirebaseAuthService.shared.getCurrentToken(completion: finish)
     }
 }

@@ -65,7 +65,7 @@
 		6F69BE8222D46F9100F8903F /* BlacklistAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE8122D46F9100F8903F /* BlacklistAPI.swift */; };
 		6F69BE8422D4742000F8903F /* ManageAgentsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE8322D4742000F8903F /* ManageAgentsAPI.swift */; };
 		6F69BE8622D4742E00F8903F /* ManageAgentsAPIProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE8522D4742E00F8903F /* ManageAgentsAPIProtocol.swift */; };
-		6F69BE8822D4780F00F8903F /* ManageAgentsDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE8722D4780F00F8903F /* ManageAgentsDataProvider.swift */; };
+		6F69BE8822D4780F00F8903F /* ManageAgentsServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE8722D4780F00F8903F /* ManageAgentsServiceProvider.swift */; };
 		6F69BE8A22D4786300F8903F /* ManageAgentsTableViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE8922D4786300F8903F /* ManageAgentsTableViewExtensions.swift */; };
 		6F69BE8C22D4A63900F8903F /* AgentDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE8B22D4A63900F8903F /* AgentDetailsViewController.swift */; };
 		6F69BE8E22D4C66800F8903F /* QuickResponsesCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE8D22D4C66800F8903F /* QuickResponsesCodable.swift */; };
@@ -163,6 +163,9 @@
 		6FBDEC7822B28D5E00A8511E /* EditDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FBDEC7722B28D5E00A8511E /* EditDetailsViewController.swift */; };
 		6FBDEC7A22B3D3C200A8511E /* SMSDetailVCChatExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FBDEC7922B3D3C200A8511E /* SMSDetailVCChatExtensions.swift */; };
 		6FBDEC7C22B3F1DA00A8511E /* SMSDetailVC+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FBDEC7B22B3F1DA00A8511E /* SMSDetailVC+CollectionView.swift */; };
+		6FD8955D245ECDB40083D79A /* AgentDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD8955C245ECDB40083D79A /* AgentDetailsView.swift */; };
+		6FD8955F245EDAAB0083D79A /* ManageAgentsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD8955E245EDAAB0083D79A /* ManageAgentsHelpers.swift */; };
+		6FD89561245EDAD40083D79A /* AgentDetailsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD89560245EDAD40083D79A /* AgentDetailsHelpers.swift */; };
 		6FEF96A222A6677900F2FF83 /* ExternalConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF96A122A6677900F2FF83 /* ExternalConversation.swift */; };
 		6FEF96A422A6679400F2FF83 /* ExternalConversationsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF96A322A6679400F2FF83 /* ExternalConversationsAPI.swift */; };
 		6FEF96A622A67F2900F2FF83 /* SMSDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF96A522A67F2900F2FF83 /* SMSDetailViewController.swift */; };
@@ -229,7 +232,7 @@
 		6F69BE8122D46F9100F8903F /* BlacklistAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlacklistAPI.swift; sourceTree = "<group>"; };
 		6F69BE8322D4742000F8903F /* ManageAgentsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsAPI.swift; sourceTree = "<group>"; };
 		6F69BE8522D4742E00F8903F /* ManageAgentsAPIProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsAPIProtocol.swift; sourceTree = "<group>"; };
-		6F69BE8722D4780F00F8903F /* ManageAgentsDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsDataProvider.swift; sourceTree = "<group>"; };
+		6F69BE8722D4780F00F8903F /* ManageAgentsServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsServiceProvider.swift; sourceTree = "<group>"; };
 		6F69BE8922D4786300F8903F /* ManageAgentsTableViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsTableViewExtensions.swift; sourceTree = "<group>"; };
 		6F69BE8B22D4A63900F8903F /* AgentDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDetailsViewController.swift; sourceTree = "<group>"; };
 		6F69BE8D22D4C66800F8903F /* QuickResponsesCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponsesCodable.swift; sourceTree = "<group>"; };
@@ -330,6 +333,9 @@
 		6FBDEC7722B28D5E00A8511E /* EditDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditDetailsViewController.swift; sourceTree = "<group>"; };
 		6FBDEC7922B3D3C200A8511E /* SMSDetailVCChatExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSDetailVCChatExtensions.swift; sourceTree = "<group>"; };
 		6FBDEC7B22B3F1DA00A8511E /* SMSDetailVC+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SMSDetailVC+CollectionView.swift"; sourceTree = "<group>"; };
+		6FD8955C245ECDB40083D79A /* AgentDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDetailsView.swift; sourceTree = "<group>"; };
+		6FD8955E245EDAAB0083D79A /* ManageAgentsHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsHelpers.swift; sourceTree = "<group>"; };
+		6FD89560245EDAD40083D79A /* AgentDetailsHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDetailsHelpers.swift; sourceTree = "<group>"; };
 		6FEF96A122A6677900F2FF83 /* ExternalConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalConversation.swift; sourceTree = "<group>"; };
 		6FEF96A322A6679400F2FF83 /* ExternalConversationsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalConversationsAPI.swift; sourceTree = "<group>"; };
 		6FEF96A522A67F2900F2FF83 /* SMSDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSDetailViewController.swift; sourceTree = "<group>"; };
@@ -780,8 +786,10 @@
 		6F69BE7122D46D1B00F8903F /* Extensions+Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				6F69BE8722D4780F00F8903F /* ManageAgentsDataProvider.swift */,
+				6F69BE8722D4780F00F8903F /* ManageAgentsServiceProvider.swift */,
+				6FD8955E245EDAAB0083D79A /* ManageAgentsHelpers.swift */,
 				6F69BE8922D4786300F8903F /* ManageAgentsTableViewExtensions.swift */,
+				6FD89560245EDAD40083D79A /* AgentDetailsHelpers.swift */,
 				6F69BE9522D4DE4900F8903F /* QuickResponsesDataProvider.swift */,
 				6F987A79245C27B500C6046E /* AgentOperations.swift */,
 			);
@@ -804,6 +812,7 @@
 				6FB11B40229F7A290098D050 /* ManageAgentsCell.swift */,
 				6F987A7D245C9B8F00C6046E /* ManageAgentsCellView.swift */,
 				6F987A7B245C93D800C6046E /* ManageAgentsView.swift */,
+				6FD8955C245ECDB40083D79A /* AgentDetailsView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1431,13 +1440,14 @@
 				6FB11AFB229BF0590098D050 /* TabBarController.swift in Sources */,
 				6F9011D422AC3B130046F5E3 /* ChatViewController.swift in Sources */,
 				6FB11B29229E75710098D050 /* FirebaseAuthService.swift in Sources */,
-				6F69BE8822D4780F00F8903F /* ManageAgentsDataProvider.swift in Sources */,
+				6F69BE8822D4780F00F8903F /* ManageAgentsServiceProvider.swift in Sources */,
 				6F987A5724570EDA00C6046E /* SelectCompanyViewController.swift in Sources */,
 				6F987A76245B556600C6046E /* PersistenceContainer.swift in Sources */,
 				6F987A4E2456CAE800C6046E /* APIServiceURLConstructor.swift in Sources */,
 				6F46A8B922D061EC0042A667 /* InternalConversation.swift in Sources */,
 				6FB8EA3F22AA34B600294EAC /* ChatColorHelpers.swift in Sources */,
 				6FAD46EE245098CE0050F7F2 /* APIService.swift in Sources */,
+				6FD8955F245EDAAB0083D79A /* ManageAgentsHelpers.swift in Sources */,
 				6F29FD5522B909A600BCA2AB /* TextInputCell.swift in Sources */,
 				6F987A72245B159500C6046E /* LaunchCounter.swift in Sources */,
 				6F23BD0522D8BB9B0001A888 /* UserProfileAPI.swift in Sources */,
@@ -1497,12 +1507,14 @@
 				6F46A8BB22D062750042A667 /* FollowUpAPI.swift in Sources */,
 				6F58C33B22D61FAE0091C785 /* AutoResponseDataProvider.swift in Sources */,
 				6F987A462454AB5D00C6046E /* LoginServiceProvider.swift in Sources */,
+				6FD89561245EDAD40083D79A /* AgentDetailsHelpers.swift in Sources */,
 				6FB11B10229C23840098D050 /* Extensions.swift in Sources */,
 				6F987A482456C8B900C6046E /* APIServiceProtocol.swift in Sources */,
 				6F58C33922D618C40091C785 /* AutoResponseAPIProtocol.swift in Sources */,
 				6F1BD2F322C4B4CB0053D0CC /* FollowUpDataProvider.swift in Sources */,
 				6F69BE8422D4742000F8903F /* ManageAgentsAPI.swift in Sources */,
 				6F1BD2ED22C4ADED0053D0CC /* FollowUpVCTableViewExtensions.swift in Sources */,
+				6FD8955D245ECDB40083D79A /* AgentDetailsView.swift in Sources */,
 				6FAD46E7245054020050F7F2 /* UserDefaultsWrapper.swift in Sources */,
 				6F41013922DDF8A30038AA76 /* CallGroupsAPI.swift in Sources */,
 				6F9453D122DDDC2100047C7F /* ScheduledMessageCell.swift in Sources */,

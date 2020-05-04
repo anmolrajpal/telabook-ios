@@ -18,16 +18,20 @@ final class FirebaseAuthService:NSObject {
     typealias FirebaseTokenFetchCompletion = (Result<String, FirebaseError>) -> Void
     enum FirebaseError:Error, LocalizedError {
         case cancelled
+        case noCurrentUser
         case referenceError
         case authenticationError(Error)
         case noIDToken(Error)
+        case unknown
         
         var localizedDescription: String {
             switch self {
                 case .cancelled: return "Firebase Error: Operation Cancelled"
+                case .noCurrentUser: return "Firebase User Error: Invalid User or Session Expired. Please Login again."
                 case .referenceError: return "Firebase Internal Error"
                 case let .authenticationError(error): return "Firebase Authentication Error: \(error.localizedDescription)"
-                case let .noIDToken(error): return "Firebase No ID Token Error: \(error.localizedDescription)"
+                case let .noIDToken(error): return "Firebase Token Error: \(error.localizedDescription)"
+                case .unknown: return "Firebase Error (Reason: Unknown). Please try signin in again."
             }
         }
     }
@@ -145,20 +149,40 @@ final class FirebaseAuthService:NSObject {
         })
     }
     func getCurrentToken(completion: @escaping FirebaseTokenFetchCompletion) {
-        let user = Auth.auth().currentUser
-        handleUserState(user)
-        user?.getIDToken(completion: { (token, error) in
-            if let token = token {
-                DispatchQueue.main.async {
-                    completion(.success(token))
+        if let user = Auth.auth().currentUser {
+            user.getIDToken(completion: { (token, error) in
+                if let token = token {
+                    
+                    DispatchQueue.main.async {
+                        completion(.success(token))
+                    }
+                } else if let err = error {
+                    #if DEBUG
+                    print("Error fetching token: \(err.localizedDescription)")
+                    #endif
+                    DispatchQueue.main.async {
+                        completion(.failure(.noIDToken(err)))
+                    }
+                } else {
+                    #if DEBUG
+                    print("Error fetching token: Unknown Error")
+                    #endif
+                    DispatchQueue.main.async {
+                        completion(.failure(.unknown))
+                    }
                 }
-            } else if let err = error {
-                print("Error fetching token: \(err.localizedDescription)")
-                DispatchQueue.main.async {
-                    completion(.failure(.noIDToken(err)))
-                }
+            })
+        } else {
+            #if DEBUG
+            print("Failed to unwrap Firebase Current User. Error: \(FirebaseError.noCurrentUser.localizedDescription)")
+            #endif
+            defer {
+                AuthenticationService.shared.callSignOutSequence()
             }
-        })
+            DispatchQueue.main.async {
+                completion(.failure(.noCurrentUser))
+            }
+        }
     }
     func getCurrentToken() -> String? {
         let user = Auth.auth().currentUser

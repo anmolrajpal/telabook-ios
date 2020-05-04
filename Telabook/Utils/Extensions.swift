@@ -715,7 +715,6 @@ extension UIImageView: APIProtocol {
         
         self.image = nil
         guard let urlString = URLString else {
-            print("no url string")
             DispatchQueue.main.async {
                 self.image = placeHolder
             }
@@ -728,7 +727,9 @@ extension UIImageView: APIProtocol {
             }
             return
         } else {
-            print("No cached image")
+            DispatchQueue.main.async {
+                self.image = placeHolder
+            }
         }
         
         if let url = URL(string: urlString) {
@@ -751,7 +752,6 @@ extension UIImageView: APIProtocol {
                             
                         }
                     } else if let status = responseStatus {
-                        print(status)
                         guard status == .OK else {
                             DispatchQueue.main.async {
                                 self.image = placeHolder

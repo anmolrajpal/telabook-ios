@@ -89,7 +89,7 @@ extension Agent {
         self.lastMessageSeenDate = (agentEntry.internalLastMessageSeen != nil) ? Date.getDateFromString(dateString: agentEntry.internalLastMessageSeen, dateFormat: "yyyy-MM-dd HH:mm:ss") : nil
         self.internalNode = agentEntry.internalNode
         self.personName = agentEntry.personName
-        self.phoneNumber = agentEntry.phoneNumber
+        self.phoneNumber = agentEntry.phoneNumber?.replacingOccurrences(of: "%2b", with: "+")
         self.priority1 = (agentEntry.priority1 != nil) ? Int(agentEntry.priority1 ?? "0")!.boolValue : false
         self.priority2 = (agentEntry.priority1 != nil) ? Int(agentEntry.priority2 ?? "0")!.boolValue : false
         self.priority3 = (agentEntry.priority1 != nil) ? Int(agentEntry.priority3 ?? "0")!.boolValue : false
@@ -98,6 +98,7 @@ extension Agent {
         self.roleID = agentEntry.roleId != nil ? Int16(agentEntry.roleId!) : 0
         self.userID = agentEntry.userId != nil ? Int32(agentEntry.userId!) : 0
         self.workerID = agentEntry.workerId != nil ? Int32(agentEntry.workerId!) : 0
+        self.lastRefreshedAt = Date()
     }
 }
 

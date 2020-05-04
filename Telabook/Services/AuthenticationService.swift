@@ -97,7 +97,6 @@ final class AuthenticationService: NSObject {
             }
         } else if let data = data,
             let response = response as? HTTPURLResponse {
-            print("Status Code => \(response.statusCode)")
             let responseStatus = ResponseStatus.getResponseStatusBy(statusCode: response.statusCode)
             completion(responseStatus, data, nil, nil)
         } else {

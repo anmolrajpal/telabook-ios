@@ -9,6 +9,7 @@
 import UIKit
 
 class ManageAgentsCellView: UIView {
+    // MARK:: Setup Views Data
     struct Parameters:Equatable {
         let name:String
         let initials:String
@@ -50,7 +51,6 @@ class ManageAgentsCellView: UIView {
         queue.addOperation(operation)
     }
     private func setupData(parameters:Parameters?, animated:Bool) {
-        print("\n--------- Parameter Person Name: \(parameters?.name as Any) --------------- \n")
         agentNameLabel.text = parameters?.name
         agentDesignationLabel.text = parameters?.role.stringValue
         if parameters?.lowPriorityCheck == true { stackView.addArrangedSubview(lowPriorityImageView) }
@@ -72,13 +72,11 @@ class ManageAgentsCellView: UIView {
             return
         }
     }
-    private let queue: OperationQueue = {
-        let queue = OperationQueue()
-        queue.maxConcurrentOperationCount = 1
-        queue.qualityOfService = .userInteractive
-        return queue
-    }()
     
+    
+    
+    
+    // MARK: init
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupViews()
@@ -97,14 +95,23 @@ class ManageAgentsCellView: UIView {
 //        layoutConstraints()
 //        super.updateConstraints()
 //    }
+    
+    
+    
+    
+    // MARK: Setup views
     fileprivate func setupViews() {
-//        backgroundColor = UIColor.yellow.withAlphaComponent(0.4)
         addSubview(profileImageView)
         addSubview(containerView)
         containerView.addSubview(agentNameLabel)
         containerView.addSubview(agentDesignationLabel)
         containerView.addSubview(stackView)
     }
+    
+    
+    
+    
+    // MARK: Layout Constraints
     fileprivate func layoutConstraints() {
         let imageViewHeight:CGFloat = 60
         profileImageView.anchor(top: nil, left: safeAreaLayoutGuide.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 0, widthConstant: imageViewHeight, heightConstant: imageViewHeight)
@@ -114,17 +121,25 @@ class ManageAgentsCellView: UIView {
         
         
         agentNameLabel.anchor(top: nil, left: containerView.leftAnchor, bottom: containerView.centerYAnchor, right: containerView.rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 8, rightConstant: 10)
-//        agentNameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: -15).activate()
-        
-        
         
         agentDesignationLabel.anchor(top: containerView.centerYAnchor, left: agentNameLabel.leftAnchor, bottom: nil, right: agentNameLabel.rightAnchor, topConstant: 8, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
-//        agentDesignationLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: 15).activate()
-        
         
         stackView.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0).activate()
         stackView.centerYAnchor.constraint(equalTo: agentDesignationLabel.centerYAnchor).activate()
     }
+    
+    
+    
+    
+    
+    
+    // MARK: Constructors
+    private let queue: OperationQueue = {
+        let queue = OperationQueue()
+        queue.maxConcurrentOperationCount = 1
+        queue.qualityOfService = .userInteractive
+        return queue
+    }()
     lazy var profileImageView:UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
