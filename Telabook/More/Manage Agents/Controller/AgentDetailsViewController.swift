@@ -12,11 +12,11 @@ class AgentDetailsViewController: UIViewController {
     lazy private(set) var subview: AgentDetailsView = {
       return AgentDetailsView(frame: UIScreen.main.bounds)
     }()
-    let agentDetails:Agent
-    init(agentDetails:Agent) {
-        self.agentDetails = agentDetails
+    let agent:Agent
+    init(agent:Agent) {
+        self.agent = agent
         super.init(nibName: nil, bundle: nil)
-        self.setupAgentDetails(details: agentDetails)
+        self.setupAgentDetails(details: agent)
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

@@ -10,7 +10,6 @@ import UIKit
 
 extension QuickResponsesViewController {
     
-    
     internal func setupTargetActions() {
         subview.doneButton.addTarget(self, action: #selector(didTapDoneButton), for: .touchUpInside)
         subview.saveResponseButton.addTarget(self, action: #selector(didTapSaveResponseButton), for: .touchUpInside)
@@ -26,7 +25,7 @@ extension QuickResponsesViewController {
     private func saveResponse() {
         if let response = self.subview.responseTextView.text,
             !response.isEmpty {
-            self.initiateAddQuickResponseSequence(userId: userId, answer: response)
+//            self.initiateAddQuickResponseSequence(userId: userId, answer: response)
         } else {
             fatalError("Unhandled case for Response text view")
         }
@@ -72,7 +71,7 @@ extension QuickResponsesViewController {
             let text = alertVC.textFields?[0].text
             if let answer = text,
                 !answer.isEmpty {
-                self.initiateUpdateQuickResponseSequence(userId: self.userId, answer: answer, responseId: responseId)
+//                self.initiateUpdateQuickResponseSequence(userId: self.userId, answer: answer, responseId: responseId)
             }
         }
         submitAction.isEnabled = false

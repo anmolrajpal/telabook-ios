@@ -13,9 +13,9 @@ extension QuickResponsesViewController {
     internal func setupTableView() {
         subview.tableView.register(UITableViewCell.self, forCellReuseIdentifier: NSStringFromClass(UITableViewCell.self))
         subview.tableView.delegate = self
-        self.diffableDataSource = UITableViewDiffableDataSource<Section, Agent>(tableView: self.subview.tableView, cellProvider: { (tableView, indexPath, agent) -> UITableViewCell? in
-            let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(ManageAgentsCell.self), for: indexPath) as! ManageAgentsCell
-            
+        self.diffableDataSource = UITableViewDiffableDataSource<Section, QuickResponse>(tableView: self.subview.tableView, cellProvider: { (tableView, indexPath, quickResponse) -> UITableViewCell? in
+            let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(UITableViewCell.self), for: indexPath)
+            cell.textLabel?.text = quickResponse.answer
             cell.selectionStyle = .none
             cell.backgroundColor = .clear
             cell.textLabel?.textColor = UIColor.telaGray7
@@ -41,7 +41,7 @@ extension QuickResponsesViewController {
     internal func handleState() {
         if self.isFetchedResultsAvailable {
             DispatchQueue.main.async {
-                self.subview.placeholderLabel.text = self.isFiltering ? "No Agent Found" : "Loading"
+//                self.subview.placeholderLabel.text = self.isFiltering ? "No Agent Found" : "Loading"
                 self.subview.placeholderLabel.isHidden = false
             }
         } else {
@@ -58,23 +58,18 @@ extension QuickResponsesViewController: UITableViewDelegate {
     }
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let editAction =  UIContextualAction(style: .normal, title: "Edit", handler: { (action,view,completion ) in
-            if let quickResponse = self.quickResponses?[indexPath.row],
-                let responseId = quickResponse.id,
-                let response = quickResponse.answer,
-                responseId != 0,
-                !response.isEmpty {
-                self.showEditResponseDialogBox(responseId: String(responseId), response: response)
+            if let selectedResponse = self.diffableDataSource?.itemIdentifier(for: indexPath) {
+                let responseID = String(selectedResponse.id)
+                let response = selectedResponse.answer ?? ""
+                self.showEditResponseDialogBox(responseId: responseID, response: response)
                 completion(true)
-            } else {
-                fatalError("Error unwrapping quick response values")
             }
         })
         editAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "edit"), text: "Edit").withRenderingMode(.alwaysOriginal)
         editAction.backgroundColor = UIColor.telaIndigo
         
         let deleteAction =  UIContextualAction(style: .destructive, title: "Delete", handler: { (action,view,completion ) in
-            self.initiateDeleteQuickResponseSequence(at: indexPath, completion: completion)
-            
+//            self.initiateDeleteQuickResponseSequence(at: indexPath, completion: completion)
         })
         deleteAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "delete_icon"), text: "Delete").withRenderingMode(.alwaysOriginal)
         deleteAction.backgroundColor = UIColor.telaRed

@@ -26,11 +26,27 @@
         <attribute name="userID" optional="YES" attributeType="Integer 32" minValueString="1" usesScalarValueType="YES"/>
         <attribute name="username" optional="YES" attributeType="String"/>
         <attribute name="workerID" optional="YES" attributeType="Integer 32" minValueString="1" usesScalarValueType="YES"/>
+        <relationship name="autoResponse" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="AutoResponse" inverseName="autoResponseSender" inverseEntity="AutoResponse"/>
         <relationship name="customers" toMany="YES" deletionRule="Cascade" destinationEntity="Customer" inverseName="agent" inverseEntity="Customer"/>
         <relationship name="quickResponses" toMany="YES" deletionRule="Cascade" destinationEntity="QuickResponse" inverseName="sender" inverseEntity="QuickResponse"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="userID"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="AutoResponse" representedClassName="AutoResponse" syncable="YES" codeGenerationType="class">
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="Integer 32" usesScalarValueType="YES"/>
+        <attribute name="lastRefreshedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="smsReply" optional="YES" attributeType="String"/>
+        <attribute name="synced" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="userID" optional="YES" attributeType="Integer 32" usesScalarValueType="YES"/>
+        <relationship name="autoResponseSender" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Agent" inverseName="autoResponse" inverseEntity="Agent"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="id"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
@@ -139,9 +155,15 @@
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="lastRefreshedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="synced" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="userID" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="sender" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Agent" inverseName="quickResponses" inverseEntity="Agent"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="id"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
     <entity name="UserObject" representedClassName=".UserObject" syncable="YES">
         <attribute name="company" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
@@ -159,14 +181,15 @@
     </entity>
     <elements>
         <element name="Address" positionX="-324.984375" positionY="-372.328125" width="128" height="90"/>
-        <element name="Agent" positionX="-718.6484375" positionY="-34.9140625" width="128" height="373"/>
+        <element name="Agent" positionX="-718.6484375" positionY="-34.9140625" width="128" height="388"/>
         <element name="Customer" positionX="-453.58984375" positionY="100.859375" width="128" height="508"/>
         <element name="ExternalChat" positionX="-310.7109375" positionY="-196.6796875" width="128" height="165"/>
         <element name="ExternalConversation" positionX="140.44140625" positionY="-192.74609375" width="128" height="345"/>
         <element name="InternalConversation" positionX="171.46484375" positionY="271.6328125" width="128" height="313"/>
         <element name="Permission" positionX="15.27734375" positionY="732.56640625" width="128" height="148"/>
         <element name="Person" positionX="-538.78515625" positionY="-276.92578125" width="128" height="105"/>
+        <element name="QuickResponse" positionX="-739.09765625" positionY="406.52734375" width="128" height="163"/>
         <element name="UserObject" positionX="-263.36328125" positionY="581.5" width="128" height="225"/>
-        <element name="QuickResponse" positionX="-739.09765625" positionY="406.52734375" width="128" height="148"/>
+        <element name="AutoResponse" positionX="-279" positionY="414" width="128" height="163"/>
     </elements>
 </model>

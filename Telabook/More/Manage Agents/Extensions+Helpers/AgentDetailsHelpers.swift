@@ -28,8 +28,8 @@ extension AgentDetailsViewController {
         subview.quickResponsesButton.addTarget(self, action: #selector(quickResponsesButtonTapped), for: .touchUpInside)
     }
     @objc private func smsButtonTapped() {
-        if let userId = self.agentDetails.userID != 0 ? Int(agentDetails.userID) : nil {
-            let vc = AutoResponseViewController(userId: String(userId))
+        if let userID = self.agent.userID != 0 ? Int(agent.userID) : nil {
+            let vc = AutoResponseViewController(userID: userID, agent: agent)
             //            vc.modalPresentationStyle = .overFullScreen
             vc.view.backgroundColor = .telaGray1
             present(vc, animated: true, completion: nil)
@@ -39,8 +39,8 @@ extension AgentDetailsViewController {
     }
     
     @objc private func quickResponsesButtonTapped() {
-        if let userId = self.agentDetails.userID != 0 ? Int(agentDetails.userID) : nil {
-            let vc = QuickResponsesViewController(userId: String(userId))
+        if let userId = self.agent.userID != 0 ? Int(agent.userID) : nil {
+            let vc = QuickResponsesViewController(userId: String(userId), agent: agent)
             //            vc.modalPresentationStyle = .overFullScreen
             vc.view.backgroundColor = .telaGray1
             present(vc, animated: true, completion: nil)
@@ -49,4 +49,3 @@ extension AgentDetailsViewController {
         }
     }
 }
-

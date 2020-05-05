@@ -50,6 +50,13 @@ struct Config {
                 case .Production: return "/api"
             }
         }
+        static var apiVersion:APIService.APIVersion {
+            switch Config.environment {
+                case .Development: return .v1
+                case .Staging: return .v1
+                case .Production: return .v1
+            }
+        }
     }
     
     

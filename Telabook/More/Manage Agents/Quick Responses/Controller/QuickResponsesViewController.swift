@@ -51,7 +51,7 @@ class QuickResponsesViewController: UIViewController {
         self.userId = userId
         self.agent = agent
         super.init(nibName: nil, bundle: nil)
-        self.initiateFetchQuickResponsesSequence(userId: userId)
+//        self.initiateFetchQuickResponsesSequence(userId: userId)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -69,25 +69,3 @@ class QuickResponsesViewController: UIViewController {
         return .lightContent
     }
 }
-
-/*
- extension QuickResponsesViewController: UITableViewDataSource {
- func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
- return self.quickResponses?.count ?? 0
- }
- 
- func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
- let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
- cell.selectionStyle = .none
- cell.backgroundColor = .clear
- cell.textLabel?.text = self.quickResponses?[indexPath.row].answer
- cell.textLabel?.textColor = UIColor.telaGray7
- cell.textLabel?.lineBreakMode = .byWordWrapping
- cell.textLabel?.numberOfLines = 0
- cell.textLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 16)
- return cell
- }
- 
- 
- }
- */

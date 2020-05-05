@@ -14,6 +14,8 @@ public struct APIService: APIServiceProtocol {
     static let shared = APIService()
     let decoder = JSONDecoder()
     
+    enum APIVersion { case v1, v2, mock; var stringValue:String { String(describing: self) }}
+    
     /// Configuration options for API Endpoints URL constructor.
     struct Configuration {
         static let timeOutInterval:TimeInterval = 15.0
@@ -51,6 +53,22 @@ public struct APIService: APIServiceProtocol {
         /// Enpoint to fetch all agents list
         case FetchAgents
         
+        /// Endpoing to fetch Agent's quick responses
+        case FetchQuickResponses
+        
+        /// Endpoint to create new quick response for the Agent
+        case CreateQuickResponse
+        
+        /// Endpoint to update an existing quick response
+        case UpdateQuickResponse(responseID:Int)
+        
+        /// Endpoint to delete an existing quick response
+        case DeleteQuickResponse(responseID:Int)
+        
+        /// Endpoint to fetch Agent's First Time SMS
+        case AutoResponse
+        
+        
         
         
         /**
@@ -71,6 +89,11 @@ public struct APIService: APIServiceProtocol {
                 case let .UpdateUserProfile(userId): return "/android/users/\(String(userId))"
                 case .ViewUserProfile: return "/android/signin"
                 case .FetchAgents: return "/agents"
+                case .FetchQuickResponses: return "/android/quick_replies"
+                case .CreateQuickResponse: return "/android/quick_replies"
+                case let .UpdateQuickResponse(responseID): return "/android/quick_replies/\(responseID)"
+                case let .DeleteQuickResponse(responseID): return "/android/quick_replies/\(responseID)"
+                case .AutoResponse: return "/android/sms_auto_reply"
             }
         }
     }

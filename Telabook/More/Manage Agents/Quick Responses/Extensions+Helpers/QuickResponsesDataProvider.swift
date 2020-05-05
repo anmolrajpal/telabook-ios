@@ -7,6 +7,11 @@
 //
 
 import UIKit
+
+
+
+/*
+
 extension QuickResponsesViewController {
     internal func initiateFetchQuickResponsesSequence(userId:String) {
         DispatchQueue.main.async {
@@ -287,3 +292,9 @@ extension QuickResponsesViewController {
     
     
 }
+
+
+
+
+
+*/

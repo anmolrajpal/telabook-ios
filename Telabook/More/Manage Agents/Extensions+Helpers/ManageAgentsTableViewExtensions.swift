@@ -59,7 +59,7 @@ extension ManageAgentsViewController: UITableViewDelegate {
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let selectedAgent = self.diffableDataSource?.itemIdentifier(for: indexPath) {
-            let vc = AgentDetailsViewController(agentDetails: selectedAgent)
+            let vc = AgentDetailsViewController(agent: selectedAgent)
             navigationController?.pushViewController(vc, animated: true)
         }
 //        if let agentDetails = self.agents?[indexPath.row] {

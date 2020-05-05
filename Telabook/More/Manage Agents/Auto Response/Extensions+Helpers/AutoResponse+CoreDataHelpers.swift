@@ -1,5 +1,5 @@
 //
-//  QuickResponses+FetchedResultsHelpers.swift
+//  AutoResponse+CoreDataHelpers.swift
 //  Telabook
 //
 //  Created by Anmol Rajpal on 05/05/20.
@@ -9,13 +9,16 @@
 import UIKit
 import CoreData
 
-extension QuickResponsesViewController {
+extension AutoResponseViewController {
     internal func setupFetchedResultsController() {
-        fetchRequest = QuickResponse.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "\(#keyPath(QuickResponse.sender))", agent)
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(Agent.date), ascending: false)]
+        let context = PersistentContainer.shared.viewContext
+        let objectID = agent.objectID
+        let agentRefrenceObject = context.object(with: objectID) as! Agent
+        fetchRequest = AutoResponse.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "\(#keyPath(AutoResponse.autoResponseSender)) == %@", agentRefrenceObject)
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(AutoResponse.lastRefreshedAt), ascending: false)]
         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
-                                                              managedObjectContext: PersistentContainer.shared.viewContext,
+                                                              managedObjectContext: context,
                                                               sectionNameKeyPath: nil,
                                                               cacheName: String(describing: self))
         
@@ -27,13 +30,9 @@ extension QuickResponsesViewController {
             print("Error fetching results: \(error)")
         }
     }
-    
 }
-extension QuickResponsesViewController: NSFetchedResultsControllerDelegate {
+extension AutoResponseViewController: NSFetchedResultsControllerDelegate {
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        self.updateSnapshot()
-    }
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
         self.updateSnapshot()
     }
 }
