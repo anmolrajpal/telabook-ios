@@ -12,6 +12,7 @@ import os
 extension QuickResponsesViewController {
     internal func fetchQuickResponses() {
         DispatchQueue.main.async {
+            self.subview.placeholderLabel.text = "Loading..."
             self.startRefreshers()
         }
         let queue = OperationQueue()
@@ -27,7 +28,26 @@ extension QuickResponsesViewController {
         queue.addOperations(operations, waitUntilFinished: false)
     }
     
-    
+    internal func createQuickResponse(answer:String) {
+        DispatchQueue.main.async {
+            self.startRefreshers()
+        }
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+        
+        let operation = CreateNewQuickResponseEntryOnServer_Operation(userID: userID, answer: answer)
+        operation.completionBlock = {
+            guard case let .failure(error) = operation.result else {
+                print("Quick Response Successfully Created | Fetching New Entries from server")
+                self.fetchQuickResponses()
+                return
+            }
+            self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+        }
+        
+        queue.addOperations([operation], waitUntilFinished: false)
+    }
     
     
     private func handleViewsStateForOperations(operations:[Operation], onOperationQueue queue:OperationQueue) {
@@ -66,6 +86,10 @@ extension QuickResponsesViewController {
                         } else {
                             DispatchQueue.main.async {
                                 self.stopRefreshers()
+                                self.subview.responseTextView.text.removeAll()
+                                self.subview.characterCountLabel.text = "Max Characters: 70"
+                                self.subview.saveResponseButton.isEnabled = false
+                                self.subview.saveResponseButton.backgroundColor = UIColor.telaGray6
                                 self.updateSnapshot()
                             }
                         }
@@ -111,7 +135,7 @@ extension QuickResponsesViewController {
     private func showAlert(withErrorMessage message:String, cancellingOperationQueue queue:OperationQueue) {
         DispatchQueue.main.async {
             UIAlertController.showTelaAlert(title: "Error", message: message, action: UIAlertAction(title: "OK", style: .cancel, handler: { action in
-                self.dismiss(animated: true, completion: nil)
+//                self.dismiss(animated: true, completion: nil)
             }), controller: self, completion: {
                 queue.cancelAllOperations()
                 self.stopRefreshers()

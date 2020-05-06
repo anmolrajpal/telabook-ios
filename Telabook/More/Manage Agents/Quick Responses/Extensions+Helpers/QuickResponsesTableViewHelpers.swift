@@ -45,7 +45,7 @@ extension QuickResponsesViewController {
                 self.subview.placeholderLabel.isHidden = true
             }
         } else {
-            self.subview.placeholderLabel.text = "Loading..."
+            self.subview.placeholderLabel.text = "No Data"
             DispatchQueue.main.async {
                 self.subview.placeholderLabel.isHidden = false
             }

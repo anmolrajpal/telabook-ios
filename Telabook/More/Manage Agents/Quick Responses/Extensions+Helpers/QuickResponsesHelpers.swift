@@ -25,6 +25,7 @@ extension QuickResponsesViewController {
     private func saveResponse() {
         if let response = self.subview.responseTextView.text,
             !response.isEmpty {
+            self.createQuickResponse(answer: response)
 //            self.initiateAddQuickResponseSequence(userId: userId, answer: response)
         } else {
             fatalError("Unhandled case for Response text view")

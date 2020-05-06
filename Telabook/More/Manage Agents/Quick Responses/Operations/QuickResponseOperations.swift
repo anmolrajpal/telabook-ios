@@ -269,3 +269,80 @@ class AddQuickResponseEntryFromServerToStore_Operation: Operation {
         
     }
 }
+
+
+
+
+
+
+
+
+
+
+/// Creates new Agent's Quick Response entry on the server.
+class CreateNewQuickResponseEntryOnServer_Operation: Operation {
+    var result: Result<APIService.EmptyData, APIService.APIError>?
+    
+    struct Body:Codable {
+        let user_id:Int
+        let company_id:String
+        let answer:String
+    }
+    private let encoder = JSONEncoder()
+    private var downloading = false
+    private let params:[String:String]
+    private let headers:[HTTPHeader] = [
+        HTTPHeader(key: .contentType, value: "application/json")
+    ]
+    private let httpBody:Data
+    init(userID:Int, answer:String) {
+        let companyID = String(AppData.companyId)
+        params = [
+            "company_id":String(AppData.companyId),
+        ]
+        let body = Body(user_id: userID, company_id: companyID, answer: answer)
+        httpBody = try! encoder.encode(body)
+    }
+    
+    override var isAsynchronous: Bool {
+        return true
+    }
+    
+    override var isExecuting: Bool {
+        return downloading
+    }
+    
+    override var isFinished: Bool {
+        return result != nil
+    }
+    
+    override func cancel() {
+        super.cancel()
+        
+    }
+    
+    func finish(result: Result<APIService.EmptyData, APIService.APIError>) {
+        guard downloading else { return }
+        
+        willChangeValue(forKey: #keyPath(isExecuting))
+        willChangeValue(forKey: #keyPath(isFinished))
+        
+        downloading = false
+        self.result = result
+        
+        didChangeValue(forKey: #keyPath(isFinished))
+        didChangeValue(forKey: #keyPath(isExecuting))
+    }
+    
+    override func start() {
+        willChangeValue(forKey: #keyPath(isExecuting))
+        downloading = true
+        didChangeValue(forKey: #keyPath(isExecuting))
+        
+        guard !isCancelled else {
+            finish(result: .failure(.cancelled))
+            return
+        }
+        APIOperations.triggerAPIEndpointOperations(endpoint: .CreateQuickResponse, httpMethod: .POST, params: params, httpBody: httpBody, headers: headers, guardResponse: .Created, expectData: false, completion: finish)
+    }
+}

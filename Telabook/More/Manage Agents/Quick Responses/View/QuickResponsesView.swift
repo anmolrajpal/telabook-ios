@@ -34,7 +34,7 @@ class QuickResponsesView: UIView {
         
         addResponseHeadingLabel.anchor(top: headingLabel.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 20, leftConstant: 20, bottomConstant: 0, rightConstant: 20)
         
-        responseTextView.anchor(top: addResponseHeadingLabel.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 5, leftConstant: 20, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 60)
+        responseTextView.anchor(top: addResponseHeadingLabel.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 5, leftConstant: 20, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 70)
         
         characterCountLabel.anchor(top: responseTextView.bottomAnchor, left: nil, bottom: nil, right: responseTextView.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
         
@@ -112,6 +112,7 @@ class QuickResponsesView: UIView {
         textView.isScrollEnabled = true
         textView.dataDetectorTypes = .all
         textView.keyboardAppearance = .dark
+        textView.layer.cornerRadius = 5
         return textView
     }()
     lazy var characterCountLabel:UILabel = {
