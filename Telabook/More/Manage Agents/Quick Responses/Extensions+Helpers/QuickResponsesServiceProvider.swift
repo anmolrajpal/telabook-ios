@@ -23,7 +23,7 @@ extension QuickResponsesViewController {
         let objectID = agent.objectID
         let agentRefrenceObject = context.object(with: objectID) as! Agent
         let operations = QuickResponseOperations.getOperationsToFetchAndSaveQuickResponses(using: context, userID: userID, forAgent: agentRefrenceObject)
-        handleViewsStateForOperations(operations: operations, onOperationQueue: queue)
+        handleViewsStateForOperations(operations: operations, onOperationQueue: queue, completion: {_ in })
         
         queue.addOperations(operations, waitUntilFinished: false)
     }
@@ -60,15 +60,34 @@ extension QuickResponsesViewController {
         
         let context = PersistentContainer.shared.newBackgroundContext()
         let operations = QuickResponseOperations.getOperationsToSyncExistingQuickResponse(using: context, userID: userID, selectedResponse: response, quickResposneToUpdate: answer)
-        handleViewsStateForOperations(operations: operations, onOperationQueue: queue)
+        handleViewsStateForOperations(operations: operations, onOperationQueue: queue, completion: {_ in })
         
         queue.addOperations(operations, waitUntilFinished: false)
     }
     
     
-    private func handleViewsStateForOperations(operations:[Operation], onOperationQueue queue:OperationQueue) {
+    internal func deleteQuickResponse(forSelectedResponse response:QuickResponse, agent:Agent, completion:@escaping (Bool) -> Void) {
+        let context = PersistentContainer.shared.newBackgroundContext()
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+        let objectID = agent.objectID
+        let agentRefrenceObject = context.object(with: objectID) as! Agent
+        let operations = QuickResponseOperations.getOperationsToDeleteExistingQuickResponse(using: context, selectedResponse: response, forAgent: agentRefrenceObject)
+        handleViewsStateForOperations(operations: operations, onOperationQueue: queue, completion: completion)
+        
+        queue.addOperations(operations, waitUntilFinished: false)
+    }
+    
+    
+    
+    
+    
+    private func handleViewsStateForOperations(operations:[Operation], onOperationQueue queue:OperationQueue, completion: @escaping (Bool) -> Void) {
         operations.forEach { operation in
             switch operation {
+                
+                
                 //MARK: Fetch & Sync Auto Response Operations
                 case let operation as FetchSavedQuickResponsesEntries_Operation:
                     operation.completionBlock = {
@@ -76,9 +95,7 @@ extension QuickResponsesViewController {
                             print(error.localizedDescription)
                             self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
                         } else {
-                            DispatchQueue.main.async {
-                                
-                            }
+                            
                         }
                 }
                 case let operation as DownloadQuickResponsesEntriesFromServer_Operation:
@@ -106,12 +123,14 @@ extension QuickResponsesViewController {
                                 self.subview.characterCountLabel.text = "Max Characters: 70"
                                 self.subview.saveResponseButton.isEnabled = false
                                 self.subview.saveResponseButton.backgroundColor = UIColor.telaGray6
-                                self.updateSnapshot()
+                                self.updateSnapshot(animated: true)
                             }
                         }
                 }
                 
                 
+                
+                //MARK: Update Existing Quick Response Operations
                 case let operation as UpdateExistingQuickResponseEntryInStore_Operation:
                     operation.completionBlock = {
                         if let error = operation.error {
@@ -119,7 +138,6 @@ extension QuickResponsesViewController {
                             self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
                         } else {
                             print("Response Saved in Core Data. Dismissing, leaving pending operations in Queue (updating on Server + sync to store)")
-                            Thread.sleep(forTimeInterval: 0.4)
                             DispatchQueue.main.async {
                                 self.stopRefreshers()
 //                                self.dismiss(animated: true, completion: nil)
@@ -138,45 +156,40 @@ extension QuickResponsesViewController {
                 }
                 
                 
+                //MARK: Delete Existing Quick Response Operations
                 
-                
-                
-                
-//                //MARK: Update AutoResponse to Server and Sync to Core Data Operations
-//                case let operation as SaveUserUpdatedAutoResponseEntryToStore_Operation:
-//                    operation.completionBlock = {
-//                        if let error = operation.error {
-//                            print(error.localizedDescription)
-//                            self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
-//                        } else {
-//                            print("Response Saved in Core Data. Dismissing, leaving pending operations in Queue (updating on Server + sync to store)")
-//                            Thread.sleep(forTimeInterval: 0.4)
-//                            DispatchQueue.main.async {
-//                                self.stopRefreshers()
-//                                self.dismiss(animated: true, completion: nil)
-//                            }
-//                        }
-//                }
-//                case let operation as UpdateAgentAutoResponseEntryOnServer_Operation:
-//                    operation.completionBlock = {
-//                        guard case let .failure(error) = operation.result else { return }
-//                        print(error.localizedDescription)
-//                        //                        self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
-//                }
-//                case let operation as AddQuickResponseEntryFromServerToStore_Operation:
-//                    operation.completionBlock = {
-//                        if let error = operation.error {
-//                            print(error.localizedDescription)
-//                            //                            self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
-//                        } else {
-//                            print("Updated AutoResponse synced to core data")
-//                        }
-//                }
+                case let operation as MarkToDeleteExistingQuickResponseEntryInStore_Operation:
+                    operation.completionBlock = {
+                        if let error = operation.error {
+                            print(error.localizedDescription)
+                            self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+                        } else {
+                            print("Response Marked for Deletion in Core Data. leaving pending operations in Queue (deleting on Server + sync to store)")
+                            self.markForDeletionWithSuccess(completion: completion)
+                        }
+                }
+                case let operation as DeleteExistingQuickResponseEntryOnServer_Operation:
+                    operation.completionBlock = {
+                        guard case let .failure(error) = operation.result else { return }
+                        print(error.localizedDescription)
+                        os_log("%@", log: .network, type: .error, error.localizedDescription)
+                }
+                case let operation as DeleteExistingQuickResponseEntryFromStore_Operation:
+                    operation.completionBlock = {
+                        if let error = operation.error {
+                            print(error.localizedDescription)
+                            os_log("%@", log: .coredata, type: .error, error.localizedDescription)
+                        } else {
+                            print("Successfully Deleted Quick Response entry from Core Data")
+                        }
+                }
                 default: break
             }
         }
     }
-    
+    private func markForDeletionWithSuccess(completion: @escaping (Bool) -> Void) {
+        completion(true)
+    }
     
     private func showAlert(withErrorMessage message:String, cancellingOperationQueue queue:OperationQueue) {
         DispatchQueue.main.async {

@@ -63,7 +63,7 @@ struct QuickResponseOperations {
     
     
     //MARK: PUT - Sync and Update Agent's Quick Response on Server
-    /// Returns an array of operations for updating  Agent's Auto Response from Core Data store to server.
+    /// Returns an array of operations for updating  Agent's Quick Response from Core Data store to server.
     static func getOperationsToSyncExistingQuickResponse(using context: NSManagedObjectContext, userID:Int, selectedResponse:QuickResponse, quickResposneToUpdate answer:String) -> [Operation] {
         
         let saveEntryToStore_Operation = UpdateExistingQuickResponseEntryInStore_Operation(context: context, selectedResponse: selectedResponse, answer: answer)
@@ -74,13 +74,43 @@ struct QuickResponseOperations {
             updateEntryOnServer_Operation
         ]
     }
+    
+    
+    
+    
+    
+    //MARK: DEL - DELETE & Sync Agent's Quick Response on Server and store
+    /// Returns an array of operations for deleting Agent's Quick Response from Core Data store and server.
+    static func getOperationsToDeleteExistingQuickResponse(using context: NSManagedObjectContext, selectedResponse:QuickResponse, forAgent agent:Agent) -> [Operation] {
+        
+        let markToDeleteFromStore_Operation = MarkToDeleteExistingQuickResponseEntryInStore_Operation(context: context, selectedResponse: selectedResponse)
+        let deleteFromServer_Operation = DeleteExistingQuickResponseEntryOnServer_Operation(responseID: Int(selectedResponse.id))
+        let deleteFromStoreOperation = DeleteExistingQuickResponseEntryFromStore_Operation(context: context, selectedResponse: selectedResponse, agent: agent)
+        
+        let guardServerResponse_Operation = BlockOperation { [unowned deleteFromServer_Operation, unowned deleteFromStoreOperation] in
+            guard case .success = deleteFromServer_Operation.result else {
+                print("Unable to delete response on server")
+                deleteFromStoreOperation.cancel()
+                return
+            }
+        }
+        guardServerResponse_Operation.addDependency(deleteFromServer_Operation)
+        deleteFromStoreOperation.addDependency(guardServerResponse_Operation)
+        
+        return [
+            markToDeleteFromStore_Operation,
+            deleteFromServer_Operation,
+            guardServerResponse_Operation,
+            deleteFromStoreOperation
+        ]
+    }
 }
 
 
 
 
 
-/// Fetches the  Agent's Auto Response entry from the Core Data store.
+/// Fetches the  Agent's Quck Response entry from the Core Data store.
 class FetchSavedQuickResponsesEntries_Operation: Operation {
     enum OperationError: Error, LocalizedError {
         case coreDataError(error:Error)
@@ -433,7 +463,7 @@ class UpdateExistingQuickResponseEntryOnServer_Operation: Operation {
         self.responseID = responseID
         let companyID = String(AppData.companyId)
         params = [
-            "company_id":String(AppData.companyId),
+            "company_id":companyID,
         ]
         let body = Body(user_id: userID, company_id: companyID, answer: answer)
         httpBody = try! encoder.encode(body)
@@ -479,5 +509,154 @@ class UpdateExistingQuickResponseEntryOnServer_Operation: Operation {
             return
         }
         APIOperations.triggerAPIEndpointOperations(endpoint: .UpdateQuickResponse(responseID: responseID), httpMethod: .PUT, params: params, httpBody: httpBody, headers: headers, guardResponse: .Created, expectData: false, completion: finish)
+    }
+}
+
+
+
+
+
+
+
+
+
+
+//MARK: DEL: Deletes and sync Quick Response
+/// Updates the existing Quick Response entry, changing it's markForDeletion value to TRUE  in the Core Data store.
+class MarkToDeleteExistingQuickResponseEntryInStore_Operation: Operation {
+    enum OperationError: Error, LocalizedError {
+        case coreDataError(error:Error)
+        
+        var localizedDescription: String {
+            switch self {
+                case let .coreDataError(error): return "Core Data Error: \(error.localizedDescription)"
+            }
+        }
+    }
+    var error:OperationError?
+    private let context: NSManagedObjectContext
+    private let selectedQuickResponse:QuickResponse
+    
+    init(context: NSManagedObjectContext, selectedResponse:QuickResponse) {
+        self.context = context
+        self.selectedQuickResponse = selectedResponse
+        self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
+    }
+    
+    override func main() {
+        context.performAndWait {
+            do {
+                selectedQuickResponse.markForDeletion = true
+                try context.save()
+            } catch {
+                print("Error adding entries to store: \(error))")
+                self.error = .coreDataError(error: error)
+            }
+        }
+    }
+}
+
+
+
+/// Deletes Existing Agent's Quick Response entry on the server.
+class DeleteExistingQuickResponseEntryOnServer_Operation: Operation {
+    var result: Result<APIService.EmptyData, APIService.APIError>?
+    
+    private var downloading = false
+    
+    private let responseID:Int
+    
+    private let params:[String:String]
+
+    init(responseID:Int) {
+        self.responseID = responseID
+        let companyID = String(AppData.companyId)
+        params = [
+            "company_id":companyID
+        ]
+    }
+    
+    override var isAsynchronous: Bool {
+        return true
+    }
+    
+    override var isExecuting: Bool {
+        return downloading
+    }
+    
+    override var isFinished: Bool {
+        return result != nil
+    }
+    
+    override func cancel() {
+        super.cancel()
+        
+    }
+    
+    func finish(result: Result<APIService.EmptyData, APIService.APIError>) {
+        guard downloading else { return }
+        
+        willChangeValue(forKey: #keyPath(isExecuting))
+        willChangeValue(forKey: #keyPath(isFinished))
+        
+        downloading = false
+        self.result = result
+        
+        didChangeValue(forKey: #keyPath(isFinished))
+        didChangeValue(forKey: #keyPath(isExecuting))
+    }
+    
+    override func start() {
+        willChangeValue(forKey: #keyPath(isExecuting))
+        downloading = true
+        didChangeValue(forKey: #keyPath(isExecuting))
+        
+        guard !isCancelled else {
+            finish(result: .failure(.cancelled))
+            return
+        }
+        APIOperations.triggerAPIEndpointOperations(endpoint: .DeleteQuickResponse(responseID: responseID), httpMethod: .DELETE, params: params, guardResponse: .Created, expectData: false, completion: finish)
+    }
+}
+
+
+/// Deletes existing Quick Response entry from the Core Data store.
+class DeleteExistingQuickResponseEntryFromStore_Operation: Operation {
+    enum OperationError: Error, LocalizedError {
+        case coreDataError(error:Error)
+        
+        var localizedDescription: String {
+            switch self {
+                case let .coreDataError(error): return "Core Data Error: \(error.localizedDescription)"
+            }
+        }
+    }
+    var error:OperationError?
+    private let context: NSManagedObjectContext
+    private let selectedQuickResponse:QuickResponse
+    private let agent:Agent
+    init(context: NSManagedObjectContext, selectedResponse:QuickResponse, agent:Agent) {
+        self.context = context
+        self.selectedQuickResponse = selectedResponse
+        self.agent = agent
+        self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
+    }
+    
+    override func main() {
+//        let deleteAllRequest = NSBatchDeleteRequest(fetchRequest: allEntriesRequest)
+//        deleteAllRequest.resultType = .resultTypeObjectIDs
+//        let result = try context.execute(deleteAllRequest) as? NSBatchDeleteResult
+//        NSManagedObjectContext.mergeChanges(fromRemoteContextSave: [NSDeletedObjectsKey: result?.result as Any],
+//                                            into: [self.viewContext])
+        context.performAndWait {
+            do {
+//                context.delete(selectedQuickResponse)
+                agent.removeFromQuickResponses(selectedQuickResponse)
+                try context.save()
+            } catch {
+                print("Error adding entries to store: \(error))")
+                self.error = .coreDataError(error: error)
+            }
+        }
     }
 }

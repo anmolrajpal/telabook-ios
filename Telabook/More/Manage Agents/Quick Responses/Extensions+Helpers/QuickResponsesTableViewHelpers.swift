@@ -35,7 +35,7 @@ extension QuickResponsesViewController {
         snapshot = NSDiffableDataSourceSnapshot<Section, QuickResponse>()
         snapshot.appendSections([.main])
         snapshot.appendItems(fetchedResultsController.fetchedObjects ?? [])
-        diffableDataSource?.apply(snapshot, animatingDifferences: false, completion: {
+        diffableDataSource?.apply(snapshot, animatingDifferences: animated, completion: {
             self.handleState()
         })
     }
@@ -75,6 +75,10 @@ extension QuickResponsesViewController: UITableViewDelegate {
         editAction.backgroundColor = UIColor.telaIndigo
         
         let deleteAction =  UIContextualAction(style: .destructive, title: "Delete", handler: { (action,view,completion ) in
+            if let selectedResponse = self.diffableDataSource?.itemIdentifier(for: indexPath) {
+                self.deleteQuickResponse(forSelectedResponse: selectedResponse, agent: self.agent, completion: completion)
+            }
+
 //            self.initiateDeleteQuickResponseSequence(at: indexPath, completion: completion)
         })
         deleteAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "delete_icon"), text: "Delete").withRenderingMode(.alwaysTemplate)

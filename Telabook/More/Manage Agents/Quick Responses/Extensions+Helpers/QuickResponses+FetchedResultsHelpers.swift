@@ -16,7 +16,9 @@ extension QuickResponsesViewController {
         fetchRequest = QuickResponse.fetchRequest()
         let objectID = agent.objectID
         let agentRefrenceObject = context.object(with: objectID) as! Agent
-        fetchRequest.predicate = NSPredicate(format: "\(#keyPath(QuickResponse.sender)) == %@", agentRefrenceObject)
+        let agentPredicate = NSPredicate(format: "\(#keyPath(QuickResponse.sender)) == %@", agentRefrenceObject)
+        let deletionCheckPredicate = NSPredicate(format: "\(#keyPath(QuickResponse.markForDeletion)) = %d", false)
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [agentPredicate, deletionCheckPredicate])
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(QuickResponse.updatedAt), ascending: false)]
         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
                                                               managedObjectContext: context,
@@ -38,6 +40,6 @@ extension QuickResponsesViewController: NSFetchedResultsControllerDelegate {
         self.updateSnapshot()
     }
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
-        self.updateSnapshot()
+        self.updateSnapshot(animated: true)
     }
 }
