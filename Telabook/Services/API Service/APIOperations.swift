@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+import os
 
 
 
@@ -33,6 +33,8 @@ struct APIOperations {
                 return
             }
             hitEndpointOperation.bearerToken = bearerToken
+            
+            os_log("Firebase Bearer Token: %{PRIVATE}@", log: .firebase, type: .info, bearerToken)
             #if DEBUG
             print("\n\n------------------------------------------------ Firebase Token: BEGIN ------------------------------------------------\n\nFirebase Bearer Token: \(bearerToken)\n\n--------------------------------------------------- Firebase Token: END ------------------------------------------------\n\n")
             #endif
@@ -42,6 +44,7 @@ struct APIOperations {
         
         hitEndpointOperation.completionBlock = {
             guard let result = hitEndpointOperation.result else {
+                os_log("Operation Error: HitEndpointOperation must return a result.", log: .network, type: .error)
                 fatalError("Operation Error: HitEndpointOperation must return a result.")
             }
             completion(result)
@@ -135,6 +138,7 @@ class HitEndpointOperation<T:Codable>: Operation {
         #if DEBUG
         print("Endpoint URL => \(url)")
         #endif
+        os_log("Endpoint URL => %@", log: .network, type: .info, url.absoluteString)
         var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: APIService.Configuration.timeOutInterval)
         guard !isCancelled else {
             finish(result: .failure(.cancelled))
@@ -175,9 +179,13 @@ class HitEndpointOperation<T:Codable>: Operation {
             }
             let responseCode = (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)
             let responseStatus = ResponseStatus.getResponseStatusBy(statusCode: responseCode)
+            
             #if DEBUG
             print("\n\n------------------------------------------------ Response: BEGIN ------------------------------------------------\n\nResponse Status => \(responseStatus)\nResponse Code => \(responseCode)\n\n--------------------------------------------------- Response: END ------------------------------------------------\n\n")
             #endif
+            let message = "Response Status: \(responseStatus.rawValue) | Code: \(responseCode) | for URL: \(url.absoluteString)"
+            os_log("%@", log: .network, type: .info, message)
+            
             if let expectedResponse = self.guardResponse {
                 guard responseStatus == expectedResponse else {
                     self.finish(result: .failure(.unexptectedResponse(response: responseStatus)))
@@ -199,6 +207,7 @@ class HitEndpointOperation<T:Codable>: Operation {
                 let jsonString = String(data: data, encoding: .utf8)!
                 print("\n\n------------------------------------------------ Raw JSON Object: BEGIN ------------------------------------------------\n\n"+jsonString+"\n\n--------------------------------------------------- Raw JSON Object: END ------------------------------------------------\n\n")
                 #endif
+                os_log("json response data: %{PRIVATE}@", log: .network, type: .info, jsonString)
                 do {
                     let object = try self.decoder.decode(T.self, from: data)
                     self.finish(result: .success(object))
@@ -206,6 +215,7 @@ class HitEndpointOperation<T:Codable>: Operation {
                     #if DEBUG
                     print("JSON Decoding Error: \(error)")
                     #endif
+                    os_log("JSON Decoding Error: %@", log: .network, type: .error, error.localizedDescription)
                     self.finish(result: .failure(.jsonDecodingError(error: error)))
                 }
             } else {

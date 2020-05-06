@@ -225,6 +225,10 @@ public enum ResponseStatus {
     //Custom
     case UnknownResponse
     
+    var rawValue:String {
+        String(describing: self)
+    }
+    
     static func getStatusCode(by status:ResponseStatus) -> Int {
         switch status {
         //2xx

@@ -20,9 +20,24 @@ extension AutoResponseViewController {
     }
     
     @objc private func didTapSaveButton() {
-//        self.initiateSaveAutoResponseDetailsSequence(userId: userId)
+        guard isFetchedResultsAvailable else { return }
+        guard let responseID = fetchedResultsController.fetchedObjects?.first?.id,
+            responseID != 0 else {
+            print("AutoResponse Object not exist or Failed to unwrap Response ID")
+            return
+        }
+        DispatchQueue.main.async {
+            self.subview.spinner.startAnimating()
+        }
+        self.updateAutoResponse(forID: Int(responseID))
     }
     
+    
+    internal func stopRefreshers() {
+        DispatchQueue.main.async {
+            self.subview.spinner.stopAnimating()
+        }
+    }
     
     
     
@@ -31,12 +46,17 @@ extension AutoResponseViewController {
         if isFetchedResultsAvailable {
             if let firstObject = fetchedResultsController.fetchedObjects?.first,
                 let lastRefreshedAt = firstObject.lastRefreshedAt {
-                let thresholdRefreshTime = lastRefreshedAt.addingTimeInterval(5)
-                let currentTime = Date()
-                currentTime > thresholdRefreshTime ? fetchAutoResponse() : ()
-                #if DEBUG
-                print("\n\n\tLast Refreshed At: \(Date.getStringFromDate(date: lastRefreshedAt, dateFormat: "yyyy-MM-dd HH:mm:ss")) | Threshold Refresh Time: \(Date.getStringFromDate(date: thresholdRefreshTime, dateFormat: "yyyy-MM-dd HH:mm:ss")) | Current time: \(Date.getStringFromDate(date: currentTime, dateFormat: "yyyy-MM-dd HH:mm:ss")))\n\n")
-                #endif
+                
+                if firstObject.synced == true {
+                    let thresholdRefreshTime = lastRefreshedAt.addingTimeInterval(13)
+                    let currentTime = Date()
+                    currentTime > thresholdRefreshTime ? fetchAutoResponse() : ()
+                    #if DEBUG
+                    print("\n\n\tLast Refreshed At: \(Date.getStringFromDate(date: lastRefreshedAt, dateFormat: "yyyy-MM-dd HH:mm:ss")) | Threshold Refresh Time: \(Date.getStringFromDate(date: thresholdRefreshTime, dateFormat: "yyyy-MM-dd HH:mm:ss")) | Current time: \(Date.getStringFromDate(date: currentTime, dateFormat: "yyyy-MM-dd HH:mm:ss")))\n\n")
+                    #endif
+                } else {
+                    updateAutoResponse(forID: Int(firstObject.id))
+                }
             }
         } else {
             fetchAutoResponse()

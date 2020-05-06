@@ -10,6 +10,7 @@ import Foundation
 import CoreData
 
 struct AutoResponseOperations {
+    //MARK: Fetch Agent's Auto Response from Server and Synchronize
     /// Returns an array of operations for synchronizing Agent's Auto Response.
     static func getOperationsToFetchAndSaveAutoResponse(using context: NSManagedObjectContext, userID:Int, forAgent agent:Agent) -> [Operation] {
         let fetchFromStore_Operation = FetchSavedAgentAutoResponseEntry_Operation(context: context)
@@ -50,7 +51,51 @@ struct AutoResponseOperations {
             addToStore_Operation
         ]
     }
+    
+    
+    
+    
+    //MARK: POST Agent's Auto Response to Server and Synchronize
+    /// Returns an array of operations for updating  Agent's Auto Response from Core Data store to server.
+    static func getOperationsToUpdateAutoResponseToServer(using context: NSManagedObjectContext, userID:Int, autoResponseID:Int, forAgent agent:Agent, smsReplyToUpdate:String) -> [Operation] {
+        let saveEntryToStore_Operation = SaveUserUpdatedAutoResponseEntryToStore_Operation(context: context, agent: agent, smsReply: smsReplyToUpdate)
+        let updateEntryOnServer_Operation = UpdateAgentAutoResponseEntryOnServer_Operation(autoResponseID: autoResponseID, smsReply: smsReplyToUpdate, userID: userID)
+        let syncEntryToStore_Operation = SyncUserUpdatedAutoResponseEntryFromServerToStore_Operation(context: context, agent: agent)
+        
+        let passServerResultsToStore_Operation = BlockOperation { [unowned updateEntryOnServer_Operation, unowned syncEntryToStore_Operation] in
+            guard case let .success(entry)? = updateEntryOnServer_Operation.result else {
+                #if DEBUG
+                print("Unresolved Error: unable to get result from download from server operation")
+                #endif
+                syncEntryToStore_Operation.cancel()
+                return
+            }
+            syncEntryToStore_Operation.serverEntry = entry
+        }
+        
+        passServerResultsToStore_Operation.addDependency(updateEntryOnServer_Operation)
+        syncEntryToStore_Operation.addDependency(passServerResultsToStore_Operation)
+        
+        return [
+            saveEntryToStore_Operation,
+            updateEntryOnServer_Operation,
+            passServerResultsToStore_Operation,
+            syncEntryToStore_Operation
+        ]
+    }
+    
+    
+    
+    
 }
+
+
+
+
+
+
+
+
 
 
 
@@ -211,5 +256,160 @@ class AddAgentAutoResponseEntryToCoreDataStore_Operation: Operation {
             }
         }
         
+    }
+}
+
+
+
+
+
+
+/// Save updated Agent Auto Response  entry from user input to the Core Data store.
+class SaveUserUpdatedAutoResponseEntryToStore_Operation: Operation {
+    enum OperationError: Error, LocalizedError {
+        case coreDataError(error:Error)
+        
+        var localizedDescription: String {
+            switch self {
+                case let .coreDataError(error): return "Core Data Error: \(error.localizedDescription)"
+            }
+        }
+    }
+    var error:OperationError?
+    private let context: NSManagedObjectContext
+    private let agent:Agent
+    private let smsReply:String
+    
+    init(context: NSManagedObjectContext, agent:Agent, smsReply:String) {
+        self.context = context
+        self.agent = agent
+        self.smsReply = smsReply
+    }
+    
+    override func main() {
+        //        self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
+        context.performAndWait {
+            do {
+                agent.autoResponse?.smsReply = smsReply
+                agent.autoResponse?.synced = false
+                try context.save()
+            } catch {
+                print("Error adding entries to store: \(error))")
+                self.error = .coreDataError(error: error)
+            }
+        }
+    }
+}
+
+
+/// Updates Agent's Auto Response entry from core data store to the server.
+class UpdateAgentAutoResponseEntryOnServer_Operation: Operation {
+    var result: Result<AutoResponseCodable, APIService.APIError>?
+    private let encoder = JSONEncoder()
+    private var downloading = false
+    private let params:[String:String]
+    struct Body:Codable {
+        let id:Int
+        let user_id:Int
+        let company_id:String
+        let sms_replay:String
+    }
+    private let headers = [
+        HTTPHeader(key: .contentType, value: "application/json"),
+    ]
+    private let httpBody:Data
+    init(autoResponseID:Int, smsReply:String, userID:Int) {
+        let companyID = String(AppData.companyId)
+        params = [
+            "company_id":companyID
+        ]
+        let body = Body(id: autoResponseID, user_id: userID, company_id: companyID, sms_replay: smsReply)
+        httpBody = try! encoder.encode(body)
+    }
+    
+    override var isAsynchronous: Bool {
+        return true
+    }
+    
+    override var isExecuting: Bool {
+        return downloading
+    }
+    
+    override var isFinished: Bool {
+        return result != nil
+    }
+    
+    override func cancel() {
+        super.cancel()
+        
+    }
+    
+    func finish(result: Result<AutoResponseCodable, APIService.APIError>) {
+        guard downloading else { return }
+        
+        willChangeValue(forKey: #keyPath(isExecuting))
+        willChangeValue(forKey: #keyPath(isFinished))
+        
+        downloading = false
+        self.result = result
+        
+        didChangeValue(forKey: #keyPath(isFinished))
+        didChangeValue(forKey: #keyPath(isExecuting))
+    }
+    
+    override func start() {
+        willChangeValue(forKey: #keyPath(isExecuting))
+        downloading = true
+        didChangeValue(forKey: #keyPath(isExecuting))
+        
+        guard !isCancelled else {
+            finish(result: .failure(.cancelled))
+            return
+        }
+        APIOperations.triggerAPIEndpointOperations(endpoint: .AutoResponse, httpMethod: .POST, params: params, httpBody: httpBody, headers: headers, completion: finish)
+    }
+}
+
+
+/// Save updated Agent Auto Response  entry from user input to the Core Data store.
+class SyncUserUpdatedAutoResponseEntryFromServerToStore_Operation: Operation {
+    enum OperationError: Error, LocalizedError {
+        case coreDataError(error:Error)
+        
+        var localizedDescription: String {
+            switch self {
+                case let .coreDataError(error): return "Core Data Error: \(error.localizedDescription)"
+            }
+        }
+    }
+    var error:OperationError?
+    private let context: NSManagedObjectContext
+    private let agent:Agent
+    var serverEntry:AutoResponseCodable?
+    
+    init(context: NSManagedObjectContext, agent:Agent) {
+        self.context = context
+        self.agent = agent
+    }
+    
+    override func main() {
+        //        self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
+        guard let serverEntry = serverEntry else {
+            #if DEBUG
+            print("Failed to unwrap server entry in SyncUserUpdatedAutoResponseEntryFromServerToStore Operation")
+            #endif
+            return
+        }
+        context.performAndWait {
+            do {
+                agent.autoResponse?.smsReply = serverEntry.smsReply
+                agent.autoResponse?.updatedAt = serverEntry.updatedAt != nil ? Date.getDateFromString(dateString: serverEntry.updatedAt, dateFormat: "yyyy-MM-dd HH:mm:ss") : nil
+                agent.autoResponse?.synced = true
+                try context.save()
+            } catch {
+                print("Error adding entries to store: \(error))")
+                self.error = .coreDataError(error: error)
+            }
+        }
     }
 }

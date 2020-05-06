@@ -68,6 +68,7 @@
 		6F58C33722D618B30091C785 /* AutoResponseAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F58C33622D618B30091C785 /* AutoResponseAPI.swift */; };
 		6F58C33922D618C40091C785 /* AutoResponseAPIProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F58C33822D618C40091C785 /* AutoResponseAPIProtocol.swift */; };
 		6F58C33B22D61FAE0091C785 /* AutoResponseDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F58C33A22D61FAE0091C785 /* AutoResponseDataProvider.swift */; };
+		6F6457D92462DCE400CECF03 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6457D82462DCE400CECF03 /* Log.swift */; };
 		6F69BE7C22D46E9000F8903F /* BlockedUsersDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE7B22D46E9000F8903F /* BlockedUsersDataProvider.swift */; };
 		6F69BE7E22D46EF600F8903F /* BlacklistCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE7D22D46EF600F8903F /* BlacklistCodable.swift */; };
 		6F69BE8022D46F8400F8903F /* BlacklistAPIProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE7F22D46F8400F8903F /* BlacklistAPIProtocol.swift */; };
@@ -246,6 +247,7 @@
 		6F58C33622D618B30091C785 /* AutoResponseAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoResponseAPI.swift; sourceTree = "<group>"; };
 		6F58C33822D618C40091C785 /* AutoResponseAPIProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoResponseAPIProtocol.swift; sourceTree = "<group>"; };
 		6F58C33A22D61FAE0091C785 /* AutoResponseDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoResponseDataProvider.swift; sourceTree = "<group>"; };
+		6F6457D82462DCE400CECF03 /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		6F69BE7B22D46E9000F8903F /* BlockedUsersDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUsersDataProvider.swift; sourceTree = "<group>"; };
 		6F69BE7D22D46EF600F8903F /* BlacklistCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlacklistCodable.swift; sourceTree = "<group>"; };
 		6F69BE7F22D46F8400F8903F /* BlacklistAPIProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlacklistAPIProtocol.swift; sourceTree = "<group>"; };
@@ -1233,6 +1235,7 @@
 			isa = PBXGroup;
 			children = (
 				6FB11B0F229C23840098D050 /* Extensions.swift */,
+				6F6457D82462DCE400CECF03 /* Log.swift */,
 				6F29FD4E22B7E28700BCA2AB /* OverlaySpinner.swift */,
 				6FB11B2A229EA7C20098D050 /* Codable.swift */,
 				6FB11B1C229D19E10098D050 /* NetworkManager.swift */,
@@ -1518,6 +1521,7 @@
 				6F087DCD22E0DF3D00CAD840 /* OnlineUsersTableViewExtensions.swift in Sources */,
 				6F098BB922BE4E3700AF19AA /* HandleBlockingHelpers.swift in Sources */,
 				6F04FFBA22C3A12400FA467E /* ChatVCCoreDataHelpers.swift in Sources */,
+				6F6457D92462DCE400CECF03 /* Log.swift in Sources */,
 				6FB11B3D229EF4690098D050 /* ArchivedSMSViewController.swift in Sources */,
 				6F9453CF22DC3CE600047C7F /* ChangePasswordAPIProtocol.swift in Sources */,
 				6F02B2DD2461C6A000FFB34E /* AutoResponseHelpers.swift in Sources */,

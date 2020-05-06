@@ -22,6 +22,7 @@ class AutoResponseView: UIView {
         addSubview(setAutoResponseHeaderView)
         addSubview(setAutoReplyHeadingLabel)
         addSubview(autoReplyTextView)
+        addSubview(spinner)
         //  addSubview(fillerView)
         layoutConstraints()
     }
@@ -38,11 +39,22 @@ class AutoResponseView: UIView {
         setAutoResponseHeaderView.anchor(top: smsAutoReplyContainerView.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, heightConstant: 20)
         setAutoReplyHeadingLabel.anchor(top: setAutoResponseHeaderView.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 20, leftConstant: 20, bottomConstant: 0, rightConstant: 20)
         autoReplyTextView.anchor(top: setAutoReplyHeadingLabel.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 8, leftConstant: 20, bottomConstant: 0, rightConstant: 20, heightConstant: 80)
+        spinner.topAnchor.constraint(equalTo: autoReplyTextView.bottomAnchor, constant: 40).activate()
+        spinner.centerXAnchor.constraint(equalTo: centerXAnchor).activate()
         //        fillerView.anchor(top: autoReplyTextView.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 60, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
     }
     
     
     // MARK: Constructors
+    lazy var spinner: UIActivityIndicatorView = {
+        let aiView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
+        aiView.backgroundColor = .clear
+        aiView.hidesWhenStopped = true
+        aiView.color = UIColor.telaGray7
+        aiView.clipsToBounds = true
+        aiView.translatesAutoresizingMaskIntoConstraints = false
+        return aiView
+    }()
     lazy var callForwardingContainerView = createCallForwardingSwitchContainerView()
     lazy var smsAutoReplyContainerView = createSmsAutoReplySwitchContainerView()
     lazy var placeholderLabel:UILabel = {
