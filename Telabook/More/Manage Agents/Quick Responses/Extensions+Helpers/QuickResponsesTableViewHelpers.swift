@@ -39,14 +39,15 @@ extension QuickResponsesViewController {
     
     /// Manages the UI state based on the fetched results available
     internal func handleState() {
+        print("Handling State: isFetchedResultsAvailable: \(isFetchedResultsAvailable)")
         if self.isFetchedResultsAvailable {
             DispatchQueue.main.async {
-//                self.subview.placeholderLabel.text = self.isFiltering ? "No Agent Found" : "Loading"
-                self.subview.placeholderLabel.isHidden = false
+                self.subview.placeholderLabel.isHidden = true
             }
         } else {
+            self.subview.placeholderLabel.text = "Loading..."
             DispatchQueue.main.async {
-                self.subview.placeholderLabel.isHidden = true
+                self.subview.placeholderLabel.isHidden = false
             }
         }
     }

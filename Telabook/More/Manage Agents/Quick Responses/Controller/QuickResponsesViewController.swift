@@ -44,11 +44,11 @@ class QuickResponsesViewController: UIViewController {
     }
     
     
-    let userId:String
+    let userID:Int
     let agent:Agent
     
-    init(userId:String, agent:Agent) {
-        self.userId = userId
+    init(userID:Int, agent:Agent) {
+        self.userID = userID
         self.agent = agent
         super.init(nibName: nil, bundle: nil)
 //        self.initiateFetchQuickResponsesSequence(userId: userId)
@@ -62,8 +62,11 @@ class QuickResponsesViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupFetchedResultsController()
         setupTableView()
         hideKeyboardWhenTappedAround()
+        setupTargetActions()
+        fetchWithTimeLogic()
     }
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent

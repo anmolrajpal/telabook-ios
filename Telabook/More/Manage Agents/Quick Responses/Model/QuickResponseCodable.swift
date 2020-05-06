@@ -38,7 +38,7 @@ struct QuickResponseCodable : Codable {
 
 
 extension QuickResponse {
-    convenience init(context:NSManagedObjectContext, quickResponseEntryFromServer entry:QuickResponseCodable, sender:Agent) {
+    convenience init(context:NSManagedObjectContext, quickResponseEntryFromServer entry:QuickResponseCodable, agent:Agent, synced:Bool) {
         self.init(context: context)
         self.id = entry.id != nil ? Int32(entry.id!) : 0
         self.userID = entry.userId != nil ? Int32(entry.userId!) : 0
@@ -46,6 +46,7 @@ extension QuickResponse {
         self.createdAt = entry.createdAt != nil ? Date.getDateFromString(dateString: entry.createdAt, dateFormat: "yyyy-MM-dd HH:mm:ss") : nil
         self.updatedAt = entry.updatedAt != nil ? Date.getDateFromString(dateString: entry.updatedAt, dateFormat: "yyyy-MM-dd HH:mm:ss") : nil
         self.lastRefreshedAt = Date()
-        self.sender = sender
+        self.sender = agent
+        self.synced = synced
     }
 }

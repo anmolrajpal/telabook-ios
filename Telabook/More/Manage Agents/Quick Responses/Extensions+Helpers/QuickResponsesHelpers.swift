@@ -31,6 +31,17 @@ extension QuickResponsesViewController {
         }
     }
     
+    
+    internal func startRefreshers() {
+        self.subview.spinner.startAnimating()
+        self.subview.saveResponseButton.isHidden = true
+    }
+    internal func stopRefreshers() {
+        self.subview.spinner.stopAnimating()
+        self.subview.saveResponseButton.isHidden = false
+    }
+    
+    
      func showEditResponseDialogBox(responseId:String, response:String) {
         let alertVC = UIAlertController(title: "", message: "\n", preferredStyle: UIAlertController.Style.alert)
         let attributedTitle = NSAttributedString(string: "Update Response", attributes: [
@@ -90,4 +101,27 @@ extension QuickResponsesViewController {
     }
     
     
+    
+    
+    
+    internal func fetchWithTimeLogic() {
+        if isFetchedResultsAvailable {
+            if let firstObject = fetchedResultsController.fetchedObjects?.first,
+                let lastRefreshedAt = firstObject.lastRefreshedAt {
+                
+                if firstObject.synced == true {
+                    let thresholdRefreshTime = lastRefreshedAt.addingTimeInterval(13)
+                    let currentTime = Date()
+                    currentTime > thresholdRefreshTime ? fetchQuickResponses() : ()
+                    #if DEBUG
+                    print("\n\n\tLast Refreshed At: \(Date.getStringFromDate(date: lastRefreshedAt, dateFormat: "yyyy-MM-dd HH:mm:ss")) | Threshold Refresh Time: \(Date.getStringFromDate(date: thresholdRefreshTime, dateFormat: "yyyy-MM-dd HH:mm:ss")) | Current time: \(Date.getStringFromDate(date: currentTime, dateFormat: "yyyy-MM-dd HH:mm:ss")))\n\n")
+                    #endif
+                } else {
+//                    updateAutoResponse(forID: Int(firstObject.id))
+                }
+            }
+        } else {
+            fetchQuickResponses()
+        }
+    }
 }

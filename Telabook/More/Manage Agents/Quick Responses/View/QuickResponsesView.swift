@@ -18,6 +18,7 @@ class QuickResponsesView: UIView {
         addSubview(responseTextView)
         addSubview(characterCountLabel)
         addSubview(saveResponseButton)
+        addSubview(spinner)
         addSubview(manageResponsesHeaderView)
         addSubview(tableView)
         addSubview(placeholderLabel)
@@ -40,6 +41,9 @@ class QuickResponsesView: UIView {
         saveResponseButton.topAnchor.constraint(equalTo: characterCountLabel.bottomAnchor, constant: 20).activate()
         saveResponseButton.centerXAnchor.constraint(equalTo: centerXAnchor).activate()
         
+        spinner.centerXAnchor.constraint(equalTo: saveResponseButton.centerXAnchor).activate()
+        spinner.centerYAnchor.constraint(equalTo: saveResponseButton.centerYAnchor).activate()
+        
         manageResponsesHeaderView.anchor(top: saveResponseButton.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 20, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 20)
         
         tableView.anchor(top: manageResponsesHeaderView.bottomAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
@@ -49,6 +53,15 @@ class QuickResponsesView: UIView {
     
     
     // MARK: Constructors
+    lazy var spinner: UIActivityIndicatorView = {
+        let aiView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
+        aiView.backgroundColor = .clear
+        aiView.hidesWhenStopped = true
+        aiView.color = UIColor.telaGray7
+        aiView.clipsToBounds = true
+        aiView.translatesAutoresizingMaskIntoConstraints = false
+        return aiView
+    }()
     lazy var placeholderLabel:UILabel = {
         let label = UILabel()
         label.text = "Turn on Mobile Data or Wifi to Access Telabook"

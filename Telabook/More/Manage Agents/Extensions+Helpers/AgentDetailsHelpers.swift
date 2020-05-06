@@ -40,7 +40,7 @@ extension AgentDetailsViewController {
     
     @objc private func quickResponsesButtonTapped() {
         if let userId = self.agent.userID != 0 ? Int(agent.userID) : nil {
-            let vc = QuickResponsesViewController(userId: String(userId), agent: agent)
+            let vc = QuickResponsesViewController(userID: userId, agent: agent)
             //            vc.modalPresentationStyle = .overFullScreen
             vc.view.backgroundColor = .telaGray1
             present(vc, animated: true, completion: nil)

@@ -11,11 +11,15 @@ import CoreData
 
 extension QuickResponsesViewController {
     internal func setupFetchedResultsController() {
+        let context = PersistentContainer.shared.viewContext
+        context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
         fetchRequest = QuickResponse.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "\(#keyPath(QuickResponse.sender))", agent)
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(Agent.date), ascending: false)]
+        let objectID = agent.objectID
+        let agentRefrenceObject = context.object(with: objectID) as! Agent
+        fetchRequest.predicate = NSPredicate(format: "\(#keyPath(QuickResponse.sender)) == %@", agentRefrenceObject)
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(QuickResponse.updatedAt), ascending: false)]
         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
-                                                              managedObjectContext: PersistentContainer.shared.viewContext,
+                                                              managedObjectContext: context,
                                                               sectionNameKeyPath: nil,
                                                               cacheName: String(describing: self))
         
