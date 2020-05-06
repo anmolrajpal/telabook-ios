@@ -49,6 +49,22 @@ extension QuickResponsesViewController {
         queue.addOperations([operation], waitUntilFinished: false)
     }
     
+    internal func updateQuickResponse(forSelectedResponse response:QuickResponse, answer:String) {
+        DispatchQueue.main.async {
+            self.subview.placeholderLabel.text = "Updating..."
+            self.startRefreshers()
+        }
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+        
+        let context = PersistentContainer.shared.newBackgroundContext()
+        let operations = QuickResponseOperations.getOperationsToSyncExistingQuickResponse(using: context, userID: userID, selectedResponse: response, quickResposneToUpdate: answer)
+        handleViewsStateForOperations(operations: operations, onOperationQueue: queue)
+        
+        queue.addOperations(operations, waitUntilFinished: false)
+    }
+    
     
     private func handleViewsStateForOperations(operations:[Operation], onOperationQueue queue:OperationQueue) {
         operations.forEach { operation in
@@ -94,6 +110,36 @@ extension QuickResponsesViewController {
                             }
                         }
                 }
+                
+                
+                case let operation as UpdateExistingQuickResponseEntryInStore_Operation:
+                    operation.completionBlock = {
+                        if let error = operation.error {
+                            print(error.localizedDescription)
+                            self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+                        } else {
+                            print("Response Saved in Core Data. Dismissing, leaving pending operations in Queue (updating on Server + sync to store)")
+                            Thread.sleep(forTimeInterval: 0.4)
+                            DispatchQueue.main.async {
+                                self.stopRefreshers()
+//                                self.dismiss(animated: true, completion: nil)
+                            }
+                        }
+                }
+                
+                case let operation as UpdateExistingQuickResponseEntryOnServer_Operation:
+                    operation.completionBlock = {
+                        guard case let .failure(error) = operation.result else {
+                            self.fetchQuickResponses()
+                            return
+                        }
+                        print(error.localizedDescription)
+                        os_log("%@", log: .network, type: .error, error.localizedDescription)
+                }
+                
+                
+                
+                
                 
                 
 //                //MARK: Update AutoResponse to Server and Sync to Core Data Operations

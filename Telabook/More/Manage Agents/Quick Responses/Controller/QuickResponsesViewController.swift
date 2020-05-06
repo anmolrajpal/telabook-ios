@@ -36,7 +36,7 @@ class QuickResponsesViewController: UIViewController {
     internal var fetchedResultsController: NSFetchedResultsController<QuickResponse>!
     
     internal enum Section { case main }
-    var diffableDataSource: UITableViewDiffableDataSource<Section, QuickResponse>?
+    var diffableDataSource: QuickResponseDataSource?
     var snapshot: NSDiffableDataSourceSnapshot<Section, QuickResponse>!
     
     internal var isFetchedResultsAvailable:Bool {

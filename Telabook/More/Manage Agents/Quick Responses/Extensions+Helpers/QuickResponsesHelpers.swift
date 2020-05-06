@@ -43,7 +43,7 @@ extension QuickResponsesViewController {
     }
     
     
-     func showEditResponseDialogBox(responseId:String, response:String) {
+     func showEditResponseDialogBox(quickResponse:QuickResponse) {
         let alertVC = UIAlertController(title: "", message: "\n", preferredStyle: UIAlertController.Style.alert)
         let attributedTitle = NSAttributedString(string: "Update Response", attributes: [
             NSAttributedString.Key.font : UIFont(name: CustomFonts.gothamMedium.rawValue, size: 12)!, //your font here
@@ -62,7 +62,7 @@ extension QuickResponsesViewController {
         alertVC.view.subviews.first?.backgroundColor = .clear
         alertVC.addTextField { (textField) in
             textField.placeholder = "Add Quick Response"
-            textField.text = response
+            textField.text = quickResponse.answer
             textField.clearButtonMode = .whileEditing
             textField.borderStyle = .roundedRect
             // textField.layer.borderColor = UIColor.telaGray5.cgColor
@@ -83,6 +83,7 @@ extension QuickResponsesViewController {
             let text = alertVC.textFields?[0].text
             if let answer = text,
                 !answer.isEmpty {
+                self.updateQuickResponse(forSelectedResponse: quickResponse, answer: answer)
 //                self.initiateUpdateQuickResponseSequence(userId: self.userId, answer: answer, responseId: responseId)
             }
         }

@@ -11,6 +11,7 @@ import CoreData
 import os
 
 struct QuickResponseOperations {
+    //MARK: Get: Fetch and Sync Agent's Quick Responses
     /// Returns an array of operations for synchronizing Agent's Quick Responses.
     static func getOperationsToFetchAndSaveQuickResponses(using context: NSManagedObjectContext, userID:Int, forAgent agent:Agent) -> [Operation] {
         let fetchFromStore_Operation = FetchSavedQuickResponsesEntries_Operation(context: context)
@@ -55,6 +56,22 @@ struct QuickResponseOperations {
             deleteRedundantEntriesFromStore_Operation,
             passServerResultsToStore_Operation,
             addToStore_Operation
+        ]
+    }
+    
+    
+    
+    
+    //MARK: PUT - Sync and Update Agent's Quick Response on Server
+    /// Returns an array of operations for updating  Agent's Auto Response from Core Data store to server.
+    static func getOperationsToSyncExistingQuickResponse(using context: NSManagedObjectContext, userID:Int, selectedResponse:QuickResponse, quickResposneToUpdate answer:String) -> [Operation] {
+        
+        let saveEntryToStore_Operation = UpdateExistingQuickResponseEntryInStore_Operation(context: context, selectedResponse: selectedResponse, answer: answer)
+        let updateEntryOnServer_Operation = UpdateExistingQuickResponseEntryOnServer_Operation(responseID: Int(selectedResponse.id), userID: userID, answer: answer)
+        
+        return [
+            saveEntryToStore_Operation,
+            updateEntryOnServer_Operation
         ]
     }
 }
@@ -344,5 +361,123 @@ class CreateNewQuickResponseEntryOnServer_Operation: Operation {
             return
         }
         APIOperations.triggerAPIEndpointOperations(endpoint: .CreateQuickResponse, httpMethod: .POST, params: params, httpBody: httpBody, headers: headers, guardResponse: .Created, expectData: false, completion: finish)
+    }
+}
+
+
+
+
+
+
+
+/// Updates the existing Quick Response entry from user input to the Core Data store.
+class UpdateExistingQuickResponseEntryInStore_Operation: Operation {
+    enum OperationError: Error, LocalizedError {
+        case coreDataError(error:Error)
+        
+        var localizedDescription: String {
+            switch self {
+                case let .coreDataError(error): return "Core Data Error: \(error.localizedDescription)"
+            }
+        }
+    }
+    var error:OperationError?
+    private let context: NSManagedObjectContext
+    private let selectedQuickResponse:QuickResponse
+    private let answer:String
+    
+    init(context: NSManagedObjectContext, selectedResponse:QuickResponse, answer:String) {
+        self.context = context
+        self.selectedQuickResponse = selectedResponse
+        self.answer = answer
+        self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
+    }
+    
+    override func main() {
+        context.performAndWait {
+            do {
+                selectedQuickResponse.answer = answer
+                selectedQuickResponse.synced = false
+                try context.save()
+            } catch {
+                print("Error adding entries to store: \(error))")
+                self.error = .coreDataError(error: error)
+            }
+        }
+    }
+}
+
+
+
+/// Updates Existing Agent's Quick Response entry on the server.
+class UpdateExistingQuickResponseEntryOnServer_Operation: Operation {
+    var result: Result<APIService.EmptyData, APIService.APIError>?
+    
+    struct Body:Codable {
+        let user_id:Int
+        let company_id:String
+        let answer:String
+    }
+    private let encoder = JSONEncoder()
+    private var downloading = false
+    
+    private let responseID:Int
+    
+    private let params:[String:String]
+    private let headers:[HTTPHeader] = [
+        HTTPHeader(key: .contentType, value: "application/json"),
+        HTTPHeader(key: .xRequestedWith, value: "XMLHttpRequest")
+    ]
+    private let httpBody:Data
+    init(responseID:Int, userID:Int, answer:String) {
+        self.responseID = responseID
+        let companyID = String(AppData.companyId)
+        params = [
+            "company_id":String(AppData.companyId),
+        ]
+        let body = Body(user_id: userID, company_id: companyID, answer: answer)
+        httpBody = try! encoder.encode(body)
+    }
+    
+    override var isAsynchronous: Bool {
+        return true
+    }
+    
+    override var isExecuting: Bool {
+        return downloading
+    }
+    
+    override var isFinished: Bool {
+        return result != nil
+    }
+    
+    override func cancel() {
+        super.cancel()
+        
+    }
+    
+    func finish(result: Result<APIService.EmptyData, APIService.APIError>) {
+        guard downloading else { return }
+        
+        willChangeValue(forKey: #keyPath(isExecuting))
+        willChangeValue(forKey: #keyPath(isFinished))
+        
+        downloading = false
+        self.result = result
+        
+        didChangeValue(forKey: #keyPath(isFinished))
+        didChangeValue(forKey: #keyPath(isExecuting))
+    }
+    
+    override func start() {
+        willChangeValue(forKey: #keyPath(isExecuting))
+        downloading = true
+        didChangeValue(forKey: #keyPath(isExecuting))
+        
+        guard !isCancelled else {
+            finish(result: .failure(.cancelled))
+            return
+        }
+        APIOperations.triggerAPIEndpointOperations(endpoint: .UpdateQuickResponse(responseID: responseID), httpMethod: .PUT, params: params, httpBody: httpBody, headers: headers, guardResponse: .Created, expectData: false, completion: finish)
     }
 }
