@@ -55,12 +55,12 @@
         <attribute name="addressBookName" optional="YES" attributeType="String"/>
         <attribute name="blacklistReason" optional="YES" attributeType="String"/>
         <attribute name="colorCode" optional="YES" attributeType="Integer 16" minValueString="0" maxValueString="3" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="customerBlacklist" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
         <attribute name="customerID" optional="YES" attributeType="Integer 32" minValueString="1" usesScalarValueType="YES"/>
         <attribute name="deliveredByProviderAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="id" optional="YES" attributeType="Integer 32" minValueString="1" usesScalarValueType="YES"/>
+        <attribute name="externalConversationID" optional="YES" attributeType="Integer 32" minValueString="1" usesScalarValueType="YES"/>
         <attribute name="isAddressBookNameActive" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isArchived" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isBlacklisted" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isCustomerDeleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isIncoming" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="lastMessageDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -82,6 +82,11 @@
         <attribute name="workerPersonName" optional="YES" attributeType="String"/>
         <attribute name="workerPhoneNumber" optional="YES" attributeType="String"/>
         <relationship name="agent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Agent" inverseName="customers" inverseEntity="Agent"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="customerID"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
     <entity name="ExternalChat" representedClassName=".ExternalChat" syncable="YES">
         <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -184,7 +189,7 @@
         <element name="Address" positionX="-324.984375" positionY="-372.328125" width="128" height="90"/>
         <element name="Agent" positionX="-718.6484375" positionY="-34.9140625" width="128" height="388"/>
         <element name="AutoResponse" positionX="-279" positionY="414" width="128" height="163"/>
-        <element name="Customer" positionX="-453.58984375" positionY="100.859375" width="128" height="508"/>
+        <element name="Customer" positionX="-453.58984375" positionY="100.859375" width="128" height="28"/>
         <element name="ExternalChat" positionX="-310.7109375" positionY="-196.6796875" width="128" height="165"/>
         <element name="ExternalConversation" positionX="140.44140625" positionY="-192.74609375" width="128" height="345"/>
         <element name="InternalConversation" positionX="171.46484375" positionY="271.6328125" width="128" height="313"/>

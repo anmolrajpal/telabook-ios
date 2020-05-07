@@ -86,6 +86,24 @@ extension QuickResponsesViewController: UITableViewDelegate {
         let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
         return configuration
     }
-    
 }
 
+
+
+//MARK: Prefetching Logic for images: To be implemented | Problem: Diffable Data Source
+/*
+let serialQueue = DispatchQueue(label: "Decode queue")
+extension QuickResponsesViewController: UITableViewDataSourcePrefetching {
+    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+        for indexPath in indexPaths {
+            serialQueue.async {
+                if let cell = self.diffableDataSource?.itemIdentifier(for: indexPath) {
+                    
+                }
+                let downsampledImage = downsample(images[indexPath.row])
+                DispatchQueue.main.async { self.update(at: indexPath, with: downsampledImage) }
+            }
+        }
+    }
+}
+*/

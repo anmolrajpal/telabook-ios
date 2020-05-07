@@ -889,3 +889,51 @@ extension UIRefreshControl {
     }
 
 }
+
+
+
+
+
+
+extension FileManager {
+    static var cacheDirectoryURL:URL {
+        self.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+    }
+    static var cacheDirectoryURLString:String {
+        NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!
+    }
+}
+
+extension Data {
+    func getDownsampledImage(to pointSize: CGSize, scale: CGFloat) -> UIImage {
+        let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
+        let imageSource = CGImageSourceCreateWithData(self as CFData, imageSourceOptions)!
+        let maxDimensionInPixels = Swift.max(pointSize.width, pointSize.height) * scale
+        let downsampleOptions =
+            [kCGImageSourceCreateThumbnailFromImageAlways: true,
+             kCGImageSourceShouldCacheImmediately: true,
+             kCGImageSourceCreateThumbnailWithTransform: true,
+             kCGImageSourceThumbnailMaxPixelSize: maxDimensionInPixels] as CFDictionary
+        
+        let downsampledImage =
+            CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampleOptions)!
+        return UIImage(cgImage: downsampledImage)
+    }
+}
+
+extension URL {
+    func getDownsampledImage(to pointSize: CGSize, scale: CGFloat) -> UIImage {
+        let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
+        let imageSource = CGImageSourceCreateWithURL(self as CFURL, imageSourceOptions)!
+        let maxDimensionInPixels = max(pointSize.width, pointSize.height) * scale
+        let downsampleOptions =
+            [kCGImageSourceCreateThumbnailFromImageAlways: true,
+             kCGImageSourceShouldCacheImmediately: true,
+             kCGImageSourceCreateThumbnailWithTransform: true,
+             kCGImageSourceThumbnailMaxPixelSize: maxDimensionInPixels] as CFDictionary
+        
+        let downsampledImage =
+            CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampleOptions)!
+        return UIImage(cgImage: downsampledImage)
+    }
+}

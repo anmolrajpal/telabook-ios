@@ -18,12 +18,23 @@ public struct APIService: APIServiceProtocol {
     
     /// Configuration options for API Endpoints URL constructor.
     struct Configuration {
-        static let timeOutInterval:TimeInterval = 15.0
-        static let apiURLScheme = Config.APIConfig.urlScheme
-        static let baseURL = Config.APIConfig.baseURL
-        static let apiHost = Config.APIConfig.apiHost
-        static let port:Int? = Config.APIConfig.port
-        static let apiCommonPath:String = Config.APIConfig.urlPrefix
+        let timeOutInterval:TimeInterval
+        let apiURLScheme:String
+        let baseURL:String
+        let apiHost:String
+        let port:Int?
+        let apiCommonPath:String
+//        static let apiVersion: APIVersion = Config.APIConfig.apiVersion
+        
+        init(timeOutInterval: TimeInterval = 15.0, apiURLScheme: String = Config.APIConfig.urlScheme, baseURL: String = Config.APIConfig.baseURL, apiHost: String = Config.APIConfig.apiHost, port: Int? = Config.APIConfig.port, apiCommonPath: String = Config.APIConfig.urlPrefix) {
+            self.timeOutInterval = timeOutInterval
+            self.apiURLScheme = apiURLScheme
+            self.baseURL = baseURL
+            self.apiHost = apiHost
+            self.port = port
+            self.apiCommonPath = apiCommonPath
+        }
+        static let defaultConfiguration:Configuration = .init()
     }
     
     struct EmptyData:Codable {

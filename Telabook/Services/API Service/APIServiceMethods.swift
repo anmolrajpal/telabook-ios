@@ -29,7 +29,7 @@ extension APIService {
             #if DEBUG
             print("Endpoint URL= \(url)")
             #endif
-            var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.timeOutInterval)
+            var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.defaultConfiguration.timeOutInterval)
             request.httpMethod = HTTPMethod.POST.rawValue
             request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: Header.headerName.Authorization.rawValue)
             if let headers = headers { headers.forEach({ request.addValue($0.value, forHTTPHeaderField: $0.key.rawValue) }) }
@@ -116,7 +116,7 @@ extension APIService {
             #if DEBUG
             print("Endpoint URL= \(url)")
             #endif
-            var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.timeOutInterval)
+            var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.defaultConfiguration.timeOutInterval)
             request.httpMethod = httpMethod.rawValue
             request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: Header.headerName.Authorization.rawValue)
             if let headers = headers { headers.forEach({ request.setValue($0.value, forHTTPHeaderField: $0.key.rawValue) }) }
@@ -205,7 +205,7 @@ extension APIService {
             #if DEBUG
             print("Endpoint URL= \(url)")
             #endif
-            var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.timeOutInterval)
+            var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.defaultConfiguration.timeOutInterval)
             request.httpMethod = httpMethod.rawValue
             request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: Header.headerName.Authorization.rawValue)
             if let headers = headers { headers.forEach({ request.setValue($0.value, forHTTPHeaderField: $0.key.rawValue) }) }
@@ -302,7 +302,7 @@ extension APIService {
             #if DEBUG
             print("Endpoint URL= \(url)")
             #endif
-            var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.timeOutInterval)
+            var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.defaultConfiguration.timeOutInterval)
             request.httpMethod = HTTPMethod.GET.rawValue
             request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: Header.headerName.Authorization.rawValue)
             if let headers = headers { headers.forEach({ request.addValue($0.value, forHTTPHeaderField: $0.key.rawValue) }) }
@@ -387,7 +387,7 @@ extension APIService {
             #if DEBUG
             print("Endpoint URL= \(url)")
             #endif
-            var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.timeOutInterval)
+            var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.defaultConfiguration.timeOutInterval)
             request.httpMethod = HTTPMethod.POST.rawValue
             request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: Header.headerName.Authorization.rawValue)
             if let headers = headers { headers.forEach({ request.setValue($0.value, forHTTPHeaderField: $0.key.rawValue) }) }
@@ -475,7 +475,7 @@ extension APIService {
             #if DEBUG
             print("Endpoint URL= \(url)")
             #endif
-            var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.timeOutInterval)
+            var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.defaultConfiguration.timeOutInterval)
             request.httpMethod = HTTPMethod.PUT.rawValue
             request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: Header.headerName.Authorization.rawValue)
             if let headers = headers { headers.forEach({ request.addValue($0.value, forHTTPHeaderField: $0.key.rawValue) }) }
@@ -561,7 +561,7 @@ extension APIService {
             #if DEBUG
             print("Endpoint URL= \(url)")
             #endif
-            var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.timeOutInterval)
+            var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.defaultConfiguration.timeOutInterval)
             request.httpMethod = HTTPMethod.DELETE.rawValue
             request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: Header.headerName.Authorization.rawValue)
             if let headers = headers { headers.forEach({ request.addValue($0.value, forHTTPHeaderField: $0.key.rawValue) }) }
@@ -657,7 +657,7 @@ extension APIService {
         #if DEBUG
         print("Endpoint URL= \(url)")
         #endif
-        var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.timeOutInterval)
+        var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.defaultConfiguration.timeOutInterval)
         request.httpMethod = httpMethod.rawValue
         request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: Header.headerName.Authorization.rawValue)
         if let headers = headers { headers.forEach({ request.setValue($0.value, forHTTPHeaderField: $0.key.rawValue) }) }
@@ -745,7 +745,7 @@ extension APIService {
         #if DEBUG
         print("Endpoint URL= \(url)")
         #endif
-        var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.timeOutInterval)
+        var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.defaultConfiguration.timeOutInterval)
         request.httpMethod = httpMethod.rawValue
         request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: Header.headerName.Authorization.rawValue)
         if let headers = headers { headers.forEach({ request.setValue($0.value, forHTTPHeaderField: $0.key.rawValue) }) }

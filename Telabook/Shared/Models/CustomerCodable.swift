@@ -127,8 +127,8 @@ extension Customer {
         self.phoneNumber = customerEntry.customerPhoneNumber
         self.isCustomerDeleted = customerEntry.deleted ?? false
         self.deliveredByProviderAt = customerEntry.deliveredByProvider != nil ? Date(milliSecondsSince1970: Int64(customerEntry.deliveredByProvider!)) : nil
-        self.customerBlacklist = customerEntry.externalConversationBlackList != nil ? Int16(customerEntry.externalConversationBlackList!) : 0
-        self.id = customerEntry.externalConversationId != nil ? Int32(customerEntry.externalConversationId!) : 0
+        self.isBlacklisted = customerEntry.externalConversationBlackList != nil ? customerEntry.externalConversationBlackList!.boolValue : false
+        self.externalConversationID = customerEntry.externalConversationId != nil ? Int32(customerEntry.externalConversationId!) : 0
         self.isIncoming = customerEntry.incoming ?? false
         self.addressBookID = customerEntry.internalAddressBookId != nil ? Int32(customerEntry.internalAddressBookId!) : 0
         self.isAddressBookNameActive = customerEntry.internalAddressBookNameActive != nil ? customerEntry.internalAddressBookNameActive!.boolValue : false

@@ -106,39 +106,48 @@ class TabBarController: UITabBarController {
         }
     }
     private func setUpTabBarViewControllers() {
+        /*
         DispatchQueue.main.async {
             self.spinner.startAnimating()
         }
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
             self.spinner.stopAnimating()
         }
-        
-            
+        */
         
         let homeViewController = UINavigationController(rootViewController: HomeViewController())
-        let callsViewController = UINavigationController(rootViewController: CallsViewController())
-        let smsViewController = UINavigationController(rootViewController: SMSViewController())
+        let callsViewController = UINavigationController(rootViewController: SMSViewController())
+        let agentsViewController = UINavigationController(rootViewController: AgentsViewController(fetchRequest: Agent.fetchRequest()))
+//        let smsViewController = UINavigationController(rootViewController: SMSViewController())
         let settingsViewController = UINavigationController(rootViewController: SettingsViewController())
         let moreViewController = UINavigationController(rootViewController: MoreViewController())
         homeViewController.tabBarItem = Tabs.tab1.tabBarItem
         callsViewController.tabBarItem = Tabs.tab2.tabBarItem
-        smsViewController.tabBarItem = Tabs.tab3.tabBarItem
+//        smsViewController.tabBarItem = Tabs.tab3.tabBarItem
+        agentsViewController.tabBarItem = Tabs.tab3.tabBarItem
         settingsViewController.tabBarItem = Tabs.tab4.tabBarItem
         moreViewController.tabBarItem = Tabs.tab5.tabBarItem
         let role = CustomUtils.shared.getUserRole()
         var viewControllersList:[UIViewController]
         if role == .Agent {
-            viewControllersList = [homeViewController, callsViewController, smsViewController,  moreViewController]
+            viewControllersList = [homeViewController, callsViewController, agentsViewController,  moreViewController]
         } else {
-            viewControllersList = [homeViewController, callsViewController, smsViewController, settingsViewController, moreViewController]
+            viewControllersList = [homeViewController, callsViewController, agentsViewController, settingsViewController, moreViewController]
         }
+        self.setupTabBarUI()
+        self.viewControllers = viewControllersList
+        self.selectedIndex = AppData.selectedTab.rawValue
+        self.isLoaded = true
+        
+        /*
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.28) {
             self.setupTabBarUI()
             self.viewControllers = viewControllersList
             self.selectedIndex = AppData.selectedTab.rawValue
             self.isLoaded = true
         }
+        */
     }
     fileprivate func setupTabBarUI() {
         tabBar.barTintColor = UIColor.telaGray4

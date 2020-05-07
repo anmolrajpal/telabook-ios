@@ -19,6 +19,16 @@
 		6F04FFBC22C3A22C00FA467E /* ExternalChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F04FFBB22C3A22C00FA467E /* ExternalChat.swift */; };
 		6F05627F22E0882A00424BF5 /* ChatVCMessageKitExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F05627E22E0882A00424BF5 /* ChatVCMessageKitExtensions.swift */; };
 		6F05628122E08EF500424BF5 /* ChatVCHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F05628022E08EF500424BF5 /* ChatVCHelpers.swift */; };
+		6F065343246487F100F857C1 /* CustomersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F065342246487F100F857C1 /* CustomersViewController.swift */; };
+		6F0653452464880100F857C1 /* CustomersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0653442464880100F857C1 /* CustomersView.swift */; };
+		6F0653472464881100F857C1 /* CustomerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0653462464881100F857C1 /* CustomerCell.swift */; };
+		6F0653492464882000F857C1 /* CustomerCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0653482464882000F857C1 /* CustomerCellView.swift */; };
+		6F06534B2464885700F857C1 /* CustomersServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F06534A2464885700F857C1 /* CustomersServiceProvider.swift */; };
+		6F06534D2464886F00F857C1 /* Customers+TableViewHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F06534C2464886F00F857C1 /* Customers+TableViewHelpers.swift */; };
+		6F06534F246488BD00F857C1 /* Customers+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F06534E246488BD00F857C1 /* Customers+Helpers.swift */; };
+		6F0653512464891500F857C1 /* Customers+SearchHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0653502464891500F857C1 /* Customers+SearchHelpers.swift */; };
+		6F0653532464892800F857C1 /* Customers+CoreDataHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0653522464892800F857C1 /* Customers+CoreDataHelpers.swift */; };
+		6F06535524648C3E00F857C1 /* CustomerOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F06535424648C3E00F857C1 /* CustomerOperations.swift */; };
 		6F087DCD22E0DF3D00CAD840 /* OnlineUsersTableViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F087DCC22E0DF3D00CAD840 /* OnlineUsersTableViewExtensions.swift */; };
 		6F087DCF22E0E40E00CAD840 /* OnlineUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F087DCE22E0E40E00CAD840 /* OnlineUser.swift */; };
 		6F087DD122E0EFFD00CAD840 /* OnlineUsersAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F087DD022E0EFFD00CAD840 /* OnlineUsersAPI.swift */; };
@@ -176,6 +186,15 @@
 		6FBDEC7822B28D5E00A8511E /* EditDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FBDEC7722B28D5E00A8511E /* EditDetailsViewController.swift */; };
 		6FBDEC7A22B3D3C200A8511E /* SMSDetailVCChatExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FBDEC7922B3D3C200A8511E /* SMSDetailVCChatExtensions.swift */; };
 		6FBDEC7C22B3F1DA00A8511E /* SMSDetailVC+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FBDEC7B22B3F1DA00A8511E /* SMSDetailVC+CollectionView.swift */; };
+		6FC6022C2464462400C1BF6D /* AgentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC6022B2464462400C1BF6D /* AgentsViewController.swift */; };
+		6FC6022E2464464D00C1BF6D /* AgentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC6022D2464464D00C1BF6D /* AgentsView.swift */; };
+		6FC60230246446F000C1BF6D /* Agents+CoreDataHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC6022F246446F000C1BF6D /* Agents+CoreDataHelpers.swift */; };
+		6FC602322464470900C1BF6D /* AgentsServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC602312464470900C1BF6D /* AgentsServiceProvider.swift */; };
+		6FC602342464471A00C1BF6D /* Agents+TableViewHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC602332464471A00C1BF6D /* Agents+TableViewHelpers.swift */; };
+		6FC60236246447E500C1BF6D /* Agents+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC60235246447E500C1BF6D /* Agents+Helpers.swift */; };
+		6FC602382464482900C1BF6D /* AgentCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC602372464482900C1BF6D /* AgentCellView.swift */; };
+		6FC6023A2464485C00C1BF6D /* AgentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC602392464485C00C1BF6D /* AgentCell.swift */; };
+		6FC6023C2464497600C1BF6D /* Agents+SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC6023B2464497600C1BF6D /* Agents+SearchController.swift */; };
 		6FD8955D245ECDB40083D79A /* AgentDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD8955C245ECDB40083D79A /* AgentDetailsView.swift */; };
 		6FD8955F245EDAAB0083D79A /* ManageAgentsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD8955E245EDAAB0083D79A /* ManageAgentsHelpers.swift */; };
 		6FD89561245EDAD40083D79A /* AgentDetailsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD89560245EDAD40083D79A /* AgentDetailsHelpers.swift */; };
@@ -199,6 +218,16 @@
 		6F04FFBB22C3A22C00FA467E /* ExternalChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalChat.swift; sourceTree = "<group>"; };
 		6F05627E22E0882A00424BF5 /* ChatVCMessageKitExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatVCMessageKitExtensions.swift; sourceTree = "<group>"; };
 		6F05628022E08EF500424BF5 /* ChatVCHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatVCHelpers.swift; sourceTree = "<group>"; };
+		6F065342246487F100F857C1 /* CustomersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomersViewController.swift; sourceTree = "<group>"; };
+		6F0653442464880100F857C1 /* CustomersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomersView.swift; sourceTree = "<group>"; };
+		6F0653462464881100F857C1 /* CustomerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerCell.swift; sourceTree = "<group>"; };
+		6F0653482464882000F857C1 /* CustomerCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerCellView.swift; sourceTree = "<group>"; };
+		6F06534A2464885700F857C1 /* CustomersServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomersServiceProvider.swift; sourceTree = "<group>"; };
+		6F06534C2464886F00F857C1 /* Customers+TableViewHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Customers+TableViewHelpers.swift"; sourceTree = "<group>"; };
+		6F06534E246488BD00F857C1 /* Customers+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Customers+Helpers.swift"; sourceTree = "<group>"; };
+		6F0653502464891500F857C1 /* Customers+SearchHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Customers+SearchHelpers.swift"; sourceTree = "<group>"; };
+		6F0653522464892800F857C1 /* Customers+CoreDataHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Customers+CoreDataHelpers.swift"; sourceTree = "<group>"; };
+		6F06535424648C3E00F857C1 /* CustomerOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerOperations.swift; sourceTree = "<group>"; };
 		6F087DCC22E0DF3D00CAD840 /* OnlineUsersTableViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineUsersTableViewExtensions.swift; sourceTree = "<group>"; };
 		6F087DCE22E0E40E00CAD840 /* OnlineUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineUser.swift; sourceTree = "<group>"; };
 		6F087DD022E0EFFD00CAD840 /* OnlineUsersAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineUsersAPI.swift; sourceTree = "<group>"; };
@@ -359,6 +388,15 @@
 		6FBDEC7722B28D5E00A8511E /* EditDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditDetailsViewController.swift; sourceTree = "<group>"; };
 		6FBDEC7922B3D3C200A8511E /* SMSDetailVCChatExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSDetailVCChatExtensions.swift; sourceTree = "<group>"; };
 		6FBDEC7B22B3F1DA00A8511E /* SMSDetailVC+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SMSDetailVC+CollectionView.swift"; sourceTree = "<group>"; };
+		6FC6022B2464462400C1BF6D /* AgentsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentsViewController.swift; sourceTree = "<group>"; };
+		6FC6022D2464464D00C1BF6D /* AgentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentsView.swift; sourceTree = "<group>"; };
+		6FC6022F246446F000C1BF6D /* Agents+CoreDataHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Agents+CoreDataHelpers.swift"; sourceTree = "<group>"; };
+		6FC602312464470900C1BF6D /* AgentsServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentsServiceProvider.swift; sourceTree = "<group>"; };
+		6FC602332464471A00C1BF6D /* Agents+TableViewHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Agents+TableViewHelpers.swift"; sourceTree = "<group>"; };
+		6FC60235246447E500C1BF6D /* Agents+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Agents+Helpers.swift"; sourceTree = "<group>"; };
+		6FC602372464482900C1BF6D /* AgentCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentCellView.swift; sourceTree = "<group>"; };
+		6FC602392464485C00C1BF6D /* AgentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentCell.swift; sourceTree = "<group>"; };
+		6FC6023B2464497600C1BF6D /* Agents+SearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Agents+SearchController.swift"; sourceTree = "<group>"; };
 		6FD8955C245ECDB40083D79A /* AgentDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDetailsView.swift; sourceTree = "<group>"; };
 		6FD8955E245EDAAB0083D79A /* ManageAgentsHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsHelpers.swift; sourceTree = "<group>"; };
 		6FD89560245EDAD40083D79A /* AgentDetailsHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDetailsHelpers.swift; sourceTree = "<group>"; };
@@ -419,6 +457,63 @@
 			);
 			name = API;
 			path = "New Group/API";
+			sourceTree = "<group>";
+		};
+		6F06533C246487B900F857C1 /* Customers */ = {
+			isa = PBXGroup;
+			children = (
+				6F065341246487DC00F857C1 /* Operations */,
+				6F065340246487D500F857C1 /* Model */,
+				6F06533F246487D000F857C1 /* View */,
+				6F06533E246487C800F857C1 /* Controller */,
+				6F06533D246487C000F857C1 /* Extensions+Helpers */,
+			);
+			path = Customers;
+			sourceTree = "<group>";
+		};
+		6F06533D246487C000F857C1 /* Extensions+Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				6F06534A2464885700F857C1 /* CustomersServiceProvider.swift */,
+				6F06534C2464886F00F857C1 /* Customers+TableViewHelpers.swift */,
+				6F06534E246488BD00F857C1 /* Customers+Helpers.swift */,
+				6F0653502464891500F857C1 /* Customers+SearchHelpers.swift */,
+				6F0653522464892800F857C1 /* Customers+CoreDataHelpers.swift */,
+			);
+			path = "Extensions+Helpers";
+			sourceTree = "<group>";
+		};
+		6F06533E246487C800F857C1 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				6F065342246487F100F857C1 /* CustomersViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		6F06533F246487D000F857C1 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				6F0653442464880100F857C1 /* CustomersView.swift */,
+				6F0653462464881100F857C1 /* CustomerCell.swift */,
+				6F0653482464882000F857C1 /* CustomerCellView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		6F065340246487D500F857C1 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		6F065341246487DC00F857C1 /* Operations */ = {
+			isa = PBXGroup;
+			children = (
+				6F06535424648C3E00F857C1 /* CustomerOperations.swift */,
+			);
+			path = Operations;
 			sourceTree = "<group>";
 		};
 		6F087DC622E0DEDD00CAD840 /* Online Users */ = {
@@ -1201,6 +1296,8 @@
 		6FB11B01229BF9AA0098D050 /* SMS */ = {
 			isa = PBXGroup;
 			children = (
+				6F06533C246487B900F857C1 /* Customers */,
+				6FC602252464451500C1BF6D /* Agents */,
 				6F1BD2F422D055280053D0CC /* Internal Conversations */,
 				6F425FB122D057190078F442 /* External Conversations */,
 			);
@@ -1328,6 +1425,62 @@
 				6FB8EA4422AA6BCE00294EAC /* SMSVCExtensions.swift */,
 			);
 			path = "Extensions+Helpers";
+			sourceTree = "<group>";
+		};
+		6FC602252464451500C1BF6D /* Agents */ = {
+			isa = PBXGroup;
+			children = (
+				6FC6022A2464454000C1BF6D /* Operations */,
+				6FC602292464453B00C1BF6D /* Model */,
+				6FC602282464453700C1BF6D /* View */,
+				6FC602272464453000C1BF6D /* Controller */,
+				6FC602262464452300C1BF6D /* Extensions+Helpers */,
+			);
+			path = Agents;
+			sourceTree = "<group>";
+		};
+		6FC602262464452300C1BF6D /* Extensions+Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				6FC6022F246446F000C1BF6D /* Agents+CoreDataHelpers.swift */,
+				6FC602312464470900C1BF6D /* AgentsServiceProvider.swift */,
+				6FC602332464471A00C1BF6D /* Agents+TableViewHelpers.swift */,
+				6FC60235246447E500C1BF6D /* Agents+Helpers.swift */,
+				6FC6023B2464497600C1BF6D /* Agents+SearchController.swift */,
+			);
+			path = "Extensions+Helpers";
+			sourceTree = "<group>";
+		};
+		6FC602272464453000C1BF6D /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				6FC6022B2464462400C1BF6D /* AgentsViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		6FC602282464453700C1BF6D /* View */ = {
+			isa = PBXGroup;
+			children = (
+				6FC6022D2464464D00C1BF6D /* AgentsView.swift */,
+				6FC602372464482900C1BF6D /* AgentCellView.swift */,
+				6FC602392464485C00C1BF6D /* AgentCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		6FC602292464453B00C1BF6D /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		6FC6022A2464454000C1BF6D /* Operations */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Operations;
 			sourceTree = "<group>";
 		};
 		6FEF969E22A50F2000F2FF83 /* API */ = {
@@ -1487,13 +1640,16 @@
 				6FB11AFB229BF0590098D050 /* TabBarController.swift in Sources */,
 				6F9011D422AC3B130046F5E3 /* ChatViewController.swift in Sources */,
 				6FB11B29229E75710098D050 /* FirebaseAuthService.swift in Sources */,
+				6FC60236246447E500C1BF6D /* Agents+Helpers.swift in Sources */,
 				6F69BE8822D4780F00F8903F /* ManageAgentsServiceProvider.swift in Sources */,
 				6F987A5724570EDA00C6046E /* SelectCompanyViewController.swift in Sources */,
 				6F987A76245B556600C6046E /* PersistenceContainer.swift in Sources */,
 				6F02B2E22461CBC000FFB34E /* AutoResponseOperations.swift in Sources */,
 				6F987A4E2456CAE800C6046E /* APIServiceURLConstructor.swift in Sources */,
 				6F46A8B922D061EC0042A667 /* InternalConversation.swift in Sources */,
+				6F0653452464880100F857C1 /* CustomersView.swift in Sources */,
 				6FB8EA3F22AA34B600294EAC /* ChatColorHelpers.swift in Sources */,
+				6F0653492464882000F857C1 /* CustomerCellView.swift in Sources */,
 				6F37E2482460A8D7003E9126 /* QuickResponsesViewController.swift in Sources */,
 				6FAD46EE245098CE0050F7F2 /* APIService.swift in Sources */,
 				6FD8955F245EDAAB0083D79A /* ManageAgentsHelpers.swift in Sources */,
@@ -1504,6 +1660,7 @@
 				6F23BD0522D8BB9B0001A888 /* UserProfileAPI.swift in Sources */,
 				6FBDEC7822B28D5E00A8511E /* EditDetailsViewController.swift in Sources */,
 				6F987A80245CC1B500C6046E /* FirebaseOperations.swift in Sources */,
+				6F0653512464891500F857C1 /* Customers+SearchHelpers.swift in Sources */,
 				6FB11B37229EF4300098D050 /* ManageAgentsViewController.swift in Sources */,
 				6FEF96A222A6677900F2FF83 /* ExternalConversation.swift in Sources */,
 				6F087DD122E0EFFD00CAD840 /* OnlineUsersAPI.swift in Sources */,
@@ -1513,6 +1670,7 @@
 				6FB8EA4122AA371900294EAC /* SMSDetailVCExtensions.swift in Sources */,
 				6F23BD0322D8BB8B0001A888 /* UserProfileAPIProtocol.swift in Sources */,
 				6FEF96A622A67F2900F2FF83 /* SMSDetailViewController.swift in Sources */,
+				6F06535524648C3E00F857C1 /* CustomerOperations.swift in Sources */,
 				6FB11B0B229BFA3C0098D050 /* SettingsViewController.swift in Sources */,
 				6F9453BF22DB2E2F00047C7F /* AgentPickerDataProvider.swift in Sources */,
 				6F987A7E245C9B9000C6046E /* ManageAgentsCellView.swift in Sources */,
@@ -1528,6 +1686,7 @@
 				6F6457D92462DCE400CECF03 /* Log.swift in Sources */,
 				6FB11B3D229EF4690098D050 /* ArchivedSMSViewController.swift in Sources */,
 				6F9453CF22DC3CE600047C7F /* ChangePasswordAPIProtocol.swift in Sources */,
+				6FC6022C2464462400C1BF6D /* AgentsViewController.swift in Sources */,
 				6F02B2DD2461C6A000FFB34E /* AutoResponseHelpers.swift in Sources */,
 				6F9011D622ACCA900046F5E3 /* Message.swift in Sources */,
 				6FA9537824606963006DAF53 /* QuickResponseCodable.swift in Sources */,
@@ -1536,8 +1695,12 @@
 				6FB11B27229E5F6F0098D050 /* AuthenticationService.swift in Sources */,
 				6FB11B31229EB5020098D050 /* CallGroupsViewController.swift in Sources */,
 				6F23BD0122D7299A0001A888 /* UserProfileDataProvider.swift in Sources */,
+				6FC6022E2464464D00C1BF6D /* AgentsView.swift in Sources */,
+				6F0653472464881100F857C1 /* CustomerCell.swift in Sources */,
 				6F098BBB22BE9A4100AF19AA /* BlockedUsersVCTableViewExtensions.swift in Sources */,
 				6FBDEC7C22B3F1DA00A8511E /* SMSDetailVC+CollectionView.swift in Sources */,
+				6F06534D2464886F00F857C1 /* Customers+TableViewHelpers.swift in Sources */,
+				6FC6023C2464497600C1BF6D /* Agents+SearchController.swift in Sources */,
 				6F1BD2F122C4B1510053D0CC /* FollowUpAPIProtocol.swift in Sources */,
 				6FB11B1F229D88510098D050 /* SectionItem.swift in Sources */,
 				6F087DCF22E0E40E00CAD840 /* OnlineUser.swift in Sources */,
@@ -1553,11 +1716,14 @@
 				6F1BD2EF22C4B0ED0053D0CC /* Protocols.swift in Sources */,
 				6FB11B2D229EB4C40098D050 /* RemindersViewController.swift in Sources */,
 				6F9453C522DB53ED00047C7F /* CustomerAPIProtocol.swift in Sources */,
+				6F06534B2464885700F857C1 /* CustomersServiceProvider.swift in Sources */,
 				6FB11B4422A2A2E10098D050 /* Telabook.xcdatamodeld in Sources */,
 				6FB11B16229D05E00098D050 /* UserDefaults.swift in Sources */,
 				6F05627F22E0882A00424BF5 /* ChatVCMessageKitExtensions.swift in Sources */,
+				6F0653532464892800F857C1 /* Customers+CoreDataHelpers.swift in Sources */,
 				6F9453C922DC3CA300047C7F /* ChangePasswordViewController.swift in Sources */,
 				6F9453BB22DB2C8200047C7F /* AgentPickerViewController.swift in Sources */,
+				6FC602322464470900C1BF6D /* AgentsServiceProvider.swift in Sources */,
 				6F46A8BB22D062750042A667 /* FollowUpAPI.swift in Sources */,
 				6F58C33B22D61FAE0091C785 /* AutoResponseDataProvider.swift in Sources */,
 				6F37E24A2460A8E7003E9126 /* QuickResponsesView.swift in Sources */,
@@ -1574,6 +1740,7 @@
 				6F02B2DF2461C8B600FFB34E /* AutoResponse+CoreDataHelpers.swift in Sources */,
 				6F83FC232460A39B00518201 /* QuickResponsesTableViewHelpers.swift in Sources */,
 				6FAD46E7245054020050F7F2 /* UserDefaultsWrapper.swift in Sources */,
+				6F065343246487F100F857C1 /* CustomersViewController.swift in Sources */,
 				6F41013922DDF8A30038AA76 /* CallGroupsAPI.swift in Sources */,
 				6F9453D122DDDC2100047C7F /* ScheduledMessageCell.swift in Sources */,
 				6F987A73245B159500C6046E /* TapticEngine.swift in Sources */,
@@ -1586,18 +1753,21 @@
 				6F69BE8E22D4C66800F8903F /* QuickResponsesCodable.swift in Sources */,
 				6F9011D822B12BC40046F5E3 /* SMSDetailVCCoreDataHelpers.swift in Sources */,
 				6F29FD4F22B7E28700BCA2AB /* OverlaySpinner.swift in Sources */,
+				6FC602342464471A00C1BF6D /* Agents+TableViewHelpers.swift in Sources */,
 				6F987A6924587FA300C6046E /* AppInfoView.swift in Sources */,
 				6FB11B0D229BFA430098D050 /* MoreViewController.swift in Sources */,
 				6FB11B14229C3FCA0098D050 /* BadgeBarItem.swift in Sources */,
 				6FEF96A422A6679400F2FF83 /* ExternalConversationsAPI.swift in Sources */,
 				6F987A7A245C27B600C6046E /* AgentOperations.swift in Sources */,
 				6FB11B19229D06BB0098D050 /* CustomUtils.swift in Sources */,
+				6FC60230246446F000C1BF6D /* Agents+CoreDataHelpers.swift in Sources */,
 				6F987A4C2456C99100C6046E /* APIService+Errors.swift in Sources */,
 				6F987A82245CCA9100C6046E /* APIOperations.swift in Sources */,
 				6F987A612457529600C6046E /* SelectCompanyTableViewHelpers.swift in Sources */,
 				6FB11B07229BFA240098D050 /* CallsViewController.swift in Sources */,
 				6F41013722DDF8950038AA76 /* CallGroupsAPIProtocol.swift in Sources */,
 				6F23BD0922D9F28A0001A888 /* ScheduleMessageVCTableViewExtensions.swift in Sources */,
+				6FC602382464482900C1BF6D /* AgentCellView.swift in Sources */,
 				6F69BE8A22D4786300F8903F /* ManageAgentsTableViewExtensions.swift in Sources */,
 				6F987A6724587F9700C6046E /* AppInfoViewController.swift in Sources */,
 				6F69BE9422D4DCF600F8903F /* QuickResponsesAPI.swift in Sources */,
@@ -1636,6 +1806,7 @@
 				6F69BE8622D4742E00F8903F /* ManageAgentsAPIProtocol.swift in Sources */,
 				6F41013D22DDF8E40038AA76 /* CallGroupsCell.swift in Sources */,
 				6F69BE7E22D46EF600F8903F /* BlacklistCodable.swift in Sources */,
+				6F06534F246488BD00F857C1 /* Customers+Helpers.swift in Sources */,
 				6FB8EA4522AA6BCE00294EAC /* SMSVCExtensions.swift in Sources */,
 				6FB11B1B229D07050098D050 /* LoginViewController.swift in Sources */,
 				6F41013B22DDF8B50038AA76 /* CallGroupsCodable.swift in Sources */,
@@ -1643,6 +1814,7 @@
 				6F234EE822D606DB001FDAD6 /* ScheduleMessagesCodable.swift in Sources */,
 				6F41014122DDF9120038AA76 /* CallGroupsTableViewExtensions.swift in Sources */,
 				6FB11B2B229EA7C20098D050 /* Codable.swift in Sources */,
+				6FC6023A2464485C00C1BF6D /* AgentCell.swift in Sources */,
 				6F29FD5722BBB1C300BCA2AB /* CustomerDetailsViewController.swift in Sources */,
 				6F987A7C245C93D900C6046E /* ManageAgentsView.swift in Sources */,
 				6F04FFBC22C3A22C00FA467E /* ExternalChat.swift in Sources */,

@@ -9,20 +9,39 @@
 import Foundation
 import os
 
+protocol Server: class {
+    init(apiVersion:APIService.APIVersion)
+//    var apiVersion:APIService.APIVersion { get }
+    func hitEndpoint<T:Codable>(endpoint:APIService.Endpoint, httpMethod:HTTPMethod, params: [String: String]?, httpBody: Data?, headers: [HTTPHeader]?, guardResponse: ResponseStatus?, expectData:Bool, completion: @escaping APIService.APICompletion<T>)
+}
+
+class APIServer<T:Codable> : Server {
+    let apiVersion:APIService.APIVersion
+    required init(apiVersion: APIService.APIVersion) {
+        self.apiVersion = apiVersion
+    }
+    func hitEndpoint<T>(endpoint:APIService.Endpoint, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, completion: @escaping APIService.APICompletion<T>) where T : Decodable, T : Encodable {
+        switch apiVersion {
+            case .v1: APIOperations.triggerAPIEndpointOperations(endpoint: endpoint, httpMethod: httpMethod, params: params, httpBody: httpBody, headers: headers, guardResponse: guardResponse, expectData: expectData, completion: completion)
+            case .v2: APIOperations.triggerAPIEndpointOperations(endpoint: endpoint, httpMethod: httpMethod, params: params, httpBody: httpBody, headers: headers, guardResponse: guardResponse, expectData: expectData, configuration: .init(apiCommonPath: "/\(apiVersion.stringValue)/api"), completion: completion)
+            case .mock: print("Mock")
+        }
+    }
+}
 
 
 struct APIOperations {
-
+    
     /// Returns an array of operations for creating and hitting API Endpoint
-    static func triggerAPIEndpointOperations<T:Codable>(endpoint:APIService.Endpoint, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, completion: @escaping APIService.APICompletion<T>) {
-
+    static func triggerAPIEndpointOperations<T:Codable>(endpoint:APIService.Endpoint, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, configuration:APIService.Configuration = .defaultConfiguration, completion: @escaping APIService.APICompletion<T>) {
+        
         let queue = OperationQueue()
         queue.name = "Endpoint Queue"
         queue.maxConcurrentOperationCount = 1
         
         let fetchFirebaseTokenOperation = FetchTokenOperation()
         
-        let hitEndpointOperation = HitEndpointOperation<T>(endpoint: endpoint, httpMethod: httpMethod, params: params, httpBody: httpBody, headers: headers, guardResponse: guardResponse, expectData: expectData)
+        let hitEndpointOperation = HitEndpointOperation<T>(endpoint: endpoint, httpMethod: httpMethod, params: params, httpBody: httpBody, headers: headers, guardResponse: guardResponse, expectData: expectData, configuration: configuration)
         
         let passFirebaseTokenToAPIEndpointOperation = BlockOperation { [unowned fetchFirebaseTokenOperation, unowned hitEndpointOperation] in
             guard case let .success(bearerToken)? = fetchFirebaseTokenOperation.result else {
@@ -64,6 +83,7 @@ class HitEndpointOperation<T:Codable>: Operation {
     private var session = URLSession.shared
     private var dataTask: URLSessionDataTask!
     
+    private let configuration:APIService.Configuration
     private let endpoint:APIService.Endpoint
     private let httpMethod:HTTPMethod
     private let params:[String:String]?
@@ -73,7 +93,7 @@ class HitEndpointOperation<T:Codable>: Operation {
     private let expectData:Bool
     var bearerToken:String?
     
-    init(endpoint:APIService.Endpoint, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true) {
+    init(endpoint:APIService.Endpoint, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, configuration:APIService.Configuration = .defaultConfiguration) {
         self.endpoint = endpoint
         self.httpMethod = httpMethod
         self.params = params
@@ -81,6 +101,7 @@ class HitEndpointOperation<T:Codable>: Operation {
         self.headers = headers
         self.guardResponse = guardResponse
         self.expectData = expectData
+        self.configuration = configuration
     }
     
 
@@ -127,7 +148,7 @@ class HitEndpointOperation<T:Codable>: Operation {
             finish(result: .failure(.cancelled))
             return
         }
-        guard let url = APIService.shared.constructURL(forEndpoint: endpoint, parameters: params) else {
+        guard let url = APIService.shared.constructURL(forEndpoint: endpoint, parameters: params, with: configuration) else {
             finish(result: .failure(.invalidURL))
             return
         }
@@ -139,7 +160,7 @@ class HitEndpointOperation<T:Codable>: Operation {
         print("Endpoint URL => \(url)")
         #endif
         os_log("Endpoint URL => %@", log: .network, type: .info, url.absoluteString)
-        var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: APIService.Configuration.timeOutInterval)
+        var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: configuration.timeOutInterval)
         guard !isCancelled else {
             finish(result: .failure(.cancelled))
             return

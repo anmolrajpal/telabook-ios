@@ -23,5 +23,5 @@ protocol APIServiceProtocol {
     func POST<T: Codable>(endpoint: APIService.Endpoint, params: [String: String]?, httpBody: Data?, headers: [HTTPHeader]?, guardResponse: ResponseStatus?, completion: @escaping APIService.APICompletion<T>)
     func PUT<T: Codable>(endpoint: APIService.Endpoint, params: [String: String]?, httpBody: Data?, headers: [HTTPHeader]?, guardResponse: ResponseStatus?, completion: @escaping APIService.APICompletion<T>)
     func DELETE<T: Codable>(endpoint: APIService.Endpoint, params: [String: String]?, httpBody: Data?, headers: [HTTPHeader]?, guardResponse: ResponseStatus?, completion: @escaping APIService.APICompletion<T>)
-    func constructURL(scheme:String, host:String, port:Int?, forEndpoint endpoint:APIService.Endpoint, urlPrefix:String, withConcatenatingPath pathToJoin:String?, parameters:[String:String]?) -> URL?
+    func constructURL(forEndpoint endpoint:APIService.Endpoint, withConcatenatingPath pathToJoin:String?, parameters:[String:String]?, with configuration: APIService.Configuration) -> URL?
 }
