@@ -118,7 +118,7 @@ class TabBarController: UITabBarController {
         
         let homeViewController = UINavigationController(rootViewController: HomeViewController())
         let callsViewController = UINavigationController(rootViewController: SMSViewController())
-        let agentsViewController = UINavigationController(rootViewController: AgentsViewController(fetchRequest: Agent.fetchRequest()))
+        let agentsViewController = UINavigationController(rootViewController: AgentsViewController(fetchRequest: Agent.fetchRequest(), viewContext: PersistentContainer.shared.viewContext))
 //        let smsViewController = UINavigationController(rootViewController: SMSViewController())
         let settingsViewController = UINavigationController(rootViewController: SettingsViewController())
         let moreViewController = UINavigationController(rootViewController: MoreViewController())

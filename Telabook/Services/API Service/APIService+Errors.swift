@@ -18,6 +18,7 @@ extension APIService {
         case noData(response:ResponseStatus)
         case jsonDecodingError(error: Error)
         case networkError(error: Error)
+        case resultError(message: String)
     }
 }
 extension APIService.APIError: LocalizedError {
@@ -31,6 +32,7 @@ extension APIService.APIError: LocalizedError {
             case let .networkError(error): return "Network Error: \(error.localizedDescription)"
             case let .jsonDecodingError(error): return "Failed to Decode data. Error: \(error.localizedDescription)"
             case let .noFirebaseToken(error): return error?.localizedDescription ?? "Firebase Error(Unknown Reason): Unable to get Firebase Auth Token."
+            case let .resultError(message): return message
         }
     }
 }

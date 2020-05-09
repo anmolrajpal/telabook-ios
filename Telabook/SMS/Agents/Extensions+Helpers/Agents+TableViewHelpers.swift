@@ -11,7 +11,7 @@ import os
 
 extension AgentsViewController {
     internal func setupTableView() {
-//        subview.tableView.refreshControl = subview.refreshControl
+        subview.tableView.refreshControl = subview.refreshControl
         subview.tableView.register(AgentCell.self, forCellReuseIdentifier: NSStringFromClass(AgentCell.self))
         subview.tableView.delegate = self
         
@@ -32,7 +32,7 @@ extension AgentsViewController {
         snapshot = NSDiffableDataSourceSnapshot<Section, Agent>()
         snapshot.appendSections([.main])
         snapshot.appendItems(fetchedResultsController.fetchedObjects ?? [])
-        diffableDataSource?.apply(snapshot, animatingDifferences: false, completion: {
+        diffableDataSource?.apply(snapshot, animatingDifferences: animated, completion: {
             self.handleState()
         })
     }
@@ -44,7 +44,8 @@ extension AgentsViewController: UITableViewDelegate {
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let selectedAgent = self.diffableDataSource?.itemIdentifier(for: indexPath) {
-            let vc = AgentDetailsViewController(agent: selectedAgent)
+            let vc = CustomersViewController(fetchRequest: Customer.fetchRequest(), viewContext: context, agent: selectedAgent)
+            vc.view.backgroundColor = .telaGray1
             navigationController?.pushViewController(vc, animated: true)
         }
     }

@@ -15,6 +15,8 @@ extension AgentsViewController {
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.hidesNavigationBarDuringPresentation = false
         searchController.searchBar.placeholder = "Search Agents"
+        searchController.searchBar.scopeButtonTitles = ["All", "Name", "Phone"]
+//        searchController.searchBar.showsScopeBar = true
         searchController.searchBar.barStyle = .black
         searchController.searchBar.isTranslucent = true
         searchController.searchBar.searchBarStyle = .prominent
@@ -29,7 +31,7 @@ extension AgentsViewController {
         ]
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes(attributes, for: .normal)
         navigationItem.searchController = searchController
-        navigationItem.hidesSearchBarWhenScrolling = true
+        navigationItem.hidesSearchBarWhenScrolling = false
     }
 }
 extension AgentsViewController: UISearchResultsUpdating {

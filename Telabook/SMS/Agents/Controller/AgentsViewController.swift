@@ -11,8 +11,10 @@ import CoreData
 
 class AgentsViewController: UIViewController {
     let fetchRequest: NSFetchRequest<Agent>
-    init(fetchRequest: NSFetchRequest<Agent>) {
+    let context:NSManagedObjectContext
+    init(fetchRequest: NSFetchRequest<Agent>, viewContext: NSManagedObjectContext) {
         self.fetchRequest = fetchRequest
+        self.context = viewContext
         super.init(nibName: nil, bundle: nil)
         setupFetchedResultsController()
     }
@@ -59,12 +61,22 @@ class AgentsViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationItem.title = "MANAGE AGENTS"
+        observeReachability()
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        stopObservingReachability()
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+//        observeReachability()
         if let selectionIndexPath = self.subview.tableView.indexPathForSelectedRow {
             self.subview.tableView.deselectRow(at: selectionIndexPath, animated: animated)
         }
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+//        stopObservingReachability()
     }
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent

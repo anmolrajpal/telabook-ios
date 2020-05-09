@@ -79,8 +79,8 @@ public struct APIService: APIServiceProtocol {
         /// Endpoint to fetch Agent's First Time SMS
         case AutoResponse
         
-        
-        
+        /// Endpoint to fetch Agent's customers / external conversations
+        case FetchCustomers
         
         /**
         Returns the path of a specified Endpoint.
@@ -105,6 +105,7 @@ public struct APIService: APIServiceProtocol {
                 case let .UpdateQuickResponse(responseID): return "/android/quick_replies/\(responseID)"
                 case let .DeleteQuickResponse(responseID): return "/android/quick_replies/\(responseID)"
                 case .AutoResponse: return "/android/sms_auto_reply"
+                case .FetchCustomers: return "/external_conversations/search_firebase"
             }
         }
     }

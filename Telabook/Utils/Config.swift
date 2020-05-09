@@ -59,6 +59,35 @@ struct Config {
         }
     }
     
+    struct FirebaseConfig {
+        enum Node {
+            
+            /// Node to fetch the Agent's Customer list / conversations
+            case conversations(companyID:Int, workerID:Int)
+            
+            /// Node to get chats of the specified customer + agent of node
+            case chats(companyID:Int, node:String)
+            
+            
+            var reference:DatabaseReference {
+                switch self {
+                    case let .conversations(companyID, workerID): return databaseRoot.child("companies/\(companyID)/inbox/\(workerID)")
+                    case let .chats(companyID, node): return databaseRoot.child("companies/\(companyID)/conversations/\(node)")
+                }
+            }
+        }
+        static let databaseRoot = Database.database().reference()
+        
+        static func getChats(companyId:String, node:String) -> DatabaseReference {
+            let path = "companies/\(companyId)/conversations/\(node)"
+            return databaseRoot.child(path)
+        }
+        static func onlineUsersReference() -> DatabaseReference {
+            let companyId = AppData.companyId
+            let reference = databaseRoot.child("companies").child(String(companyId)).child("online")
+            return reference
+        }
+    }
     
     struct DatabaseConfig {
         static let databaseRoot = Database.database().reference()

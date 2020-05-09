@@ -68,6 +68,7 @@
         <attribute name="lastMessageKey" optional="YES" attributeType="String"/>
         <attribute name="lastMessageSeenDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="lastMessageText" optional="YES" attributeType="String"/>
+        <attribute name="lastRefreshedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="messageType" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="node" optional="YES" attributeType="String"/>
@@ -189,7 +190,7 @@
         <element name="Address" positionX="-324.984375" positionY="-372.328125" width="128" height="90"/>
         <element name="Agent" positionX="-718.6484375" positionY="-34.9140625" width="128" height="388"/>
         <element name="AutoResponse" positionX="-279" positionY="414" width="128" height="163"/>
-        <element name="Customer" positionX="-453.58984375" positionY="100.859375" width="128" height="28"/>
+        <element name="Customer" positionX="-453.58984375" positionY="100.859375" width="128" height="523"/>
         <element name="ExternalChat" positionX="-310.7109375" positionY="-196.6796875" width="128" height="165"/>
         <element name="ExternalConversation" positionX="140.44140625" positionY="-192.74609375" width="128" height="345"/>
         <element name="InternalConversation" positionX="171.46484375" positionY="271.6328125" width="128" height="313"/>

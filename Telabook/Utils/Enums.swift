@@ -99,16 +99,31 @@ public enum CustomDateFormat: String {
     
     static func telaDateTime() -> String {
         return "\(self.ddMMMyyyy.rawValue) | \(self.hmma.rawValue)"
+        
     }
 }
 public enum TextFieldItemPosition {
     case Left
     case Right
 }
-public enum ResultType:String {
-    case Success
-    case Failure
+enum ServerResult {
+    case success, failure
 }
+extension ServerResult: RawRepresentable {
+    typealias ServerResultValue = String
+    
+    init(rawValue: ServerResultValue) {
+        switch rawValue {
+            case "success": self = .success
+            case "failure": self = .failure
+            default: fatalError("Unhandled case for Server Result Type")
+        }
+    }
+    var rawValue: ServerResultValue {
+        String(describing: self)
+    }
+}
+
 public enum httpMethod:String {
     case GET
     case POST
@@ -141,6 +156,85 @@ public enum ChatMessageType {
         case .MMS: return "mms"
         }
     }
+}
+public enum CustomerPriority {
+    case None, Low, Medium, High
+    
+    static func priority(from code:Int) -> Self {
+        switch code {
+            case 0: return .None
+            case 1: return .Low
+            case 2: return .Medium
+            case 3: return .High
+            default: fatalError("Unhandled Case for Customer Priority")
+        }
+    }
+   
+    var code:Int {
+        switch self {
+            case .None: return 0
+            case .Low: return 1
+            case .Medium: return 2
+            case .High: return 3
+        }
+    }
+    var color:UIColor {
+        switch self {
+            case .None: return .telaGray5
+            case .Low: return .telaGreen
+            case .Medium: return .telaYellow
+            case .High: return .telaRed
+        }
+    }
+    var image:UIImage {
+        switch self {
+            case .None: return #imageLiteral(resourceName: "followup_low").withTintColor(.telaGreen)
+            case .Low: return #imageLiteral(resourceName: "followup_low")
+            case .Medium: return #imageLiteral(resourceName: "followup_medium")
+            case .High: return #imageLiteral(resourceName: "followup_high")
+        }
+    }
+}
+public enum CustomerConversationColor {
+    case Default, Yellow, Blue, Green
+    
+    static func colorCase(from colorCode:Int) -> CustomerConversationColor {
+        switch colorCode {
+            case 0: return .Default
+            case 1: return .Yellow
+            case 2: return .Green
+            case 3: return .Blue
+            default: fatalError("Unhandled Case for Customer Conversation Color")
+        }
+    }
+    var code:Int {
+        switch self {
+            case .Default: return 0
+            case .Yellow: return 1
+            case .Green: return 2
+            case .Blue: return 3
+        }
+    }
+    var color:UIColor {
+        switch self {
+            case .Default: return .telaWhite
+            case .Yellow: return .telaYellow
+            case .Green: return .telaGreen
+            case .Blue: return .telaBlue
+        }
+    }
+}
+public enum MessageCategory {
+    case Text, Multimedia
+    
+    static func message(from string:String) -> Self {
+        switch string {
+            case "TEXT-ONLY": return .Text
+            case "MULTIMEDIA": return .Multimedia
+            default: fatalError("Unhandled case for Message Type")
+        }
+    }
+    var rawValue:String { String(describing: self) }
 }
 public enum ConversationPriority {
     case Low

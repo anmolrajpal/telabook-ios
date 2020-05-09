@@ -16,13 +16,13 @@ extension AgentsViewController {
             fetchRequest.predicate = NSPredicate(format: "\(#keyPath(Agent.personName)) CONTAINS[c] %@", currentSearchText)
             fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(Agent.personName), ascending: true)]
             fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
-                                                                  managedObjectContext: PersistentContainer.shared.viewContext,
+                                                                  managedObjectContext: context,
                                                                   sectionNameKeyPath: nil,
                                                                   cacheName: nil)
         } else {
             fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(Agent.date), ascending: false)]
             fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
-                                                                  managedObjectContext: PersistentContainer.shared.viewContext,
+                                                                  managedObjectContext: context,
                                                                   sectionNameKeyPath: nil,
                                                                   cacheName: String(describing: self))
         }
