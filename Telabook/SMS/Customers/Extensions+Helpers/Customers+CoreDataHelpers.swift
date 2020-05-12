@@ -20,20 +20,20 @@ extension CustomersViewController {
                                                                   cacheName: nil)
         } else {
             if selectedSegment == .Inbox {
-                fetchRequest.predicate = NSPredicate(format: "\(#keyPath(Customer.isArchived)) = %d AND \(#keyPath(Customer.isCustomerDeleted)) = %d", false, false)
+                fetchRequest.predicate = NSPredicate(format: "\(#keyPath(Customer.isArchived)) = %d AND \(#keyPath(Customer.isCustomerDeleted)) = %d AND \(#keyPath(Customer.agent)) == %@", false, false, agent)
             } else {
-                fetchRequest.predicate = NSPredicate(format: "\(#keyPath(Customer.isArchived)) = %d AND \(#keyPath(Customer.isCustomerDeleted)) = %d", true, false)
+                fetchRequest.predicate = NSPredicate(format: "\(#keyPath(Customer.isArchived)) = %d AND \(#keyPath(Customer.isCustomerDeleted)) = %d AND \(#keyPath(Customer.agent)) == %@", true, false, agent)
             }
-            fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(Customer.lastMessageDateTime), ascending: false)]
+            fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(Customer.updatedAt), ascending: false)]
             fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
                                                                   managedObjectContext: context,
                                                                   sectionNameKeyPath: nil,
-                                                                  cacheName: String(describing: self))
+                                                                  cacheName: nil)
         }
         fetchedResultsController.delegate = self
         do {
             try fetchedResultsController.performFetch()
-            self.updateSnapshot()
+            self.updateSnapshot(animated: true)
         } catch {
             print("Error fetching results: \(error)")
         }
@@ -44,6 +44,6 @@ extension CustomersViewController: NSFetchedResultsControllerDelegate {
         self.updateSnapshot()
     }
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
-        self.updateSnapshot()
+        self.updateSnapshot(animated: true)
     }
 }

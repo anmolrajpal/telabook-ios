@@ -22,7 +22,7 @@ extension CustomersViewController {
     }
     internal func setupTargetActions() {
         subview.segmentedControl.addTarget(self, action: #selector(didChangeSegment(_:)), for: .valueChanged)
-        subview.refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
+//        subview.refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
     }
     
     @objc private func didChangeSegment(_ sender:UISegmentedControl) {
@@ -33,15 +33,16 @@ extension CustomersViewController {
         }
     }
     internal func handleEvents(for segment:Segment) {
-        self.stopRefreshers()
-        switch segment {
-        case .Inbox:
-            print("Segment: Inbox")
-            synchronizeWithTimeLogic()
-        case .Archived:
-            print("Segment: Archived")
-            synchronizeWithTimeLogic()
-        }
+//        self.stopRefreshers()
+        setupFetchedResultsController()
+//        switch segment {
+//        case .Inbox:
+//            print("Segment: Inbox")
+//            synchronizeWithTimeLogic()
+//        case .Archived:
+//            print("Segment: Archived")
+//            synchronizeWithTimeLogic()
+//        }
     }
     
     
@@ -127,9 +128,8 @@ extension CustomersViewController {
             self.stopRefreshers()
             self.handleState()
         }
-        
     }
-    private func showLoadingPlaceholers() {
+    internal func showLoadingPlaceholers() {
         subview.inboxPlaceholderLabel.text = "Loading Conversations"
         subview.archivedPlaceholderLabel.text = "Loading"
         if self.selectedSegment == .Inbox {

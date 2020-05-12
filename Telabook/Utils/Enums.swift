@@ -188,8 +188,8 @@ public enum CustomerPriority {
     }
     var image:UIImage {
         switch self {
-            case .None: return #imageLiteral(resourceName: "followup_low").withTintColor(.telaGreen)
-            case .Low: return #imageLiteral(resourceName: "followup_low")
+            case .None: return #imageLiteral(resourceName: "followup_low")
+            case .Low: return #imageLiteral(resourceName: "followup_low").withTintColor(.telaGreen)
             case .Medium: return #imageLiteral(resourceName: "followup_medium")
             case .High: return #imageLiteral(resourceName: "followup_high")
         }
@@ -229,9 +229,9 @@ public enum MessageCategory {
     
     static func message(from string:String) -> Self {
         switch string {
-            case "TEXT-ONLY": return .Text
+            case "TEXT_ONLY": return .Text
             case "MULTIMEDIA": return .Multimedia
-            default: fatalError("Unhandled case for Message Type")
+            default: fatalError("Unhandled case for Message Type value: \(string)")
         }
     }
     var rawValue:String { String(describing: self) }

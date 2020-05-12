@@ -54,6 +54,7 @@
 		6F23BD0D22D9F3480001A888 /* ScheduleMessageAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F23BD0C22D9F3470001A888 /* ScheduleMessageAPI.swift */; };
 		6F23BD0F22D9F9610001A888 /* ScheduleMessageDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F23BD0E22D9F9610001A888 /* ScheduleMessageDataProvider.swift */; };
 		6F23BD1122DA0D7A0001A888 /* ScheduleNewMessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F23BD1022DA0D7A0001A888 /* ScheduleNewMessageViewController.swift */; };
+		6F26516F246AC0C7003D582F /* FirebaseCustomer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F26516E246AC0C7003D582F /* FirebaseCustomer.swift */; };
 		6F29FD4F22B7E28700BCA2AB /* OverlaySpinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F29FD4E22B7E28700BCA2AB /* OverlaySpinner.swift */; };
 		6F29FD5122B8B36400BCA2AB /* FollowUpCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F29FD5022B8B36400BCA2AB /* FollowUpCell.swift */; };
 		6F29FD5322B8FFD100BCA2AB /* CustomHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F29FD5222B8FFD100BCA2AB /* CustomHeaderView.swift */; };
@@ -254,6 +255,7 @@
 		6F23BD0C22D9F3470001A888 /* ScheduleMessageAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleMessageAPI.swift; sourceTree = "<group>"; };
 		6F23BD0E22D9F9610001A888 /* ScheduleMessageDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleMessageDataProvider.swift; sourceTree = "<group>"; };
 		6F23BD1022DA0D7A0001A888 /* ScheduleNewMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleNewMessageViewController.swift; sourceTree = "<group>"; };
+		6F26516E246AC0C7003D582F /* FirebaseCustomer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseCustomer.swift; sourceTree = "<group>"; };
 		6F29FD4E22B7E28700BCA2AB /* OverlaySpinner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySpinner.swift; sourceTree = "<group>"; };
 		6F29FD5022B8B36400BCA2AB /* FollowUpCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUpCell.swift; sourceTree = "<group>"; };
 		6F29FD5222B8FFD100BCA2AB /* CustomHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomHeaderView.swift; sourceTree = "<group>"; };
@@ -506,6 +508,7 @@
 		6F065340246487D500F857C1 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				6F26516E246AC0C7003D582F /* FirebaseCustomer.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1738,6 +1741,7 @@
 				6F987A482456C8B900C6046E /* APIServiceProtocol.swift in Sources */,
 				6F58C33922D618C40091C785 /* AutoResponseAPIProtocol.swift in Sources */,
 				6F1BD2F322C4B4CB0053D0CC /* FollowUpDataProvider.swift in Sources */,
+				6F26516F246AC0C7003D582F /* FirebaseCustomer.swift in Sources */,
 				6F69BE8422D4742000F8903F /* ManageAgentsAPI.swift in Sources */,
 				6F1BD2ED22C4ADED0053D0CC /* FollowUpVCTableViewExtensions.swift in Sources */,
 				6FD8955D245ECDB40083D79A /* AgentDetailsView.swift in Sources */,

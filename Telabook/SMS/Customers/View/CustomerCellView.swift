@@ -73,16 +73,16 @@ class CustomerCellView: UIView {
         badgeCountLabel.text = String(parameters?.unreadMessagesCount ?? 0)
         badgeCountLabel.isHidden = parameters?.unreadMessagesCount == 0
        
-        guard !animated else {
-            self.alpha = 0.1
-            UIView.transition(with: self,
-                              duration: 0.2,
-                              options: [.transitionCrossDissolve, .beginFromCurrentState, .allowUserInteraction],
-                              animations: {
-                                self.alpha = 1.0
-            }, completion: nil)
-            return
-        }
+//        guard !animated else {
+//            self.alpha = 0.1
+//            UIView.transition(with: self,
+//                              duration: 0.2,
+//                              options: [.transitionCrossDissolve, .beginFromCurrentState, .allowUserInteraction],
+//                              animations: {
+//                                self.alpha = 1.0
+//            }, completion: nil)
+//            return
+//        }
     }
     
     
@@ -112,9 +112,9 @@ class CustomerCellView: UIView {
     private func setupViews() {
         addSubview(priorityImageView)
         containerView.addSubview(nameLabel)
-        containerView.addSubview(lastMessageLabel)
         containerView.addSubview(badgeCountLabel)
         containerView.addSubview(dateTimeLabel)
+        containerView.addSubview(lastMessageLabel)
         addSubview(containerView)
     }
     
@@ -131,13 +131,13 @@ class CustomerCellView: UIView {
         badgeCountLabel.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor).activate()
         badgeCountLabel.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -5).activate()
         
+        
+        dateTimeLabel.anchor(top: nil, left: containerView.centerXAnchor, bottom: nil, right: containerView.rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 5)
         dateTimeLabel.centerYAnchor.constraint(equalTo: lastMessageLabel.centerYAnchor).activate()
-        dateTimeLabel.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -5).activate()
-        dateTimeLabel.layoutIfNeeded()
         
         lastMessageLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: 15).activate()
         lastMessageLabel.leftAnchor.constraint(equalTo: nameLabel.leftAnchor).activate()
-        lastMessageLabel.rightAnchor.constraint(equalTo: dateTimeLabel.leftAnchor, constant: -20).withPriority(999).activate()
+        lastMessageLabel.rightAnchor.constraint(lessThanOrEqualTo: containerView.centerXAnchor).activate()
     }
     
     

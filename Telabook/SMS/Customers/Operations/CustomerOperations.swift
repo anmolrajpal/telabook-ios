@@ -11,11 +11,38 @@ import CoreData
 import os
 
 struct CustomerOperations {
-    func huh() {
-        APIServer<APIService.EmptyData>(apiVersion: .v1).hitEndpoint(endpoint: .AutoResponse, httpMethod: .DELETE) { (result: Result<APIService.EmptyData, APIService.APIError>) in
+//    func huh() {
+//        APIServer<APIService.EmptyData>(apiVersion: .v1).hitEndpoint(endpoint: .AutoResponse, httpMethod: .DELETE) { (result: Result<APIService.EmptyData, APIService.APIError>) in
+//
+//        }
+//    }
+    
+    static func getOperationsToPersistData(using context:NSManagedObjectContext, forAgent agent:Agent, fromFirebaseEntries entries:[FirebaseCustomer]?) -> [Operation] {
+        let fetchFromStore_Operation = FetchSavedCustomersEntries_Operation(context: context, agent: agent)
+        let deleteRedundantEntriesFromStore_Operation = DeleteRedundantCustomerEntries_Operation(context: context, agent: agent, serverEntries: entries)
+        let addToStore_Operation = AddCustomerEntriesFromServerToStore_Operation(context: context, agent: agent, serverEntries: entries)
 
+        let passFetchResultsToStore_Operation = BlockOperation { [unowned fetchFromStore_Operation, unowned deleteRedundantEntriesFromStore_Operation] in
+            guard case let .success(entries) = fetchFromStore_Operation.result else {
+                #if DEBUG
+                print("Unresolved Error: Unable to get result(Customer) from fetchFromStore_Operation")
+                #endif
+                deleteRedundantEntriesFromStore_Operation.cancel()
+                return
+            }
+            deleteRedundantEntriesFromStore_Operation.fetchedEntries = entries
         }
+        passFetchResultsToStore_Operation.addDependency(fetchFromStore_Operation)
+        deleteRedundantEntriesFromStore_Operation.addDependency(passFetchResultsToStore_Operation)
+        
+        return [
+            fetchFromStore_Operation,
+            passFetchResultsToStore_Operation,
+            deleteRedundantEntriesFromStore_Operation,
+            addToStore_Operation
+        ]
     }
+    
 }
 
 
@@ -34,16 +61,18 @@ class FetchSavedCustomersEntries_Operation: Operation {
         }
     }
     private let context: NSManagedObjectContext
+    private let agent:Agent
+    var result: Result<[Customer], OperationError>?
     
-    var result: Result<[QuickResponse], OperationError>?
-    
-    init(context: NSManagedObjectContext) {
+    init(context: NSManagedObjectContext, agent:Agent) {
         self.context = context
-        self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
+        self.agent = agent
+//        self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
     }
     
     override func main() {
-        let request: NSFetchRequest<QuickResponse> = QuickResponse.fetchRequest()
+        let request: NSFetchRequest<Customer> = Customer.fetchRequest()
+        request.predicate = NSPredicate(format: "\(#keyPath(Customer.agent)) == %@", agent)
         request.sortDescriptors = [NSSortDescriptor(key: #keyPath(QuickResponse.updatedAt), ascending: false)]
         
         context.performAndWait {
@@ -152,22 +181,24 @@ class DeleteRedundantCustomerEntries_Operation: Operation {
     var error: OperationError?
     
     private let agent:Agent
-    var fetchedEntries:[QuickResponse]?
-    var serverEntries:[QuickResponseCodable]?
+    private let serverEntries:[FirebaseCustomer]?
+    
+    var fetchedEntries:[Customer]?
     
     
-    init(context: NSManagedObjectContext, agent:Agent) {
+    
+    init(context: NSManagedObjectContext, agent:Agent, serverEntries:[FirebaseCustomer]?) {
         self.context = context
         self.agent = agent
-    }
-    convenience init(context: NSManagedObjectContext, fetchedEntries: [QuickResponse]?, serverEntries:[QuickResponseCodable]?, agent:Agent) {
-        self.init(context: context, agent:agent)
-        self.fetchedEntries = fetchedEntries
         self.serverEntries = serverEntries
+    }
+    convenience init(context: NSManagedObjectContext, fetchedEntries: [Customer]?, serverEntries:[FirebaseCustomer]?, agent:Agent) {
+        self.init(context: context, agent:agent, serverEntries:serverEntries)
+        self.fetchedEntries = fetchedEntries
     }
     
     override func main() {
-        let fetchRequest: NSFetchRequest<QuickResponse> = QuickResponse.fetchRequest()
+        let fetchRequest: NSFetchRequest<Customer> = Customer.fetchRequest()
         
         guard fetchedEntries != nil, !fetchedEntries!.isEmpty else {
             print("No Fetched Entries or nil")
@@ -176,8 +207,10 @@ class DeleteRedundantCustomerEntries_Operation: Operation {
         
         if let serverEntries = serverEntries,
             !serverEntries.isEmpty {
-            let serverIDs = serverEntries.map { $0.id }.compactMap { $0 }
-            fetchRequest.predicate = NSPredicate(format: "NOT (\(#keyPath(QuickResponse.id)) IN %@)", serverIDs)
+            let serverIDs = serverEntries.map { $0.conversationID }.compactMap { $0 }
+            let agentPredicate = NSPredicate(format: "\(#keyPath(Customer.agent)) == %@", agent)
+            let filterPredicate = NSPredicate(format: "NOT (\(#keyPath(Customer.externalConversationID)) IN %@)", serverIDs)
+            fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [agentPredicate, filterPredicate])
         } else {
             print("No Server Entries, deleting all entries")
         }
@@ -185,7 +218,7 @@ class DeleteRedundantCustomerEntries_Operation: Operation {
         context.performAndWait {
             do {
                 let entriesToDelete = try context.fetch(fetchRequest)
-                _ = entriesToDelete.map { agent.removeFromQuickResponses($0) }
+                _ = entriesToDelete.map { agent.removeFromCustomers($0) }
 //                _ = entriesToDelete.map { context.delete($0) }
                 try context.save()
             } catch {
@@ -212,11 +245,12 @@ class AddCustomerEntriesFromServerToStore_Operation: Operation {
     var error:OperationError?
     private let context: NSManagedObjectContext
     private let agent:Agent
-    var serverEntries:[QuickResponseCodable]?
+    private let serverEntries:[FirebaseCustomer]?
     
-    init(context: NSManagedObjectContext, agent:Agent) {
+    init(context: NSManagedObjectContext, agent:Agent, serverEntries:[FirebaseCustomer]?) {
         self.context = context
         self.agent = agent
+        self.serverEntries = serverEntries
         self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
     }
     
@@ -229,7 +263,7 @@ class AddCustomerEntriesFromServerToStore_Operation: Operation {
         }
         context.performAndWait {
             do {
-                _ = serverEntries.map { QuickResponse(context: context, quickResponseEntryFromServer: $0, agent: agent, synced: true) }
+                _ = serverEntries.map { Customer(context: context, conversationEntryFromFirebase: $0, agent: agent) }
                 try context.save()
             } catch {
                 print("Error adding entries to store: \(error))")

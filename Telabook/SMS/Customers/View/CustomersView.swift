@@ -59,11 +59,11 @@ class CustomersView: UIView {
         control.backgroundColor = .telaGray3
         return control
     }()
-    lazy var refreshControl:UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
-        refreshControl.tintColor = UIColor.telaGray7
-        return refreshControl
-    }()
+//    lazy var refreshControl:UIRefreshControl = {
+//        let refreshControl = UIRefreshControl()
+//        refreshControl.tintColor = UIColor.telaGray7
+//        return refreshControl
+//    }()
     lazy var inboxSpinner: UIActivityIndicatorView = {
         let aiView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
         aiView.backgroundColor = .clear

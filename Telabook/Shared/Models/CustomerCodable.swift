@@ -325,13 +325,109 @@ extension Customer {
 }
 
 
+// MARK: An extension to create Customer Object Core Data Entity from Firebase External Conversation Response Data
+extension Customer {
+    private func getFormattedDate_forAllLastMessageSeenDate(dateString: String?) -> Date? {
+        guard let dateString = dateString else { return nil }
+        if dateString.contains("Z") {
+            return Date.getDate(fromMicrosecondsFormattedDateString: dateString)
+        } else {
+            return Date.getDateFromString(dateString: dateString, dateFormat: "yyyy-MM-dd HH:mm:ss")
+        }
+    }
+    
+    
+    convenience init(context: NSManagedObjectContext, conversationEntryFromFirebase entry: FirebaseCustomer, agent:Agent) {
+        self.init(context: context)
+        self.lastMessageSeenDate = getFormattedDate_forAllLastMessageSeenDate(dateString: entry.allLastMessageSeenDate)
+        self.lastMessageText = entry.allLastMessageText
+        self.isArchived = entry.isArchived.boolValue
+        self.blacklistReason = entry.blacklistReason
+        self.colorCode = Int16(entry.colorCode)
+        self.customerID = Int32(entry.customerID)
+        self.name = entry.customerPerson
+        self.phoneNumber = entry.customerPhoneNumber
+        self.isCustomerDeleted = entry.isDeleted.boolValue
+        self.deliveredByProviderAt = entry.deliveredByProvderAt != 0 ? Date.getDate(fromSecondsOrMilliseconds: entry.deliveredByProvderAt) : nil
+        self.isBlacklisted = entry.isBlacklisted.boolValue
+        self.externalConversationID = Int32(entry.conversationID)
+        self.isIncoming = entry.isIncoming.boolValue
+        self.addressBookID = Int32(entry.addressBookID)
+        self.isAddressBookNameActive = entry.addressBookNameActive.boolValue
+        self.addressBookName = entry.addressBookName
+        self.lastMessageDate = entry.lastMessageDate != 0 ? Date.getDate(fromSecondsOrMilliseconds: entry.lastMessageDate) : nil
+        self.lastMessageDateTime = entry.lastMessageDateTime != 0 ? Date.getDate(fromSecondsOrMilliseconds: entry.lastMessageDateTime) : nil
+        self.lastMessageKey = entry.lastMessageKey
+        self.messageType = entry.lastMessageType
+        self.node = entry.node
+        self.priority = Int16(entry.priority)
+        self.senderID = Int32(entry.senderID)
+        self.sentByApiAt = entry.sentByAPIat != 0 ? Date.getDate(fromSecondsOrMilliseconds: entry.sentByAPIat) : nil
+        self.sentByAppAt = entry.sentByAppAt != 0 ? Date.getDate(fromSecondsOrMilliseconds: entry.sentByAppAt) : nil
+        self.sentByProviderAt = entry.sentByProviderAt != 0 ? Date.getDate(fromSecondsOrMilliseconds: entry.sentByProviderAt) : nil
+        self.unreadMessagesCount = Int16(entry.unreadMessagesCount)
+        self.updatedAt = entry.updatedAt != 0 ? Date.getDate(fromSecondsOrMilliseconds: entry.updatedAt) : nil
+        self.workerPersonName = entry.workerPerson
+        self.workerPhoneNumber = entry.workerPhoneNumber
+        
+        self.agent = agent
+        self.lastRefreshedAt = Date()
+    }
+}
+
+
+
 extension Date {
+    
+    /// Retruns the milliseconds passed since 1970 (the epoch time)
     var milliSecondsSince1970:Int64 {
         return Int64((self.timeIntervalSince1970 * 1000).rounded())
     }
-
+    
+    /// Initializes the `Date` object from given milliseconds since 1970 (the epoch time)
+    /// - Parameter milliSecondsSince1970: This parameter takes milliseconds which must be of 13 digits till next `267 years` from the time of coding this function.
     init(milliSecondsSince1970: Int64) {
         self = Date(timeIntervalSince1970: TimeInterval(milliSecondsSince1970 / 1000))
         self.addTimeInterval(TimeInterval(Double(milliSecondsSince1970 % 1000) / 1000 ))
     }
+    
+    /// This function adds the milliseconds from a custom microseconds formatted date string.
+    /// - Parameter string: This value must be in a string format: `yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ`
+    /// - Returns: An optional  `Date` object with added milliseconds.
+    static func getDate(fromMicrosecondsFormattedDateString string:String) -> Date? {
+        let groups = string.split(separator: ".")
+        let datePart = String(groups[0])
+        guard let date = Date.getDateFromString(dateString: datePart, dateFormat: "yyyy-MM-dd'T'HH:mm:ss") else { return nil }
+        let microseconds = groups[1].replacingOccurrences(of: "Z", with: "")
+        let milliseconds = Int(microseconds)! / 1000
+        let timeIntervalToAdd:TimeInterval = TimeInterval((Double(milliseconds) / 1000.0))
+        return date.addingTimeInterval(timeIntervalToAdd)
+    }
+    
+    /// This function returns the Date object depending on the parameter which maybe is seconds or milliseconds.
+    /// - Note: This  function is only valid for next `267` years till `Saturday, 20 November 2286 17:46:39.999`
+    /// - Parameter value: Parameter value must be either `seconds` or `milliseconds` | `10 digits`  or `13 digits` respectively.
+    /// - Returns: `Date` object calculted from timeInterval passed since 1970 or milliSeconds passed since 1970
+    static func getDate(fromSecondsOrMilliseconds value:Int) -> Date? {
+        if value.digitsCount == 13 {
+            return Date(milliSecondsSince1970: Int64(value))
+        } else if value.digitsCount == 10 {
+            return Date(timeIntervalSince1970: TimeInterval(value))
+        } else { return nil }
+    }
+}
+extension StringProtocol  {
+    /// Returns an array of integer digits from called string integer.
+    var digits: [Int] { compactMap(\.wholeNumberValue) }
+}
+extension LosslessStringConvertible {
+    var string: String { .init(self) }
+}
+
+extension Numeric where Self: LosslessStringConvertible {
+    /// Returns an array of integer digits from called integer.
+    var digits: [Int] { string.digits }
+    
+    /// Returns count of array of integer digits from called integer.
+    var digitsCount:Int { string.digits.count }
 }

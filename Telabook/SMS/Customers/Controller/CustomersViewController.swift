@@ -14,14 +14,20 @@ import FirebaseStorage
 extension CustomersViewController.Segment: CaseIterable { }
 class CustomersViewController: UIViewController {
     let fetchRequest: NSFetchRequest<Customer>
+    let node:Config.FirebaseConfig.Node
     let context:NSManagedObjectContext
     let agent:Agent
+    let reference:DatabaseReference
+    var handle:UInt!
     init(fetchRequest: NSFetchRequest<Customer>, viewContext:NSManagedObjectContext, agent:Agent) {
         self.fetchRequest = fetchRequest
         self.agent = agent
         self.context = viewContext
+        self.node = .conversations(companyID: AppData.companyId, workerID: Int(agent.workerID))
+        self.reference = node.reference
         super.init(nibName: nil, bundle: nil)
-        setupFetchedResultsController()
+        self.setupFetchedResultsController()
+        self.selectedSegment = .Inbox
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -39,7 +45,7 @@ class CustomersViewController: UIViewController {
     }()
     
     var selectedSegment:Segment = .Inbox {
-        didSet { self.handleEvents(for: selectedSegment) }
+        didSet { self.setupFetchedResultsController() }
     }
     
     
@@ -72,19 +78,21 @@ class CustomersViewController: UIViewController {
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-//        stopObservingReachability()
+        reference.removeObserver(withHandle: handle)
+        stopObservingReachability()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationItem.title = agent.personName?.uppercased() ?? agent.phoneNumber ?? "Customers"
-        subview.segmentedControl.selectedSegmentIndex = selectedSegment.rawValue
-//        observeReachability()
+        observeReachability()
+        fetchCustomers()
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if let selectionIndexPath = self.subview.tableView.indexPathForSelectedRow {
             self.subview.tableView.deselectRow(at: selectionIndexPath, animated: animated)
         }
+//        fetchCustomers()
     }
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -97,16 +105,42 @@ class CustomersViewController: UIViewController {
         setupTableView()
         setupTargetActions()
 //        setupSearchController()
-        fetchCustomers()
+//        fetchCustomers()
     }
     
     
     internal func fetchCustomers() {
-        let companyID = AppData.companyId
-        let workerID = Int(agent.workerID)
-        let node:Config.FirebaseConfig.Node = .conversations(companyID: companyID, workerID: workerID)
-        let reference = node.reference
+        if !isFetchedResultsAvailable {
+            showLoadingPlaceholers()
+            selectedSegment == .Inbox ? startInboxSpinner() : startArchivedSpinner()
+        }
+        let workerIDstring = String(agent.workerID)
         
+        handle = reference.observe(.value, with: { snapshot in
+            guard snapshot.exists() else {
+                print("Snapshot Does not exists: returning")
+                return
+            }
+            var conversations:[FirebaseCustomer] = []
+            for child in snapshot.children {
+                if let snapshot = child as? DataSnapshot {
+                    guard let conversation = FirebaseCustomer(snapshot: snapshot, workerID: workerIDstring) else {
+                        print("Unresolved Error: Unable to create conversation from Firebase Customer")
+                        return
+                    }
+//                    print(conversation)
+                    conversations.append(conversation)
+                }
+            }
+            self.persistFirebaseEntriesToCoreDataStore(entries: conversations)
+//            print(snapshot.value as Any)
+        }) { error in
+            print("Value Observer Event Error: \(error)")
+        }
+        
+        
+        
+        /*
         reference.observe(.childAdded, with: { snapshot in
             print("Snapshot Key: \(snapshot.key)")
             guard let dictionary = snapshot.value else { return }
@@ -126,7 +160,7 @@ class CustomersViewController: UIViewController {
         }) { error in
             print(error)
         }
-        
+        */
     }
 }
 class DictionaryEncoder {

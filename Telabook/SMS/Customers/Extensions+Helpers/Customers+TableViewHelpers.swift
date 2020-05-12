@@ -10,7 +10,7 @@ import UIKit
 
 extension CustomersViewController {
     internal func setupTableView() {
-        subview.tableView.refreshControl = subview.refreshControl
+//        subview.tableView.refreshControl = subview.refreshControl
         subview.tableView.register(CustomerCell.self, forCellReuseIdentifier: NSStringFromClass(CustomerCell.self))
         subview.tableView.delegate = self
         

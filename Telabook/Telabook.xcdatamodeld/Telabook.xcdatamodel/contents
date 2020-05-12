@@ -51,11 +51,11 @@
         </uniquenessConstraints>
     </entity>
     <entity name="Customer" representedClassName="Customer" syncable="YES" codeGenerationType="class">
-        <attribute name="addressBookID" optional="YES" attributeType="Integer 32" minValueString="1" usesScalarValueType="YES"/>
+        <attribute name="addressBookID" optional="YES" attributeType="Integer 32" usesScalarValueType="YES"/>
         <attribute name="addressBookName" optional="YES" attributeType="String"/>
         <attribute name="blacklistReason" optional="YES" attributeType="String"/>
         <attribute name="colorCode" optional="YES" attributeType="Integer 16" minValueString="0" maxValueString="3" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="customerID" optional="YES" attributeType="Integer 32" minValueString="1" usesScalarValueType="YES"/>
+        <attribute name="customerID" optional="YES" attributeType="Integer 32" usesScalarValueType="YES"/>
         <attribute name="deliveredByProviderAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="externalConversationID" optional="YES" attributeType="Integer 32" minValueString="1" usesScalarValueType="YES"/>
         <attribute name="isAddressBookNameActive" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
@@ -74,7 +74,7 @@
         <attribute name="node" optional="YES" attributeType="String"/>
         <attribute name="phoneNumber" optional="YES" attributeType="String"/>
         <attribute name="priority" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
-        <attribute name="senderID" optional="YES" attributeType="Integer 32" minValueString="1" usesScalarValueType="YES"/>
+        <attribute name="senderID" optional="YES" attributeType="Integer 32" usesScalarValueType="YES"/>
         <attribute name="sentByApiAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="sentByAppAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="sentByProviderAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -85,7 +85,7 @@
         <relationship name="agent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Agent" inverseName="customers" inverseEntity="Agent"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
-                <constraint value="customerID"/>
+                <constraint value="externalConversationID"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>

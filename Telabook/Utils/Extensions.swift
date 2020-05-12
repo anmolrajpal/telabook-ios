@@ -292,9 +292,14 @@ extension UINavigationController {
     }
 }
 extension UIColor {
-    static var telaBlue = UIColor.rgb(r: 16, g: 182, b: 230)
-    static var telaYellow = UIColor.rgb(r: 255, g: 229, b: 11)
-    static var telaRed = UIColor.rgb(r: 255, g: 45, b: 10)
+//    static var telaBlue = UIColor.rgb(r: 16, g: 182, b: 230) // Old
+    static var telaBlue = UIColor.rgb(r: 144, g: 202, b: 249)
+//    static var telaYellow = UIColor.rgb(r: 255, g: 229, b: 11) // Old
+    static var telaYellow = UIColor.rgb(r: 255, g: 245, b: 157)
+//    static var telaRed = UIColor.rgb(r: 255, g: 45, b: 10) // Old
+    static var telaRed = UIColor.rgb(r: 239, g: 83, b: 80)
+    
+    static var telaGreen = UIColor.rgb(r: 76, g: 175, b: 80)
     static var telaBlack = UIColor.rgb(r: 0, g: 0, b: 0)
     static var telaWhite = UIColor.rgb(r: 255, g: 255, b: 255)
     static var telaGray1 = UIColor.rgb(r: 9, g: 9, b: 9)
@@ -304,7 +309,6 @@ extension UIColor {
     static var telaGray5 = UIColor.rgb(r: 63, g: 63, b: 63)
     static var telaGray6 = UIColor.rgb(r: 96, g: 96, b: 96)
     static var telaGray7 = UIColor.rgb(r: 131, g: 131, b: 131)
-    static var telaGreen = UIColor.rgb(r: 52, g: 225, b: 190)
     static var telaIndigo = UIColor.rgb(r: 82, g: 142, b: 244)
     static var telaLightYellow = UIColor.rgb(r: 255, g: 245, b: 157)
     static var telaLightBlue = UIColor.rgb(r: 144, g: 202, b: 249)
