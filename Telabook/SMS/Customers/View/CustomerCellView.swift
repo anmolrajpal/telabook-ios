@@ -11,7 +11,7 @@ import UIKit
 class CustomerCellView: UIView {
     // MARK:: Setup Views Data
     struct Parameters:Equatable {
-        let priority:CustomerPriority
+//        let priority:CustomerPriority
         let phoneNumber:String
         let name:String?
         let lastMessageType:MessageCategory
@@ -52,7 +52,7 @@ class CustomerCellView: UIView {
         queue.addOperation(operation)
     }
     private func setupData(parameters:Parameters?, animated:Bool) {
-        priorityImageView.image = parameters?.priority.image
+//        priorityImageView.image = parameters?.priority.image
         if let phoneNumber = parameters?.phoneNumber {
             if let name = parameters?.name {
                 nameLabel.text = "\(name) (\(phoneNumber))"
@@ -127,7 +127,7 @@ class CustomerCellView: UIView {
     
     //MARK: Add Views to hierarchy
     private func setupViews() {
-        addSubview(priorityImageView)
+//        addSubview(priorityImageView)
         containerView.addSubview(nameLabel)
         containerView.addSubview(badgeCountLabel)
         containerView.addSubview(dateTimeLabel)
@@ -137,10 +137,10 @@ class CustomerCellView: UIView {
     
     //MARK: Layout Constraints
     private func layoutConstraints() {
-        priorityImageView.anchor(top: nil, left: leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 0, widthConstant: 30, heightConstant: 30)
-        priorityImageView.centerYAnchor.constraint(equalTo:centerYAnchor).activate()
+//        priorityImageView.anchor(top: nil, left: leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 0, widthConstant: 30, heightConstant: 30)
+//        priorityImageView.centerYAnchor.constraint(equalTo:centerYAnchor).activate()
         
-        containerView.anchor(top: topAnchor, left: priorityImageView.rightAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 5, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        containerView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 16, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         
         nameLabel.anchor(top: nil, left: containerView.leftAnchor, bottom: nil, right: badgeCountLabel.leftAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
         nameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: -15).activate()
@@ -165,13 +165,13 @@ class CustomerCellView: UIView {
         queue.qualityOfService = .userInteractive
         return queue
     }()
-    lazy var priorityImageView:UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = #imageLiteral(resourceName: "followup_small_high")
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        return imageView
-    }()
+//    lazy var priorityImageView:UIImageView = {
+//        let imageView = UIImageView()
+//        imageView.image = #imageLiteral(resourceName: "followup_small_high")
+//        imageView.contentMode = .scaleAspectFill
+//        imageView.clipsToBounds = true
+//        return imageView
+//    }()
     lazy var nameLabel:UILabel = {
         let label = UILabel()
         label.numberOfLines = 1

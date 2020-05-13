@@ -54,9 +54,11 @@ class CustomersView: UIView {
         let control = UISegmentedControl(items: CustomersViewController.Segment.allCases.map { $0.stringValue })
         control.selectedSegmentIndex = CustomersViewController.Segment.Inbox.rawValue
         control.tintColor = .clear
+        control.selectedSegmentTintColor = .telaGray6
         control.setTitleTextAttributes(attributes, for: UIControl.State.selected)
         control.setTitleTextAttributes(unselectedAttributes, for: UIControl.State.normal)
         control.backgroundColor = .telaGray3
+        control.layer.cornerRadius = 0
         return control
     }()
 //    lazy var refreshControl:UIRefreshControl = {

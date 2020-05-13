@@ -20,7 +20,7 @@ fileprivate let networkStatusLabel:UILabel = {
 }()
 fileprivate let noConnectionAttributedText:NSMutableAttributedString = {
     let attachment = NSTextAttachment()
-    let icon = UIImage(systemName: "wifi.slash")?.withTintColor(.telaWhite)
+    let icon = SFSymbol.noWifi.image.withTintColor(.telaWhite)
     attachment.image = icon
     attachment.bounds = CGRect(x: 0, y: -2.0, width: attachment.image!.size.width, height: attachment.image!.size.height)
     let attachmentString = NSAttributedString(attachment: attachment)
@@ -32,7 +32,7 @@ fileprivate let noConnectionAttributedText:NSMutableAttributedString = {
 }()
 fileprivate let wifiAttributedText:NSMutableAttributedString = {
     let wifiIconAttachment = NSTextAttachment()
-    let wifiIcon = UIImage(systemName: "wifi")?.withTintColor(.telaWhite)
+    let wifiIcon = SFSymbol.wifi.image.withTintColor(.telaWhite)
     wifiIconAttachment.image = wifiIcon
     wifiIconAttachment.bounds = CGRect(x: 0, y: -2.0, width: wifiIconAttachment.image!.size.width, height: wifiIconAttachment.image!.size.height)
     let wifiAttachmentString = NSAttributedString(attachment: wifiIconAttachment)
@@ -44,7 +44,7 @@ fileprivate let wifiAttributedText:NSMutableAttributedString = {
 }()
 fileprivate let cellularAttributedText:NSMutableAttributedString = {
     let cellularIconAttachment = NSTextAttachment()
-    let cellularIcon = UIImage(systemName: "antenna.radiowaves.left.and.right")?.withTintColor(.telaWhite)
+    let cellularIcon = SFSymbol.cellular.image.withTintColor(.telaWhite)
     cellularIconAttachment.image = cellularIcon
     cellularIconAttachment.bounds = CGRect(x: 0, y: -4.0, width: cellularIconAttachment.image!.size.width, height: cellularIconAttachment.image!.size.height)
     let cellularAttachmentString = NSAttributedString(attachment: cellularIconAttachment)

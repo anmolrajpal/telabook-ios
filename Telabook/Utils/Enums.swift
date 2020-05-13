@@ -196,32 +196,34 @@ public enum CustomerPriority {
     }
 }
 public enum CustomerConversationColor {
-    case Default, Yellow, Blue, Green
+    case White, Yellow, Blue, Green
     
     static func colorCase(from colorCode:Int) -> CustomerConversationColor {
         switch colorCode {
-            case 0: return .Default
             case 1: return .Yellow
-            case 2: return .Green
-            case 3: return .Blue
-            default: fatalError("Unhandled Case for Customer Conversation Color")
+            case 2: return .Blue
+            case 3: return .Green
+            default: return .White
         }
     }
     var code:Int {
         switch self {
-            case .Default: return 0
             case .Yellow: return 1
-            case .Green: return 2
-            case .Blue: return 3
+            case .Blue: return 2
+            case .Green: return 3
+            case .White: return 99
         }
     }
     var color:UIColor {
         switch self {
-            case .Default: return .telaWhite
             case .Yellow: return .telaYellow
-            case .Green: return .telaGreen
             case .Blue: return .telaBlue
+            case .Green: return .telaGreen
+            case .White: return .telaWhite
         }
+    }
+    var colorName:String {
+        String(describing: self)
     }
 }
 public enum MessageCategory {
@@ -231,6 +233,7 @@ public enum MessageCategory {
         switch string {
             case "TEXT_ONLY": return .Text
             case "MULTIMEDIA": return .Multimedia
+            case "TEXT": return .Text
             default: fatalError("Unhandled case for Message Type value: \(string)")
         }
     }

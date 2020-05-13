@@ -19,6 +19,7 @@ class CustomersViewController: UIViewController {
     let agent:Agent
     let reference:DatabaseReference
     var handle:UInt!
+    var firebaseCustomers:[FirebaseCustomer] = []
     init(fetchRequest: NSFetchRequest<Customer>, viewContext:NSManagedObjectContext, agent:Agent) {
         self.fetchRequest = fetchRequest
         self.agent = agent
@@ -52,7 +53,7 @@ class CustomersViewController: UIViewController {
     internal var fetchedResultsController: NSFetchedResultsController<Customer>!
     
     
-    var diffableDataSource: UITableViewDiffableDataSource<Section, Customer>?
+    var diffableDataSource: CustomerDataSource?
     var snapshot: NSDiffableDataSourceSnapshot<Section, Customer>!
     
     internal var currentSearchText = ""
@@ -92,7 +93,6 @@ class CustomersViewController: UIViewController {
         if let selectionIndexPath = self.subview.tableView.indexPathForSelectedRow {
             self.subview.tableView.deselectRow(at: selectionIndexPath, animated: animated)
         }
-//        fetchCustomers()
     }
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -105,7 +105,6 @@ class CustomersViewController: UIViewController {
         setupTableView()
         setupTargetActions()
 //        setupSearchController()
-//        fetchCustomers()
     }
     
     
@@ -134,6 +133,7 @@ class CustomersViewController: UIViewController {
                     conversations.append(conversation)
                 }
             }
+            self.firebaseCustomers = conversations
             self.persistFirebaseEntriesToCoreDataStore(entries: conversations)
 //            print(snapshot.value as Any)
         }) { error in

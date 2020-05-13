@@ -18,6 +18,7 @@ struct CustomerOperations {
 //    }
     
     static func getOperationsToPersistData(using context:NSManagedObjectContext, forAgent agent:Agent, fromFirebaseEntries entries:[FirebaseCustomer]?) -> [Operation] {
+        context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
         let fetchFromStore_Operation = FetchSavedCustomersEntries_Operation(context: context, agent: agent)
         let deleteRedundantEntriesFromStore_Operation = DeleteRedundantCustomerEntries_Operation(context: context, agent: agent, serverEntries: entries)
         let addToStore_Operation = AddCustomerEntriesFromServerToStore_Operation(context: context, agent: agent, serverEntries: entries)

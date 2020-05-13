@@ -41,10 +41,8 @@ extension CustomersViewController {
     }
 }
 extension CustomersViewController: NSFetchedResultsControllerDelegate {
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        self.updateSnapshot()
-    }
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
-        self.updateSnapshot(animated: true)
+        print("Controller did change content with shanpshot")
+        self.updateSnapshot()
     }
 }

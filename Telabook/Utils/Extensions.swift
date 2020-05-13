@@ -554,7 +554,7 @@ extension UIImage {
             UIGraphicsEndImageContext()
         }
         
-        UIGraphicsBeginImageContextWithOptions(size, true, 0)
+        UIGraphicsBeginImageContextWithOptions(size, false, 0)
         draw(in: CGRect(origin: .zero, size: size))
         
         return UIGraphicsGetImageFromCurrentImageContext()

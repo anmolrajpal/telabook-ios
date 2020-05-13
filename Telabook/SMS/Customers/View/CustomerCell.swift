@@ -19,16 +19,15 @@ class CustomerCell: UITableViewCell {
     
     private func updateCell() {
         guard let details = customerDetails else { return }
-        let priority = CustomerPriority.priority(from: Int(details.priority))
+//        let priority = CustomerPriority.priority(from: Int(details.priority))
         let phoneNumber = details.phoneNumber ?? ""
-        let name = details.name
+        let name = details.addressBookName
         let messageType = MessageCategory.message(from: details.messageType ?? "")
         let lastMessage = details.lastMessageText
         let lastMessageDate = details.lastMessageDateTime
         let conversationColor = CustomerConversationColor.colorCase(from: Int(details.colorCode)).color
         let unreadMessagesCount = Int(details.unreadMessagesCount)
-        cellView.parameters = CustomerCellView.Parameters(priority: priority,
-                                                          phoneNumber: phoneNumber,
+        cellView.parameters = CustomerCellView.Parameters(phoneNumber: phoneNumber,
                                                           name: name,
                                                           lastMessageType: messageType,
                                                           lastMessage: lastMessage,

@@ -55,7 +55,7 @@ extension CustomersViewController {
                         } else {
                             DispatchQueue.main.async {
                                 self.stopRefreshers()
-                                self.updateSnapshot(animated: true)
+//                                self.updateSnapshot(animated: true)
                             }
                         }
                 }

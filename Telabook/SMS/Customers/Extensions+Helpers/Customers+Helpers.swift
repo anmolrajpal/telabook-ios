@@ -144,4 +144,54 @@ extension CustomersViewController {
             }
         }
     }
+    
+    
+    
+    
+    
+    
+    internal func promptChatColor(indexPath: IndexPath) {
+        
+        let alert = UIAlertController(title: "Set Chat Color", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+        
+        
+        let yellowAction = UIAlertAction(title: CustomerConversationColor.Yellow.colorName, style: UIAlertAction.Style.default, handler: { (action) in
+            self.handleChatColorSequence(color: .Yellow, indexPath: indexPath)
+        })
+        let blueAction = UIAlertAction(title: CustomerConversationColor.Blue.colorName, style: UIAlertAction.Style.default, handler: { (action) in
+            self.handleChatColorSequence(color: .Blue, indexPath: indexPath)
+        })
+        let greenAction = UIAlertAction(title: CustomerConversationColor.Green.colorName, style: UIAlertAction.Style.default, handler: { (action) in
+            self.handleChatColorSequence(color: .Green, indexPath: indexPath)
+        })
+        let whiteAction = UIAlertAction(title: CustomerConversationColor.White.colorName, style: UIAlertAction.Style.default, handler: { (action) in
+            self.handleChatColorSequence(color: .White, indexPath: indexPath)
+        })
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil)
+        
+        alert.addAction(yellowAction)
+        alert.addAction(blueAction)
+        alert.addAction(greenAction)
+        alert.addAction(whiteAction)
+        alert.addAction(cancelAction)
+        alert.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = UIColor.telaGray6
+        
+        alert.view.tintColor = UIColor.telaBlue
+        alert.view.subviews.first?.subviews.first?.backgroundColor = .clear
+        alert.view.subviews.first?.backgroundColor = .clear
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    fileprivate func handleChatColorSequence(color:CustomerConversationColor, indexPath:IndexPath) {
+        guard let customers = fetchedResultsController.fetchedObjects else { return }
+        let customer = customers[indexPath.row]
+        guard let conversation = firebaseCustomers.first(where: { $0.conversationID == customer.externalConversationID }) else { return }
+        conversation.ref?.updateChildValues([
+            "colour" : color.code
+            ], withCompletionBlock: { (error, reference) in
+                if let error = error {
+                    print("Error: unable to update color on Firebase: \(error)")
+                }
+        })
+    }
 }
