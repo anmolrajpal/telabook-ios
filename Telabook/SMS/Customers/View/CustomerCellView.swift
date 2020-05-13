@@ -53,36 +53,53 @@ class CustomerCellView: UIView {
     }
     private func setupData(parameters:Parameters?, animated:Bool) {
         priorityImageView.image = parameters?.priority.image
-        let phoneNumber = parameters?.phoneNumber ?? ""
-        if let name = parameters?.name {
-            nameLabel.text = "\(name) (\(phoneNumber))"
+        if let phoneNumber = parameters?.phoneNumber {
+            if let name = parameters?.name {
+                nameLabel.text = "\(name) (\(phoneNumber))"
+            } else {
+                nameLabel.text = phoneNumber
+            }
         } else {
-            nameLabel.text = phoneNumber
+            nameLabel.text = nil
         }
         nameLabel.textColor = parameters?.conversationColor
-        if let lastMessageType = parameters?.lastMessageType {
-            lastMessageLabel.text = lastMessageType == .Text ? parameters?.lastMessage : ""
+        if parameters?.lastMessageType == .Text {
+            lastMessageLabel.text = parameters?.lastMessage
+        } else if parameters?.lastMessageType == .Multimedia {
+            lastMessageLabel.text = "📷"
+        } else {
+            lastMessageLabel.text = nil
         }
-        lastMessageLabel.text = parameters?.lastMessageType == .Text ? parameters?.lastMessage : "📷"
+
         if let lastMessageDate = parameters?.lastMessageDate {
             let dateStr = Date.getStringFromDate(date: lastMessageDate, dateFormat: CustomDateFormat.ddMMMyyyy)
             let timeStr = Date.getStringFromDate(date: lastMessageDate, dateFormat: CustomDateFormat.hmma)
             let dateTimeStr = "\(dateStr) | \(timeStr)"
             dateTimeLabel.text = dateTimeStr
+        } else {
+            dateTimeLabel.text = nil
         }
-        badgeCountLabel.text = String(parameters?.unreadMessagesCount ?? 0)
-        badgeCountLabel.isHidden = parameters?.unreadMessagesCount == 0
+        if let unreadMessagesCount = parameters?.unreadMessagesCount {
+            badgeCountLabel.isHidden = unreadMessagesCount == 0
+            badgeCountLabel.text = String(unreadMessagesCount)
+        } else {
+            badgeCountLabel.text = nil
+            badgeCountLabel.isHidden = true
+        }
+        
        
-//        guard !animated else {
+        guard !animated else {
 //            self.alpha = 0.1
-//            UIView.transition(with: self,
-//                              duration: 0.2,
-//                              options: [.transitionCrossDissolve, .beginFromCurrentState, .allowUserInteraction],
-//                              animations: {
+            self.transform = CGAffineTransform(scaleX: 0.9, y: 0.6)
+            UIView.transition(with: self,
+                              duration: 0.4,
+                              options: [.transitionCrossDissolve, .beginFromCurrentState, .allowUserInteraction],
+                              animations: {
 //                                self.alpha = 1.0
-//            }, completion: nil)
-//            return
-//        }
+                                self.transform = .identity
+            }, completion: nil)
+            return
+        }
     }
     
     

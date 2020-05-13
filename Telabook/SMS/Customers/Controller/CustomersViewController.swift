@@ -114,6 +114,7 @@ class CustomersViewController: UIViewController {
             showLoadingPlaceholers()
             selectedSegment == .Inbox ? startInboxSpinner() : startArchivedSpinner()
         }
+     
         let workerIDstring = String(agent.workerID)
         
         handle = reference.observe(.value, with: { snapshot in
@@ -124,6 +125,7 @@ class CustomersViewController: UIViewController {
             var conversations:[FirebaseCustomer] = []
             for child in snapshot.children {
                 if let snapshot = child as? DataSnapshot {
+                    print(snapshot)
                     guard let conversation = FirebaseCustomer(snapshot: snapshot, workerID: workerIDstring) else {
                         print("Unresolved Error: Unable to create conversation from Firebase Customer")
                         return
