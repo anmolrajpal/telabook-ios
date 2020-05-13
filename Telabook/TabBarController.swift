@@ -12,15 +12,15 @@ class TabBarController: UITabBarController {
     static let shared = TabBarController()
     
     enum Tabs: Int, Codable {
-        case tab1, tab2, tab3, tab4, tab5
+        case tab1, tab2, tab3, tab4
         
         private var tabName:String {
             switch self {
                 case .tab1: return "HOME"
                 case .tab2: return "CALLS"
                 case .tab3: return "SMS"
-                case .tab4: return "SETTINGS"
-                case .tab5: return "MORE"
+//                case .tab4: return "SETTINGS"
+                case .tab4: return "MORE"
             }
         }
         private var tabImage:UIImage {
@@ -28,8 +28,8 @@ class TabBarController: UITabBarController {
                 case .tab1: return #imageLiteral(resourceName: "tab_home_inactive")
                 case .tab2: return #imageLiteral(resourceName: "tab_call_inactive")
                 case .tab3: return #imageLiteral(resourceName: "tab_sms_inactive")
-                case .tab4: return #imageLiteral(resourceName: "tab_settings_inactive")
-                case .tab5: return #imageLiteral(resourceName: "tab_more_inactive")
+//                case .tab4: return #imageLiteral(resourceName: "tab_settings_inactive")
+                case .tab4: return #imageLiteral(resourceName: "tab_more_inactive")
             }
         }
         private var tabSelelctedImage:UIImage {
@@ -37,8 +37,8 @@ class TabBarController: UITabBarController {
                 case .tab1: return #imageLiteral(resourceName: "tab_home_active")
                 case .tab2: return #imageLiteral(resourceName: "tab_call_active")
                 case .tab3: return #imageLiteral(resourceName: "tab_sms_active")
-                case .tab4: return #imageLiteral(resourceName: "tab_settings_active")
-                case .tab5: return #imageLiteral(resourceName: "tab_more_active")
+//                case .tab4: return #imageLiteral(resourceName: "tab_settings_active")
+                case .tab4: return #imageLiteral(resourceName: "tab_more_active")
             }
         }
         var tabBarItem:UITabBarItem {

@@ -45,6 +45,66 @@ extension CustomersViewController: UITableViewDelegate {
         return CustomerCell.cellHeight
     }
     
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        // 1
+        let index = indexPath.row
+        guard let customers = fetchedResultsController.fetchedObjects else { return nil }
+        let customer = customers[index]
+        guard let conversation = firebaseCustomers.first(where: { $0.conversationID == customer.externalConversationID }) else { return nil }
+        
+        // 2
+        let identifier = "\(index)" as NSString
+        
+        return UIContextMenuConfiguration(identifier: identifier, previewProvider: nil) { _ in
+            let yellowAction = UIAction(title: "Yellow", image: SFSymbol.circleSwitch.image.withTintColor(.telaYellow, renderingMode: .alwaysOriginal)) { _ in
+                self.updateColorOnFirebase(forConversation: conversation, color: .Yellow)
+            }
+            let blueAction = UIAction(title: "Blue", image: SFSymbol.circleSwitch.image.withTintColor(.telaBlue, renderingMode: .alwaysOriginal)) { _ in
+                self.updateColorOnFirebase(forConversation: conversation, color: .Blue)
+            }
+            let greenAction = UIAction(title: "Green", image: SFSymbol.circleSwitch.image.withTintColor(.telaGreen, renderingMode: .alwaysOriginal)) { _ in
+                self.updateColorOnFirebase(forConversation: conversation, color: .Green)
+            }
+            let whiteAction = UIAction(title: "White", image: SFSymbol.circleSwitch.image.withTintColor(.telaWhite, renderingMode: .alwaysOriginal)) { _ in
+                self.updateColorOnFirebase(forConversation: conversation, color: .White)
+            }
+            let setColorMenu = UIMenu(title: "Set Color", image: #imageLiteral(resourceName: "set_color").withInsets(UIEdgeInsets(top: 1, left: 1, bottom: 1, right: 1)), children: [
+                yellowAction, blueAction, greenAction, whiteAction
+            ])
+            
+            let sendMessageAction = UIAction(title: "Send Message", image: #imageLiteral(resourceName: "autoresponse_icon")) { _ in
+                
+            }
+            let pinAction = UIAction(title: "Pin", image: #imageLiteral(resourceName: "pin").withInsets(UIEdgeInsets(top: 1, left: 1, bottom: 1, right: 1))) { _ in
+                
+            }
+            let detailsAction = UIAction(title: "Details", image: SFSymbol.person.image.withTintColor(.telaBlue, renderingMode: .alwaysOriginal)) { _ in
+                
+            }
+            let archiveAction = UIAction(title: "Archive", image: #imageLiteral(resourceName: "archive")) { _ in
+                
+            }
+            let blockAction = UIAction(title: "Confirm Block", image: #imageLiteral(resourceName: "block_rounded"), attributes: .destructive) { _ in
+                
+            }
+            let confirmBlockMenu = UIMenu(title: "Block", image: SFSymbol.arrowUpRightSquare.image, options: .destructive, children: [blockAction])
+            
+            let deleteAction = UIAction(title: "Confirm Delete", image: #imageLiteral(resourceName: "delete_icon"), attributes: .destructive) { _ in
+                
+            }
+            let confirmDeleteMenu = UIMenu(title: "Delete", image: SFSymbol.arrowUpRightSquare.image, options: [.destructive], children: [deleteAction])
+            return UIMenu(title: "", children: [
+                sendMessageAction,
+                detailsAction,
+                pinAction,
+                setColorMenu,
+                archiveAction,
+                confirmBlockMenu,
+                confirmDeleteMenu
+            ])
+        }
+    }
+    
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let leadingAction:UIContextualAction
         

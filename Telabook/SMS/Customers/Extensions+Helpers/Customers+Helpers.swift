@@ -186,6 +186,9 @@ extension CustomersViewController {
         guard let customers = fetchedResultsController.fetchedObjects else { return }
         let customer = customers[indexPath.row]
         guard let conversation = firebaseCustomers.first(where: { $0.conversationID == customer.externalConversationID }) else { return }
+        updateColorOnFirebase(forConversation: conversation, color: color)
+    }
+    internal func updateColorOnFirebase(forConversation conversation: FirebaseCustomer, color:CustomerConversationColor) {
         conversation.ref?.updateChildValues([
             "colour" : color.code
             ], withCompletionBlock: { (error, reference) in

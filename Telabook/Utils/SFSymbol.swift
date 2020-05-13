@@ -13,8 +13,11 @@ public enum SFSymbol { case
     wifi,
     noWifi,
     cellular,
-    more
-    
+    more,
+    person,
+    circleSwitch,
+    sendMessage,
+    arrowUpRightSquare
     
     private var imageName:String {
         switch self {
@@ -22,10 +25,16 @@ public enum SFSymbol { case
             case .noWifi: return "wifi.slash"
             case .cellular: return "antenna.radiowaves.left.and.right"
             case .more: return "ellipsis"
+            case .person: return "person"
+            case .circleSwitch: return "largecircle.fill.circle"
+            case .sendMessage: return "paperplane"
+            case .arrowUpRightSquare: return "arrow.up.right.square"
         }
     }
     
-    var image:UIImage {
-        UIImage(systemName: self.imageName)!
+    var image:UIImage { image() }
+    
+    func image(withSymbolConfiguration configuration:UIImage.SymbolConfiguration = .init(textStyle: UIFont.TextStyle.body)) -> UIImage {
+        UIImage(systemName: self.imageName, withConfiguration: configuration)!
     }
 }
