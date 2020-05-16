@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import MenuController
 
 extension CustomersViewController {
     internal class CustomerDataSource: UITableViewDiffableDataSource<Section, Customer> {
@@ -71,7 +72,6 @@ extension CustomersViewController: UITableViewDelegate {
             let setColorMenu = UIMenu(title: "Set Color", image: #imageLiteral(resourceName: "set_color").withInsets(UIEdgeInsets(top: 1, left: 1, bottom: 1, right: 1)), children: [
                 yellowAction, blueAction, greenAction, whiteAction
             ])
-            
             let sendMessageAction = UIAction(title: "Send Message", image: #imageLiteral(resourceName: "autoresponse_icon")) { _ in
                 
             }
@@ -150,7 +150,16 @@ extension CustomersViewController: UITableViewDelegate {
         
         
         let moreAction = UIContextualAction(style: .normal, title: "More") { (action, view, completion) in
-            
+            let actions:[UIControlMenuAction] = [
+                UIControlMenuAction(title: "Send Message", image: UIImage(systemName: "paperplane")!, handler: { _ in print("Sending Message") }),
+                UIControlMenuAction(title: "Enable Wifi", image: UIImage(systemName: "wifi")!, handler: { _ in print("Wifi ON") }),
+                UIControlMenuAction(title: "Set Color", image: #imageLiteral(resourceName: "set_color").image(scaledTo: CGSize(width: 24, height: 24))!.withInsets(UIEdgeInsets(top: 2, left: 0, bottom: 1, right: 0))!, handler: { _ in self.promptChatColor(indexPath: indexPath) }),
+                UIControlMenuAction(title: "Delete", image: UIImage(systemName: "trash.fill")!, handler: { _ in print("Deleted ✅") })
+            ]
+
+            let vc = MenuController(actions: actions)
+            self.present(vc, animated: true, completion: nil)
+            completion(true)
         }
         moreAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "tab_more_inactive").withTintColor(.white), text: "More").withRenderingMode(.alwaysOriginal)
         moreAction.backgroundColor = .telaIndigo
@@ -200,4 +209,30 @@ extension CustomersViewController: UITableViewDelegate {
 //            navigationController?.pushViewController(vc, animated: true)
         }
     }
+}
+
+
+
+
+class CustomActivityViewController: UIActivityViewController {
+
+    private let controller: UIViewController!
+
+    required init(controller: UIViewController) {
+        self.controller = controller
+        super.init(activityItems: [], applicationActivities: nil)
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        let subViews = self.view.subviews
+        for view in subViews {
+            view.removeFromSuperview()
+        }
+
+        self.addChild(controller)
+        self.view.addSubview(controller.view)
+    }
+
 }

@@ -3,11 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		07EE2475CAADE7AD32CD00F9 /* Pods_Telabook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A24D2E2A3583492FDB7723EF /* Pods_Telabook.framework */; };
+		6F010CAE246F81B600C20DC6 /* MenuController in Frameworks */ = {isa = PBXBuildFile; productRef = 6F010CAD246F81B600C20DC6 /* MenuController */; };
 		6F02B2D92461C03F00FFB34E /* AutoResponseCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F02B2D82461C03F00FFB34E /* AutoResponseCodable.swift */; };
 		6F02B2DB2461C47300FFB34E /* AutoResponseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F02B2DA2461C47300FFB34E /* AutoResponseView.swift */; };
 		6F02B2DD2461C6A000FFB34E /* AutoResponseHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F02B2DC2461C6A000FFB34E /* AutoResponseHelpers.swift */; };
@@ -421,6 +422,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				07EE2475CAADE7AD32CD00F9 /* Pods_Telabook.framework in Frameworks */,
+				6F010CAE246F81B600C20DC6 /* MenuController in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1537,6 +1539,9 @@
 			dependencies = (
 			);
 			name = Telabook;
+			packageProductDependencies = (
+				6F010CAD246F81B600C20DC6 /* MenuController */,
+			);
 			productName = Telabook;
 			productReference = 6FB11AE0229BDDBD0098D050 /* Telabook.app */;
 			productType = "com.apple.product-type.application";
@@ -1573,6 +1578,9 @@
 				Base,
 			);
 			mainGroup = 6FB11AD7229BDDBD0098D050;
+			packageReferences = (
+				6F010CAC246F81B600C20DC6 /* XCRemoteSwiftPackageReference "MenuController" */,
+			);
 			productRefGroup = 6FB11AE1229BDDBD0098D050 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -2027,6 +2035,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		6F010CAC246F81B600C20DC6 /* XCRemoteSwiftPackageReference "MenuController" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/anmolrajpal/MenuController.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6F010CAD246F81B600C20DC6 /* MenuController */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6F010CAC246F81B600C20DC6 /* XCRemoteSwiftPackageReference "MenuController" */;
+			productName = MenuController;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		6FB11B4222A2A2E10098D050 /* Telabook.xcdatamodeld */ = {
