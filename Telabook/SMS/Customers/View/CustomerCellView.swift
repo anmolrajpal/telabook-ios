@@ -89,13 +89,11 @@ class CustomerCellView: UIView {
         
        
         guard !animated else {
-//            self.alpha = 0.1
-            self.transform = CGAffineTransform(scaleX: 0.9, y: 0.6)
+            self.transform = CGAffineTransform(scaleX: 0.9, y: 1.0)
             UIView.transition(with: self,
-                              duration: 0.4,
-                              options: [.transitionCrossDissolve, .beginFromCurrentState, .allowUserInteraction],
+                              duration: 0.3,
+                              options: [.curveLinear, .beginFromCurrentState, .allowUserInteraction],
                               animations: {
-//                                self.alpha = 1.0
                                 self.transform = .identity
             }, completion: nil)
             return

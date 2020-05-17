@@ -11,7 +11,6 @@ import CoreData
 
 extension CustomersViewController {
     internal func setupFetchedResultsController() {
-        context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
         if !currentSearchText.isEmpty {
             fetchRequest.predicate = NSPredicate(format: "\(#keyPath(Customer.name)) CONTAINS[c] %@", currentSearchText)
             fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(Customer.name), ascending: true)]
@@ -20,10 +19,11 @@ extension CustomersViewController {
                                                                   sectionNameKeyPath: nil,
                                                                   cacheName: nil)
         } else {
+            let aWeek = Date().subtract(days: 7)! as NSDate
             if selectedSegment == .Inbox {
-                fetchRequest.predicate = NSPredicate(format: "\(#keyPath(Customer.isArchived)) = %d AND \(#keyPath(Customer.isCustomerDeleted)) = %d AND \(#keyPath(Customer.agent)) == %@", false, false, agent)
+                fetchRequest.predicate = NSPredicate(format: "\(#keyPath(Customer.agent)) == %@ AND \(#keyPath(Customer.lastMessageDateTime)) >= %@ AND \(#keyPath(Customer.isArchived)) = %d AND \(#keyPath(Customer.isCustomerDeleted)) = %d", agent, aWeek, false, false)
             } else {
-                fetchRequest.predicate = NSPredicate(format: "\(#keyPath(Customer.isArchived)) = %d AND \(#keyPath(Customer.isCustomerDeleted)) = %d AND \(#keyPath(Customer.agent)) == %@", true, false, agent)
+                fetchRequest.predicate = NSPredicate(format: "\(#keyPath(Customer.agent)) == %@ AND \(#keyPath(Customer.lastMessageDateTime)) < %@ OR \(#keyPath(Customer.isArchived)) = %d AND \(#keyPath(Customer.isCustomerDeleted)) = %d", agent, aWeek, true, false)
             }
             fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(Customer.lastMessageDateTime), ascending: false)]
             fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
@@ -41,8 +41,7 @@ extension CustomersViewController {
     }
 }
 extension CustomersViewController: NSFetchedResultsControllerDelegate {
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
-        print("Controller did change content with shanpshot")
-        self.updateSnapshot()
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {   
+        self.updateSnapshot(animated: true)
     }
 }

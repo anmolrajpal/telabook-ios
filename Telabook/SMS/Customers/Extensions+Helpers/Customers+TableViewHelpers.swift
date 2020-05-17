@@ -34,10 +34,13 @@ extension CustomersViewController {
     internal func updateSnapshot(animated: Bool = false) {
         snapshot = NSDiffableDataSourceSnapshot<Section, Customer>()
         snapshot.appendSections([.main])
-        snapshot.appendItems(fetchedResultsController.fetchedObjects ?? [])
-        diffableDataSource?.apply(snapshot, animatingDifferences: animated, completion: {
+        let objects = fetchedResultsController.fetchedObjects ?? []
+        snapshot.appendItems(objects)
+        self.diffableDataSource?.apply(self.snapshot, animatingDifferences: animated, completion: {
+            if animated { self.subview.tableView.reloadData() }  // Should not have used this but in order to update existing visible cells, it's required. Hope Apple will fix this but with next iOS Update.
             self.handleState()
         })
+        
     }
 }
 
@@ -82,7 +85,10 @@ extension CustomersViewController: UITableViewDelegate {
                 
             }
             let archiveAction = UIAction(title: "Archive", image: #imageLiteral(resourceName: "archive")) { _ in
-                
+                self.updateConversation(for: customer, archiving: true, completion: {_ in})
+            }
+            let unarchiveAction = UIAction(title: "Unarchive", image: #imageLiteral(resourceName: "archive")) { _ in
+                self.updateConversation(for: customer, archiving: false, completion: {_ in})
             }
             let blockAction = UIAction(title: "Confirm Block", image: #imageLiteral(resourceName: "block_rounded"), attributes: .destructive) { _ in
                 
@@ -98,29 +104,31 @@ extension CustomersViewController: UITableViewDelegate {
                 detailsAction,
                 pinAction,
                 setColorMenu,
-                archiveAction,
+                self.selectedSegment == .Inbox ? archiveAction : unarchiveAction,
                 confirmBlockMenu,
                 confirmDeleteMenu
             ])
         }
     }
     
+    
+    
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let leadingAction:UIContextualAction
+        let index = indexPath.row
+        guard let customers = fetchedResultsController.fetchedObjects, !customers.isEmpty else { return nil }
+        let customer = customers[index]
         
+        
+        let leadingAction:UIContextualAction
         if selectedSegment == .Inbox {
             let archiveAction = UIContextualAction(style: UIContextualAction.Style.destructive, title: "Archive") { (action, view, completion) in
-                DispatchQueue.main.async {
-//                    self.initiateChatArchivingSequence(markArchive: true, indexPath: indexPath, completion: completion)
-                }
+                self.updateConversation(for: customer, archiving: true, completion: completion)
             }
             archiveAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "archive"), text: "Archive").withRenderingMode(.alwaysTemplate)
             leadingAction = archiveAction
         } else {
-            let unArchiveAction = UIContextualAction(style: UIContextualAction.Style.destructive, title: "Unarchive") { (action, view, completion) in
-                DispatchQueue.main.async {
-//                    self.initiateChatArchivingSequence(markArchive: false, indexPath: indexPath, completion: completion)
-                }
+            let unArchiveAction = UIContextualAction(style: UIContextualAction.Style.normal, title: "Unarchive") { (action, view, completion) in
+                self.updateConversation(for: customer, archiving: false, completion: completion)
             }
             unArchiveAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "archive"), text: "Unarchive").withRenderingMode(.alwaysTemplate)
             leadingAction = unArchiveAction
@@ -141,6 +149,12 @@ extension CustomersViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let index = indexPath.row
+        guard let customers = fetchedResultsController.fetchedObjects else { return nil }
+        let customer = customers[index]
+//        guard let conversation = firebaseCustomers.first(where: { $0.conversationID == customer.externalConversationID }) else { return nil }
+        
+        
         
         let blockAction =  UIContextualAction(style: .destructive, title: "Block", handler: { (action,view,completion ) in
 //            self.initiateBlockNumberSequence(indexPath: indexPath, completion: completion)
@@ -150,11 +164,42 @@ extension CustomersViewController: UITableViewDelegate {
         
         
         let moreAction = UIContextualAction(style: .normal, title: "More") { (action, view, completion) in
+            let setColorAction = UIControlMenuAction(title: "Set Color", image: #imageLiteral(resourceName: "set_color").image(scaledTo: CGSize(width: 26, height: 26))!, handler: { _ in
+                self.promptChatColor(indexPath: indexPath)
+            })
+            let archiveAction = UIControlMenuAction(title: "Archive", image: #imageLiteral(resourceName: "archive"), handler: { _ in
+                self.updateConversation(for: customer, archiving: true, completion: { _ in})
+            })
+            let unarchiveAction = UIControlMenuAction(title: "Unarchive", image: #imageLiteral(resourceName: "archive"), handler: { _ in
+                self.updateConversation(for: customer, archiving: false, completion: { _ in})
+            })
+            let pinAction = UIControlMenuAction(title: "Pin", image: #imageLiteral(resourceName: "pin")) { _ in
+                
+            }
+            _ = UIControlMenuAction(title: "Unpin", image: #imageLiteral(resourceName: "unpin")) { _ in
+                
+            }
+            let detailsAction = UIControlMenuAction(title: "Details", image: SFSymbol.person.image.withTintColor(.telaBlue, renderingMode: .alwaysOriginal)) { _ in
+                
+            }
+            let blockAction = UIControlMenuAction(title: "Confirm Block", image: #imageLiteral(resourceName: "block_rounded")) { _ in
+                
+            }
+            
+            let deleteAction = UIControlMenuAction(title: "Confirm Delete", image: #imageLiteral(resourceName: "delete_icon")) { _ in
+                
+            }
+            
+            
+            
+            
             let actions:[UIControlMenuAction] = [
-                UIControlMenuAction(title: "Send Message", image: UIImage(systemName: "paperplane")!, handler: { _ in print("Sending Message") }),
-                UIControlMenuAction(title: "Enable Wifi", image: UIImage(systemName: "wifi")!, handler: { _ in print("Wifi ON") }),
-                UIControlMenuAction(title: "Set Color", image: #imageLiteral(resourceName: "set_color").image(scaledTo: CGSize(width: 24, height: 24))!.withInsets(UIEdgeInsets(top: 2, left: 0, bottom: 1, right: 0))!, handler: { _ in self.promptChatColor(indexPath: indexPath) }),
-                UIControlMenuAction(title: "Delete", image: UIImage(systemName: "trash.fill")!, handler: { _ in print("Deleted ✅") })
+                pinAction,
+                setColorAction,
+                self.selectedSegment == .Inbox ? archiveAction : unarchiveAction,
+                detailsAction,
+                blockAction,
+                deleteAction
             ]
 
             let vc = MenuController(actions: actions)

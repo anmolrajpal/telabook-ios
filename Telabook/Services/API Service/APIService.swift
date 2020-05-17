@@ -41,7 +41,10 @@ public struct APIService: APIServiceProtocol {
         let result:String
         let message:String
     }
-    
+    struct RecurrentResult:Codable {
+        let result:String?
+        let message:String?
+    }
     /// All API Endpoints options used in the app.
     /// - Note: `path()` function is required to return the Path of the specified Endpoint as a `String`
     enum Endpoint {
@@ -79,8 +82,15 @@ public struct APIService: APIServiceProtocol {
         /// Endpoint to fetch Agent's First Time SMS
         case AutoResponse
         
-        /// Endpoint to fetch Agent's customers / external conversations
-        case FetchCustomers
+        /// Endpoint to search Agent's customers / external conversations
+        case SearchCustomer
+        
+        /// Endpoint to archive Agent's conversation with customer
+        case ArchiveConversation
+        
+        /// Endpoint to unarchive Agent's conversation with customer
+        case UnarchiveConversation
+        
         
         /**
         Returns the path of a specified Endpoint.
@@ -105,7 +115,9 @@ public struct APIService: APIServiceProtocol {
                 case let .UpdateQuickResponse(responseID): return "/android/quick_replies/\(responseID)"
                 case let .DeleteQuickResponse(responseID): return "/android/quick_replies/\(responseID)"
                 case .AutoResponse: return "/android/sms_auto_reply"
-                case .FetchCustomers: return "/external_conversations/search_firebase"
+                case .SearchCustomer: return "/external_conversations/search_firebase"
+                case .ArchiveConversation: return "/archive_external_conversation"
+                case .UnarchiveConversation: return "/remove_archive_external_conversation"
             }
         }
     }

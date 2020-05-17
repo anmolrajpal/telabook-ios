@@ -25,7 +25,10 @@ class PersistentContainer: NSPersistentContainer {
         }
         
         container.viewContext.automaticallyMergesChangesFromParent = true
-        container.viewContext.mergePolicy = NSMergePolicy(merge: NSMergePolicyType.mergeByPropertyStoreTrumpMergePolicyType)
+//        container.viewContext.mergePolicy = NSMergePolicy(merge: NSMergePolicyType.mergeByPropertyStoreTrumpMergePolicyType)
+        container.viewContext.mergePolicy = NSMergePolicy(merge: NSMergePolicyType.mergeByPropertyObjectTrumpMergePolicyType)
+        container.viewContext.undoManager = nil
+        container.viewContext.shouldDeleteInaccessibleFaults = true
         return container
     }()
     
@@ -41,7 +44,10 @@ class PersistentContainer: NSPersistentContainer {
     override func newBackgroundContext() -> NSManagedObjectContext {
         let backgroundContext = super.newBackgroundContext()
         backgroundContext.automaticallyMergesChangesFromParent = true
-        backgroundContext.mergePolicy = NSMergePolicy(merge: NSMergePolicyType.mergeByPropertyStoreTrumpMergePolicyType)
+//        backgroundContext.mergePolicy = NSMergePolicy(merge: NSMergePolicyType.mergeByPropertyStoreTrumpMergePolicyType)
+        backgroundContext.mergePolicy = NSMergePolicy(merge: NSMergePolicyType.mergeByPropertyObjectTrumpMergePolicyType)
+        backgroundContext.undoManager = nil
+        backgroundContext.shouldDeleteInaccessibleFaults = true
         return backgroundContext
     }
 }

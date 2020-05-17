@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import os
 extension CustomersViewController {
     internal func persistFirebaseEntriesToCoreDataStore(entries:[FirebaseCustomer]) {
         let queue = OperationQueue()
@@ -22,6 +22,32 @@ extension CustomersViewController {
         
         queue.addOperations(operations, waitUntilFinished: false)
     }
+    
+    
+    internal func updateConversation(for customer:Customer, archiving:Bool, completion:@escaping (Bool) -> Void) {
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+        
+        let context = PersistentContainer.shared.newBackgroundContext()
+//        context.parent = context
+        let operations = CustomerOperations.getArchivingOperations(using: context, for: customer, shouldArchive: archiving)
+        handleViewsStateForOperations(operations: operations, onOperationQueue: queue, completion: completion)
+        queue.addOperations(operations, waitUntilFinished: false)
+    }
+    
+    internal func updateConversationInStore(for customer:Customer, archiving:Bool, completion:@escaping (Bool) -> Void) {
+            let queue = OperationQueue()
+            queue.qualityOfService = .userInitiated
+            queue.maxConcurrentOperationCount = 1
+            
+            let context = PersistentContainer.shared.newBackgroundContext()
+    //        context.parent = context
+            let operation = UpdateConversationInStore_ArchivingOperation(context: context, selectedCustomer: customer, shouldArchive: archiving)
+            handleViewsStateForOperations(operations: [operation], onOperationQueue: queue, completion: completion)
+        
+            queue.addOperations([operation], waitUntilFinished: false)
+        }
     
     
     
@@ -59,14 +85,48 @@ extension CustomersViewController {
                             }
                         }
                 }
+                
+                
+                
+                
+                
+                case let operation as UpdateConversationInStore_ArchivingOperation:
+                    operation.completionBlock = {
+                        if let error = operation.error {
+                            #if DEBUG
+                            print("Error updating Archiving operation in Store: \(error)")
+                            #endif
+                            os_log("Error updating Archiving operation in Store: %@", log: .coredata, type: .error, error.localizedDescription)
+                            DispatchQueue.main.async {
+                                completion(false)
+                            }
+                        } else {
+                            DispatchQueue.main.async {
+                                completion(true)
+                            }
+                        }
+                }
+                case let operation as UpdateConversationOnServer_ArchivingOperation:
+                    operation.completionBlock = {
+                        guard case let .failure(error) = operation.result else { return }
+                        self.updateConversationInStore(for: operation.customer, archiving: !operation.shouldArchive, completion: {_ in})
+                        self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+                        #if DEBUG
+                        print("Error updating Archiving operation on server: \(error)")
+                        #endif
+                        os_log("Error updating Archiving operation on server: %@", log: .network, type: .error, error.localizedDescription)
+                }
+                
+                
                 default: break
             }
         }
     }
-    private func showAlert(withErrorMessage message:String, cancellingOperationQueue queue:OperationQueue) {
+    
+    private func showAlert(withErrorMessage message:String, cancellingOperationQueue queue:OperationQueue, completion: (() -> Void)? = nil) {
         DispatchQueue.main.async {
             UIAlertController.showTelaAlert(title: "Error", message: message, action: UIAlertAction(title: "OK", style: .cancel, handler: { action in
-                //                self.dismiss(animated: true, completion: nil)
+                if let completionHandler = completion { completionHandler() }
             }), controller: self, completion: {
                 queue.cancelAllOperations()
                 self.stopRefreshers()

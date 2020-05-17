@@ -51,8 +51,8 @@ extension CustomersViewController {
         switch selectedSegment {
             case .Inbox:
                 if !isFetchedResultsAvailable {
-                    self.subview.inboxPlaceholderLabel.text = "No Customer"
                     DispatchQueue.main.async {
+                        self.subview.inboxPlaceholderLabel.text = "No Customer"
                         self.subview.archivedPlaceholderLabel.isHidden = true
                         self.subview.inboxPlaceholderLabel.isHidden = false
                     }

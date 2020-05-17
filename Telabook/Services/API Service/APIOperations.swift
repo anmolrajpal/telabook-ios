@@ -23,7 +23,7 @@ class APIServer<T:Codable> : Server {
     func hitEndpoint<T>(endpoint:APIService.Endpoint, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, completion: @escaping APIService.APICompletion<T>) where T : Decodable, T : Encodable {
         switch apiVersion {
             case .v1: APIOperations.triggerAPIEndpointOperations(endpoint: endpoint, httpMethod: httpMethod, params: params, httpBody: httpBody, headers: headers, guardResponse: guardResponse, expectData: expectData, completion: completion)
-            case .v2: APIOperations.triggerAPIEndpointOperations(endpoint: endpoint, httpMethod: httpMethod, params: params, httpBody: httpBody, headers: headers, guardResponse: guardResponse, expectData: expectData, configuration: .init(apiCommonPath: "/\(apiVersion.stringValue)/api"), completion: completion)
+            case .v2: APIOperations.triggerAPIEndpointOperations(endpoint: endpoint, httpMethod: httpMethod, params: params, httpBody: httpBody, headers: headers, guardResponse: guardResponse, expectData: expectData, configuration: .init(apiCommonPath: "\(Config.APIConfig.urlPrefix)/\(apiVersion.stringValue)"), completion: completion)
             case .mock: print("Mock")
         }
     }

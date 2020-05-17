@@ -44,6 +44,26 @@ struct CustomerOperations {
         ]
     }
     
+    
+    
+    
+    
+    
+    
+    
+    //MARK: POST - Archive/Unarchive Agent's Conversation with Customer in store and on Server
+    /// Returns an array of operations for archiving/unarchiving  Agent's conversation with Customer  from Core Data store to server.
+    static func getArchivingOperations(using context: NSManagedObjectContext, for selectedCustomer:Customer, shouldArchive:Bool) -> [Operation] {
+        
+        let updateEntryInStore_Operation = UpdateConversationInStore_ArchivingOperation(context: context, selectedCustomer: selectedCustomer, shouldArchive: shouldArchive)
+        let updateEntryOnServer_Operation = UpdateConversationOnServer_ArchivingOperation(selectedCustomer: selectedCustomer, shouldArchive: shouldArchive)
+        
+        return [
+            updateEntryInStore_Operation,
+            updateEntryOnServer_Operation
+        ]
+    }
+    
 }
 
 
@@ -160,7 +180,7 @@ class DownloadCustomrersEntriesFromServer_Operation: Operation {
             finish(result: .failure(.cancelled))
             return
         }
-        APIServer<CustomerCodable>(apiVersion: .v2).hitEndpoint(endpoint: .FetchCustomers, httpMethod: .POST, params: params, completion: finish)
+//        APIServer<CustomerCodable>(apiVersion: .v2).hitEndpoint(endpoint: .FetchCustomers, httpMethod: .POST, params: params, completion: finish)
     }
 }
 
@@ -272,5 +292,134 @@ class AddCustomerEntriesFromServerToStore_Operation: Operation {
             }
         }
         
+    }
+}
+
+
+
+/// Updates the existing Agent's Conversation with Customer entry to Archive/Unarchive in the Core Data store.
+class UpdateConversationInStore_ArchivingOperation: Operation {
+    enum OperationError: Error, LocalizedError {
+        case coreDataError(error:Error)
+        
+        var localizedDescription: String {
+            switch self {
+                case let .coreDataError(error): return "Core Data Error: \(error.localizedDescription)"
+            }
+        }
+    }
+    var error:OperationError?
+    private let context: NSManagedObjectContext
+    private let selectedCustomer:Customer
+    private let shouldArchive:Bool
+    
+    init(context: NSManagedObjectContext, selectedCustomer:Customer, shouldArchive:Bool) {
+        self.context = context
+        self.selectedCustomer = selectedCustomer
+        self.shouldArchive = shouldArchive
+    }
+    
+    override func main() {
+        context.performAndWait {
+            do {
+                selectedCustomer.isArchived = shouldArchive
+                try context.save()
+            } catch {
+                print("Error adding entries to store: \(error))")
+                self.error = .coreDataError(error: error)
+            }
+        }
+    }
+}
+
+
+
+/// Updates the existing Agent's Conversation with Customer entry to Archive/Unarchive on the server.
+class UpdateConversationOnServer_ArchivingOperation: Operation {
+    var result: Result<Bool, APIService.APIError>?
+    
+    private var downloading = false
+    
+    let customer:Customer
+    let shouldArchive:Bool
+    
+    private let params:[String:String]
+    
+    init(selectedCustomer:Customer, shouldArchive:Bool) {
+        self.customer = selectedCustomer
+        self.shouldArchive = shouldArchive
+        let companyID = String(AppData.companyId)
+        params = [
+            "company_id":companyID,
+            "external_conversation_id":String(selectedCustomer.externalConversationID)
+        ]
+    }
+    
+    override var isAsynchronous: Bool {
+        return true
+    }
+    
+    override var isExecuting: Bool {
+        return downloading
+    }
+    
+    override var isFinished: Bool {
+        return result != nil
+    }
+    
+    override func cancel() {
+        super.cancel()
+        
+    }
+    
+    func finish(result: Result<APIService.RecurrentResult, APIService.APIError>) {
+        guard downloading else { return }
+        
+        willChangeValue(forKey: #keyPath(isExecuting))
+        willChangeValue(forKey: #keyPath(isFinished))
+        
+        downloading = false
+        
+        let errorMessage = "Error: No results from server"
+        
+        guard case let .success(resultData) = result else {
+            if case let .failure(error) = result {
+                self.result = .failure(error)
+                didChangeValue(forKey: #keyPath(isFinished))
+                didChangeValue(forKey: #keyPath(isExecuting))
+            }
+            return
+        }
+        guard let serverResultValue = resultData.result else {
+            self.result = .failure(.resultError(message: errorMessage))
+            didChangeValue(forKey: #keyPath(isFinished))
+            didChangeValue(forKey: #keyPath(isExecuting))
+            return
+        }
+        let serverResult = ServerResult(rawValue: serverResultValue)
+        guard serverResult == .success else {
+            self.result = .failure(.resultError(message: resultData.message ?? errorMessage))
+            didChangeValue(forKey: #keyPath(isFinished))
+            didChangeValue(forKey: #keyPath(isExecuting))
+            return
+        }
+        self.result = .success(true)
+        
+        didChangeValue(forKey: #keyPath(isFinished))
+        didChangeValue(forKey: #keyPath(isExecuting))
+    }
+    
+    override func start() {
+        willChangeValue(forKey: #keyPath(isExecuting))
+        downloading = true
+        didChangeValue(forKey: #keyPath(isExecuting))
+        
+        guard !isCancelled else {
+            finish(result: .failure(.cancelled))
+            return
+        }
+        shouldArchive ?
+            APIServer<APIService.RecurrentResult>(apiVersion: .v2).hitEndpoint(endpoint: .ArchiveConversation, httpMethod: .POST, params: params, completion: finish) :
+            APIServer<APIService.RecurrentResult>(apiVersion: .v2).hitEndpoint(endpoint: .UnarchiveConversation, httpMethod: .POST, params: params, completion: finish)
     }
 }
