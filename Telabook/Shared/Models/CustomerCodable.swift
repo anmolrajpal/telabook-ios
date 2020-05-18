@@ -337,7 +337,7 @@ extension Customer {
     }
     
     
-    convenience init(context: NSManagedObjectContext, conversationEntryFromFirebase entry: FirebaseCustomer, agent:Agent) {
+    convenience init(context: NSManagedObjectContext, conversationEntryFromFirebase entry: FirebaseCustomer, agent:Agent, isPinned:Bool) {
         self.init(context: context)
         self.lastMessageSeenDate = getFormattedDate_forAllLastMessageSeenDate(dateString: entry.allLastMessageSeenDate)
         self.lastMessageText = entry.allLastMessageText
@@ -369,9 +369,9 @@ extension Customer {
         self.updatedAt = entry.updatedAt != 0 ? Date.getDate(fromSecondsOrMilliseconds: entry.updatedAt) : nil
         self.workerPersonName = entry.workerPerson
         self.workerPhoneNumber = entry.workerPhoneNumber
-        
         self.agent = agent
         self.lastRefreshedAt = Date()
+        self.isPinned = isPinned
     }
 }
 

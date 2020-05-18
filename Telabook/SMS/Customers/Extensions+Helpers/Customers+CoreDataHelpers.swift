@@ -25,7 +25,10 @@ extension CustomersViewController {
             } else {
                 fetchRequest.predicate = NSPredicate(format: "\(#keyPath(Customer.agent)) == %@ AND \(#keyPath(Customer.lastMessageDateTime)) < %@ OR \(#keyPath(Customer.isArchived)) = %d AND \(#keyPath(Customer.isCustomerDeleted)) = %d", agent, aWeek, true, false)
             }
-            fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(Customer.lastMessageDateTime), ascending: false)]
+            fetchRequest.sortDescriptors = [
+                NSSortDescriptor(key: #keyPath(Customer.isPinned), ascending: false),
+                NSSortDescriptor(key: #keyPath(Customer.lastMessageDateTime), ascending: false)
+            ]
             fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
                                                                   managedObjectContext: context,
                                                                   sectionNameKeyPath: nil,

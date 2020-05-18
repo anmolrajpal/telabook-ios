@@ -78,8 +78,8 @@ extension CustomersViewController: UITableViewDelegate {
             let sendMessageAction = UIAction(title: "Send Message", image: #imageLiteral(resourceName: "autoresponse_icon")) { _ in
                 
             }
-            let pinAction = UIAction(title: "Pin", image: #imageLiteral(resourceName: "pin").withInsets(UIEdgeInsets(top: 1, left: 1, bottom: 1, right: 1))) { _ in
-                
+            let pinningAction = UIAction(title: customer.isPinned ? "Unpin" : "Pin", image: (customer.isPinned ? #imageLiteral(resourceName: "unpin") : #imageLiteral(resourceName: "pin")).withInsets(UIEdgeInsets(top: 1, left: 1, bottom: 1, right: 1))) { _ in
+                self.updateConversationInStore(for: customer, pinning: !customer.isPinned, completion: {_ in})
             }
             let detailsAction = UIAction(title: "Details", image: SFSymbol.person.image.withTintColor(.telaBlue, renderingMode: .alwaysOriginal)) { _ in
                 
@@ -101,9 +101,9 @@ extension CustomersViewController: UITableViewDelegate {
             let confirmDeleteMenu = UIMenu(title: "Delete", image: SFSymbol.arrowUpRightSquare.image, options: [.destructive], children: [deleteAction])
             return UIMenu(title: "", children: [
                 sendMessageAction,
-                detailsAction,
-                pinAction,
+                pinningAction,
                 setColorMenu,
+                detailsAction,
                 self.selectedSegment == .Inbox ? archiveAction : unarchiveAction,
                 confirmBlockMenu,
                 confirmDeleteMenu
@@ -136,15 +136,13 @@ extension CustomersViewController: UITableViewDelegate {
         leadingAction.backgroundColor = .telaBlue
         
         
-        let colorAction = UIContextualAction(style: UIContextualAction.Style.normal, title: "Chat Color") { (action, view, completion) in
-            DispatchQueue.main.async {
-                self.promptChatColor(indexPath: indexPath)
-                completion(true)
-            }
+        let pinningAction = UIContextualAction(style: UIContextualAction.Style.normal, title: customer.isPinned ? "Unpin" : "Pin") { (action, view, completion) in
+            completion(true)
+            self.updateConversationInStore(for: customer, pinning: !customer.isPinned, completion: completion)
         }
-        colorAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "set_color").image(scaledTo: CGSize(width: 24, height: 24))!.withInsets(UIEdgeInsets(top: 2, left: 0, bottom: 1, right: 0))!, text: "Chat Color").withRenderingMode(.alwaysOriginal)
-        colorAction.backgroundColor = .telaGray7
-        let configuration = UISwipeActionsConfiguration(actions: [leadingAction, colorAction])
+        pinningAction.image = UIImage.textImage(image: (customer.isPinned ? #imageLiteral(resourceName: "unpin") : #imageLiteral(resourceName: "pin")).image(scaledTo: CGSize(width: 22, height: 22))!.withInsets(UIEdgeInsets(top: 2, left: 0, bottom: 1, right: 0))!, text: customer.isPinned ? "Unpin" : "Pin").withRenderingMode(.alwaysOriginal)
+        pinningAction.backgroundColor = .telaGray7
+        let configuration = UISwipeActionsConfiguration(actions: [leadingAction, pinningAction])
         return configuration
     }
     
@@ -164,6 +162,9 @@ extension CustomersViewController: UITableViewDelegate {
         
         
         let moreAction = UIContextualAction(style: .normal, title: "More") { (action, view, completion) in
+            let sendMessageAction = UIControlMenuAction(title: "Send Message", image: SFSymbol.sendMessage.image) { _ in
+                
+            }
             let setColorAction = UIControlMenuAction(title: "Set Color", image: #imageLiteral(resourceName: "set_color").image(scaledTo: CGSize(width: 26, height: 26))!, handler: { _ in
                 self.promptChatColor(indexPath: indexPath)
             })
@@ -173,20 +174,17 @@ extension CustomersViewController: UITableViewDelegate {
             let unarchiveAction = UIControlMenuAction(title: "Unarchive", image: #imageLiteral(resourceName: "archive"), handler: { _ in
                 self.updateConversation(for: customer, archiving: false, completion: { _ in})
             })
-            let pinAction = UIControlMenuAction(title: "Pin", image: #imageLiteral(resourceName: "pin")) { _ in
-                
-            }
-            _ = UIControlMenuAction(title: "Unpin", image: #imageLiteral(resourceName: "unpin")) { _ in
-                
+            let pinningAction = UIControlMenuAction(title: customer.isPinned ? "Unpin" : "Pin", image: (customer.isPinned ? #imageLiteral(resourceName: "unpin") : #imageLiteral(resourceName: "pin"))) { _ in
+                self.updateConversationInStore(for: customer, pinning: !customer.isPinned, completion: completion)
             }
             let detailsAction = UIControlMenuAction(title: "Details", image: SFSymbol.person.image.withTintColor(.telaBlue, renderingMode: .alwaysOriginal)) { _ in
                 
             }
-            let blockAction = UIControlMenuAction(title: "Confirm Block", image: #imageLiteral(resourceName: "block_rounded")) { _ in
+            let blockAction = UIControlMenuAction(title: "Block", image: #imageLiteral(resourceName: "block_rounded")) { _ in
                 
             }
             
-            let deleteAction = UIControlMenuAction(title: "Confirm Delete", image: #imageLiteral(resourceName: "delete_icon")) { _ in
+            let deleteAction = UIControlMenuAction(title: "Delete", image: #imageLiteral(resourceName: "delete_icon")) { _ in
                 
             }
             
@@ -194,10 +192,11 @@ extension CustomersViewController: UITableViewDelegate {
             
             
             let actions:[UIControlMenuAction] = [
-                pinAction,
+                sendMessageAction,
+                pinningAction,
                 setColorAction,
-                self.selectedSegment == .Inbox ? archiveAction : unarchiveAction,
                 detailsAction,
+                self.selectedSegment == .Inbox ? archiveAction : unarchiveAction,
                 blockAction,
                 deleteAction
             ]

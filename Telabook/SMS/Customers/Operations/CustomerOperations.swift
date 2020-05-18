@@ -18,12 +18,11 @@ struct CustomerOperations {
 //    }
     
     static func getOperationsToPersistData(using context:NSManagedObjectContext, forAgent agent:Agent, fromFirebaseEntries entries:[FirebaseCustomer]?) -> [Operation] {
-        context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
         let fetchFromStore_Operation = FetchSavedCustomersEntries_Operation(context: context, agent: agent)
         let deleteRedundantEntriesFromStore_Operation = DeleteRedundantCustomerEntries_Operation(context: context, agent: agent, serverEntries: entries)
         let addToStore_Operation = AddCustomerEntriesFromServerToStore_Operation(context: context, agent: agent, serverEntries: entries)
 
-        let passFetchResultsToStore_Operation = BlockOperation { [unowned fetchFromStore_Operation, unowned deleteRedundantEntriesFromStore_Operation] in
+        let passFetchResultsToStore_Operation = BlockOperation { [unowned fetchFromStore_Operation, unowned deleteRedundantEntriesFromStore_Operation, unowned addToStore_Operation] in
             guard case let .success(entries) = fetchFromStore_Operation.result else {
                 #if DEBUG
                 print("Unresolved Error: Unable to get result(Customer) from fetchFromStore_Operation")
@@ -32,9 +31,11 @@ struct CustomerOperations {
                 return
             }
             deleteRedundantEntriesFromStore_Operation.fetchedEntries = entries
+            addToStore_Operation.fetchedEntries = entries
         }
         passFetchResultsToStore_Operation.addDependency(fetchFromStore_Operation)
         deleteRedundantEntriesFromStore_Operation.addDependency(passFetchResultsToStore_Operation)
+        addToStore_Operation.addDependency(passFetchResultsToStore_Operation)
         
         return [
             fetchFromStore_Operation,
@@ -264,6 +265,7 @@ class AddCustomerEntriesFromServerToStore_Operation: Operation {
         }
     }
     var error:OperationError?
+    var fetchedEntries:[Customer]?
     private let context: NSManagedObjectContext
     private let agent:Agent
     private let serverEntries:[FirebaseCustomer]?
@@ -284,7 +286,12 @@ class AddCustomerEntriesFromServerToStore_Operation: Operation {
         }
         context.performAndWait {
             do {
-                _ = serverEntries.map { Customer(context: context, conversationEntryFromFirebase: $0, agent: agent) }
+                _ = serverEntries.map { serverEntry -> Customer in
+                    let isPinned = fetchedEntries?.first(where: { conversation -> Bool in
+                        conversation.externalConversationID == serverEntry.conversationID
+                    })?.isPinned ?? false
+                    return Customer(context: context, conversationEntryFromFirebase: serverEntry, agent: agent, isPinned: isPinned)
+                }
                 try context.save()
             } catch {
                 print("Error adding entries to store: \(error))")
@@ -423,3 +430,47 @@ class UpdateConversationOnServer_ArchivingOperation: Operation {
             APIServer<APIService.RecurrentResult>(apiVersion: .v2).hitEndpoint(endpoint: .UnarchiveConversation, httpMethod: .POST, params: params, completion: finish)
     }
 }
+
+
+
+
+
+
+/* ----------------------------------------------------------------------------------------------------------------------- */
+
+
+/// Updates the existing Agent's Conversation with Customer entry to Pin/Unpin in the Core Data store.
+class UpdateConversationInStore_PinningOperation: Operation {
+    enum OperationError: Error, LocalizedError {
+        case coreDataError(error:Error)
+        
+        var localizedDescription: String {
+            switch self {
+                case let .coreDataError(error): return "Core Data Error: \(error.localizedDescription)"
+            }
+        }
+    }
+    var error:OperationError?
+    private let context: NSManagedObjectContext
+    private let selectedCustomer:Customer
+    private let shouldPin:Bool
+    
+    init(context: NSManagedObjectContext, selectedCustomer:Customer, shouldPin:Bool) {
+        self.context = context
+        self.selectedCustomer = selectedCustomer
+        self.shouldPin = shouldPin
+    }
+    
+    override func main() {
+        context.performAndWait {
+            do {
+                selectedCustomer.isPinned = shouldPin
+                try context.save()
+            } catch {
+                print("Error adding entries to store: \(error))")
+                self.error = .coreDataError(error: error)
+            }
+        }
+    }
+}
+

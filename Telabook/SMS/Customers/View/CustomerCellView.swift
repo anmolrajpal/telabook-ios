@@ -19,6 +19,7 @@ class CustomerCellView: UIView {
         let lastMessageDate:Date?
         let conversationColor:UIColor
         let unreadMessagesCount:Int
+        let isPinned:Bool
     }
     var parameters: Parameters? {
         didSet {
@@ -70,7 +71,7 @@ class CustomerCellView: UIView {
         } else {
             lastMessageLabel.text = nil
         }
-
+        
         if let lastMessageDate = parameters?.lastMessageDate {
             let dateStr = Date.getStringFromDate(date: lastMessageDate, dateFormat: CustomDateFormat.ddMMMyyyy)
             let timeStr = Date.getStringFromDate(date: lastMessageDate, dateFormat: CustomDateFormat.hmma)
@@ -85,6 +86,11 @@ class CustomerCellView: UIView {
         } else {
             badgeCountLabel.text = nil
             badgeCountLabel.isHidden = true
+        }
+        if let isPinned = parameters?.isPinned {
+            pinImageView.isHidden = !isPinned
+        } else {
+            pinImageView.isHidden = true
         }
         
        
@@ -128,6 +134,7 @@ class CustomerCellView: UIView {
 //        addSubview(priorityImageView)
         containerView.addSubview(nameLabel)
         containerView.addSubview(badgeCountLabel)
+        containerView.addSubview(pinImageView)
         containerView.addSubview(dateTimeLabel)
         containerView.addSubview(lastMessageLabel)
         addSubview(containerView)
@@ -141,16 +148,18 @@ class CustomerCellView: UIView {
         containerView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 16, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         
         nameLabel.anchor(top: nil, left: containerView.leftAnchor, bottom: nil, right: badgeCountLabel.leftAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
-        nameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: -15).activate()
+        nameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: -18).activate()
         
         badgeCountLabel.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor).activate()
         badgeCountLabel.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -5).activate()
         
+        pinImageView.anchor(top: nil, left: nil, bottom: nil, right: containerView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 5, widthConstant: 17, heightConstant: 17)
+        pinImageView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).activate()
         
         dateTimeLabel.anchor(top: nil, left: containerView.centerXAnchor, bottom: nil, right: containerView.rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 5)
         dateTimeLabel.centerYAnchor.constraint(equalTo: lastMessageLabel.centerYAnchor).activate()
         
-        lastMessageLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: 15).activate()
+        lastMessageLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: 18).activate()
         lastMessageLabel.leftAnchor.constraint(equalTo: nameLabel.leftAnchor).activate()
         lastMessageLabel.rightAnchor.constraint(lessThanOrEqualTo: containerView.centerXAnchor).activate()
     }
@@ -170,6 +179,13 @@ class CustomerCellView: UIView {
 //        imageView.clipsToBounds = true
 //        return imageView
 //    }()
+    lazy var pinImageView:UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = SFSymbol.pin.image.withTintColor(.telaBlue).withRenderingMode(.alwaysTemplate).rotate(radians: .pi / 4)
+        imageView.contentMode = .scaleAspectFit
+        imageView.clipsToBounds = true
+        return imageView
+    }()
     lazy var nameLabel:UILabel = {
         let label = UILabel()
         label.numberOfLines = 1

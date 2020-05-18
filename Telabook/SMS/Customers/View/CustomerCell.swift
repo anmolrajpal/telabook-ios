@@ -27,13 +27,15 @@ class CustomerCell: UITableViewCell {
         let lastMessageDate = details.lastMessageDateTime
         let conversationColor = CustomerConversationColor.colorCase(from: Int(details.colorCode)).color
         let unreadMessagesCount = Int(details.unreadMessagesCount)
+        let isPinned = details.isPinned
         cellView.parameters = CustomerCellView.Parameters(phoneNumber: phoneNumber,
                                                           name: name,
                                                           lastMessageType: messageType,
                                                           lastMessage: lastMessage,
                                                           lastMessageDate: lastMessageDate,
                                                           conversationColor: conversationColor,
-                                                          unreadMessagesCount: unreadMessagesCount)
+                                                          unreadMessagesCount: unreadMessagesCount,
+                                                          isPinned: isPinned)
     }
     
     

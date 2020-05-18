@@ -228,7 +228,6 @@ class HitEndpointOperation<T:Codable>: Operation {
                 let jsonString = String(data: data, encoding: .utf8)!
                 print("\n\n------------------------------------------------ Raw JSON Object: BEGIN ------------------------------------------------\n\n"+jsonString+"\n\n--------------------------------------------------- Raw JSON Object: END ------------------------------------------------\n\n")
                 #endif
-                os_log("json response data: %{PRIVATE}@", log: .network, type: .info, jsonString)
                 do {
                     let object = try self.decoder.decode(T.self, from: data)
                     self.finish(result: .success(object))

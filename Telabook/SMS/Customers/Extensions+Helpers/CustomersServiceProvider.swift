@@ -9,6 +9,10 @@
 import UIKit
 import os
 extension CustomersViewController {
+    
+    
+    
+    /* ------------------------------------------------------------------------------------------------------------ */
     internal func persistFirebaseEntriesToCoreDataStore(entries:[FirebaseCustomer]) {
         let queue = OperationQueue()
         queue.qualityOfService = .userInitiated
@@ -22,8 +26,11 @@ extension CustomersViewController {
         
         queue.addOperations(operations, waitUntilFinished: false)
     }
+    /* ------------------------------------------------------------------------------------------------------------ */
     
     
+    
+    /* ------------------------------------------------------------------------------------------------------------ */
     internal func updateConversation(for customer:Customer, archiving:Bool, completion:@escaping (Bool) -> Void) {
         let queue = OperationQueue()
         queue.qualityOfService = .userInitiated
@@ -35,19 +42,52 @@ extension CustomersViewController {
         handleViewsStateForOperations(operations: operations, onOperationQueue: queue, completion: completion)
         queue.addOperations(operations, waitUntilFinished: false)
     }
+    /* ------------------------------------------------------------------------------------------------------------ */
     
+    
+    
+    
+    /* ------------------------------------------------------------------------------------------------------------ */
     internal func updateConversationInStore(for customer:Customer, archiving:Bool, completion:@escaping (Bool) -> Void) {
-            let queue = OperationQueue()
-            queue.qualityOfService = .userInitiated
-            queue.maxConcurrentOperationCount = 1
-            
-            let context = PersistentContainer.shared.newBackgroundContext()
-    //        context.parent = context
-            let operation = UpdateConversationInStore_ArchivingOperation(context: context, selectedCustomer: customer, shouldArchive: archiving)
-            handleViewsStateForOperations(operations: [operation], onOperationQueue: queue, completion: completion)
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
         
-            queue.addOperations([operation], waitUntilFinished: false)
-        }
+        let context = PersistentContainer.shared.newBackgroundContext()
+        //        context.parent = context
+        let operation = UpdateConversationInStore_ArchivingOperation(context: context, selectedCustomer: customer, shouldArchive: archiving)
+        handleViewsStateForOperations(operations: [operation], onOperationQueue: queue, completion: completion)
+        
+        queue.addOperations([operation], waitUntilFinished: false)
+    }
+    /* ------------------------------------------------------------------------------------------------------------ */
+    
+    
+    
+    
+    
+    /* ------------------------------------------------------------------------------------------------------------ */
+    internal func updateConversationInStore(for customer:Customer, pinning:Bool, completion:@escaping (Bool) -> Void) {
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+        
+//        let context = PersistentContainer.shared.newBackgroundContext()
+//        let objectID = agent.objectID
+//        let agentRefrenceObject = context.object(with: objectID) as! Agent
+        let operation = UpdateConversationInStore_PinningOperation(context: context, selectedCustomer: customer, shouldPin: pinning)
+        handleViewsStateForOperations(operations: [operation], onOperationQueue: queue, completion: completion)
+        
+        queue.addOperations([operation], waitUntilFinished: false)
+    }
+    /* ------------------------------------------------------------------------------------------------------------ */
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -55,7 +95,7 @@ extension CustomersViewController {
         operations.forEach { operation in
             switch operation {
                 
-                
+                /* ------------------------------------------------------------------------------------------------------------ */
                 //MARK: Sync Customer Conversations Operations completions
                 case let operation as FetchSavedCustomersEntries_Operation:
                     operation.completionBlock = {
@@ -85,11 +125,14 @@ extension CustomersViewController {
                             }
                         }
                 }
+                /* ------------------------------------------------------------------------------------------------------------ */
                 
                 
                 
                 
                 
+                /* ------------------------------------------------------------------------------------------------------------ */
+                //MARK: Archive/Unarchive Customer Conversation Operations completions
                 case let operation as UpdateConversationInStore_ArchivingOperation:
                     operation.completionBlock = {
                         if let error = operation.error {
@@ -116,6 +159,31 @@ extension CustomersViewController {
                         #endif
                         os_log("Error updating Archiving operation on server: %@", log: .network, type: .error, error.localizedDescription)
                 }
+                /* ------------------------------------------------------------------------------------------------------------ */
+                
+                
+                
+                
+                
+                
+                /* ------------------------------------------------------------------------------------------------------------ */
+                //MARK: Pin/Unpin Customer Conversation Operation completion
+                case let operation as UpdateConversationInStore_PinningOperation:
+                    operation.completionBlock = {
+                        if let error = operation.error {
+                            #if DEBUG
+                            print("Error updating Pinning operation in Store: \(error)")
+                            #endif
+                            os_log("Error updating Pinning operation in Store: %@", log: .coredata, type: .error, error.localizedDescription)
+                            completion(false)
+                        } else {
+                            completion(true)
+                        }
+                }
+                /* ------------------------------------------------------------------------------------------------------------ */
+                
+                
+                
                 
                 
                 default: break

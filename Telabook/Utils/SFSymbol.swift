@@ -17,7 +17,8 @@ public enum SFSymbol { case
     person,
     circleSwitch,
     sendMessage,
-    arrowUpRightSquare
+    arrowUpRightSquare,
+    pin
     
     private var imageName:String {
         switch self {
@@ -29,6 +30,7 @@ public enum SFSymbol { case
             case .circleSwitch: return "largecircle.fill.circle"
             case .sendMessage: return "paperplane"
             case .arrowUpRightSquare: return "arrow.up.right.square"
+            case .pin: return "pin.fill"
         }
     }
     
