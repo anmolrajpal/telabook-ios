@@ -178,6 +178,9 @@ extension CustomersViewController {
                             completion(false)
                         } else {
                             completion(true)
+                            DispatchQueue.main.async {
+                                self.subview.tableView.scrollToTopRow()
+                            }
                         }
                 }
                 /* ------------------------------------------------------------------------------------------------------------ */

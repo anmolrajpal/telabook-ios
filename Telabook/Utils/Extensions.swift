@@ -135,6 +135,11 @@ public extension CodingUserInfoKey {
     static let context = CodingUserInfoKey(rawValue: "managedObjectContext")
 }
 extension UITableView {
+    func scrollToTopRow(animated:Bool = true) {
+        let topRowIndexPath = IndexPath(row: 0, section: 0)
+        self.scrollToRow(at: topRowIndexPath, at: .top, animated: animated)
+    }
+    
     func resetCheckmarks() {
         for i in 0 ..< self.numberOfSections {
             for j in 0 ..< self.numberOfRows(inSection: i) {
