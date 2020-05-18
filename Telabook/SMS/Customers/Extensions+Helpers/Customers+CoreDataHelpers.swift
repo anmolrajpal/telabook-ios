@@ -20,11 +20,18 @@ extension CustomersViewController {
                                                                   cacheName: nil)
         } else {
             let aWeek = Date().subtract(days: 7)! as NSDate
-            if selectedSegment == .Inbox {
-                fetchRequest.predicate = NSPredicate(format: "\(#keyPath(Customer.agent)) == %@ AND \(#keyPath(Customer.lastMessageDateTime)) >= %@ AND \(#keyPath(Customer.isArchived)) = %d AND \(#keyPath(Customer.isCustomerDeleted)) = %d", agent, aWeek, false, false)
-            } else {
-                fetchRequest.predicate = NSPredicate(format: "\(#keyPath(Customer.agent)) == %@ AND \(#keyPath(Customer.lastMessageDateTime)) < %@ OR \(#keyPath(Customer.isArchived)) = %d AND \(#keyPath(Customer.isCustomerDeleted)) = %d", agent, aWeek, true, false)
-            }
+            let agentPredicate = NSPredicate(format: "\(#keyPath(Customer.agent)) == %@", agent)
+            let inboxDatePredicate = NSPredicate(format: "\(#keyPath(Customer.lastMessageDateTime)) >= %@", aWeek)
+            let unarchivedPredicate = NSPredicate(format: "\(#keyPath(Customer.isArchived)) = %d", false)
+            let archivedPredicate = NSPredicate(format: "\(#keyPath(Customer.lastMessageDateTime)) < %@ OR \(#keyPath(Customer.isArchived)) = %d", aWeek, true)
+            let isDeletedPredicate = NSPredicate(format: "\(#keyPath(Customer.isCustomerDeleted)) = %d", false)
+            let isBlacklistedPredicate = NSPredicate(format: "\(#keyPath(Customer.isBlacklisted)) = %d", false)
+            
+            let inboxCompoundPredicate = NSCompoundPredicate(type: .and, subpredicates: [agentPredicate, inboxDatePredicate,  unarchivedPredicate, isBlacklistedPredicate, isDeletedPredicate])
+            let archivedCompoundPredicate = NSCompoundPredicate(type: .and, subpredicates: [agentPredicate, archivedPredicate, isBlacklistedPredicate, isDeletedPredicate])
+            
+            fetchRequest.predicate = selectedSegment == .Inbox ? inboxCompoundPredicate : archivedCompoundPredicate
+ 
             fetchRequest.sortDescriptors = [
                 NSSortDescriptor(key: #keyPath(Customer.isPinned), ascending: false),
                 NSSortDescriptor(key: #keyPath(Customer.lastMessageDateTime), ascending: false)
