@@ -367,15 +367,25 @@ extension UITextField {
             rightViewMode = .always
         }
     }
-    func setDefault(string text:String, withFont font:UIFont = UIFont(name: CustomFonts.gothamBook.rawValue, size: 20.0)!, withColor color:UIColor = UIColor.telaWhite, at position: TextFieldItemPosition) {
-        let calculatedSize = (text as NSString).size(withAttributes: [.font: font])
-        let label = UILabel(frame: CGRect(x: 10, y: 10, width: calculatedSize.width, height: calculatedSize.height))
-        label.text = text
-        label.font = font
-        label.textColor = color
-        let containerView: UIView = UIView(frame:
-            CGRect(x: 10, y: 0, width: calculatedSize.width + 13, height: calculatedSize.height + 20))
+    func setDefault(string text:String, withFont font:UIFont = UIFont(name: CustomFonts.gothamBook.rawValue, size: 20.0)!, characterSpacing:Double = 0, withColor color:UIColor = UIColor.telaWhite, at position: TextFieldItemPosition, withLeftSpacing leftSpacing:CGFloat = 10, withRightSpacing rightSpacing:CGFloat = 10) {
+        let calculatedSize = (text as NSString).size(withAttributes: [
+            .font: font,
+            .kern: characterSpacing
+        ])
+//        let label = UILabel(frame: CGRect(x: 10, y: 10, width: calculatedSize.width, height: calculatedSize.height))
+        let label = UILabel()
+        label.attributedText = NSAttributedString(string: text, attributes: [
+            .font: font,
+            .kern: characterSpacing,
+            .foregroundColor: color
+        ])
+        let containerView: UIView = UIView(frame: CGRect(x: 0, y: 0, width: leftSpacing + calculatedSize.width + rightSpacing, height: self.frame.height))
         containerView.addSubview(label)
+        label.translatesAutoresizingMaskIntoConstraints = false
+//        label.centerXAnchor.constraint(equalTo: containerView.centerXAnchor).activate()
+        label.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).activate()
+        label.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: leftSpacing).activate()
+        label.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -rightSpacing).activate()
         if position == .Left {
             leftView = containerView
             leftViewMode = .always

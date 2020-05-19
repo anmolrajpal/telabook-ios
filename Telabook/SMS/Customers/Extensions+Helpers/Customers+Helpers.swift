@@ -7,6 +7,13 @@
 //
 
 import UIKit
+import InteractiveModal
+
+extension CustomersViewController: StartNewConversationDelegate {
+    func conversation(didStartNewConversationWithID id: Int) {
+        print("conversation started")
+    }
+}
 
 extension CustomersViewController {
     internal func setupNavBarItems() {
@@ -14,11 +21,13 @@ extension CustomersViewController {
         navigationItem.rightBarButtonItems = [addButton]
     }
     @objc func addButtonTapped() {
-        let newContactVC = NewContactViewController()
-        newContactVC.modalPresentationStyle = .overFullScreen
-        newContactVC.view.backgroundColor = .telaGray1
+//        let newContactVC = NewContactViewController()
+//        newContactVC.modalPresentationStyle = .overFullScreen
+//        newContactVC.view.backgroundColor = .telaGray1
 //        newContactVC.delegate = self
-        self.present(newContactVC, animated: true, completion: nil)
+        let vc = NewConversationController(senderID: Int(agent.workerID))
+        vc.delegate = self
+        self.present(vc, animated: true, completion: nil)
     }
     internal func setupTargetActions() {
         subview.segmentedControl.addTarget(self, action: #selector(didChangeSegment(_:)), for: .valueChanged)

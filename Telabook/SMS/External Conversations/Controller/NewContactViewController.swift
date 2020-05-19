@@ -60,7 +60,6 @@ class NewContactViewController: UIViewController {
             
         }, completion: nil)
     }
-    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         view.endEditing(true)
     }
