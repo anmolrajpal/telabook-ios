@@ -17,6 +17,7 @@ class NewConversationView: UIView {
         addSubview(headingLabel)
         addSubview(numberTextField)
         addSubview(startButton)
+        addSubview(spinner)
         layoutConstraints()
     }
     private func layoutConstraints() {
@@ -30,17 +31,35 @@ class NewConversationView: UIView {
         headingLabel.anchor(top: cancelButton.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 40, leftConstant: 20, bottomConstant: 0, rightConstant: 20)
         
         
-        
-        numberTextField.anchor(top: headingLabel.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 60, leftConstant: 60, bottomConstant: 0, rightConstant: 60, heightConstant: 58)
-        
+        let calculatedSize = ("(000) 000-0000" as NSString).size(withAttributes: [
+            .font: numberTextField.font!,
+            .kern: 1.5
+        ])
+        let leftViewWidth = numberTextField.leftView?.frame.width ?? 46.5
+        let width = calculatedSize.width + leftViewWidth + 10 // 10 is extra unknown margin
+        numberTextField.anchor(top: headingLabel.bottomAnchor, left: nil, bottom: nil, right: nil, topConstant: 60, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: width, heightConstant: 58)
+        numberTextField.centerXAnchor.constraint(equalTo: centerXAnchor).activate()
         
         startButton.anchor(top: numberTextField.bottomAnchor, left: nil, bottom: nil, right: nil, topConstant: 50, leftConstant: 0, bottomConstant: 0, rightConstant: 0, heightConstant: 33)
         startButton.centerXAnchor.constraint(equalTo: centerXAnchor).activate()
+        
+        
+        spinner.centerXAnchor.constraint(equalTo: startButton.centerXAnchor).activate()
+        spinner.centerYAnchor.constraint(equalTo: startButton.centerYAnchor).activate()
     }
     
     
     
     // MARK: Constructors
+    lazy var spinner: UIActivityIndicatorView = {
+        let aiView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
+        aiView.backgroundColor = .clear
+        aiView.hidesWhenStopped = true
+        aiView.color = UIColor.telaGray7
+        aiView.clipsToBounds = true
+        aiView.translatesAutoresizingMaskIntoConstraints = false
+        return aiView
+    }()
     private lazy var blurredEffectView: UIVisualEffectView = {
         let blurEffect = UIBlurEffect(style: .dark)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
@@ -89,7 +108,8 @@ class NewConversationView: UIView {
     }()
     lazy var startButton: UIButton = {
         let button = UIButton(type: .system)
-        button.backgroundColor = UIColor.telaGray5
+//        button.backgroundColor = UIColor.telaGray5
+        button.backgroundColor = UIColor.telaBlue
         button.setTitle("Start Conversation", for: .normal)
         button.titleLabel?.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 14)
         button.layer.borderColor = UIColor.telaBlue.cgColor
@@ -98,7 +118,7 @@ class NewConversationView: UIView {
         button.setTitleColor(.telaWhite, for: .normal)
         button.clipsToBounds = true
         button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 35, bottom: 0, right: 35)
-        button.isEnabled = false
+//        button.isEnabled = false
         return button
     }()
     

@@ -6,7 +6,8 @@
 //  Copyright © 2020 Anmol Rajpal. All rights reserved.
 //
 
-import SwiftUI
+import UIKit
+
 final class TapticEngine {
     enum HapticFeedback { case Error, Warning, Success, Light, Medium, Heavy, Rigid, Soft, SelectionChanged }
     static func generateFeedback(ofType feedback: HapticFeedback) {

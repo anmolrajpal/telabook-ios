@@ -184,7 +184,7 @@ extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
                         let vc = GalleryViewController()
                         self.show(vc, sender: self)
                     case 4:
-                        let vc = BlockedUsersViewController()
+                        let vc = BlacklistViewController()
                         self.show(vc, sender: self)
                     case 5:
                         let vc = ScheduleMessageViewController()

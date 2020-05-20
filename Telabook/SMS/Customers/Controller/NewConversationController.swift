@@ -10,7 +10,7 @@ import UIKit
 
 
 protocol StartNewConversationDelegate {
-    func conversation(didStartNewConversationWithID id: Int)
+    func conversation(didStartNewConversationWithID id: Int, node:String)
 }
 
 class NewConversationController: UIViewController {
@@ -58,7 +58,7 @@ class NewConversationController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        hideKeyboardWhenTappedAround()
+        
         commonInit()
     }
 }

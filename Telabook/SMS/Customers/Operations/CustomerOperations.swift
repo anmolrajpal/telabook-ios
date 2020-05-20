@@ -474,3 +474,93 @@ class UpdateConversationInStore_PinningOperation: Operation {
     }
 }
 
+
+
+
+
+
+
+
+/// Start new conversation with a customer's number.
+class StartNewConversation_Operation: Operation {
+    var result: Result<NewConversationProperties, APIService.APIError>?
+    
+    private var downloading = false
+    
+    private let params:[String:String]
+    
+    init(agentSenderID:String, phoneNumber:String) {
+        let companyID = String(AppData.companyId)
+        params = [
+            "company_id":companyID,
+            "phone_number":phoneNumber,
+            "sender_id":agentSenderID
+        ]
+    }
+    
+    override var isAsynchronous: Bool {
+        return true
+    }
+    
+    override var isExecuting: Bool {
+        return downloading
+    }
+    
+    override var isFinished: Bool {
+        return result != nil
+    }
+    
+    override func cancel() {
+        super.cancel()
+        
+    }
+    
+    func finish(result: Result<NewConversationJSON, APIService.APIError>) {
+        guard downloading else { return }
+        
+        willChangeValue(forKey: #keyPath(isExecuting))
+        willChangeValue(forKey: #keyPath(isFinished))
+        
+        downloading = false
+        
+        let errorMessage = "Error: No results from server"
+        
+        guard case let .success(resultData) = result else {
+            if case let .failure(error) = result {
+                self.result = .failure(error)
+                didChangeValue(forKey: #keyPath(isFinished))
+                didChangeValue(forKey: #keyPath(isExecuting))
+            }
+            return
+        }
+        guard let serverResultValue = resultData.result else {
+            self.result = .failure(.resultError(message: errorMessage))
+            didChangeValue(forKey: #keyPath(isFinished))
+            didChangeValue(forKey: #keyPath(isExecuting))
+            return
+        }
+        let serverResult = ServerResult(rawValue: serverResultValue)
+        guard serverResult == .success, let conversation = resultData.conversation else {
+            self.result = .failure(.resultError(message: resultData.message ?? errorMessage))
+            didChangeValue(forKey: #keyPath(isFinished))
+            didChangeValue(forKey: #keyPath(isExecuting))
+            return
+        }
+        self.result = .success(conversation)
+        
+        didChangeValue(forKey: #keyPath(isFinished))
+        didChangeValue(forKey: #keyPath(isExecuting))
+    }
+    
+    override func start() {
+        willChangeValue(forKey: #keyPath(isExecuting))
+        downloading = true
+        didChangeValue(forKey: #keyPath(isExecuting))
+        
+        guard !isCancelled else {
+            finish(result: .failure(.cancelled))
+            return
+        }
+        APIServer<NewConversationJSON>(apiVersion: .v2).hitEndpoint(endpoint: .StartNewConversation, httpMethod: .POST, params: params, completion: finish)
+    }
+}

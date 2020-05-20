@@ -72,6 +72,24 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
+    <entity name="BlockedUser" representedClassName="BlockedUser" syncable="YES" codeGenerationType="class">
+        <attribute name="blockedBy" optional="YES" attributeType="String"/>
+        <attribute name="blockingReason" optional="YES" attributeType="String"/>
+        <attribute name="companyID" optional="YES" attributeType="Integer 64" usesScalarValueType="YES"/>
+        <attribute name="conversationID" optional="YES" attributeType="Integer 64" usesScalarValueType="YES"/>
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="customerID" optional="YES" attributeType="Integer 64" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="Integer 64" usesScalarValueType="YES"/>
+        <attribute name="isUnblocking" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="lastRefreshedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="phoneNumber" optional="YES" attributeType="String"/>
+        <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="id"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
     <entity name="Customer" representedClassName="Customer" syncable="YES" codeGenerationType="class">
         <attribute name="addressBookID" optional="YES" attributeType="Integer 32" usesScalarValueType="YES"/>
         <attribute name="addressBookName" optional="YES" attributeType="String"/>
@@ -212,6 +230,7 @@
     </entity>
     <elements>
         <element name="Address" positionX="-324.984375" positionY="-372.328125" width="128" height="90"/>
+        <element name="AddressBook" positionX="-173.23828125" positionY="228.984375" width="128" height="268"/>
         <element name="Agent" positionX="-718.6484375" positionY="-34.9140625" width="128" height="388"/>
         <element name="AutoResponse" positionX="-543.58984375" positionY="-61.21484375" width="128" height="163"/>
         <element name="Customer" positionX="-354.14453125" positionY="-1.0625" width="128" height="553"/>
@@ -222,6 +241,6 @@
         <element name="Person" positionX="490.1484375" positionY="-384.12890625" width="128" height="105"/>
         <element name="QuickResponse" positionX="-939.1953125" positionY="409.9609375" width="128" height="178"/>
         <element name="UserObject" positionX="233.99609375" positionY="682.64453125" width="128" height="225"/>
-        <element name="AddressBook" positionX="-173.23828125" positionY="228.984375" width="128" height="268"/>
+        <element name="BlockedUser" positionX="-651.66015625" positionY="387.48828125" width="128" height="208"/>
     </elements>
 </model>

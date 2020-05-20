@@ -142,6 +142,8 @@
 		6F987A7E245C9B9000C6046E /* ManageAgentsCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A7D245C9B8F00C6046E /* ManageAgentsCellView.swift */; };
 		6F987A80245CC1B500C6046E /* FirebaseOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A7F245CC1B500C6046E /* FirebaseOperations.swift */; };
 		6F987A82245CCA9100C6046E /* APIOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A81245CCA9000C6046E /* APIOperations.swift */; };
+		6FA3DFEF2475BFDE0083AB13 /* Blacklist+SearchHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA3DFEE2475BFDE0083AB13 /* Blacklist+SearchHelpers.swift */; };
+		6FA3DFF12475C2D60083AB13 /* BlacklistOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA3DFF02475C2D60083AB13 /* BlacklistOperations.swift */; };
 		6FA9537824606963006DAF53 /* QuickResponseCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA9537724606963006DAF53 /* QuickResponseCodable.swift */; };
 		6FAD46E1245041390050F7F2 /* SMSViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FAD46E0245041390050F7F2 /* SMSViewController.swift */; };
 		6FAD46E6245054020050F7F2 /* AppData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FAD46E3245054020050F7F2 /* AppData.swift */; };
@@ -206,6 +208,16 @@
 		6FC822F52474496E002421F0 /* NewConversationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC822F42474496E002421F0 /* NewConversationController.swift */; };
 		6FC822F724744984002421F0 /* NewConversationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC822F624744984002421F0 /* NewConversationView.swift */; };
 		6FC822F9247459C5002421F0 /* NewConversation+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC822F8247459C5002421F0 /* NewConversation+Helpers.swift */; };
+		6FC822FB24757E63002421F0 /* NewConversation+ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC822FA24757E63002421F0 /* NewConversation+ServiceProvider.swift */; };
+		6FC822FD24758EF6002421F0 /* BlacklistJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC822FC24758EF6002421F0 /* BlacklistJSON.swift */; };
+		6FC823052475ADE4002421F0 /* BlacklistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC823042475ADE4002421F0 /* BlacklistViewController.swift */; };
+		6FC823072475ADFA002421F0 /* BlacklistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC823062475ADFA002421F0 /* BlacklistView.swift */; };
+		6FC823092475AE23002421F0 /* Blacklist+CoreDataHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC823082475AE23002421F0 /* Blacklist+CoreDataHelpers.swift */; };
+		6FC8230B2475AE4F002421F0 /* Blacklist+TableViewHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC8230A2475AE4F002421F0 /* Blacklist+TableViewHelpers.swift */; };
+		6FC8230D2475AE5A002421F0 /* Blacklist+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC8230C2475AE5A002421F0 /* Blacklist+Helpers.swift */; };
+		6FC8230F2475AE68002421F0 /* Blacklist+ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC8230E2475AE68002421F0 /* Blacklist+ServiceProvider.swift */; };
+		6FC823112475AF41002421F0 /* BlacklistCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC823102475AF41002421F0 /* BlacklistCell.swift */; };
+		6FC823132475AF4B002421F0 /* BlacklistCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC823122475AF4B002421F0 /* BlacklistCellView.swift */; };
 		6FD8955D245ECDB40083D79A /* AgentDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD8955C245ECDB40083D79A /* AgentDetailsView.swift */; };
 		6FD8955F245EDAAB0083D79A /* ManageAgentsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD8955E245EDAAB0083D79A /* ManageAgentsHelpers.swift */; };
 		6FD89561245EDAD40083D79A /* AgentDetailsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD89560245EDAD40083D79A /* AgentDetailsHelpers.swift */; };
@@ -351,6 +363,8 @@
 		6F987A7D245C9B8F00C6046E /* ManageAgentsCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsCellView.swift; sourceTree = "<group>"; };
 		6F987A7F245CC1B500C6046E /* FirebaseOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseOperations.swift; sourceTree = "<group>"; };
 		6F987A81245CCA9000C6046E /* APIOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIOperations.swift; sourceTree = "<group>"; };
+		6FA3DFEE2475BFDE0083AB13 /* Blacklist+SearchHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Blacklist+SearchHelpers.swift"; sourceTree = "<group>"; };
+		6FA3DFF02475C2D60083AB13 /* BlacklistOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlacklistOperations.swift; sourceTree = "<group>"; };
 		6FA9537724606963006DAF53 /* QuickResponseCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponseCodable.swift; sourceTree = "<group>"; };
 		6FAD46E0245041390050F7F2 /* SMSViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SMSViewController.swift; sourceTree = "<group>"; };
 		6FAD46E3245054020050F7F2 /* AppData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppData.swift; sourceTree = "<group>"; };
@@ -418,6 +432,16 @@
 		6FC822F42474496E002421F0 /* NewConversationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewConversationController.swift; sourceTree = "<group>"; };
 		6FC822F624744984002421F0 /* NewConversationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewConversationView.swift; sourceTree = "<group>"; };
 		6FC822F8247459C5002421F0 /* NewConversation+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NewConversation+Helpers.swift"; sourceTree = "<group>"; };
+		6FC822FA24757E63002421F0 /* NewConversation+ServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NewConversation+ServiceProvider.swift"; sourceTree = "<group>"; };
+		6FC822FC24758EF6002421F0 /* BlacklistJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlacklistJSON.swift; sourceTree = "<group>"; };
+		6FC823042475ADE4002421F0 /* BlacklistViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlacklistViewController.swift; sourceTree = "<group>"; };
+		6FC823062475ADFA002421F0 /* BlacklistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlacklistView.swift; sourceTree = "<group>"; };
+		6FC823082475AE23002421F0 /* Blacklist+CoreDataHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Blacklist+CoreDataHelpers.swift"; sourceTree = "<group>"; };
+		6FC8230A2475AE4F002421F0 /* Blacklist+TableViewHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Blacklist+TableViewHelpers.swift"; sourceTree = "<group>"; };
+		6FC8230C2475AE5A002421F0 /* Blacklist+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Blacklist+Helpers.swift"; sourceTree = "<group>"; };
+		6FC8230E2475AE68002421F0 /* Blacklist+ServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Blacklist+ServiceProvider.swift"; sourceTree = "<group>"; };
+		6FC823102475AF41002421F0 /* BlacklistCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlacklistCell.swift; sourceTree = "<group>"; };
+		6FC823122475AF4B002421F0 /* BlacklistCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlacklistCellView.swift; sourceTree = "<group>"; };
 		6FD8955C245ECDB40083D79A /* AgentDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDetailsView.swift; sourceTree = "<group>"; };
 		6FD8955E245EDAAB0083D79A /* ManageAgentsHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsHelpers.swift; sourceTree = "<group>"; };
 		6FD89560245EDAD40083D79A /* AgentDetailsHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDetailsHelpers.swift; sourceTree = "<group>"; };
@@ -502,6 +526,7 @@
 				6F0653502464891500F857C1 /* Customers+SearchHelpers.swift */,
 				6F0653522464892800F857C1 /* Customers+CoreDataHelpers.swift */,
 				6FC822F8247459C5002421F0 /* NewConversation+Helpers.swift */,
+				6FC822FA24757E63002421F0 /* NewConversation+ServiceProvider.swift */,
 			);
 			path = "Extensions+Helpers";
 			sourceTree = "<group>";
@@ -1271,6 +1296,7 @@
 				6F987A77245B6BE600C6046E /* CustomerCodable.swift */,
 				6F2137772473EED8002AB150 /* AddressBookCodable.swift */,
 				6F21377924742DD1002AB150 /* NewConversationCodable.swift */,
+				6FC822FC24758EF6002421F0 /* BlacklistJSON.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1402,7 +1428,8 @@
 				6F987A5024570E8D00C6046E /* Select Company */,
 				6F23BCF822D723E30001A888 /* Schedule Message */,
 				6F69BE6F22D46CF900F8903F /* Manage Agents */,
-				6FB11B38229EF4430098D050 /* GalleryViewController.swift */,
+				6FC822FE2475ADA0002421F0 /* Gallery */,
+				6FC822FF2475ADA5002421F0 /* Blacklist */,
 				6F69BE7522D46D9000F8903F /* Blocked Users */,
 				6FB11B3C229EF4690098D050 /* ArchivedSMSViewController.swift */,
 			);
@@ -1559,6 +1586,63 @@
 		6FC6022A2464454000C1BF6D /* Operations */ = {
 			isa = PBXGroup;
 			children = (
+			);
+			path = Operations;
+			sourceTree = "<group>";
+		};
+		6FC822FE2475ADA0002421F0 /* Gallery */ = {
+			isa = PBXGroup;
+			children = (
+				6FB11B38229EF4430098D050 /* GalleryViewController.swift */,
+			);
+			path = Gallery;
+			sourceTree = "<group>";
+		};
+		6FC822FF2475ADA5002421F0 /* Blacklist */ = {
+			isa = PBXGroup;
+			children = (
+				6FC823032475ADD3002421F0 /* Operations */,
+				6FC823022475ADCD002421F0 /* Views */,
+				6FC823012475ADC9002421F0 /* Controllers */,
+				6FC823002475ADC0002421F0 /* Extensions+Helpers */,
+			);
+			path = Blacklist;
+			sourceTree = "<group>";
+		};
+		6FC823002475ADC0002421F0 /* Extensions+Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				6FC823082475AE23002421F0 /* Blacklist+CoreDataHelpers.swift */,
+				6FC8230A2475AE4F002421F0 /* Blacklist+TableViewHelpers.swift */,
+				6FC8230C2475AE5A002421F0 /* Blacklist+Helpers.swift */,
+				6FA3DFEE2475BFDE0083AB13 /* Blacklist+SearchHelpers.swift */,
+				6FC8230E2475AE68002421F0 /* Blacklist+ServiceProvider.swift */,
+			);
+			path = "Extensions+Helpers";
+			sourceTree = "<group>";
+		};
+		6FC823012475ADC9002421F0 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				6FC823042475ADE4002421F0 /* BlacklistViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		6FC823022475ADCD002421F0 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				6FC823062475ADFA002421F0 /* BlacklistView.swift */,
+				6FC823102475AF41002421F0 /* BlacklistCell.swift */,
+				6FC823122475AF4B002421F0 /* BlacklistCellView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		6FC823032475ADD3002421F0 /* Operations */ = {
+			isa = PBXGroup;
+			children = (
+				6FA3DFF02475C2D60083AB13 /* BlacklistOperations.swift */,
 			);
 			path = Operations;
 			sourceTree = "<group>";
@@ -1726,6 +1810,7 @@
 				6FB11AFB229BF0590098D050 /* TabBarController.swift in Sources */,
 				6F9011D422AC3B130046F5E3 /* ChatViewController.swift in Sources */,
 				6FB11B29229E75710098D050 /* FirebaseAuthService.swift in Sources */,
+				6FC823092475AE23002421F0 /* Blacklist+CoreDataHelpers.swift in Sources */,
 				6FC60236246447E500C1BF6D /* Agents+Helpers.swift in Sources */,
 				6F69BE8822D4780F00F8903F /* ManageAgentsServiceProvider.swift in Sources */,
 				6F987A5724570EDA00C6046E /* SelectCompanyViewController.swift in Sources */,
@@ -1765,6 +1850,7 @@
 				6F9453BF22DB2E2F00047C7F /* AgentPickerDataProvider.swift in Sources */,
 				6F987A7E245C9B9000C6046E /* ManageAgentsCellView.swift in Sources */,
 				6F9453CD22DC3CCA00047C7F /* ChangePasswordAPI.swift in Sources */,
+				6FA3DFF12475C2D60083AB13 /* BlacklistOperations.swift in Sources */,
 				6F23BD0D22D9F3480001A888 /* ScheduleMessageAPI.swift in Sources */,
 				6FB11B39229EF4430098D050 /* GalleryViewController.swift in Sources */,
 				6F987A5B24571C2300C6046E /* SelectCompanyHelpers.swift in Sources */,
@@ -1786,6 +1872,7 @@
 				6FB11B31229EB5020098D050 /* CallGroupsViewController.swift in Sources */,
 				6F23BD0122D7299A0001A888 /* UserProfileDataProvider.swift in Sources */,
 				6FC6022E2464464D00C1BF6D /* AgentsView.swift in Sources */,
+				6FC823132475AF4B002421F0 /* BlacklistCellView.swift in Sources */,
 				6F0653472464881100F857C1 /* CustomerCell.swift in Sources */,
 				6F098BBB22BE9A4100AF19AA /* BlockedUsersVCTableViewExtensions.swift in Sources */,
 				6FBDEC7C22B3F1DA00A8511E /* SMSDetailVC+CollectionView.swift in Sources */,
@@ -1817,6 +1904,7 @@
 				6FC602322464470900C1BF6D /* AgentsServiceProvider.swift in Sources */,
 				6F46A8BB22D062750042A667 /* FollowUpAPI.swift in Sources */,
 				6F58C33B22D61FAE0091C785 /* AutoResponseDataProvider.swift in Sources */,
+				6FC822FB24757E63002421F0 /* NewConversation+ServiceProvider.swift in Sources */,
 				6F37E24A2460A8E7003E9126 /* QuickResponsesView.swift in Sources */,
 				6F987A462454AB5D00C6046E /* LoginServiceProvider.swift in Sources */,
 				6FD89561245EDAD40083D79A /* AgentDetailsHelpers.swift in Sources */,
@@ -1825,6 +1913,7 @@
 				6F987A482456C8B900C6046E /* APIServiceProtocol.swift in Sources */,
 				6F58C33922D618C40091C785 /* AutoResponseAPIProtocol.swift in Sources */,
 				6F1BD2F322C4B4CB0053D0CC /* FollowUpDataProvider.swift in Sources */,
+				6FC8230F2475AE68002421F0 /* Blacklist+ServiceProvider.swift in Sources */,
 				6F26516F246AC0C7003D582F /* FirebaseCustomer.swift in Sources */,
 				6F69BE8422D4742000F8903F /* ManageAgentsAPI.swift in Sources */,
 				6F1BD2ED22C4ADED0053D0CC /* FollowUpVCTableViewExtensions.swift in Sources */,
@@ -1850,6 +1939,7 @@
 				6F265171246C3610003D582F /* SFSymbol.swift in Sources */,
 				6FB11B0D229BFA430098D050 /* MoreViewController.swift in Sources */,
 				6FB11B14229C3FCA0098D050 /* BadgeBarItem.swift in Sources */,
+				6FC8230D2475AE5A002421F0 /* Blacklist+Helpers.swift in Sources */,
 				6FEF96A422A6679400F2FF83 /* ExternalConversationsAPI.swift in Sources */,
 				6F987A7A245C27B600C6046E /* AgentOperations.swift in Sources */,
 				6FB11B19229D06BB0098D050 /* CustomUtils.swift in Sources */,
@@ -1858,10 +1948,12 @@
 				6F987A82245CCA9100C6046E /* APIOperations.swift in Sources */,
 				6F987A612457529600C6046E /* SelectCompanyTableViewHelpers.swift in Sources */,
 				6FB11B07229BFA240098D050 /* CallsViewController.swift in Sources */,
+				6FC823072475ADFA002421F0 /* BlacklistView.swift in Sources */,
 				6F41013722DDF8950038AA76 /* CallGroupsAPIProtocol.swift in Sources */,
 				6F23BD0922D9F28A0001A888 /* ScheduleMessageVCTableViewExtensions.swift in Sources */,
 				6FC602382464482900C1BF6D /* AgentCellView.swift in Sources */,
 				6F69BE8A22D4786300F8903F /* ManageAgentsTableViewExtensions.swift in Sources */,
+				6FC8230B2475AE4F002421F0 /* Blacklist+TableViewHelpers.swift in Sources */,
 				6F987A6724587F9700C6046E /* AppInfoViewController.swift in Sources */,
 				6F69BE9422D4DCF600F8903F /* QuickResponsesAPI.swift in Sources */,
 				6F58C33522D6178B0091C785 /* AutoResponseViewController.swift in Sources */,
@@ -1900,7 +1992,9 @@
 				6FB11B4622A2A5110098D050 /* PersistenceService.swift in Sources */,
 				6F23BCFF22D724A70001A888 /* UserProfileCodable.swift in Sources */,
 				6F69BE8622D4742E00F8903F /* ManageAgentsAPIProtocol.swift in Sources */,
+				6FC823112475AF41002421F0 /* BlacklistCell.swift in Sources */,
 				6F41013D22DDF8E40038AA76 /* CallGroupsCell.swift in Sources */,
+				6FC822FD24758EF6002421F0 /* BlacklistJSON.swift in Sources */,
 				6F69BE7E22D46EF600F8903F /* BlacklistCodable.swift in Sources */,
 				6F06534F246488BD00F857C1 /* Customers+Helpers.swift in Sources */,
 				6FB8EA4522AA6BCE00294EAC /* SMSVCExtensions.swift in Sources */,
@@ -1914,6 +2008,7 @@
 				6F29FD5722BBB1C300BCA2AB /* CustomerDetailsViewController.swift in Sources */,
 				6F987A7C245C93D900C6046E /* ManageAgentsView.swift in Sources */,
 				6F04FFBC22C3A22C00FA467E /* ExternalChat.swift in Sources */,
+				6FC823052475ADE4002421F0 /* BlacklistViewController.swift in Sources */,
 				6F02E9AC22DF45BF005708B0 /* AssertionModalController.swift in Sources */,
 				6F087DD522E1DFFE00CAD840 /* MessageSendingAPI.swift in Sources */,
 				6F46A8B722D0618B0042A667 /* InternalConversationsAPI.swift in Sources */,
@@ -1921,6 +2016,7 @@
 				6F987A6F245B053C00C6046E /* AgentCodable.swift in Sources */,
 				6FB11B05229BFA120098D050 /* HomeViewController.swift in Sources */,
 				6FAD46E6245054020050F7F2 /* AppData.swift in Sources */,
+				6FA3DFEF2475BFDE0083AB13 /* Blacklist+SearchHelpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -247,6 +247,24 @@ extension UIView {
         NSLayoutConstraint.activate(constraints)
         
     }
+    
+    
+    
+    
+    
+    func shake(for duration:CFTimeInterval = 0.07, repeatCount:Float = 3, translationX: CGFloat = 4.0, withFeedbackTypeOf feedback:TapticEngine.HapticFeedback? = nil) {
+        let animation = CABasicAnimation(keyPath: "position")
+        animation.duration = duration
+        animation.repeatCount = repeatCount
+        animation.autoreverses = true
+        animation.fromValue = CGPoint(x: self.center.x - translationX, y: self.center.y)
+        animation.toValue = CGPoint(x: self.center.x + translationX, y: self.center.y)
+        layer.add(animation, forKey: "position")
+        if let feedback = feedback {
+            TapticEngine.generateFeedback(ofType: feedback)
+        }
+    }
+    
 }
 extension UIViewController {
 //    func startSpinner() {
@@ -535,6 +553,27 @@ extension String {
         
         let emailTest = NSPredicate(format: "SELF MATCHES[c] %@", emailRegEx)
         return emailTest.evaluate(with: self)
+    }
+    
+    
+    func formatNumber(withMask mask:String = "(XXX) XXX-XXXX") -> String {
+        let cleanPhoneNumber = self.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()
+
+        var result = ""
+        var index = cleanPhoneNumber.startIndex
+        for character in mask where index < cleanPhoneNumber.endIndex {
+            if character == "X" {
+                result.append(cleanPhoneNumber[index])
+                index = cleanPhoneNumber.index(after: index)
+            } else {
+                result.append(character)
+            }
+        }
+        return result
+    }
+    var extractNumbers: String {
+        let pattern = UnicodeScalar("0")..."9"
+        return String(unicodeScalars.compactMap { pattern ~= $0 ? Character($0) : nil })
     }
 }
 let imageCache = NSCache<NSString, UIImage>()

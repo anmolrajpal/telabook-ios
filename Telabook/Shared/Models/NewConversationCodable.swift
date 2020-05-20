@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct NewConversationJSON: Decodable {
+struct NewConversationJSON: Codable {
     let result:String?
     let message:String?
     let conversation:NewConversationProperties?
@@ -24,7 +24,7 @@ struct NewConversationJSON: Decodable {
 }
 
 
-struct NewConversationProperties: Decodable {
+struct NewConversationProperties: Codable {
     let externalConversationId : Int?
     let node : String?
     let recipientNumber : String?

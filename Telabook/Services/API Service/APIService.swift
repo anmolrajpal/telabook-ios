@@ -91,6 +91,15 @@ public struct APIService: APIServiceProtocol {
         /// Endpoint to unarchive Agent's conversation with customer
         case UnarchiveConversation
         
+        /// Endpoint to start a new conversation with entered customer's phone number
+        case StartNewConversation
+        
+        /// Endpoint to fetch all blocked users
+        case FetchBlacklist
+        
+        /// Endpoint to unblock customer from blacklist
+        case UnblockConversation
+        
         
         /**
         Returns the path of a specified Endpoint.
@@ -118,6 +127,9 @@ public struct APIService: APIServiceProtocol {
                 case .SearchCustomer: return "/external_conversations/search_firebase"
                 case .ArchiveConversation: return "/archive_external_conversation"
                 case .UnarchiveConversation: return "/remove_archive_external_conversation"
+                case .StartNewConversation: return "/external_conversations"
+                case .FetchBlacklist: return "/blacklists/list"
+                case .UnblockConversation: return "/remove_number_blacklist"
             }
         }
     }

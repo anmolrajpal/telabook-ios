@@ -11,37 +11,65 @@ import UIKit
 extension NewConversationController {
     internal func commonInit() {
         setupTargetActions()
-        
+        subview.numberTextField.delegate = self
     }
     
     private func setupTargetActions() {
         subview.cancelButton.addTarget(self, action: #selector(cancelButtonDidTap), for: .touchUpInside)
-        subview.numberTextField.addTarget(self, action: #selector(numberFieldDidChange(_:)), for: .editingChanged)
-        subview.numberTextField.addTarget(self, action: #selector(numberFieldDidStartEditing(_:)), for: .editingDidBegin)
         subview.startButton.addTarget(self, action: #selector(startButtonDidTap(_:)), for: .touchUpInside)
     }
     @objc private func cancelButtonDidTap() {
         self.dismiss(animated: true, completion: nil)
     }
-    @objc private func numberFieldDidChange(_ textField:UITextField) {
-        
-        
-        let isPhoneNumberValid = textField.text?.isPhoneNumberLengthValid() ?? false
-        handleValidationSequence(isValidPhoneNumber: isPhoneNumberValid)
-    }
-    private func handleValidationSequence(isValidPhoneNumber:Bool) {
-        subview.startButton.isEnabled = isValidPhoneNumber
-        subview.startButton.backgroundColor = subview.startButton.isEnabled ? UIColor.telaBlue : UIColor.telaGray5
-    }
     @objc private func startButtonDidTap(_ sender: UIButton) {
-        self.dismiss(animated: true) {
-            self.delegate?.conversation(didStartNewConversationWithID: 0)
+        guard let formattedPhoneNumber = subview.numberTextField.text else { return }
+        let purePhoneNumber = formattedPhoneNumber.extractNumbers
+        let isPhoneNumberValid = purePhoneNumber.isPhoneNumberLengthValid()
+        guard isPhoneNumberValid else {
+            subview.numberTextField.shake(withFeedbackTypeOf: .Error)
+            return
+        }
+        let phoneNumber = "+1\(purePhoneNumber)"
+        self.startNewConversation(with: phoneNumber)
+    }
+    internal func conversationDidStart(withID id:Int, node:String) {
+        self.stopRefreshers()
+        DispatchQueue.main.async {
+            self.dismiss(animated: true) {
+                self.delegate?.conversation(didStartNewConversationWithID: id, node: node)
+            }
         }
     }
-    @objc private func numberFieldDidStartEditing(_ textField: UITextField) {
-
+    
+    internal func startRefreshers() {
+        DispatchQueue.main.async {
+            self.subview.spinner.startAnimating()
+            self.subview.startButton.isHidden = true
+        }
+    }
+    internal func stopRefreshers() {
+        DispatchQueue.main.async {
+            self.subview.spinner.stopAnimating()
+            self.subview.startButton.isHidden = false
+        }
     }
 }
+
+extension NewConversationController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        guard let text = textField.text else { return false }
+        let newString = (text as NSString).replacingCharacters(in: range, with: string)
+        textField.text = newString.formatNumber()
+        return false
+    }
+}
+
+
+
+
+
+
+
 
 
 extension UIViewController {
