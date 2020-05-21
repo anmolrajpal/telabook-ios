@@ -11,21 +11,24 @@ import CoreData
 
 extension BlacklistViewController {
     internal func setupFetchedResultsController() {
+        if viewContext == nil {
+            viewContext = PersistentContainer.shared.viewContext
+        }
         let fetchRequest:NSFetchRequest<BlockedUser> = BlockedUser.fetchRequest()
-        let context = PersistentContainer.shared.viewContext
         if !currentSearchText.isEmpty {
             fetchRequest.predicate = NSPredicate(format: "\(#keyPath(BlockedUser.phoneNumber)) CONTAINS[c] %@", currentSearchText)
             fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(BlockedUser.phoneNumber), ascending: true)]
             fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
-                                                                  managedObjectContext: context,
+                                                                  managedObjectContext: viewContext,
                                                                   sectionNameKeyPath: nil,
                                                                   cacheName: nil)
         } else {
+            fetchRequest.predicate = NSPredicate(format: "\(#keyPath(BlockedUser.isUnblocking)) = %d", false)
             fetchRequest.sortDescriptors = [
                 NSSortDescriptor(key: #keyPath(BlockedUser.updatedAt), ascending: false)
             ]
             fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
-                                                                  managedObjectContext: context,
+                                                                  managedObjectContext: viewContext,
                                                                   sectionNameKeyPath: nil,
                                                                   cacheName: nil)
         }

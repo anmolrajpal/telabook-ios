@@ -67,8 +67,8 @@ struct BlacklistOperations {
     
     
     
-    static func getOperationsToUnblockCustomer(using context: NSManagedObjectContext, blockedUser:BlockedUser) -> [Operation] {
-        let unblockFromStore_Operation = MarkUnblockCustomerInStore_Operation(context: context, blockedUser: blockedUser)
+    static func getOperationsToUnblockCustomer(using context: NSManagedObjectContext, blockedUser:BlockedUser, markUnblock:Bool = true) -> [Operation] {
+        let unblockFromStore_Operation = MarkUnblockCustomerInStore_Operation(context: context, blockedUser: blockedUser, markUnblock: markUnblock)
         let unblockOnServer_Operation = UnblockCustomerOnServer_Operation(blockedUser: blockedUser)
         let deleteFromStore_Operation = DeleteBlockedUserEntryFromStore_Operation(context: context, blockedUser: blockedUser)
         
@@ -368,16 +368,17 @@ class MarkUnblockCustomerInStore_Operation: Operation {
     var error:OperationError?
     private let context: NSManagedObjectContext
     private let blockedUser:BlockedUser
-    
-    init(context: NSManagedObjectContext, blockedUser:BlockedUser) {
+    private let markUnblock:Bool
+    init(context: NSManagedObjectContext, blockedUser:BlockedUser, markUnblock:Bool) {
         self.context = context
         self.blockedUser = blockedUser
+        self.markUnblock = markUnblock
     }
     
     override func main() {
         context.performAndWait {
             do {
-                blockedUser.isUnblocking = true
+                blockedUser.isUnblocking = markUnblock
                 try context.save()
             } catch {
                 print("Error adding entries to store: \(error))")
@@ -393,12 +394,22 @@ class MarkUnblockCustomerInStore_Operation: Operation {
 class UnblockCustomerOnServer_Operation: Operation {
     var result: Result<Bool, APIService.APIError>?
     
+    struct Body:Codable {
+        let external_conversation_id:Int
+        let company_id:String
+        let number:String
+        let description:String
+    }
+    private let encoder = JSONEncoder()
     private var downloading = false
     
     let blockedUser:BlockedUser
     
     private let params:[String:String]
-    
+    private let headers:[HTTPHeader] = [
+        HTTPHeader(key: .contentType, value: "application/json")
+    ]
+    private let httpBody:Data
     init(blockedUser:BlockedUser) {
         self.blockedUser = blockedUser
         let companyID = String(AppData.companyId)
@@ -407,6 +418,8 @@ class UnblockCustomerOnServer_Operation: Operation {
             "external_conversation_id":String(blockedUser.conversationID),
             "id":String(blockedUser.id)
         ]
+        let body = Body(external_conversation_id: Int(blockedUser.conversationID), company_id: companyID, number: blockedUser.phoneNumber ?? "", description: "")
+        httpBody = try! encoder.encode(body)
     }
     
     override var isAsynchronous: Bool {
@@ -423,7 +436,7 @@ class UnblockCustomerOnServer_Operation: Operation {
     
     override func cancel() {
         super.cancel()
-        
+        finish(result: .failure(.cancelled))
     }
     
     func finish(result: Result<APIService.RecurrentResult, APIService.APIError>) {
@@ -472,7 +485,7 @@ class UnblockCustomerOnServer_Operation: Operation {
             finish(result: .failure(.cancelled))
             return
         }
-        APIServer<APIService.RecurrentResult>(apiVersion: .v2).hitEndpoint(endpoint: .UnblockConversation, httpMethod: .POST, params: params, completion: finish)
+        APIServer<APIService.RecurrentResult>(apiVersion: .v2).hitEndpoint(endpoint: .UnblockConversation, httpMethod: .POST, params: params, httpBody: httpBody, headers: headers, completion: finish)
     }
 }
 
@@ -501,7 +514,9 @@ class DeleteBlockedUserEntryFromStore_Operation: Operation {
     override func main() {
         context.performAndWait {
             do {
-                context.delete(blockedUser)
+                let objectID = blockedUser.objectID
+                let objectContext = context.object(with: objectID) as! BlockedUser
+                context.delete(objectContext)
                 try context.save()
             } catch {
                 print("Error adding entries to store: \(error))")

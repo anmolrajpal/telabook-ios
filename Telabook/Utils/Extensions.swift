@@ -575,6 +575,16 @@ extension String {
         let pattern = UnicodeScalar("0")..."9"
         return String(unicodeScalars.compactMap { pattern ~= $0 ? Character($0) : nil })
     }
+    func getE164FormattedNumber() -> String? {
+        guard self.count >= 10 else { return nil }
+        let purePhoneNumber = String(self.suffix(10))
+        let formattedPhoneNumber = purePhoneNumber.formatNumber()
+        if self.count > 10 {
+            let countryCode = self.padding(toLength: self.count - 10, withPad: purePhoneNumber, startingAt: -1)
+            return "\(countryCode) \(formattedPhoneNumber)"
+        }
+        return formattedPhoneNumber
+    }
 }
 let imageCache = NSCache<NSString, UIImage>()
 extension UIImage {

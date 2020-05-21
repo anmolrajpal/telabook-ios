@@ -42,7 +42,15 @@ extension BlacklistViewController {
     /* ------------------------------------------------------------------------------------------------------------ */
     
     
-    
+    internal func markConversation(isUnblocking:Bool, for blockedUser:BlockedUser) {
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+        let context = PersistentContainer.shared.newBackgroundContext()
+        let operation = MarkUnblockCustomerInStore_Operation(context: context, blockedUser: blockedUser, markUnblock: isUnblocking)
+        handleViewsStateForOperations(operations: [operation], onOperationQueue: queue, completion: {_ in})
+        queue.addOperations([operation], waitUntilFinished: false)
+    }
     
     
     
@@ -110,6 +118,8 @@ extension BlacklistViewController {
                 case let operation as UnblockCustomerOnServer_Operation:
                     operation.completionBlock = {
                         guard case let .failure(error) = operation.result else { return }
+                        let blockedConversation = operation.blockedUser
+                        self.markConversation(isUnblocking: false, for: blockedConversation)
                         self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
                         #if DEBUG
                         print("Error updating Archiving operation on server: \(error)")

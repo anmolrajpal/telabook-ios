@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import InteractiveModal
 
 extension BlacklistViewController {
     internal class BlacklistDataSource: UITableViewDiffableDataSource<Section, BlockedUser> {
@@ -48,22 +49,19 @@ extension BlacklistViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        // 1
         let index = indexPath.row
         guard let blacklist = fetchedResultsController.fetchedObjects else { return nil }
         let blockedUser = blacklist[index]
-        print(blockedUser)
         
-        // 2
         let identifier = "\(index)" as NSString
         
         return UIContextMenuConfiguration(identifier: identifier, previewProvider: nil) { _ in
             
-            let detailsAction = UIAction(title: "Details", image: SFSymbol.person.image.withTintColor(.telaBlue, renderingMode: .alwaysOriginal)) { _ in
-                
+            let detailsAction = UIAction(title: "Details", image: #imageLiteral(resourceName: "tab_more_active").withTintColor(.white)) { _ in
+                self.showDetails(at: indexPath)
             }
             
-            let unblockAction = UIAction(title: "Unblock", image: #imageLiteral(resourceName: "block_rounded"), attributes: .destructive) { _ in
+            let unblockAction = UIAction(title: "Unblock", image: #imageLiteral(resourceName: "unblock").withTintColor(.white).image(scaledTo: .init(width: 30, height: 30))!, attributes: .destructive) { _ in
                 self.unblockConversation(for: blockedUser, completion: {_ in})
             }
            
@@ -81,22 +79,19 @@ extension BlacklistViewController: UITableViewDelegate {
         let index = indexPath.row
         guard let blacklist = fetchedResultsController.fetchedObjects else { return nil }
         let blockedUser = blacklist[index]
-        print(blockedUser)
-        
-        
         
         let unblockAction =  UIContextualAction(style: .destructive, title: "Unblock", handler: { (action,view,completion ) in
-            self.unblockConversation(for: blockedUser, completion: {_ in})
+            self.unblockConversation(for: blockedUser, completion: completion)
         })
-        unblockAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "unblock"), text: "Unblock").withRenderingMode(.alwaysOriginal)
+        unblockAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "unblock").withTintColor(.white).image(scaledTo: .init(width: 25, height: 25))!, text: "Unblock").withRenderingMode(.alwaysOriginal)
         unblockAction.backgroundColor = .systemPink
         
         
-        
         let detailsAction =  UIContextualAction(style: .destructive, title: "Details", handler: { (action,view,completion ) in
-            //            self.initiateBlockNumberSequence(indexPath: indexPath, completion: completion)
+            completion(true)
+            self.showDetails(at: indexPath)
         })
-        detailsAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "more_img"), text: "Details").withRenderingMode(.alwaysOriginal)
+        detailsAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "tab_more_active").withTintColor(.white), text: "Details").withRenderingMode(.alwaysOriginal)
         detailsAction.backgroundColor = .telaGray7
         
        
@@ -107,16 +102,21 @@ extension BlacklistViewController: UITableViewDelegate {
     
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        showDetails(at: indexPath)
+    }
+    internal func showDetails(at indexPath:IndexPath) {
         if let selectedBlockedUser = self.diffableDataSource?.itemIdentifier(for: indexPath) {
-            let id = selectedBlockedUser.id
-            print(id)
-//            guard id != 0,
-//                let node = selectedCustomer.node else { return }
-//            print("Conversation Node: \(node)")
-//                let vc = ChatViewController(conversationId: String(id), node: node, conversation: selectedCustomer)
-//                vc.workerId = self.workerId
-//                vc.title = conversation.internalAddressBookName?.isEmpty ?? true ? conversation.customerPhoneNumber : conversation.internalAddressBookName
-//            navigationController?.pushViewController(vc, animated: true)
+            let vc = BlacklistedDetailsViewController(selectedBlockedUser: selectedBlockedUser)
+            vc.delegate = self
+            let presenter = InteractiveModalViewController(controller: vc)
+            self.present(presenter, animated: true, completion: nil)
         }
+    }
+}
+
+extension BlacklistViewController: BlacklistedDetailsDelegate {
+    func unblockButton(didTapFor blockedUser: BlockedUser) {
+        self.unblockConversation(for: blockedUser, completion: {_ in})
     }
 }

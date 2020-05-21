@@ -24,6 +24,9 @@ class BlacklistViewController: UIViewController {
     
     internal var currentSearchText = ""
     
+    
+    var viewContext:NSManagedObjectContext!
+    
     internal var isFetchedResultsAvailable:Bool {
         return fetchedResultsController.sections?.first?.numberOfObjects == 0 ? false : true
     }
@@ -49,6 +52,9 @@ class BlacklistViewController: UIViewController {
         super.viewWillAppear(animated)
         title = "BLACKLIST"
         observeReachability()
+        if let selectionIndexPath = self.subview.tableView.indexPathForSelectedRow {
+            self.subview.tableView.deselectRow(at: selectionIndexPath, animated: animated)
+        }
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)

@@ -8,6 +8,9 @@
 
 import UIKit
 
+enum PhoneNumberMask {
+    
+}
 class BlacklistCell: UITableViewCell {
     let cellView = BlacklistCellView()
     static let cellHeight:CGFloat = 70.0
@@ -20,9 +23,11 @@ class BlacklistCell: UITableViewCell {
     private func updateCell() {
         guard let details = blockedUser else { return }
         let phoneNumber = details.phoneNumber ?? ""
+        
         let number:String
-        if phoneNumber.count == 10 {
-            number = phoneNumber.formatNumber(withMask: "+X (XXX) XXX-XXXX")
+        
+        if let formattedPhoneNumber = phoneNumber.getE164FormattedNumber() {
+            number = formattedPhoneNumber
         } else {
             number = phoneNumber
         }
