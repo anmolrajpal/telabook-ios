@@ -104,6 +104,9 @@ public struct APIService: APIServiceProtocol {
         case UnblockConversation
         
         
+        case DeleteConversation(conversationID:Int)
+        
+        
         /**
         Returns the path of a specified Endpoint.
         ## Example Usage ##
@@ -134,6 +137,7 @@ public struct APIService: APIServiceProtocol {
                 case .FetchBlacklist: return "/blacklists/list"
                 case .BlockConversation: return "/blacklists"
                 case .UnblockConversation: return "/remove_number_blacklist"
+                case let .DeleteConversation(conversationID): return "/external_conversations/\(conversationID)"
             }
         }
     }

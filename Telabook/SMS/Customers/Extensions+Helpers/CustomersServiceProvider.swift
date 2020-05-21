@@ -103,7 +103,9 @@ extension CustomersViewController {
     
     
     
-    internal func markConversationInStore(isBlocking:Bool, for customer:Customer) {
+    
+    /* ------------------------------------------------------------------------------------------------------------ */
+    private func markConversationInStore(isBlocking:Bool, for customer:Customer) {
         let queue = OperationQueue()
         queue.qualityOfService = .userInitiated
         queue.maxConcurrentOperationCount = 1
@@ -112,8 +114,36 @@ extension CustomersViewController {
         handleViewsStateForOperations(operations: [operation], onOperationQueue: queue, completion: {_ in})
         queue.addOperations([operation], waitUntilFinished: false)
     }
+    /* ------------------------------------------------------------------------------------------------------------ */
     
     
+    
+    /* ------------------------------------------------------------------------------------------------------------ */
+    internal func deleteConversation(for customer:Customer, completion:@escaping (Bool) -> Void) {
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+        
+        let context = PersistentContainer.shared.newBackgroundContext()
+        let operations = CustomerOperations.getDeletionOperations(using: context, for: customer)
+        handleViewsStateForOperations(operations: operations, onOperationQueue: queue, completion: completion)
+        queue.addOperations(operations, waitUntilFinished: false)
+    }
+    /* ------------------------------------------------------------------------------------------------------------ */
+    
+    
+    
+    /* ------------------------------------------------------------------------------------------------------------ */
+    private func markConversationInStore(isDeleted:Bool, for customer:Customer) {
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+        let context = PersistentContainer.shared.newBackgroundContext()
+        let operation = MarkDeleteCustomerInStore_Operation(context: context, customer: customer, markDeleted: isDeleted)
+        handleViewsStateForOperations(operations: [operation], onOperationQueue: queue, completion: {_ in})
+        queue.addOperations([operation], waitUntilFinished: false)
+    }
+    /* ------------------------------------------------------------------------------------------------------------ */
     
     private func handleViewsStateForOperations(operations:[Operation], onOperationQueue queue:OperationQueue, completion: @escaping (Bool) -> Void) {
         operations.forEach { operation in
@@ -234,17 +264,47 @@ extension CustomersViewController {
                 case let operation as BlockCustomerOnServer_Operation:
                     operation.completionBlock = {
                         guard case let .failure(error) = operation.result else { return }
-                        let customer = operation.customer
-                        self.markConversationInStore(isBlocking: false, for: customer)
+                        self.markConversationInStore(isBlocking: false, for: operation.customer)
                         self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
                         #if DEBUG
-                        print("Error updating Archiving operation on server: \(error)")
+                        print("Error updating Blocking operation on server: \(error)")
                         #endif
-                        os_log("Error updating Archiving operation on server: %@", log: .network, type: .error, error.localizedDescription)
+                        os_log("Error updating Blocking operation on server: %@", log: .network, type: .error, error.localizedDescription)
                 }
                 /* ------------------------------------------------------------------------------------------------------------ */
                 
                 
+                
+                
+                /* ------------------------------------------------------------------------------------------------------------ */
+               //MARK: Delete conversation Operations completions
+               case let operation as MarkDeleteCustomerInStore_Operation:
+                   operation.completionBlock = {
+                       if let error = operation.error {
+                           #if DEBUG
+                           print("Error updating Delete operation in Store: \(error)")
+                           #endif
+                           os_log("Error updating Delete operation in Store: %@", log: .coredata, type: .error, error.localizedDescription)
+                           DispatchQueue.main.async {
+                               completion(false)
+                           }
+                       } else {
+                           DispatchQueue.main.async {
+                               completion(true)
+                           }
+                       }
+               }
+               case let operation as DeleteCustomerOnServer_Operation:
+                   operation.completionBlock = {
+                       guard case let .failure(error) = operation.result else { return }
+                       self.markConversationInStore(isDeleted: false, for: operation.customer)
+                       self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+                       #if DEBUG
+                       print("Error updating Deletion operation on server: \(error)")
+                       #endif
+                       os_log("Error updating Deletion operation on server: %@", log: .network, type: .error, error.localizedDescription)
+               }
+               /* ------------------------------------------------------------------------------------------------------------ */
                 
                 default: break
             }

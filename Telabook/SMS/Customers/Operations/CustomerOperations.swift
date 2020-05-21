@@ -65,6 +65,18 @@ struct CustomerOperations {
         ]
     }
     
+    
+    
+    
+    //MARK: DELETE - Delete Agent's Conversation with Customer in store and on Server
+    /// Returns an array of operations for delete  Agent's conversation with Customer  from Core Data store to server.
+    static func getDeletionOperations(using context:NSManagedObjectContext, for customer:Customer, shouldDelete:Bool = true) -> [Operation] {
+        let markDeleteInStore_Operation = MarkDeleteCustomerInStore_Operation(context: context, customer: customer, markDeleted: shouldDelete)
+        let deleteOnServer_Operation = DeleteCustomerOnServer_Operation(customer: customer)
+        
+        return [markDeleteInStore_Operation, deleteOnServer_Operation]
+    }
+    
 }
 
 
@@ -562,5 +574,134 @@ class StartNewConversation_Operation: Operation {
             return
         }
         APIServer<NewConversationJSON>(apiVersion: .v2).hitEndpoint(endpoint: .StartNewConversation, httpMethod: .POST, params: params, completion: finish)
+    }
+}
+
+
+
+
+
+
+
+
+/// Mark customer as Deleted in the customer list  in the Core Data store.
+class MarkDeleteCustomerInStore_Operation: Operation {
+    enum OperationError: Error, LocalizedError {
+        case coreDataError(error:Error)
+        
+        var localizedDescription: String {
+            switch self {
+                case let .coreDataError(error): return "Core Data Error: \(error.localizedDescription)"
+            }
+        }
+    }
+    var error:OperationError?
+    private let context: NSManagedObjectContext
+    private let customer:Customer
+    private let markDeleted:Bool
+    init(context: NSManagedObjectContext, customer:Customer, markDeleted:Bool) {
+        self.context = context
+        self.customer = customer
+        self.markDeleted = markDeleted
+    }
+    
+    override func main() {
+        context.performAndWait {
+            do {
+                customer.isCustomerDeleted = markDeleted
+                try context.save()
+            } catch {
+                print("Error adding entries to store: \(error))")
+                self.error = .coreDataError(error: error)
+            }
+        }
+    }
+}
+
+
+
+/// Delete the customer from customer list on the server.
+class DeleteCustomerOnServer_Operation: Operation {
+    var result: Result<Bool, APIService.APIError>?
+    
+    private var downloading = false
+    
+    
+    let customer:Customer
+    
+    private let params:[String:String]
+
+    init(customer:Customer) {
+        self.customer = customer
+        let companyID = String(AppData.companyId)
+        params = [
+            "company_id":companyID
+        ]
+    }
+    
+    override var isAsynchronous: Bool {
+        return true
+    }
+    
+    override var isExecuting: Bool {
+        return downloading
+    }
+    
+    override var isFinished: Bool {
+        return result != nil
+    }
+    
+    override func cancel() {
+        super.cancel()
+        finish(result: .failure(.cancelled))
+    }
+    
+    func finish(result: Result<APIService.RecurrentResult, APIService.APIError>) {
+        guard downloading else { return }
+        
+        willChangeValue(forKey: #keyPath(isExecuting))
+        willChangeValue(forKey: #keyPath(isFinished))
+        
+        downloading = false
+        
+        let errorMessage = "Error: No results from server"
+        
+        guard case let .success(resultData) = result else {
+            if case let .failure(error) = result {
+                self.result = .failure(error)
+                didChangeValue(forKey: #keyPath(isFinished))
+                didChangeValue(forKey: #keyPath(isExecuting))
+            }
+            return
+        }
+        guard let serverResultValue = resultData.result else {
+            self.result = .failure(.resultError(message: errorMessage))
+            didChangeValue(forKey: #keyPath(isFinished))
+            didChangeValue(forKey: #keyPath(isExecuting))
+            return
+        }
+        let serverResult = ServerResult(rawValue: serverResultValue)
+        guard serverResult == .success else {
+            self.result = .failure(.resultError(message: resultData.message ?? errorMessage))
+            didChangeValue(forKey: #keyPath(isFinished))
+            didChangeValue(forKey: #keyPath(isExecuting))
+            return
+        }
+        self.result = .success(true)
+        
+        didChangeValue(forKey: #keyPath(isFinished))
+        didChangeValue(forKey: #keyPath(isExecuting))
+    }
+    
+    override func start() {
+        willChangeValue(forKey: #keyPath(isExecuting))
+        downloading = true
+        didChangeValue(forKey: #keyPath(isExecuting))
+        
+        guard !isCancelled else {
+            finish(result: .failure(.cancelled))
+            return
+        }
+        APIServer<APIService.RecurrentResult>(apiVersion: .v2).hitEndpoint(endpoint: .DeleteConversation(conversationID: Int(customer.externalConversationID)), httpMethod: .DELETE, params: params, completion: finish)
     }
 }

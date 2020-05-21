@@ -95,7 +95,7 @@ extension CustomersViewController: UITableViewDelegate {
             }
             
             let deleteAction = UIAction(title: "Confirm Delete", image: #imageLiteral(resourceName: "delete_icon"), attributes: .destructive) { _ in
-                
+                self.deleteConversation(for: customer, completion: {_ in})
             }
             let confirmDeleteMenu = UIMenu(title: "Delete", image: SFSymbol.arrowUpRightSquare.image, options: [.destructive], children: [deleteAction])
             return UIMenu(title: "", children: [
@@ -190,11 +190,8 @@ extension CustomersViewController: UITableViewDelegate {
             }
             
             let deleteAction = UIControlMenuAction(title: "Delete", image: #imageLiteral(resourceName: "delete_icon")) { _ in
-                
+                self.deleteConversation(for: customer, completion: {_ in})
             }
-            
-            
-            
             
             let actions:[UIControlMenuAction] = [
                 sendMessageAction,
