@@ -91,6 +91,15 @@ struct BlacklistOperations {
     }
     
     
+    
+    
+    static func getOperationsToBlockConversation(using context:NSManagedObjectContext, for customer:Customer, withReasonToBlock reason:String, markBlock:Bool = true) -> [Operation] {
+        let blockInStore_Operation = MarkBlockCustomerInStore_Operation(context: context, customer: customer, markBlock: markBlock)
+        let blockOnServer_Operation = BlockCustomerOnServer_Operation(customer: customer, blockingReason: reason)
+        
+        return [blockInStore_Operation, blockOnServer_Operation]
+    }
+    
 }
 
 
@@ -523,5 +532,152 @@ class DeleteBlockedUserEntryFromStore_Operation: Operation {
                 self.error = .coreDataError(error: error)
             }
         }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/// Mark customer as Blocked in the customer list  in the Core Data store.
+class MarkBlockCustomerInStore_Operation: Operation {
+    enum OperationError: Error, LocalizedError {
+        case coreDataError(error:Error)
+        
+        var localizedDescription: String {
+            switch self {
+                case let .coreDataError(error): return "Core Data Error: \(error.localizedDescription)"
+            }
+        }
+    }
+    var error:OperationError?
+    private let context: NSManagedObjectContext
+    private let customer:Customer
+    private let markBlock:Bool
+    init(context: NSManagedObjectContext, customer:Customer, markBlock:Bool) {
+        self.context = context
+        self.customer = customer
+        self.markBlock = markBlock
+    }
+    
+    override func main() {
+        context.performAndWait {
+            do {
+                customer.isBlacklisted = markBlock
+                try context.save()
+            } catch {
+                print("Error adding entries to store: \(error))")
+                self.error = .coreDataError(error: error)
+            }
+        }
+    }
+}
+
+
+
+/// Block the customer from customer list on the server.
+class BlockCustomerOnServer_Operation: Operation {
+    var result: Result<Bool, APIService.APIError>?
+    
+    struct Body:Codable {
+        let external_conversation_id:Int
+        let company_id:String
+        let number:String
+        let description:String
+    }
+    private let encoder = JSONEncoder()
+    private var downloading = false
+    
+    let customer:Customer
+    
+    private let params:[String:String]
+    private let headers:[HTTPHeader] = [
+        HTTPHeader(key: .contentType, value: "application/json")
+    ]
+    private let httpBody:Data
+
+    init(customer:Customer, blockingReason:String) {
+        self.customer = customer
+        let companyID = String(AppData.companyId)
+        params = [
+            "company_id":companyID
+        ]
+        let body = Body(external_conversation_id: Int(customer.externalConversationID), company_id: companyID, number: customer.phoneNumber ?? "", description: blockingReason)
+        httpBody = try! encoder.encode(body)
+    }
+    
+    override var isAsynchronous: Bool {
+        return true
+    }
+    
+    override var isExecuting: Bool {
+        return downloading
+    }
+    
+    override var isFinished: Bool {
+        return result != nil
+    }
+    
+    override func cancel() {
+        super.cancel()
+        finish(result: .failure(.cancelled))
+    }
+    
+    func finish(result: Result<APIService.RecurrentResult, APIService.APIError>) {
+        guard downloading else { return }
+        
+        willChangeValue(forKey: #keyPath(isExecuting))
+        willChangeValue(forKey: #keyPath(isFinished))
+        
+        downloading = false
+        
+        let errorMessage = "Error: No results from server"
+        
+        guard case let .success(resultData) = result else {
+            if case let .failure(error) = result {
+                self.result = .failure(error)
+                didChangeValue(forKey: #keyPath(isFinished))
+                didChangeValue(forKey: #keyPath(isExecuting))
+            }
+            return
+        }
+        guard let serverResultValue = resultData.result else {
+            self.result = .failure(.resultError(message: errorMessage))
+            didChangeValue(forKey: #keyPath(isFinished))
+            didChangeValue(forKey: #keyPath(isExecuting))
+            return
+        }
+        let serverResult = ServerResult(rawValue: serverResultValue)
+        guard serverResult == .success else {
+            self.result = .failure(.resultError(message: resultData.message ?? errorMessage))
+            didChangeValue(forKey: #keyPath(isFinished))
+            didChangeValue(forKey: #keyPath(isExecuting))
+            return
+        }
+        self.result = .success(true)
+        
+        didChangeValue(forKey: #keyPath(isFinished))
+        didChangeValue(forKey: #keyPath(isExecuting))
+    }
+    
+    override func start() {
+        willChangeValue(forKey: #keyPath(isExecuting))
+        downloading = true
+        didChangeValue(forKey: #keyPath(isExecuting))
+        
+        guard !isCancelled else {
+            finish(result: .failure(.cancelled))
+            return
+        }
+        APIServer<APIService.RecurrentResult>(apiVersion: .v2).hitEndpoint(endpoint: .BlockConversation, httpMethod: .POST, params: params, httpBody: httpBody, headers: headers, completion: finish)
     }
 }

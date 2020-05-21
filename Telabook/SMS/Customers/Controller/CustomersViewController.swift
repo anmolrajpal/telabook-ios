@@ -97,11 +97,37 @@ class CustomersViewController: UIViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
-    
+    lazy var reasonTextView:UITextView = {
+        let textView = UITextView(frame: CGRect.zero)
+        textView.isEditable = true
+        textView.textAlignment = .left
+        textView.isSelectable = true
+        textView.backgroundColor = UIColor.telaGray4
+        textView.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 13)
+        textView.textColor = UIColor.telaGray7
+        textView.sizeToFit()
+        textView.isScrollEnabled = true
+        textView.keyboardAppearance = .dark
+        textView.returnKeyType = .done
+        textView.layer.cornerRadius = 7
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        return textView
+    }()
+    lazy var characterCountLabel:UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Character limit: 70"
+        label.textColor = UIColor.telaGray7
+        label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 11)
+        label.numberOfLines = 1
+        label.textAlignment = .right
+        return label
+    }()
     // MARK: Common setup
     private func setup() {
         setUpNavBar()
         setupNavBarItems()
+        hideKeyboardWhenTappedAround()
         setupTableView()
         setupTargetActions()
 //        setupSearchController()

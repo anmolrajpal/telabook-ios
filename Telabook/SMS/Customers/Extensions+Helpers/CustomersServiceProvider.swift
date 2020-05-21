@@ -87,7 +87,31 @@ extension CustomersViewController {
     
     
     
+    /* ------------------------------------------------------------------------------------------------------------ */
+    internal func blockConversation(for customer:Customer, blockingReason:String, completion:@escaping (Bool) -> Void) {
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+        
+        let context = PersistentContainer.shared.newBackgroundContext()
+        let operations = BlacklistOperations.getOperationsToBlockConversation(using: context, for: customer, withReasonToBlock: blockingReason)
+        handleViewsStateForOperations(operations: operations, onOperationQueue: queue, completion: completion)
+        queue.addOperations(operations, waitUntilFinished: false)
+    }
+    /* ------------------------------------------------------------------------------------------------------------ */
     
+    
+    
+    
+    internal func markConversationInStore(isBlocking:Bool, for customer:Customer) {
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+        let context = PersistentContainer.shared.newBackgroundContext()
+        let operation = MarkBlockCustomerInStore_Operation(context: context, customer: customer, markBlock: isBlocking)
+        handleViewsStateForOperations(operations: [operation], onOperationQueue: queue, completion: {_ in})
+        queue.addOperations([operation], waitUntilFinished: false)
+    }
     
     
     
@@ -186,6 +210,39 @@ extension CustomersViewController {
                 /* ------------------------------------------------------------------------------------------------------------ */
                 
                 
+                
+                
+                
+                /* ------------------------------------------------------------------------------------------------------------ */
+                //MARK: Block conversation Operations completions
+                case let operation as MarkBlockCustomerInStore_Operation:
+                    operation.completionBlock = {
+                        if let error = operation.error {
+                            #if DEBUG
+                            print("Error updating Blacklist operation in Store: \(error)")
+                            #endif
+                            os_log("Error updating Blacklist operation in Store: %@", log: .coredata, type: .error, error.localizedDescription)
+                            DispatchQueue.main.async {
+                                completion(false)
+                            }
+                        } else {
+                            DispatchQueue.main.async {
+                                completion(true)
+                            }
+                        }
+                }
+                case let operation as BlockCustomerOnServer_Operation:
+                    operation.completionBlock = {
+                        guard case let .failure(error) = operation.result else { return }
+                        let customer = operation.customer
+                        self.markConversationInStore(isBlocking: false, for: customer)
+                        self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+                        #if DEBUG
+                        print("Error updating Archiving operation on server: \(error)")
+                        #endif
+                        os_log("Error updating Archiving operation on server: %@", log: .network, type: .error, error.localizedDescription)
+                }
+                /* ------------------------------------------------------------------------------------------------------------ */
                 
                 
                 

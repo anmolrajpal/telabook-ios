@@ -90,10 +90,9 @@ extension CustomersViewController: UITableViewDelegate {
             let unarchiveAction = UIAction(title: "Unarchive", image: #imageLiteral(resourceName: "archive")) { _ in
                 self.updateConversation(for: customer, archiving: false, completion: {_ in})
             }
-            let blockAction = UIAction(title: "Confirm Block", image: #imageLiteral(resourceName: "block_rounded"), attributes: .destructive) { _ in
-                
+            let blockAction = UIAction(title: "Block", image: #imageLiteral(resourceName: "block_rounded"), attributes: .destructive) { _ in
+                self.promptBlockingReasonAlert(for: customer)
             }
-            let confirmBlockMenu = UIMenu(title: "Block", image: SFSymbol.arrowUpRightSquare.image, options: .destructive, children: [blockAction])
             
             let deleteAction = UIAction(title: "Confirm Delete", image: #imageLiteral(resourceName: "delete_icon"), attributes: .destructive) { _ in
                 
@@ -105,7 +104,7 @@ extension CustomersViewController: UITableViewDelegate {
                 setColorMenu,
                 detailsAction,
                 self.selectedSegment == .Inbox ? archiveAction : unarchiveAction,
-                confirmBlockMenu,
+                blockAction,
                 confirmDeleteMenu
             ])
         }
@@ -146,6 +145,11 @@ extension CustomersViewController: UITableViewDelegate {
         return configuration
     }
     
+    
+    
+    
+    
+    
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let index = indexPath.row
         guard let customers = fetchedResultsController.fetchedObjects else { return nil }
@@ -155,6 +159,7 @@ extension CustomersViewController: UITableViewDelegate {
         
         
         let blockAction =  UIContextualAction(style: .destructive, title: "Block", handler: { (action,view,completion ) in
+            completion(true)
 //            self.initiateBlockNumberSequence(indexPath: indexPath, completion: completion)
         })
         blockAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "unblock"), text: "Block").withRenderingMode(.alwaysOriginal)
@@ -181,7 +186,7 @@ extension CustomersViewController: UITableViewDelegate {
                 
             }
             let blockAction = UIControlMenuAction(title: "Block", image: #imageLiteral(resourceName: "block_rounded")) { _ in
-                
+                self.promptBlockingReasonAlert(for: customer)
             }
             
             let deleteAction = UIControlMenuAction(title: "Delete", image: #imageLiteral(resourceName: "delete_icon")) { _ in
@@ -257,26 +262,3 @@ extension CustomersViewController: UITableViewDelegate {
 
 
 
-
-class CustomActivityViewController: UIActivityViewController {
-
-    private let controller: UIViewController!
-
-    required init(controller: UIViewController) {
-        self.controller = controller
-        super.init(activityItems: [], applicationActivities: nil)
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        let subViews = self.view.subviews
-        for view in subViews {
-            view.removeFromSuperview()
-        }
-
-        self.addChild(controller)
-        self.view.addSubview(controller.view)
-    }
-
-}

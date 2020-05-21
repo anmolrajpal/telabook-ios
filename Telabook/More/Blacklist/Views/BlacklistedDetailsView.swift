@@ -62,7 +62,7 @@ class BlacklistedDetailsView: UIView {
         let leftGuideAnchor = safeAreaLayoutGuide.leftAnchor
         let rightGuideAnchor = safeAreaLayoutGuide.rightAnchor
         
-        let headingLabelXMargin:CGFloat = 26
+        let headingLabelXMargin:CGFloat = 30
         let valueLabelXMargin:CGFloat = 26
         let headingValueSpacing:CGFloat = 8
         let spacing:CGFloat = 24
@@ -146,7 +146,7 @@ class BlacklistedDetailsView: UIView {
         let label = InsetLabel(15, 15, 12, 12)
         label.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 16)
         label.textColor = UIColor.telaGray7
-        label.backgroundColor = UIColor.systemGray5
+        label.backgroundColor = UIColor.telaGray5
         label.textAlignment = .left
         label.numberOfLines = 0
         label.lineBreakMode = .byWordWrapping

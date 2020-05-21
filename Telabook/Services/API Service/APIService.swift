@@ -97,6 +97,9 @@ public struct APIService: APIServiceProtocol {
         /// Endpoint to fetch all blocked users
         case FetchBlacklist
         
+        /// Endpoint to block selected customer
+        case BlockConversation
+        
         /// Endpoint to unblock customer from blacklist
         case UnblockConversation
         
@@ -129,6 +132,7 @@ public struct APIService: APIServiceProtocol {
                 case .UnarchiveConversation: return "/remove_archive_external_conversation"
                 case .StartNewConversation: return "/external_conversations"
                 case .FetchBlacklist: return "/blacklists/list"
+                case .BlockConversation: return "/blacklists"
                 case .UnblockConversation: return "/remove_number_blacklist"
             }
         }
