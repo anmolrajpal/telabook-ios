@@ -60,7 +60,7 @@ class AgentsViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationItem.title = "MANAGE AGENTS"
+        self.navigationItem.title = "SMS"
         observeReachability()
     }
     override func viewWillDisappear(_ animated: Bool) {

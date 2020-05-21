@@ -34,7 +34,7 @@ class SMSViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationItem.title = "SMS"
+        self.navigationItem.title = "CALLS"
         self.preFetchData()
         self.updateTableContent()
     }

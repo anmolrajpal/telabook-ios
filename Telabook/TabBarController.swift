@@ -12,33 +12,52 @@ class TabBarController: UITabBarController {
     static let shared = TabBarController()
     
     enum Tabs: Int, Codable {
-        case tab1, tab2, tab3, tab4
+        case tab1, tab2, tab3
         
         private var tabName:String {
             switch self {
+                case .tab1: return "SMS"
+                case .tab2: return "CALLS"
+                case .tab3: return "MORE"
+                
+                /*
                 case .tab1: return "HOME"
                 case .tab2: return "CALLS"
                 case .tab3: return "SMS"
 //                case .tab4: return "SETTINGS"
                 case .tab4: return "MORE"
+                */
             }
         }
         private var tabImage:UIImage {
             switch self {
+                case .tab1: return #imageLiteral(resourceName: "tab_sms_inactive")
+                case .tab2: return #imageLiteral(resourceName: "tab_call_inactive")
+                case .tab3: return #imageLiteral(resourceName: "tab_more_inactive")
+                
+                /*
                 case .tab1: return #imageLiteral(resourceName: "tab_home_inactive")
                 case .tab2: return #imageLiteral(resourceName: "tab_call_inactive")
                 case .tab3: return #imageLiteral(resourceName: "tab_sms_inactive")
 //                case .tab4: return #imageLiteral(resourceName: "tab_settings_inactive")
                 case .tab4: return #imageLiteral(resourceName: "tab_more_inactive")
+                */
             }
         }
         private var tabSelelctedImage:UIImage {
             switch self {
+                case .tab1: return #imageLiteral(resourceName: "tab_sms_active")
+                case .tab2: return #imageLiteral(resourceName: "tab_call_active")
+                case .tab3: return #imageLiteral(resourceName: "tab_more_active")
+
+                
+                /*
                 case .tab1: return #imageLiteral(resourceName: "tab_home_active")
                 case .tab2: return #imageLiteral(resourceName: "tab_call_active")
                 case .tab3: return #imageLiteral(resourceName: "tab_sms_active")
 //                case .tab4: return #imageLiteral(resourceName: "tab_settings_active")
                 case .tab4: return #imageLiteral(resourceName: "tab_more_active")
+                */
             }
         }
         var tabBarItem:UITabBarItem {
@@ -116,24 +135,24 @@ class TabBarController: UITabBarController {
         }
         */
         
-        let homeViewController = UINavigationController(rootViewController: HomeViewController())
+//        let homeViewController = UINavigationController(rootViewController: HomeViewController())
         let callsViewController = UINavigationController(rootViewController: SMSViewController())
         let agentsViewController = UINavigationController(rootViewController: AgentsViewController(fetchRequest: Agent.fetchRequest(), viewContext: PersistentContainer.shared.viewContext))
 //        let smsViewController = UINavigationController(rootViewController: SMSViewController())
 //        let settingsViewController = UINavigationController(rootViewController: SettingsViewController())
         let moreViewController = UINavigationController(rootViewController: MoreViewController())
-        homeViewController.tabBarItem = Tabs.tab1.tabBarItem
+//        homeViewController.tabBarItem = Tabs.tab1.tabBarItem
         callsViewController.tabBarItem = Tabs.tab2.tabBarItem
 //        smsViewController.tabBarItem = Tabs.tab3.tabBarItem
-        agentsViewController.tabBarItem = Tabs.tab3.tabBarItem
+        agentsViewController.tabBarItem = Tabs.tab1.tabBarItem
 //        settingsViewController.tabBarItem = Tabs.tab4.tabBarItem
-        moreViewController.tabBarItem = Tabs.tab4.tabBarItem
+        moreViewController.tabBarItem = Tabs.tab3.tabBarItem
         let role = CustomUtils.shared.getUserRole()
         var viewControllersList:[UIViewController]
         if role == .Agent {
-            viewControllersList = [homeViewController, callsViewController, agentsViewController, moreViewController]
+            viewControllersList = [agentsViewController, callsViewController, moreViewController]
         } else {
-            viewControllersList = [homeViewController, callsViewController, agentsViewController, moreViewController]
+            viewControllersList = [agentsViewController, callsViewController, moreViewController]
         }
         self.setupTabBarUI()
         self.viewControllers = viewControllersList
