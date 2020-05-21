@@ -21,6 +21,12 @@ class CustomerCell: UITableViewCell {
         guard let details = customerDetails else { return }
 //        let priority = CustomerPriority.priority(from: Int(details.priority))
         let phoneNumber = details.phoneNumber ?? ""
+        let number:String
+        if let formattedPhoneNumber = phoneNumber.getE164FormattedNumber() {
+            number = formattedPhoneNumber
+        } else {
+            number = phoneNumber
+        }
         let name = details.addressBookName
         let messageType = MessageCategory.message(from: details.messageType ?? "")
         let lastMessage = details.lastMessageText
@@ -28,7 +34,7 @@ class CustomerCell: UITableViewCell {
         let conversationColor = CustomerConversationColor.colorCase(from: Int(details.colorCode)).color
         let unreadMessagesCount = Int(details.unreadMessagesCount)
         let isPinned = details.isPinned
-        cellView.parameters = CustomerCellView.Parameters(phoneNumber: phoneNumber,
+        cellView.parameters = CustomerCellView.Parameters(phoneNumber: number,
                                                           name: name,
                                                           lastMessageType: messageType,
                                                           lastMessage: lastMessage,
