@@ -9,44 +9,56 @@
 import UIKit
 import MenuController
 
+
 extension CustomersViewController {
-    internal class CustomerDataSource: UITableViewDiffableDataSource<Section, Customer> {
+    class CustomerDataSource: UITableViewDiffableDataSource<Section, Customer> {
         override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool { return true }
     }
-    internal func setupTableView() {
-//        subview.tableView.refreshControl = subview.refreshControl
-        subview.tableView.register(CustomerCell.self, forCellReuseIdentifier: NSStringFromClass(CustomerCell.self))
-        subview.tableView.delegate = self
-        
-        self.diffableDataSource = CustomerDataSource(tableView: self.subview.tableView, cellProvider: { (tableView, indexPath, customer) -> UITableViewCell? in
-            let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(CustomerCell.self), for: indexPath) as! CustomerCell
+    func setupTableView() {
+        self.subview.tableView.delegate = self
+        self.subview.tableView.register(CustomerCell.self, forCellReuseIdentifier: NSStringFromClass(CustomerCell.self))
+    }
+    func updateUI(animating:Bool = true) {
+        guard let snapshot = currentSnapshot() else { return }
+        dataSource.apply(snapshot, animatingDifferences: animating, completion: { [weak self] in
+            guard let self = self else { return }
+            self.subview.tableView.reloadData()
+            self.handleState()
+        })
+    }
+    func configureDataSource() {
+        self.dataSource = CustomerDataSource(tableView: self.subview.tableView, cellProvider: { (tableView, indexPath, customer) -> UITableViewCell? in
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(CustomerCell.self), for: indexPath) as? CustomerCell else { fatalError("Could not create new cell") }
             cell.customerDetails = customer
-            cell.backgroundColor = .clear
+            cell.backgroundColor = .telaGray1
+            cell.isUserInteractionEnabled = true
             cell.accessoryType = .disclosureIndicator
             let backgroundView = UIView()
             backgroundView.backgroundColor = UIColor.telaGray7.withAlphaComponent(0.2)
             cell.selectedBackgroundView  = backgroundView
             return cell
         })
-        updateSnapshot()
+        updateUI(animating: false)
     }
-    /// Create a `NSDiffableDataSourceSnapshot` with the table view data
-    internal func updateSnapshot(animated: Bool = false) {
-        snapshot = NSDiffableDataSourceSnapshot<Section, Customer>()
+    
+    func currentSnapshot() -> NSDiffableDataSourceSnapshot<Section, Customer>? {
+        guard fetchedResultsController != nil else { return nil }
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Customer>()
         snapshot.appendSections([.main])
         let objects = fetchedResultsController.fetchedObjects ?? []
         snapshot.appendItems(objects)
-        self.diffableDataSource?.apply(self.snapshot, animatingDifferences: animated, completion: {
-            if animated { self.subview.tableView.reloadData() }  // Should not have used this but in order to update existing visible cells, it's required. Hope Apple will fix this but with next iOS Update.
-            self.handleState()
-        })
-        
+        return snapshot
     }
+    
 }
 
 extension CustomersViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return CustomerCell.cellHeight
+    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let customer = self.dataSource.itemIdentifier(for: indexPath) else { return }
+        self.openChat(forSelectedCustomer: customer, at: indexPath)
     }
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
@@ -76,7 +88,7 @@ extension CustomersViewController: UITableViewDelegate {
                 yellowAction, blueAction, greenAction, whiteAction
             ])
             let sendMessageAction = UIAction(title: "Send Message", image: #imageLiteral(resourceName: "autoresponse_icon")) { _ in
-                
+                self.openChat(forSelectedCustomer: customer, at: indexPath)
             }
             let pinningAction = UIAction(title: customer.isPinned ? "Unpin" : "Pin", image: (customer.isPinned ? #imageLiteral(resourceName: "unpin") : #imageLiteral(resourceName: "pin")).withInsets(UIEdgeInsets(top: 1, left: 1, bottom: 1, right: 1))) { _ in
                 self.updateConversationInStore(for: customer, pinning: !customer.isPinned, completion: {_ in})
@@ -168,7 +180,7 @@ extension CustomersViewController: UITableViewDelegate {
         
         let moreAction = UIContextualAction(style: .normal, title: "More") { (action, view, completion) in
             let sendMessageAction = UIControlMenuAction(title: "Send Message", image: SFSymbol.sendMessage.image) { _ in
-                
+                self.openChat(forSelectedCustomer: customer, at: indexPath)
             }
             let setColorAction = UIControlMenuAction(title: "Set Color", image: #imageLiteral(resourceName: "set_color").image(scaledTo: CGSize(width: 26, height: 26))!, handler: { _ in
                 self.promptChatColor(indexPath: indexPath)
@@ -211,7 +223,7 @@ extension CustomersViewController: UITableViewDelegate {
         moreAction.backgroundColor = .telaIndigo
         
         let detailsAction =  UIContextualAction(style: .normal, title: "Details", handler: { (action,view,completionHandler ) in
-            if let conversation = self.diffableDataSource?.itemIdentifier(for: indexPath) {
+            if let conversation = self.dataSource.itemIdentifier(for: indexPath) {
                 let customerId = Int(conversation.externalConversationID)
 //                let workerId = Int(self.workerI)
 //                guard customerId != 0, workerId != 0 else {
@@ -241,21 +253,15 @@ extension CustomersViewController: UITableViewDelegate {
         return configuration
     }
     
-    
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let selectedCustomer = self.diffableDataSource?.itemIdentifier(for: indexPath) {
-            let id = selectedCustomer.customerID
-            guard id != 0,
-                let node = selectedCustomer.node else { return }
-            print("Conversation Node: \(node)")
-//                let vc = ChatViewController(conversationId: String(id), node: node, conversation: selectedCustomer)
-//                vc.workerId = self.workerId
-//                vc.title = conversation.internalAddressBookName?.isEmpty ?? true ? conversation.customerPhoneNumber : conversation.internalAddressBookName
-//            navigationController?.pushViewController(vc, animated: true)
-        }
+    private func openChat(forSelectedCustomer customer:Customer, at indexPath:IndexPath) {
+        let id = customer.customerID
+        print(customer.node as Any)
+        guard
+            id != 0,
+            customer.node != nil else { return }
+        let vc = MessagesController(customer: customer)
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
-
 
 

@@ -102,8 +102,8 @@ class MoreViewController: UIViewController {
         switch role {
             case .Developer: return ["Profile Settings", "Companies", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "Application Information", "Log Out"]
             case .Owner: return ["Profile Settings", "Companies", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "Application Information", "Log Out"]
-            case .Operator: return ["Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Archived SMSes", "Clear Cache"]
-            case .Agent: return ["Profile Settings", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Clear Cache"]
+            case .Operator: return ["Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Archived SMSes", "Clear Cache", "Log Out"]
+            case .Agent: return ["Profile Settings", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Clear Cache", "Log Out"]
         }
 //        if role != .Agent {
 //            return ["Manage Agents", "Gallery", "Blocked Users", "Schedule Message", "Archived SMSes", "Clear Cache"]
@@ -214,7 +214,8 @@ extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
                         case 4:
                             let vc = ArchivedSMSViewController()
                             self.show(vc, sender: self)
-                        default: handleClearCache()
+                        case 5: handleClearCache()
+                        default: alertLogout()
                 }
             case .Agent:
                 switch indexPath.row {
@@ -230,7 +231,8 @@ extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
                         case 3:
                             let vc = ScheduleMessageViewController()
                             self.show(vc, sender: self)
-                        default: handleClearCache()
+                        case 4: handleClearCache()
+                        default: alertLogout()
                 }
         }
         tableView.deselectRow(at: indexPath, animated: true)

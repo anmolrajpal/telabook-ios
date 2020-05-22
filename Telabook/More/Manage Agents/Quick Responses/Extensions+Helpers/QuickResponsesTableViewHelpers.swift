@@ -19,7 +19,7 @@ extension QuickResponsesViewController {
         self.diffableDataSource = QuickResponseDataSource(tableView: self.subview.tableView, cellProvider: { (tableView, indexPath, quickResponse) -> UITableViewCell? in
             let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(UITableViewCell.self), for: indexPath)
             cell.textLabel?.text = quickResponse.answer
-//            cell.selectionStyle = .none
+            cell.selectionStyle = .none
             cell.backgroundColor = .clear
             cell.textLabel?.textColor = UIColor.telaGray7
             cell.textLabel?.lineBreakMode = .byWordWrapping
@@ -59,10 +59,6 @@ extension QuickResponsesViewController {
 extension QuickResponsesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
-    }
-    
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        .delete
     }
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let editAction =  UIContextualAction(style: .normal, title: "Edit", handler: { (action,view,completion ) in

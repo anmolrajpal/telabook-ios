@@ -23,7 +23,12 @@ class CustomersView: UIView {
     }
     private func layoutConstraints() {
         segmentedControl.anchor(top: safeAreaLayoutGuide.topAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, heightConstant: 40)
+        
+        
+        
         tableView.anchor(top: segmentedControl.bottomAnchor, left: segmentedControl.leftAnchor, bottom: bottomAnchor, right: segmentedControl.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
+        
+        
         inboxSpinner.centerXAnchor.constraint(equalTo: centerXAnchor).activate()
         inboxSpinner.centerYAnchor.constraint(equalTo: centerYAnchor).activate()
         archivedSpinner.centerXAnchor.constraint(equalTo: centerXAnchor).activate()
@@ -61,11 +66,6 @@ class CustomersView: UIView {
         control.layer.cornerRadius = 0
         return control
     }()
-//    lazy var refreshControl:UIRefreshControl = {
-//        let refreshControl = UIRefreshControl()
-//        refreshControl.tintColor = UIColor.telaGray7
-//        return refreshControl
-//    }()
     lazy var inboxSpinner: UIActivityIndicatorView = {
         let aiView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
         aiView.backgroundColor = .clear
@@ -86,14 +86,8 @@ class CustomersView: UIView {
     }()
     lazy var tableView : UITableView = {
         let tv = UITableView(frame: CGRect.zero, style: UITableView.Style.plain)
-        tv.translatesAutoresizingMaskIntoConstraints = false
         tv.backgroundColor = .clear
         tv.separatorColor = UIColor.telaWhite.withAlphaComponent(0.5)
-        tv.bounces = true
-        tv.alwaysBounceVertical = true
-        tv.clipsToBounds = true
-        tv.showsHorizontalScrollIndicator = false
-        tv.showsVerticalScrollIndicator = true
         tv.tableFooterView = UIView(frame: CGRect.zero)
         return tv
     }()
@@ -135,6 +129,35 @@ class CustomersView: UIView {
     }()
     
     
+    
+    
+    // MARK: Alert Views
+    lazy var reasonTextView:UITextView = {
+        let textView = UITextView(frame: CGRect.zero)
+        textView.isEditable = true
+        textView.textAlignment = .left
+        textView.isSelectable = true
+        textView.backgroundColor = UIColor.telaGray4
+        textView.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 13)
+        textView.textColor = UIColor.telaGray7
+        textView.sizeToFit()
+        textView.isScrollEnabled = true
+        textView.keyboardAppearance = .dark
+        textView.returnKeyType = .done
+        textView.layer.cornerRadius = 7
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        return textView
+    }()
+    lazy var characterCountLabel:UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Character limit: 70"
+        label.textColor = UIColor.telaGray7
+        label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 11)
+        label.numberOfLines = 1
+        label.textAlignment = .right
+        return label
+    }()
     
     
     

@@ -26,7 +26,7 @@ extension NewConversationController {
         let purePhoneNumber = formattedPhoneNumber.extractNumbers
         let isPhoneNumberValid = purePhoneNumber.isPhoneNumberLengthValid()
         guard isPhoneNumberValid else {
-            subview.numberTextField.shake(withFeedbackTypeOf: .Error)
+            subview.numberTextField.shake(withFeedbackTypeOf: .Heavy)
             return
         }
         let phoneNumber = "+1\(purePhoneNumber)"

@@ -233,14 +233,14 @@ extension CustomersViewController {
         alertVC.view.subviews.first?.subviews.first?.backgroundColor = .clear
         alertVC.view.subviews.first?.backgroundColor = .clear
         
-        alertVC.view.addSubview(reasonTextView)
-        reasonTextView.delegate = self
-        reasonTextView.anchor(top: alertVC.view.topAnchor, left: alertVC.view.leftAnchor, bottom: nil, right: alertVC.view.rightAnchor, topConstant: 54, leftConstant: 10, bottomConstant: 54, rightConstant: 10, heightConstant: 60)
-        alertVC.view.addSubview(characterCountLabel)
-        characterCountLabel.anchor(top: reasonTextView.bottomAnchor, left: reasonTextView.leftAnchor, bottom: alertVC.view.bottomAnchor, right: reasonTextView.rightAnchor, topConstant: 5, leftConstant: 0, bottomConstant: 50, rightConstant: 3)
+        alertVC.view.addSubview(subview.reasonTextView)
+        subview.reasonTextView.delegate = self
+        subview.reasonTextView.anchor(top: alertVC.view.topAnchor, left: alertVC.view.leftAnchor, bottom: nil, right: alertVC.view.rightAnchor, topConstant: 54, leftConstant: 10, bottomConstant: 54, rightConstant: 10, heightConstant: 60)
+        alertVC.view.addSubview(subview.characterCountLabel)
+        subview.characterCountLabel.anchor(top: subview.reasonTextView.bottomAnchor, left: subview.reasonTextView.leftAnchor, bottom: alertVC.view.bottomAnchor, right: subview.reasonTextView.rightAnchor, topConstant: 5, leftConstant: 0, bottomConstant: 50, rightConstant: 3)
         let cancelAction = UIAlertAction(title: "Cancel", style: .destructive, handler: { (_) in })
         let submitAction = UIAlertAction(title: "SUBMIT", style: UIAlertAction.Style.default) { (action) in
-            let reason = self.reasonTextView.text
+            let reason = self.subview.reasonTextView.text
             if let reason = reason, !reason.isEmpty {
                 self.blockConversation(for: customer, blockingReason: reason, completion: {_ in})
             }
@@ -249,7 +249,7 @@ extension CustomersViewController {
         alertVC.addAction(cancelAction)
         alertVC.addAction(submitAction)
         self.present(alertVC, animated: true, completion: {
-            self.reasonTextView.becomeFirstResponder()
+            self.subview.reasonTextView.becomeFirstResponder()
         })
     }
 }
@@ -261,7 +261,7 @@ extension CustomersViewController: UITextViewDelegate {
             let submitAction = alertController.actions.last else { return }
         let textCount = textView.text.count
         submitAction.isEnabled = textCount > 0
-        characterCountLabel.text = "Charaters left: \(70 - textCount)"
+        subview.characterCountLabel.text = "Charaters left: \(70 - textCount)"
     }
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {

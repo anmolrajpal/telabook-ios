@@ -11,7 +11,6 @@ import CoreData
 import Firebase
 import FirebaseStorage
 
-extension CustomersViewController.Segment: CaseIterable { }
 class CustomersViewController: UIViewController {
     let fetchRequest: NSFetchRequest<Customer>
     let node:Config.FirebaseConfig.Node
@@ -27,15 +26,15 @@ class CustomersViewController: UIViewController {
         self.node = .conversations(companyID: AppData.companyId, workerID: Int(agent.workerID))
         self.reference = node.reference
         super.init(nibName: nil, bundle: nil)
-        self.setupFetchedResultsController()
-        self.selectedSegment = .Inbox
+        
+//        self.selectedSegment = .Inbox
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     //MARK: Enums
-    enum Segment:Int { case Inbox, Archived ; var stringValue:String { String(describing: self).uppercased() } }
+    enum Segment:Int, CaseIterable { case Inbox, Archived ; var stringValue:String { String(describing: self).uppercased() } }
     enum Section { case main }
     
     
@@ -53,8 +52,7 @@ class CustomersViewController: UIViewController {
     internal var fetchedResultsController: NSFetchedResultsController<Customer>!
     
     
-    var diffableDataSource: CustomerDataSource?
-    var snapshot: NSDiffableDataSourceSnapshot<Section, Customer>!
+    var dataSource: CustomerDataSource!
     
     internal var currentSearchText = ""
     
@@ -94,41 +92,15 @@ class CustomersViewController: UIViewController {
             self.subview.tableView.deselectRow(at: selectionIndexPath, animated: animated)
         }
     }
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
-    lazy var reasonTextView:UITextView = {
-        let textView = UITextView(frame: CGRect.zero)
-        textView.isEditable = true
-        textView.textAlignment = .left
-        textView.isSelectable = true
-        textView.backgroundColor = UIColor.telaGray4
-        textView.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 13)
-        textView.textColor = UIColor.telaGray7
-        textView.sizeToFit()
-        textView.isScrollEnabled = true
-        textView.keyboardAppearance = .dark
-        textView.returnKeyType = .done
-        textView.layer.cornerRadius = 7
-        textView.translatesAutoresizingMaskIntoConstraints = false
-        return textView
-    }()
-    lazy var characterCountLabel:UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Character limit: 70"
-        label.textColor = UIColor.telaGray7
-        label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 11)
-        label.numberOfLines = 1
-        label.textAlignment = .right
-        return label
-    }()
+
+    
     // MARK: Common setup
     private func setup() {
         setUpNavBar()
-        setupNavBarItems()
-        hideKeyboardWhenTappedAround()
         setupTableView()
+        configureDataSource()
+        setupFetchedResultsController()
+        setupNavBarItems()
         setupTargetActions()
 //        setupSearchController()
     }
@@ -191,6 +163,25 @@ class CustomersViewController: UIViewController {
         */
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class DictionaryEncoder {
     private let jsonEncoder = JSONEncoder()
 

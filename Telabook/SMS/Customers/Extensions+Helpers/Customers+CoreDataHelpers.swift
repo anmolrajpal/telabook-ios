@@ -44,7 +44,8 @@ extension CustomersViewController {
         fetchedResultsController.delegate = self
         do {
             try fetchedResultsController.performFetch()
-            self.updateSnapshot(animated: true)
+//            self.updateSnapshot(animated: true)
+//            updateUI()
         } catch {
             print("Error fetching results: \(error)")
         }
@@ -52,6 +53,7 @@ extension CustomersViewController {
 }
 extension CustomersViewController: NSFetchedResultsControllerDelegate {
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {   
-        self.updateSnapshot(animated: true)
+//        self.updateSnapshot(animated: true)
+        self.updateUI()
     }
 }

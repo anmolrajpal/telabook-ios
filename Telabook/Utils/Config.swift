@@ -66,13 +66,13 @@ struct Config {
             case conversations(companyID:Int, workerID:Int)
             
             /// Node to get chats of the specified customer + agent of node
-            case chats(companyID:Int, node:String)
+            case messages(companyID:Int, node:String)
             
             
             var reference:DatabaseReference {
                 switch self {
                     case let .conversations(companyID, workerID): return databaseRoot.child("companies/\(companyID)/inbox/\(workerID)")
-                    case let .chats(companyID, node): return databaseRoot.child("companies/\(companyID)/conversations/\(node)")
+                    case let .messages(companyID, node): return databaseRoot.child("companies/\(companyID)/conversations/\(node)")
                 }
             }
         }
