@@ -227,17 +227,29 @@ public enum CustomerConversationColor {
     }
 }
 public enum MessageCategory {
-    case Text, Multimedia
+    case text, multimedia, scheduled, system
     
-    static func message(from string:String) -> Self {
+    init(stringValue type:String) {
+        switch type {
+            case "TEXT_ONLY", "TEXT", "sms", "SMS", "text", "Text": self = .text
+            case "MULTIMEDIA", "mms", "MMS", "Multimedia": self = .multimedia
+            case "SCHEDULED_MESSAGE": self = .scheduled
+            case "NOTE", "SYSTEM_MESSAGE": self = .system
+            default: fatalError("Unhandled case for Message Type value: \(type)")
+        }
+    }
+    
+    static func messageType(from string:String) -> Self {
         switch string {
-            case "TEXT_ONLY": return .Text
-            case "MULTIMEDIA": return .Multimedia
-            case "TEXT": return .Text
+            case "TEXT_ONLY", "TEXT", "sms", "SMS", "text", "Text": return .text
+            case "MULTIMEDIA", "mms", "MMS", "Multimedia": return .multimedia
+            case "SCHEDULED_MESSAGE": return .scheduled
+            case "NOTE", "SYSTEM_MESSAGE": return .system
             default: fatalError("Unhandled case for Message Type value: \(string)")
         }
     }
     var rawValue:String { String(describing: self) }
+    
 }
 public enum ConversationPriority {
     case Low

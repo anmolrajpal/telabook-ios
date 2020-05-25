@@ -384,12 +384,24 @@ extension Date {
         return Int64((self.timeIntervalSince1970 * 1000).rounded())
     }
     
+    
     /// Initializes the `Date` object from given milliseconds since 1970 (the epoch time)
     /// - Parameter milliSecondsSince1970: This parameter takes milliseconds which must be of 13 digits till next `267 years` from the time of coding this function.
-    init(milliSecondsSince1970: Int64) {
-        self = Date(timeIntervalSince1970: TimeInterval(milliSecondsSince1970 / 1000))
-        self.addTimeInterval(TimeInterval(Double(milliSecondsSince1970 % 1000) / 1000 ))
+    init(milliSecondsSince1970 value: Int64) {
+//        let value:Int64
+//        switch milliSecondsSince1970.digitsCount {
+//            case 11: value = milliSecondsSince1970 * 100
+//            case 12: value = milliSecondsSince1970 * 10
+//            default: value = milliSecondsSince1970
+//        }
+        self = Date(timeIntervalSince1970: TimeInterval(value / 1000))
+        self.addTimeInterval(TimeInterval(Double(value % 1000) / 1000 ))
     }
+    init(milliSecondsSince1970: TimeInterval) {
+        self = Date(timeIntervalSince1970: TimeInterval(milliSecondsSince1970 / 1000))
+        self.addTimeInterval(TimeInterval(Double(Int64(milliSecondsSince1970) % 1000) / 1000 ))
+    }
+    
     
     /// This function adds the milliseconds from a custom microseconds formatted date string.
     /// - Parameter string: This value must be in a string format: `yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ`
@@ -409,13 +421,31 @@ extension Date {
     /// - Parameter value: Parameter value must be either `seconds` or `milliseconds` | `10 digits`  or `13 digits` respectively.
     /// - Returns: `Date` object calculted from timeInterval passed since 1970 or milliSeconds passed since 1970
     static func getDate(fromSecondsOrMilliseconds value:Int) -> Date? {
-        if value.digitsCount == 13 {
-            return Date(milliSecondsSince1970: Int64(value))
-        } else if value.digitsCount == 10 {
-            return Date(timeIntervalSince1970: TimeInterval(value))
-        } else { return nil }
+        if 11...13 ~= value.digitsCount {
+            return Date(milliSecondsSince1970: Int64(value * (10^(13 - value.digitsCount))))
+        } else if 6...10 ~= value.digitsCount {
+            return Date(timeIntervalSince1970: TimeInterval(value * (10^(10 - value.digitsCount))))
+        } else if value == 0 { return nil} else { return nil }
     }
 }
+
+extension String {
+    var dateFromFormattedString:Date? {
+        if self.contains("Z") && self.count == 27 {
+            return .getDate(fromMicrosecondsFormattedDateString: self)
+        } else {
+            return .getDateFromString(dateString: self, dateFormat: "yyyy-MM-dd HH:mm:ss")
+        }
+    }
+    var boolFromPossibleStringValues:Bool {
+        switch self {
+            case "true", "TRUE", "True", "1", "yes", "YES", "Yes": return true
+            case "false", "FALSE", "False", "0", "NO", "no", "No": return false
+            default: return false
+        }
+    }
+}
+
 extension StringProtocol  {
     /// Returns an array of integer digits from called string integer.
     var digits: [Int] { compactMap(\.wholeNumberValue) }

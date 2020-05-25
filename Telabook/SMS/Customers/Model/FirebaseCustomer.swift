@@ -82,7 +82,7 @@ struct FirebaseCustomer {
         let last_message_date = mapToInt(value: value["last_message_date"])
         let last_message_datetime = mapToInt(value: value["last_message_datetime"])
         let last_message_key = value["last_message_key"] as? String
-        let message_type = value["message_type"] as? String ?? MessageCategory.Text.rawValue
+        let message_type = value["message_type"] as? String ?? MessageCategory.text.rawValue
         let node = value["node"] as? String
         let priority = mapToInt(value: value["priority"])
         let sender_id = mapToInt(value: value["sender_id"])
@@ -169,7 +169,7 @@ struct FirebaseCustomer {
         let last_message_date = mapToInt(value: value["last_message_date"])
         let last_message_datetime = mapToInt(value: value["last_message_datetime"])
         let last_message_key = value["last_message_key"] as? String
-        let message_type = value["message_type"] as? String ?? MessageCategory.Text.rawValue
+        let message_type = value["message_type"] as? String ?? MessageCategory.text.rawValue
         let node = value["node"] as? String ?? explicitNode
         let priority = mapToInt(value: value["priority"])
         let sender_id = mapToInt(value: value["sender_id"])

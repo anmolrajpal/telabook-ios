@@ -64,9 +64,9 @@ class CustomerCellView: UIView {
             nameLabel.text = nil
         }
         nameLabel.textColor = parameters?.conversationColor
-        if parameters?.lastMessageType == .Text {
+        if parameters?.lastMessageType == .text {
             lastMessageLabel.text = parameters?.lastMessage
-        } else if parameters?.lastMessageType == .Multimedia {
+        } else if parameters?.lastMessageType == .multimedia {
             lastMessageLabel.text = "📷"
         } else {
             lastMessageLabel.text = nil

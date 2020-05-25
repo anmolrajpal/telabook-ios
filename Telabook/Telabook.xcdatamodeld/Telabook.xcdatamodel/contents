@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19E266" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19E287" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Address" representedClassName="Address" syncable="YES" codeGenerationType="class">
         <attribute name="city" optional="YES" attributeType="String"/>
         <attribute name="street" optional="YES" attributeType="String"/>
@@ -125,6 +125,7 @@
         <attribute name="workerPhoneNumber" optional="YES" attributeType="String"/>
         <relationship name="addressBook" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="AddressBook" inverseName="customer" inverseEntity="AddressBook"/>
         <relationship name="agent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Agent" inverseName="customers" inverseEntity="Agent"/>
+        <relationship name="messages" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="UserMessage" inverseName="conversation" inverseEntity="UserMessage"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="externalConversationID"/>
@@ -214,6 +215,32 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
+    <entity name="UserMessage" representedClassName="UserMessage" syncable="YES" codeGenerationType="class">
+        <attribute name="accountSID" optional="YES" attributeType="String"/>
+        <attribute name="conversationID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="deliveredByProviderAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="firebaseKey" optional="YES" attributeType="String"/>
+        <attribute name="hasError" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="imageURL" optional="YES" attributeType="URI"/>
+        <attribute name="imageUrlString" optional="YES" attributeType="String"/>
+        <attribute name="isMessageDeleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isSentByWorker" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="messageSID" optional="YES" attributeType="String"/>
+        <attribute name="messageType" optional="YES" attributeType="String"/>
+        <attribute name="sentByApiAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="sentByAppAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="sentByProviderAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="tags" optional="YES" attributeType="String"/>
+        <attribute name="textMessage" optional="YES" attributeType="String"/>
+        <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="conversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Customer" inverseName="messages" inverseEntity="Customer"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="firebaseKey"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
     <entity name="UserObject" representedClassName=".UserObject" syncable="YES">
         <attribute name="company" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="email" optional="YES" attributeType="String"/>
@@ -233,7 +260,8 @@
         <element name="AddressBook" positionX="-173.23828125" positionY="228.984375" width="128" height="268"/>
         <element name="Agent" positionX="-718.6484375" positionY="-34.9140625" width="128" height="388"/>
         <element name="AutoResponse" positionX="-543.58984375" positionY="-61.21484375" width="128" height="163"/>
-        <element name="Customer" positionX="-354.14453125" positionY="-1.0625" width="128" height="553"/>
+        <element name="BlockedUser" positionX="-651.66015625" positionY="387.48828125" width="128" height="208"/>
+        <element name="Customer" positionX="-354.14453125" positionY="-1.0625" width="128" height="568"/>
         <element name="ExternalChat" positionX="354.94140625" positionY="-169.65234375" width="128" height="165"/>
         <element name="ExternalConversation" positionX="140.44140625" positionY="-192.74609375" width="128" height="345"/>
         <element name="InternalConversation" positionX="367.36328125" positionY="181.109375" width="128" height="313"/>
@@ -241,6 +269,6 @@
         <element name="Person" positionX="490.1484375" positionY="-384.12890625" width="128" height="105"/>
         <element name="QuickResponse" positionX="-939.1953125" positionY="409.9609375" width="128" height="178"/>
         <element name="UserObject" positionX="233.99609375" positionY="682.64453125" width="128" height="225"/>
-        <element name="BlockedUser" positionX="-651.66015625" positionY="387.48828125" width="128" height="208"/>
+        <element name="UserMessage" positionX="-167.7734375" positionY="-1.8046875" width="128" height="328"/>
     </elements>
 </model>

@@ -28,7 +28,7 @@ class CustomerCell: UITableViewCell {
             number = phoneNumber
         }
         let name = details.addressBookName
-        let messageType = MessageCategory.message(from: details.messageType ?? "")
+        let messageType = MessageCategory(stringValue: details.messageType ?? "")
         let lastMessage = details.lastMessageText
         let lastMessageDate = details.lastMessageDateTime
         let conversationColor = CustomerConversationColor.colorCase(from: Int(details.colorCode)).color
