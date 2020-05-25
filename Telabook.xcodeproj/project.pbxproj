@@ -225,6 +225,7 @@
 		6FD89561245EDAD40083D79A /* AgentDetailsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD89560245EDAD40083D79A /* AgentDetailsHelpers.swift */; };
 		6FEE99FF247BB8E900709E2D /* UserMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE99FE247BB8E900709E2D /* UserMessage.swift */; };
 		6FEE9A01247BF69C00709E2D /* FirebaseMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE9A00247BF69C00709E2D /* FirebaseMessage.swift */; };
+		6FEE9A03247C841B00709E2D /* ExponentOperator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE9A02247C841A00709E2D /* ExponentOperator.swift */; };
 		6FEF96A222A6677900F2FF83 /* ExternalConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF96A122A6677900F2FF83 /* ExternalConversation.swift */; };
 		6FEF96A422A6679400F2FF83 /* ExternalConversationsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF96A322A6679400F2FF83 /* ExternalConversationsAPI.swift */; };
 		6FEF96A622A67F2900F2FF83 /* SMSDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF96A522A67F2900F2FF83 /* SMSDetailViewController.swift */; };
@@ -453,6 +454,7 @@
 		6FD89560245EDAD40083D79A /* AgentDetailsHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDetailsHelpers.swift; sourceTree = "<group>"; };
 		6FEE99FE247BB8E900709E2D /* UserMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserMessage.swift; sourceTree = "<group>"; };
 		6FEE9A00247BF69C00709E2D /* FirebaseMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseMessage.swift; sourceTree = "<group>"; };
+		6FEE9A02247C841A00709E2D /* ExponentOperator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponentOperator.swift; sourceTree = "<group>"; };
 		6FEF96A122A6677900F2FF83 /* ExternalConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalConversation.swift; sourceTree = "<group>"; };
 		6FEF96A322A6679400F2FF83 /* ExternalConversationsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalConversationsAPI.swift; sourceTree = "<group>"; };
 		6FEF96A522A67F2900F2FF83 /* SMSDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSDetailViewController.swift; sourceTree = "<group>"; };
@@ -1450,6 +1452,7 @@
 			isa = PBXGroup;
 			children = (
 				6FB11B0F229C23840098D050 /* Extensions.swift */,
+				6FEE9A02247C841A00709E2D /* ExponentOperator.swift */,
 				6F6457D82462DCE400CECF03 /* Log.swift */,
 				6F29FD4E22B7E28700BCA2AB /* OverlaySpinner.swift */,
 				6FB11B2A229EA7C20098D050 /* Codable.swift */,
@@ -1886,6 +1889,7 @@
 				6F23BD0122D7299A0001A888 /* UserProfileDataProvider.swift in Sources */,
 				6FC6022E2464464D00C1BF6D /* AgentsView.swift in Sources */,
 				6FC823132475AF4B002421F0 /* BlacklistCellView.swift in Sources */,
+				6FEE9A03247C841B00709E2D /* ExponentOperator.swift in Sources */,
 				6F0653472464881100F857C1 /* CustomerCell.swift in Sources */,
 				6F098BBB22BE9A4100AF19AA /* BlockedUsersVCTableViewExtensions.swift in Sources */,
 				6FBDEC7C22B3F1DA00A8511E /* SMSDetailVC+CollectionView.swift in Sources */,

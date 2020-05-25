@@ -1026,3 +1026,89 @@ extension URL {
         return UIImage(cgImage: downsampledImage)
     }
 }
+
+
+
+
+
+extension Date {
+    
+    /// Retruns the milliseconds passed since 1970 (the epoch time)
+    var milliSecondsSince1970:Int64 {
+        return Int64((self.timeIntervalSince1970 * 1000).rounded())
+    }
+    
+    
+    /// Initializes the `Date` object from given milliseconds since 1970 (the epoch time)
+    /// - Parameter milliSecondsSince1970: This parameter takes milliseconds which must be of 13 digits till next `267 years` from the time of coding this function.
+    init(milliSecondsSince1970 value: Int64) {
+        self = Date(timeIntervalSince1970: TimeInterval(value / 1000))
+        self.addTimeInterval(TimeInterval(Double(value % 1000) / 1000 ))
+    }
+//    init(milliSecondsSince1970: TimeInterval) {
+//        self = Date(timeIntervalSince1970: TimeInterval(milliSecondsSince1970 / 1000))
+//        self.addTimeInterval(TimeInterval(Double(Int64(milliSecondsSince1970) % 1000) / 1000 ))
+//    }
+    
+    
+    /// This function adds the milliseconds from a custom microseconds formatted date string.
+    /// - Parameter string: This value must be in a string format: `yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ`
+    /// - Returns: An optional  `Date` object with added milliseconds.
+    static func getDate(fromMicrosecondsFormattedDateString string:String) -> Date? {
+        let groups = string.split(separator: ".")
+        let datePart = String(groups[0])
+        guard let date = Date.getDateFromString(dateString: datePart, dateFormat: "yyyy-MM-dd'T'HH:mm:ss") else { return nil }
+        let microseconds = groups[1].replacingOccurrences(of: "Z", with: "")
+        let milliseconds = Int(microseconds)! / 1000
+        let timeIntervalToAdd:TimeInterval = TimeInterval((Double(milliseconds) / 1000.0))
+        return date.addingTimeInterval(timeIntervalToAdd)
+    }
+    
+    /// This function returns the Date object depending on the parameter which maybe is seconds or milliseconds.
+    /// - Note: This  function is only valid for next `267` years till `Saturday, 20 November 2286 17:46:39.999`
+    /// - Parameter value: Parameter value must be either `seconds` or `milliseconds` | `10 digits`  or `13 digits` respectively.
+    /// - Returns: `Date` object calculted from timeInterval passed since 1970 or milliSeconds passed since 1970
+    static func getDate(fromSecondsOrMilliseconds value:Int) -> Date? {
+        if 11...13 ~= value.digitsCount {
+            return Date(milliSecondsSince1970: Int64(value * (10 ~^ (13 - value.digitsCount))))
+        } else if 6...10 ~= value.digitsCount {
+            return Date(timeIntervalSince1970: TimeInterval(value * (10 ~^ (10 - value.digitsCount))))
+        } else if value == 0 { return nil} else { return nil }
+    }
+}
+
+
+
+
+extension String {
+    var dateFromFormattedString:Date? {
+        if self.contains("Z") && self.count == 27 {
+            return .getDate(fromMicrosecondsFormattedDateString: self)
+        } else {
+            return .getDateFromString(dateString: self, dateFormat: "yyyy-MM-dd HH:mm:ss")
+        }
+    }
+    var boolFromPossibleStringValues:Bool {
+        switch self {
+            case "true", "TRUE", "True", "1", "yes", "YES", "Yes": return true
+            case "false", "FALSE", "False", "0", "NO", "no", "No": return false
+            default: return false
+        }
+    }
+}
+
+extension StringProtocol  {
+    /// Returns an array of integer digits from called string integer.
+    var digits: [Int] { compactMap(\.wholeNumberValue) }
+}
+extension LosslessStringConvertible {
+    var string: String { .init(self) }
+}
+
+extension Numeric where Self: LosslessStringConvertible {
+    /// Returns an array of integer digits from called integer.
+    var digits: [Int] { string.digits }
+    
+    /// Returns count of array of integer digits from called integer.
+    var digitsCount:Int { string.digits.count }
+}
