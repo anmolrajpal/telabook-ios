@@ -218,7 +218,7 @@
     <entity name="UserMessage" representedClassName="UserMessage" syncable="YES" codeGenerationType="class">
         <attribute name="accountSID" optional="YES" attributeType="String"/>
         <attribute name="conversationID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deliveredByProviderAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="firebaseKey" optional="YES" attributeType="String"/>
         <attribute name="hasError" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
@@ -227,12 +227,12 @@
         <attribute name="isMessageDeleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isSentByWorker" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="messageSID" optional="YES" attributeType="String"/>
-        <attribute name="messageType" optional="YES" attributeType="String"/>
         <attribute name="sentByApiAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="sentByAppAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="sentByProviderAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="tags" optional="YES" attributeType="String"/>
         <attribute name="textMessage" optional="YES" attributeType="String"/>
+        <attribute name="type" attributeType="String"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="conversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Customer" inverseName="messages" inverseEntity="Customer"/>
         <uniquenessConstraints>

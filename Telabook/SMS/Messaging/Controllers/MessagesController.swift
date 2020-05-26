@@ -7,11 +7,11 @@
 //
 
 import UIKit
+import CoreData
 import Firebase
 import MessageKit
 
-class MessagesController: UIViewController {
-    
+class MessagesController: MessagesViewController {
     
     
     
@@ -21,11 +21,18 @@ class MessagesController: UIViewController {
     let customer:Customer
     let node:Config.FirebaseConfig.Node
     let reference:DatabaseReference
-    init(customer:Customer) {
+    let conversationID:Int
+    let viewContext:NSManagedObjectContext
+    var thisSender:MessageSender
+    init(context:NSManagedObjectContext, customer:Customer) {
+        self.viewContext =  context
         self.customer = customer
         self.node = .messages(companyID: AppData.companyId, node: customer.node!)
         self.reference = node.reference
+        self.conversationID = Int(customer.externalConversationID)
+        self.thisSender = .init(senderId: String(customer.agent?.workerID ?? 0), displayName: customer.agent?.personName ?? "")
         super.init(nibName: nil, bundle: nil)
+        setupFetchedResultsController()
 //        self.preLoadMessages(node: node)
 //        self.preLoadChats(node: customer.node) { messages in
 //
@@ -37,6 +44,37 @@ class MessagesController: UIViewController {
     
     
     
+    internal var storageUploadTask:StorageUploadTask!
+    internal var fetchedResultsController: NSFetchedResultsController<UserMessage>!
+    internal var isFetchedResultsAvailable:Bool {
+        return fetchedResultsController.sections?.first?.numberOfObjects == 0 ? false : true
+    }
+    
+    var collectionViewOperations: [BlockOperation] = []
+    
+    
+    
+//    var scrollsToBottomOnKeyboardBeginsEditing: Bool = false
+//    var maintainPositionOnKeyboardFrameChanged: Bool = false
+    
+//    var additionalBottomInset: CGFloat = 0 {
+//        didSet {
+//            let delta = additionalBottomInset - oldValue
+//            messageCollectionViewBottomInset += delta
+//        }
+//    }
+    private var isFirstLayout: Bool = true
+    internal var isMessagesControllerBeingDismissed: Bool = false
+    
+    
+    internal var messageCollectionViewBottomInset: CGFloat = 0 {
+        didSet {
+            messagesCollectionView.contentInset.bottom = messageCollectionViewBottomInset
+            messagesCollectionView.verticalScrollIndicatorInsets.bottom = messageCollectionViewBottomInset
+        }
+    }
+    
+
     
     
     //MARK: Lifecycle
@@ -48,7 +86,7 @@ class MessagesController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .telaGray1
         setUpNavBar()
-//        setup()
+        commonInit()
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
@@ -61,28 +99,42 @@ class MessagesController: UIViewController {
         observeReachability()
         loadMessages()
     }
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if isFirstLayout {
+            defer { isFirstLayout = false }
+//            addKeyboardObservers()
+            messageCollectionViewBottomInset = requiredInitialScrollViewBottomInset()
+        }
+//        if isFirstLayout {
+//            defer { isFirstLayout = false }
+////            addKeyboardObservers()
+//            messageCollectionViewBottomInset = requiredInitialScrollViewBottomInset()
+//        }
+//        adjustScrollViewTopInset()
+    }
     
     
     func loadMessages() {
-        handle = reference.observe(.value, with: { snapshot in
+        handle = reference.queryLimited(toLast: 50).observe(.value, with: { snapshot in
             guard snapshot.exists() else {
                 print("Snapshot Does not exists: returning")
                 return
             }
-//            var messages:[Message] = []
+            var messages:[FirebaseMessage] = []
             for child in snapshot.children {
                 if let snapshot = child as? DataSnapshot {
                     print(snapshot)
-//                    guard let message = FirebaseCustomer(snapshot: snapshot, workerID: workerIDstring) else {
-//                        print("Unresolved Error: Unable to create conversation from Firebase Customer")
-//                        return
-//                    }
+                    guard let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) else {
+                        print("Unresolved Error: Failed to create message from Firebase Message")
+                        continue
+                    }
                     //                    print(conversation)
-//                    conversations.append(conversation)
+                    messages.append(message)
                 }
             }
 //            self.firebaseCustomers = conversations
-//            self.persistFirebaseEntriesToCoreDataStore(entries: conversations)
+            self.persistFirebaseMessagesInStore(entries: messages)
             //            print(snapshot.value as Any)
         }) { error in
             print("Value Observer Event Error: \(error)")
@@ -139,4 +191,122 @@ class MessagesController: UIViewController {
                }
            }
        }
+    
+    
+    
+    func isLastSectionVisible() -> Bool {
+        
+        guard let messages = self.fetchedResultsController.fetchedObjects, !messages.isEmpty else { return false }
+        
+        let lastIndexPath = IndexPath(item: 0, section: messages.count - 1)
+        
+        return messagesCollectionView.indexPathsForVisibleItems.contains(lastIndexPath)
+    }
+    
+    func isTimeLabelVisible(at indexPath: IndexPath) -> Bool {
+        return indexPath.section % 3 == 0 && !isPreviousMessageSameSender(at: indexPath)
+    }
+    
+    func isPreviousMessageSameSender(at indexPath: IndexPath) -> Bool {
+        guard let messages = self.fetchedResultsController.fetchedObjects, !messages.isEmpty else { return false }
+        guard indexPath.section - 1 >= 0 else { return false }
+        return messages[indexPath.section].messageSender == messages[indexPath.section - 1].messageSender
+    }
+    
+    func isNextMessageSameSender(at indexPath: IndexPath) -> Bool {
+        guard let messages = self.fetchedResultsController.fetchedObjects, !messages.isEmpty else { return false }
+        guard indexPath.section + 1 < messages.count else { return false }
+        return messages[indexPath.section].messageSender == messages[indexPath.section + 1].messageSender
+    }
+    
+    func setTypingIndicatorViewHidden(_ isHidden: Bool, performUpdates updates: (() -> Void)? = nil) {
+//        updateTitleView(title: "MessageKit", subtitle: isHidden ? "2 Online" : "Typing...")
+        setTypingIndicatorViewHidden(isHidden, animated: true, whilePerforming: updates) { [weak self] success in
+            if success, self?.isLastSectionVisible() == true {
+                self?.messagesCollectionView.scrollToBottom(animated: true)
+            }
+        }
+    }
+    
+    
+    
+    func reloadMessages(messages:[UserMessage]) {
+        messagesCollectionView.performBatchUpdates({
+            messagesCollectionView.insertSections([messages.count - 1])
+            if messages.count >= 2 {
+                messagesCollectionView.reloadSections([messages.count - 2])
+            }
+        }, completion: { [weak self] _ in
+            //            self?.messagesCollectionView.scrollToBottom(animated: true)
+            if self?.isLastSectionVisible() == true {
+                self?.messagesCollectionView.scrollToBottom(animated: true)
+            }
+        })
+    }
+    
+    
+    
+    
+    // MARK: - Inset Computation
+    
+
+    
+    private func requiredScrollViewBottomInset(forKeyboardFrame keyboardFrame: CGRect) -> CGFloat {
+        // we only need to adjust for the part of the keyboard that covers (i.e. intersects) our collection view;
+        // see https://developer.apple.com/videos/play/wwdc2017/242/ for more details
+        let intersection = messagesCollectionView.frame.intersection(keyboardFrame)
+        
+        if intersection.isNull || intersection.maxY < messagesCollectionView.frame.maxY {
+            // The keyboard is hidden, is a hardware one, or is undocked and does not cover the bottom of the collection view.
+            // Note: intersection.maxY may be less than messagesCollectionView.frame.maxY when dealing with undocked keyboards.
+            return max(0, additionalBottomInset - automaticallyAddedBottomInset)
+        } else {
+            return max(0, intersection.height + additionalBottomInset - automaticallyAddedBottomInset)
+        }
+    }
+    
+    internal func requiredInitialScrollViewBottomInset() -> CGFloat {
+        guard let inputAccessoryView = inputAccessoryView else { return 0 }
+        return max(0, inputAccessoryView.frame.height + additionalBottomInset - automaticallyAddedBottomInset)
+    }
+    
+    /// iOS 11's UIScrollView can automatically add safe area insets to its contentInset,
+    /// which needs to be accounted for when setting the contentInset based on screen coordinates.
+    ///
+    /// - Returns: The distance automatically added to contentInset.bottom, if any.
+    private var automaticallyAddedBottomInset: CGFloat {
+        if #available(iOS 11.0, *) {
+            return messagesCollectionView.adjustedContentInset.bottom - messagesCollectionView.contentInset.bottom
+        } else {
+            return 0
+        }
+    }
+//    override func isSectionReservedForTypingIndicator(_ section: Int) -> Bool {
+//
+//    }
+//    override func setTypingIndicatorViewHidden(_ isHidden: Bool, animated: Bool, whilePerforming updates: (() -> Void)? = nil, completion: ((Bool) -> Void)? = nil) {
+//
+//    }
+//    override var isTypingIndicatorHidden: Bool {
+//        messagesCollectionView.isTypingIndicatorHidden
+//    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+}
+
+
+
+
+extension MessagesController {
+
 }

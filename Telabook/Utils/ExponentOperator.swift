@@ -16,14 +16,13 @@ precedencegroup Exponentiative {
 
 infix operator ~^ : Exponentiative
 
-public func ~^ <N: BinaryInteger>(base: N, power: N) -> N {
-    return N.self( pow(Double(base), Double(power)) )
+public func ~^ <T: BinaryInteger>(base: T, power: T) -> T {
+    return T.self( pow(Double(base), Double(power)) )
 }
 
-public func ~^ <N: BinaryFloatingPoint>(base: N, power: N) -> N {
-    return N.self ( pow(Double(base), Double(power)) )
-}
-
+public func ~^ <T: BinaryFloatingPoint>(base: T, power: T) -> T {
+    return T.self ( pow(Double(base), Double(power)) )
+}    
 
 
 
@@ -36,10 +35,10 @@ precedencegroup ExponentiativeAssignment {
 
 infix operator ~^= : ExponentiativeAssignment
 
-public func ~^= <N: BinaryInteger>(lhs: inout N, rhs: N) {
+public func ~^= <T: BinaryInteger>(lhs: inout T, rhs: T) {
     lhs = lhs ~^ rhs
 }
 
-public func ~^= <N: BinaryFloatingPoint>(lhs: inout N, rhs: N) {
+public func ~^= <T: BinaryFloatingPoint>(lhs: inout T, rhs: T) {
     lhs = lhs ~^ rhs
 }

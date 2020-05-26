@@ -32,7 +32,7 @@ struct FirebaseMessage {
     
     
     
-    init?(snapshot: DataSnapshot) {
+    init?(snapshot: DataSnapshot, conversationID:Int) {
 //        print(snapshot)
         guard let value = snapshot.value as? [String: AnyObject] else {
             print("Error: Failed to unwrap snapshot value")
@@ -80,7 +80,8 @@ struct FirebaseMessage {
         
         self.accountSID = value["account_sid"] as? String
         self.messageSID = value["message_sid"] as? String
-        self.conversationID = mapToInt(value: value["conversationId"])
+        let conversationId = mapToInt(value: value["conversationId"])
+        self.conversationID = conversationId != 0 ? conversationId : conversationID
         self.deleted = mapToBool(value: value["deleted"])
         self.hasError = mapToBool(value: value["error"])
         self.messageText = value["message"] as? String
@@ -91,7 +92,8 @@ struct FirebaseMessage {
         self.sentByApiTimestamp = mapToDate(value: value["sent_by_api"])
         self.sentByAppTimestamp = mapToDate(value: value["sent_by_app"])
         self.sentByProviderTimestamp = mapToDate(value: value["sent_by_provider"])
-        self.timestamp = mapToDate(value: value["date"])
+        guard let sentDate = mapToDate(value: value["date"]) else { return nil }
+        self.timestamp = sentDate
         self.updatedAt = mapToDate(value: value["updated_at"])
         self.senderIsWorker = mapToBool(value: value["sender_is_worker"])
         self.tags = value["tags"] as? String

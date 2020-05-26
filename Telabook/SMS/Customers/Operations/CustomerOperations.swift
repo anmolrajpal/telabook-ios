@@ -101,7 +101,6 @@ class FetchSavedCustomersEntries_Operation: Operation {
     init(context: NSManagedObjectContext, agent:Agent) {
         self.context = context
         self.agent = agent
-//        self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
     }
     
     override func main() {

@@ -232,10 +232,10 @@ public enum MessageCategory {
     init(stringValue type:String) {
         switch type {
             case "TEXT_ONLY", "TEXT", "sms", "SMS", "text", "Text": self = .text
-            case "MULTIMEDIA", "mms", "MMS", "Multimedia": self = .multimedia
-            case "SCHEDULED_MESSAGE": self = .scheduled
-            case "NOTE", "SYSTEM_MESSAGE": self = .system
-            default: fatalError("Unhandled case for Message Type value: \(type)")
+            case "MULTIMEDIA", "mms", "MMS", "Multimedia", "multimedia": self = .multimedia
+            case "SCHEDULED_MESSAGE", "scheduled": self = .scheduled
+            case "NOTE", "SYSTEM_MESSAGE", "system": self = .system
+            default: fatalError("Unhandled case for Message Type value: <\(type)>")
         }
     }
     
