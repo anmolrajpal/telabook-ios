@@ -13,7 +13,7 @@ import MessageKit
 extension MessagesController: MessagesLayoutDelegate {
     
     
-    
+
     func footerViewSize(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGSize {
         return CGSize.zero
     }
@@ -32,6 +32,12 @@ extension MessagesController: MessagesLayoutDelegate {
     func messageBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
         return 20
     }
+    
+    func headerViewSize(for section: Int, in messagesCollectionView: MessagesCollectionView) -> CGSize {
+        section == 3 ? .init(width: messagesCollectionView.frame.width, height: 26) : .zero
+    }
+    
+    
     
     /*
     func cellTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {

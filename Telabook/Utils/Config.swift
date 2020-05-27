@@ -12,13 +12,13 @@ import FirebaseStorage
 struct Config {
     internal enum Environment { case Development, Staging, Production }
     
-    static let environment:Environment = .Development
+    static let environment:Environment = .Staging
     
     struct APIConfig {
         static var baseURL:String {
             switch Config.environment {
                 case .Development: return "https://fornax.aimservices.tech"
-                case .Staging: return "https://fornax.aimservices.tech"
+                case .Staging: return "https://api.noandosaldo.com"
                 case .Production: return "https://fornax.aimservices.tech"
             }
         }
@@ -32,7 +32,7 @@ struct Config {
         static var apiHost:String {
             switch Config.environment {
                 case .Development: return "fornax.aimservices.tech"
-                case .Staging: return "fornax.aimservices.tech"
+                case .Staging: return "api.noandosaldo.com"
                 case .Production: return "fornax.aimservices.tech"
             }
         }

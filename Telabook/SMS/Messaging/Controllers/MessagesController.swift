@@ -10,6 +10,7 @@ import UIKit
 import CoreData
 import Firebase
 import MessageKit
+import AVFoundation
 
 class MessagesController: MessagesViewController {
     
@@ -41,8 +42,10 @@ class MessagesController: MessagesViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
+    deinit {
+        synthesizer.stopSpeaking(at: .immediate)
+    }
+    let synthesizer = AVSpeechSynthesizer()
     
     internal var storageUploadTask:StorageUploadTask!
     internal var fetchedResultsController: NSFetchedResultsController<UserMessage>!
@@ -275,11 +278,7 @@ class MessagesController: MessagesViewController {
     ///
     /// - Returns: The distance automatically added to contentInset.bottom, if any.
     private var automaticallyAddedBottomInset: CGFloat {
-        if #available(iOS 11.0, *) {
-            return messagesCollectionView.adjustedContentInset.bottom - messagesCollectionView.contentInset.bottom
-        } else {
-            return 0
-        }
+        return messagesCollectionView.adjustedContentInset.bottom - messagesCollectionView.contentInset.bottom
     }
 //    override func isSectionReservedForTypingIndicator(_ section: Int) -> Bool {
 //

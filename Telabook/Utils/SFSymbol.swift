@@ -19,7 +19,16 @@ public enum SFSymbol { case
     sendMessage,
     arrowUpRightSquare,
     pin,
-    cancel
+    cancel,
+    info,
+    copy,
+    delete,
+    forward,
+    reply,
+    speak,
+    tag,
+    checkmark,
+    messageDeleted
     
     private var imageName:String {
         switch self {
@@ -33,6 +42,15 @@ public enum SFSymbol { case
             case .arrowUpRightSquare: return "arrow.up.right.square"
             case .pin: return "pin.fill"
             case .cancel: return "multiply.circle.fill"
+            case .info: return "info.circle"
+            case .copy: return "doc.on.doc"
+            case .delete: return "trash"
+            case .forward: return "arrowshape.turn.up.right"
+            case .reply: return "arrowshape.turn.up.left"
+            case .speak: return "captions.bubble"
+            case .tag: return "tag"
+            case .checkmark: return "checkmark"
+            case .messageDeleted: return "nosign"
         }
     }
     

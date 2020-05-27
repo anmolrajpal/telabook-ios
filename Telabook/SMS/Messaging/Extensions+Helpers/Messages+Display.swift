@@ -15,17 +15,25 @@ extension MessagesController: MessagesDisplayDelegate {
         switch message.kind {
         case .photo:
             return UIColor.telaGray7.withAlphaComponent(0.4)
+        case .custom:
+            return .clear
         default:
             return isFromCurrentSender(message: message) ? .telaBlue : .telaGray7
         }
         
     }
     func textColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
+//        guard let message = message as? UserMessage else { return }
+//        if message.isMessageDeleted { return .black }
         return .telaWhite
     }
-    func shouldDisplayHeader(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> Bool {
-        return false
-    }
+    
+//    func shouldDisplayHeader(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> Bool {
+//        return indexPath.section == 3
+//    }
+    
+    
+    
     func detectorAttributes(for detector: DetectorType, and message: MessageType, at indexPath: IndexPath) -> [NSAttributedString.Key: Any] {
         switch detector {
         case .hashtag, .mention:
@@ -43,6 +51,7 @@ extension MessagesController: MessagesDisplayDelegate {
     }
 
     func messageStyle(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageStyle {
+        
         let corner: MessageStyle.TailCorner = isFromCurrentSender(message: message) ? .bottomRight : .bottomLeft
         return .bubbleTail(corner, .curved)
         

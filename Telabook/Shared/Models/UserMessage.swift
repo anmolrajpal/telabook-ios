@@ -68,7 +68,24 @@ extension UserMessage: MessageType {
     private func messageKind() -> MessageKind {
         switch messageType {
             case .text:
-                return .text(self.textMessage!)
+                if self.isMessageDeleted {
+                    let message:String = isSentByWorker ? " You deleted this message." : " This Message was deleted."
+                    let attachment = NSTextAttachment()
+                    let image = SFSymbol.messageDeleted.image(withSymbolConfiguration: .init(textStyle: .footnote)).withTintColor(UIColor.telaGray5)
+                    attachment.image = image
+                    attachment.bounds = CGRect(x: 0, y: -2.0, width: attachment.image!.size.width, height: attachment.image!.size.height)
+                    let icon = NSAttributedString(attachment: attachment)
+                    let messageString = NSMutableAttributedString(string: message, attributes: [
+                        .font: UIFont.italicSystemFont(ofSize: 13),
+                        .foregroundColor: UIColor.telaGray5
+                    ])
+                    let attributedText = NSMutableAttributedString()
+                    attributedText.append(icon)
+                    attributedText.append(messageString)
+                    return .attributedText(attributedText)
+                } else {
+                    return .text(self.textMessage ?? "")
+            }
             case .multimedia:
                 if let url = self.imageURL {
                     if let imageText = self.textMessage {
@@ -85,10 +102,22 @@ extension UserMessage: MessageType {
                 ]))
             
             case .system:
-                return .attributedText(NSAttributedString(string: self.textMessage ?? "", attributes: [
-                    .font : UIFont(name: CustomFonts.gothamBook.rawValue, size: 15)!,
-                    .foregroundColor: UIColor.telaGray6
-                ]))
+                let messageAttributedString = NSAttributedString(string: self.textMessage?.replacingOccurrences(of: "_", with: " ").capitalized ?? "", attributes: [
+                    .font : UIFont(name: CustomFonts.gothamMedium.rawValue, size: 14)!,
+                    .foregroundColor: UIColor.telaYellow
+                ])
+                let dateAttributedString = NSAttributedString(string: "\nTelabook 🤖 @ \(Date.getStringFromDate(date: self.date!, dateFormat: .ddMMyyyy·hmma))", attributes: [
+                    .font : UIFont(name: CustomFonts.gothamBook.rawValue, size: 12)!,
+                    .foregroundColor: UIColor.telaYellow
+                ])
+                let paragraphStyle = NSMutableParagraphStyle()
+                paragraphStyle.lineSpacing = 4
+                paragraphStyle.alignment = .center
+                let attributedText = NSMutableAttributedString()
+                attributedText.append(messageAttributedString)
+                attributedText.append(dateAttributedString)
+                attributedText.addAttribute(.paragraphStyle, value:paragraphStyle, range:NSMakeRange(0, attributedText.length))
+                return .custom(attributedText)
         }
     }
 }
