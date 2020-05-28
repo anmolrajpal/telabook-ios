@@ -12,13 +12,25 @@ import FirebaseStorage
 
 extension MessagesController {
     internal func commonInit() {
-        
+        setupViews()
         configureMessageCollectionView()
         configureMessageInputBar()
     }
-    
-    
-    
+    private func setupViews() {
+        messagesCollectionView.addSubview(spinner)
+        spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).activate()
+        spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor).activate()
+    }
+    internal func startSpinner() {
+        DispatchQueue.main.async {
+            self.spinner.startAnimating()
+        }
+    }
+    internal func stopSpinner() {
+        DispatchQueue.main.async {
+            self.spinner.stopAnimating()
+        }
+    }
     @objc internal func cameraButtonDidTap() {
         messageInputBar.inputTextView.resignFirstResponder()
         promptPhotosPickerMenu()

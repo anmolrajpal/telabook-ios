@@ -100,10 +100,7 @@ extension MessagesController: MessagesDisplayDelegate {
     
     func configureMediaMessageImageView(_ imageView: UIImageView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
         guard let msg = message as? UserMessage,
-            let url = msg.imageURL else {
-                print("Optional Message Item")
-                return
-        }
+            let url = msg.imageURL else { return }
         if let text = msg.textMessage,
             !text.isBlank {
             #if !RELEASE

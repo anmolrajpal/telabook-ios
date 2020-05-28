@@ -1118,3 +1118,57 @@ extension String {
 extension Optional where Wrapped == String {
   var isBlank: Bool { self?.isBlank ?? true }
 }
+
+
+
+extension UIImage {
+    var averageColor: UIColor? {
+        guard let inputImage = CIImage(image: self) else { return nil }
+        let extentVector = CIVector(x: inputImage.extent.origin.x, y: inputImage.extent.origin.y, z: inputImage.extent.size.width, w: inputImage.extent.size.height)
+
+        guard let filter = CIFilter(name: "CIAreaAverage", parameters: [kCIInputImageKey: inputImage, kCIInputExtentKey: extentVector]) else { return nil }
+        guard let outputImage = filter.outputImage else { return nil }
+
+        var bitmap = [UInt8](repeating: 0, count: 4)
+        let context = CIContext(options: [.workingColorSpace: kCFNull as Any])
+        context.render(outputImage, toBitmap: &bitmap, rowBytes: 4, bounds: CGRect(x: 0, y: 0, width: 1, height: 1), format: .RGBA8, colorSpace: nil)
+
+        return UIColor(red: CGFloat(bitmap[0]) / 255, green: CGFloat(bitmap[1]) / 255, blue: CGFloat(bitmap[2]) / 255, alpha: CGFloat(bitmap[3]) / 255)
+    }
+}
+extension UIImage {
+    func getPixelColor(pos: CGPoint) -> UIColor? {
+        
+        guard let pixelData = self.cgImage?.dataProvider?.data else { return nil }
+        let data: UnsafePointer<UInt8> = CFDataGetBytePtr(pixelData)
+        
+        let pixelInfo: Int = ((Int(self.size.width) * Int(pos.y)) + Int(pos.x)) * 4
+        
+        let r = CGFloat(data[pixelInfo]) / CGFloat(255.0)
+        let g = CGFloat(data[pixelInfo+1]) / CGFloat(255.0)
+        let b = CGFloat(data[pixelInfo+2]) / CGFloat(255.0)
+        let a = CGFloat(data[pixelInfo+3]) / CGFloat(255.0)
+        
+        return UIColor(red: r, green: g, blue: b, alpha: a)
+    }
+    /*
+    What happens is this method will pick the pixel colour from the image's CGImage. So make sure you are picking from the right image. e.g. If you UIImage is 200x200, but the original image file from Imgaes.xcassets or wherever it came from, is 400x400, and you are picking point (100,100), you are actually picking the point on the upper left section of the image, instead of middle.
+
+    Two Solutions:
+    1, Use image from Imgaes.xcassets, and only put one @1x image in 1x field. Leave the @2x, @3x blank. Make sure you know the image size, and pick a point that is within the range.
+
+    //Make sure only 1x image is set
+    let image : UIImage = UIImage(named:"imageName")
+    //Make sure point is within the image
+    let color : UIColor = image.getPixelColor(CGPointMake(xValue, yValue))
+    2, Scale you CGPoint up/down the proportion to match the UIImage. e.g. let point = CGPoint(100,100) in the example above,
+
+    let xCoordinate : Float = Float(point.x) * (400.0/200.0)
+    let yCoordinate : Float = Float(point.y) * (400.0/200.0)
+    let newCoordinate : CGPoint = CGPointMake(CGFloat(xCoordinate), CGFloat(yCoordinate))
+    let image : UIImage = largeImage
+    let color : UIColor = image.getPixelColor(CGPointMake(xValue, yValue))
+    I've only tested the first method, and I am using it to get a colour off a colour palette. Both should work. Happy coding :)
+
+    */
+ }

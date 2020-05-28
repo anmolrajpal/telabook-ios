@@ -8,7 +8,7 @@
 
 import UIKit
 import CoreData
-
+import os
 extension MessagesController {
     internal func setupFetchedResultsController() {
         let fetchRequest:NSFetchRequest = UserMessage.fetchRequest()
@@ -28,7 +28,10 @@ extension MessagesController {
         do {
             try fetchedResultsController.performFetch()
         } catch {
+            #if !RELEASE
             print("Error fetching results: \(error)")
+            #endif
+            os_log("Core Data Error: %@", log: .coredata, type: .error, error.localizedDescription)
         }
     }
 }
@@ -92,7 +95,11 @@ extension MessagesController: NSFetchedResultsControllerDelegate {
         messagesCollectionView.reloadData()
         if self.isLastSectionVisible() == true {
             self.messagesCollectionView.scrollToBottom(animated: true)
+        } else if let messageSentTime = self.fetchedResults?.first?.date,
+            self.screenEntryTime > messageSentTime {
+            self.messagesCollectionView.scrollToBottom(animated: true)
         }
+        if self.isFetchedResultsAvailable { self.stopSpinner() }
         /*
             messagesCollectionView.performBatchUpdates({
                 self.collectionViewOperations.forEach { $0.start() }

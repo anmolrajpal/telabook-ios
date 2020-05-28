@@ -149,7 +149,7 @@ extension SMSDetailViewController {
             selectedIndexPathForMenu = nil
         }
         
-        currentMenuController.setMenuVisible(false, animated: false)
+        //        currentMenuController.setMenuVisible(false, animated: false)
         
         guard let selectedCell = messagesCollectionView.cellForItem(at: selectedIndexPath) as? MessageContentCell else { return }
         let selectedCellMessageBubbleFrame = selectedCell.convert(selectedCell.messageContainerView.frame, to: view)
@@ -179,8 +179,8 @@ extension SMSDetailViewController {
         else if selectedCellMessageBubblePlusMenuFrame.intersects(topNavigationBarFrame) {
             currentMenuController.arrowDirection = .up
         }
-        currentMenuController.setTargetRect(targetRect, in: view)
-        currentMenuController.setMenuVisible(true, animated: true)
+        currentMenuController.showMenu(from: view, rect: targetRect)
+        currentMenuController.hideMenu()
     }
    
     // MARK: - Helpers

@@ -10,7 +10,7 @@ import UIKit
 import MessageKit
 import InputBarAccessoryView
 import AVFoundation
-
+import os
 extension MessagesController {
     internal func configureMessageCollectionView() {
         messagesCollectionView.register(BotMessageCell.self)
@@ -136,6 +136,7 @@ extension MessagesController {
         guard let index = messages.firstIndex(where: { $0.firebaseKey == identifier }) else { return nil }
         let section = totalMessages - 1 - index
         
+        //MARK: Execution Time Calculation
         /*
         let indexTime = CFAbsoluteTimeGetCurrent()
         let totalMessages = messages.count
@@ -157,7 +158,11 @@ extension MessagesController {
         
         let indexPath = IndexPath(item: 0, section: section)
         guard let cell = messagesCollectionView.cellForItem(at: indexPath) as? MessageContentCell else {
-            print("Fuxk")
+            let errorMessage = "Unresolved Error While making Target View for Context Menu: Unable to cast collectionViewCell as MessageContentCell"
+            #if !RELEASE
+            print(errorMessage)
+            #endif
+            os_log("%@", log: .ui, type: .error, errorMessage)
             return nil
         }
 

@@ -505,7 +505,7 @@ class SMSDetailViewController: UIViewController {
     internal var messageCollectionViewBottomInset: CGFloat = 0 {
         didSet {
             messagesCollectionView.contentInset.bottom = messageCollectionViewBottomInset
-            messagesCollectionView.scrollIndicatorInsets.bottom = messageCollectionViewBottomInset
+            messagesCollectionView.verticalScrollIndicatorInsets.bottom = messageCollectionViewBottomInset
         }
     }
     // MARK: - Methods [Private]

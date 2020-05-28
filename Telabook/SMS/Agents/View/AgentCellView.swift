@@ -124,9 +124,9 @@ class AgentCellView: UIView {
         containerView.anchor(top: topAnchor, left: profileImageView.rightAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 10)
         
         
-        agentNameLabel.anchor(top: nil, left: containerView.leftAnchor, bottom: containerView.centerYAnchor, right: containerView.rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 8, rightConstant: 10)
+        agentNameLabel.anchor(top: nil, left: containerView.leftAnchor, bottom: containerView.centerYAnchor, right: containerView.rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 10, rightConstant: 10)
         
-        agentDesignationLabel.anchor(top: containerView.centerYAnchor, left: agentNameLabel.leftAnchor, bottom: nil, right: agentNameLabel.rightAnchor, topConstant: 8, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
+        agentDesignationLabel.anchor(top: containerView.centerYAnchor, left: agentNameLabel.leftAnchor, bottom: nil, right: agentNameLabel.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
         
         stackView.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0).activate()
         stackView.centerYAnchor.constraint(equalTo: agentDesignationLabel.centerYAnchor).activate()

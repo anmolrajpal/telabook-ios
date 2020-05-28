@@ -178,9 +178,9 @@ extension MessageCollectionViewCell {
         // Get the collectionView
         if let collectionView = self.superview as? UICollectionView {
             // Get indexPath
-            if let indexPath = collectionView.indexPath(for: self) {
+            if let _ = collectionView.indexPath(for: self) {
                 // Trigger action
-                collectionView.delegate?.collectionView?(collectionView, performAction: #selector(MessageCollectionViewCell.followUp(_:)), forItemAt: indexPath, withSender: sender)
+//                collectionView.delegate?.collectionView?(collectionView, performAction: #selector(MessageCollectionViewCell.followUp(_:)), forItemAt: indexPath, withSender: sender)
             }
         }
     }

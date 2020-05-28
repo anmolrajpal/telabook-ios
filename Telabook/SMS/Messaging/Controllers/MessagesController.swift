@@ -11,13 +11,14 @@ import CoreData
 import Firebase
 import MessageKit
 import AVFoundation
+import os
 
 class MessagesController: MessagesViewController {
     
     
     
     
-    
+    let screenEntryTime = Date()
     var handle:UInt!
     let customer:Customer
     let node:Config.FirebaseConfig.Node
@@ -52,6 +53,21 @@ class MessagesController: MessagesViewController {
     internal var isFetchedResultsAvailable:Bool {
         return fetchedResultsController.sections?.first?.numberOfObjects == 0 ? false : true
     }
+    internal var fetchedResults:[UserMessage]? {
+        return fetchedResultsController.fetchedObjects
+    }
+    internal var fetchedResultsCount:Int {
+        return fetchedResultsController.fetchedObjects?.count ?? 0
+    }
+    lazy var spinner: UIActivityIndicatorView = {
+        let aiView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
+        aiView.backgroundColor = .clear
+        aiView.hidesWhenStopped = true
+        aiView.color = UIColor.telaGray7
+        aiView.clipsToBounds = true
+        aiView.translatesAutoresizingMaskIntoConstraints = false
+        return aiView
+    }()
     
     var collectionViewOperations: [BlockOperation] = []
     
@@ -119,9 +135,14 @@ class MessagesController: MessagesViewController {
     
     
     func loadMessages() {
+        if !isFetchedResultsAvailable {
+            self.startSpinner()
+        }
         handle = reference.queryLimited(toLast: 50).observe(.value, with: { snapshot in
             guard snapshot.exists() else {
+                #if !RELEASE
                 print("Snapshot Does not exists: returning")
+                #endif
                 return
             }
             var messages:[FirebaseMessage] = []
@@ -129,7 +150,10 @@ class MessagesController: MessagesViewController {
                 if let snapshot = child as? DataSnapshot {
                     print(snapshot)
                     guard let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) else {
-                        print("Unresolved Error: Failed to create message from Firebase Message")
+                        #if !RELEASE
+                        print("Invalid Data Error: Failed to create message from Firebase Message")
+                        #endif
+                        os_log("Invalid Data, Unable to create Message from Firebase Message due to invalid data. Hence not saving it in local db and the message will not be visible to user.", log: .firebase, type: .debug)
                         continue
                     }
                     //                    print(conversation)
@@ -140,7 +164,10 @@ class MessagesController: MessagesViewController {
             self.persistFirebaseMessagesInStore(entries: messages)
             //            print(snapshot.value as Any)
         }) { error in
+            #if !RELEASE
             print("Value Observer Event Error: \(error)")
+            #endif
+            os_log("Firebase Value Observer Event Error while observing Messages: %@", log: .firebase, type: .error, error.localizedDescription)
         }
     }
     

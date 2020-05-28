@@ -101,7 +101,7 @@ class MoreViewController: UIViewController {
         let role = AppData.getUserRole()
         switch role {
             case .Developer: return ["Profile Settings", "Companies", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "Application Information", "Log Out"]
-            case .Owner: return ["Profile Settings", "Companies", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "Application Information", "Log Out"]
+            case .Owner: return ["Profile Settings", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "Application Information", "Log Out"]
             case .Operator: return ["Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Archived SMSes", "Clear Cache", "Log Out"]
             case .Agent: return ["Profile Settings", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Clear Cache", "Log Out"]
         }
@@ -169,7 +169,7 @@ extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
         let role = AppData.getUserRole()
         
         switch role {
-            case .Developer, .Owner:
+            case .Developer:
                 switch indexPath.row {
                     case 0:
                         let vc = SettingsViewController()
@@ -197,6 +197,32 @@ extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
                         self.show(vc, sender: self)
                     default: alertLogout()
             }
+            case .Owner, .Operator, .Agent:
+                switch indexPath.row {
+                    case 0:
+                        let vc = SettingsViewController()
+                        self.show(vc, sender: self)
+                    case 2:
+                        let vc = ManageAgentsViewController()
+                        self.show(vc, sender: self)
+                    case 3:
+                        let vc = GalleryViewController()
+                        self.show(vc, sender: self)
+                    case 4:
+                        let vc = BlacklistViewController()
+                        self.show(vc, sender: self)
+                    case 5:
+                        let vc = ScheduleMessageViewController()
+                        self.show(vc, sender: self)
+                    case 6:
+                        let vc = ScheduleMessageViewController()
+                        self.show(vc, sender: self)
+                    case 7:
+                        let vc = AppInfoViewController()
+                        self.show(vc, sender: self)
+                    default: alertLogout()
+            }
+            /*
             case .Operator:
                 switch indexPath.row {
                         case 0:
@@ -234,6 +260,7 @@ extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
                         case 4: handleClearCache()
                         default: alertLogout()
                 }
+            */
         }
         tableView.deselectRow(at: indexPath, animated: true)
         

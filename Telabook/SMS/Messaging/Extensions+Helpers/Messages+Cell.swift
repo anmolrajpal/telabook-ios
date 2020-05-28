@@ -18,7 +18,7 @@ extension MessagesController: MessageCellDelegate {
         print("Message tapped")
         guard let cell  = cell as? MessageContentCell else { return }
         guard let indexPath = messagesCollectionView.indexPath(for: cell),
-            let message = messagesCollectionView.messagesDataSource?.messageForItem(at: indexPath, in: messagesCollectionView) else {
+            let _ = messagesCollectionView.messagesDataSource?.messageForItem(at: indexPath, in: messagesCollectionView) else {
                 print("Failed to identify message when audio cell receive tap gesture")
                 return
         }

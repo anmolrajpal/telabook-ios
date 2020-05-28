@@ -37,17 +37,17 @@ extension LoginViewController {
             
             let appUserRole:AppUserRole = AppUserRole.getUserRole(byRoleCode: roleId)
             
-            if appUserRole == .Owner {
-                #if DEBUG
-                print("Owner")
+            if appUserRole == .Developer {
+                #if !RELEASE
+                print("User is able to select company because the role is \(appUserRole)")
                 #endif
                 let vc = SelectCompanyViewController()
                 vc.isModalInPresentation = true
                 vc.delegate = self
                 self.present(vc, animated: true, completion: nil)
             } else {
-                #if DEBUG
-                print("Not an Owner")
+                #if !RELEASE
+                print("User Does not need to select company, proceeding with login with the user of role: \(appUserRole)")
                 #endif
                 DispatchQueue.main.async {
                     self.stopButtonSpinner()
