@@ -10,6 +10,7 @@ import UIKit
 
 extension LoginViewController {
     func signInWithCredentials(email:String, password:String) {
+        TapticEngine.generateFeedback(ofType: .Medium)
         APIService.shared.loginWithCredentials(email: email, password: password, params: nil) { (result: Result<UserInfoCodable?, APIService.APIError>) in
             switch result {
                 case let .success(data): self.handleLoginWithSuccess(userInfo: data)
@@ -49,6 +50,7 @@ extension LoginViewController {
                 #if !RELEASE
                 print("User Does not need to select company, proceeding with login with the user of role: \(appUserRole)")
                 #endif
+                TapticEngine.generateFeedback(ofType: .Success)
                 DispatchQueue.main.async {
                     self.stopButtonSpinner()
                     self.delegate?.didLoginIWithSuccess()
@@ -58,6 +60,7 @@ extension LoginViewController {
         }
     }
     func handleLoginFailure(error: APIService.APIError) {
+        TapticEngine.generateFeedback(ofType: .Error)
         DispatchQueue.main.async {
             self.stopButtonSpinner()
             UIAlertController.showTelaAlert(title: "Error", message: error.localizedDescription, controller: self)
@@ -155,8 +158,8 @@ extension LoginViewController {
         }
     }
     fileprivate func setAppPreferences(_ userId:Int, _ companyId:Int, _ workerId:Int, _ roleId:Int, _ userInfo: UserInfoCodable) {
-        let emailId = idTextField.text!, password = passwordTextField.text!
-        AppData.isRememberMeChecked = self.checkBox.isChecked
+        let emailId = subview.emailTextField.text!, password = subview.passwordTextField.text!
+        AppData.isRememberMeChecked = self.subview.checkBox.isChecked
         AppData.userId = userId
         AppData.email = emailId
         AppData.password = password
@@ -172,6 +175,7 @@ extension LoginViewController {
 extension LoginViewController: SelectCompanyDelegate {
     func didSelectCompany() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            TapticEngine.generateFeedback(ofType: .Success)
             self.stopButtonSpinner()
             self.delegate?.didLoginIWithSuccess()
             self.dismiss(animated: true, completion: nil)

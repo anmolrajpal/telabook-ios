@@ -103,25 +103,18 @@ class TabBarController: UITabBarController {
     private func handleSignOut() {
         self.showLoginController()
     }
-    func authenticate() {
-        if AppData.isLoggedIn {
-            setUpTabBarViewControllers()
-        } else {
-            print("Presented View Controller:")
-            print(self.presentedViewController as Any)
-            guard let _ = self.presentedViewController as? LoginViewController else {
-                print("Presenting Login View Controller")
-                let loginViewController = LoginViewController()                
-                loginViewController.delegate = self
-                loginViewController.isModalInPresentation = true
-                AppData.clearData()
-                AppData.isLoggedIn = false
-                
-                DispatchQueue.main.async {
-                    self.present(loginViewController, animated: false, completion: nil)
-                }
-                return
-            }
+    func authenticate(animated:Bool = false) {
+        guard !AppData.isLoggedIn else { setUpTabBarViewControllers(); return }
+        self.selectedViewController?.view.isHidden = true
+        self.viewControllers = nil
+        guard !(self.presentedViewController is LoginViewController) else { return }
+        let loginViewController = LoginViewController()
+        loginViewController.delegate = self
+        loginViewController.isModalInPresentation = true
+        AppData.clearData()
+        AppData.isLoggedIn = false
+        DispatchQueue.main.async {
+            self.present(loginViewController, animated: animated, completion: nil)
         }
     }
     private func setUpTabBarViewControllers() {
@@ -140,7 +133,9 @@ class TabBarController: UITabBarController {
         let agentsViewController = UINavigationController(rootViewController: AgentsViewController(fetchRequest: Agent.fetchRequest(), viewContext: PersistentContainer.shared.viewContext))
 //        let smsViewController = UINavigationController(rootViewController: SMSViewController())
 //        let settingsViewController = UINavigationController(rootViewController: SettingsViewController())
-        let moreViewController = UINavigationController(rootViewController: MoreViewController())
+        let moreVC = MoreViewController()
+        moreVC.delegate = self
+        let moreViewController = UINavigationController(rootViewController: moreVC)
 //        homeViewController.tabBarItem = Tabs.tab1.tabBarItem
         callsViewController.tabBarItem = Tabs.tab2.tabBarItem
 //        smsViewController.tabBarItem = Tabs.tab3.tabBarItem
@@ -198,7 +193,15 @@ extension TabBarController: UITabBarControllerDelegate {
 
 extension TabBarController: LoginDelegate {
     func didLoginIWithSuccess() {
-        print("Login with success")
         self.setUpTabBarViewControllers()
     }
+}
+extension TabBarController: LogoutDelegate {
+    func presentLogin() {
+        AppData.isLoggedIn = false
+        authenticate(animated: true)
+    }
+}
+protocol LogoutDelegate {
+    func presentLogin()
 }

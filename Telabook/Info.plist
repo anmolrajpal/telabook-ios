@@ -6,12 +6,6 @@
 	<string>$(API_HOST)</string>
 	<key>BASE_URL</key>
 	<string>$(BASE_URL)</string>
-	<key>URL_SCHEME</key>
-	<string>$(URL_SCHEME)</string>
-	<key>TIMEOUT_INTERVAL</key>
-	<string>$(TIMEOUT_INTERVAL)</string>
-	<key>SUBDOMAIN</key>
-	<string>$(SUBDOMAIN)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -36,6 +30,10 @@
 	<string>Used to send photos from the camera</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Used to send photos from the camera roll</string>
+	<key>SUBDOMAIN</key>
+	<string>$(SUBDOMAIN)</string>
+	<key>TIMEOUT_INTERVAL</key>
+	<string>$(TIMEOUT_INTERVAL)</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Gotham-Medium.otf</string>
@@ -84,5 +82,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>URL_SCHEME</key>
+	<string>$(URL_SCHEME)</string>
 </dict>
 </plist>

@@ -9,7 +9,7 @@
 import UIKit
 
 class MoreViewController: UIViewController {
-
+    var delegate:LogoutDelegate?
     override func loadView() {
         super.loadView()
         setupViews()
@@ -60,6 +60,7 @@ class MoreViewController: UIViewController {
         alertVC.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
         self.present(alertVC, animated: true, completion: nil)
     }
+    
     private func signOut() {
         let loginViewController = LoginViewController()
         loginViewController.isModalInPresentation = true
@@ -82,7 +83,14 @@ class MoreViewController: UIViewController {
                 UIAlertController.showTelaAlert(title: "Signout Failed", message: error?.localizedDescription ?? "Try again", controller: self)
                 return
             }
-            self.signOut()
+//            self.signOut()
+            if AppData.isRememberMeChecked {
+                DispatchQueue.main.async {
+                    self.delegate?.presentLogin()
+                }
+            } else {
+                self.dumpCoreData()
+            }
         }
     }
     fileprivate func setupViews() {
@@ -102,8 +110,8 @@ class MoreViewController: UIViewController {
         switch role {
             case .Developer: return ["Profile Settings", "Companies", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "Application Information", "Log Out"]
             case .Owner: return ["Profile Settings", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "Application Information", "Log Out"]
-            case .Operator: return ["Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Archived SMSes", "Clear Cache", "Log Out"]
-            case .Agent: return ["Profile Settings", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Clear Cache", "Log Out"]
+            case .Operator: return ["Profile Settings", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "Application Information", "Log Out"]
+            case .Agent: return ["Profile Settings", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "Application Information", "Log Out"]
         }
 //        if role != .Agent {
 //            return ["Manage Agents", "Gallery", "Blocked Users", "Schedule Message", "Archived SMSes", "Clear Cache"]
@@ -202,22 +210,22 @@ extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
                     case 0:
                         let vc = SettingsViewController()
                         self.show(vc, sender: self)
-                    case 2:
+                    case 1:
                         let vc = ManageAgentsViewController()
                         self.show(vc, sender: self)
-                    case 3:
+                    case 2:
                         let vc = GalleryViewController()
                         self.show(vc, sender: self)
-                    case 4:
+                    case 3:
                         let vc = BlacklistViewController()
+                        self.show(vc, sender: self)
+                    case 4:
+                        let vc = ScheduleMessageViewController()
                         self.show(vc, sender: self)
                     case 5:
                         let vc = ScheduleMessageViewController()
                         self.show(vc, sender: self)
                     case 6:
-                        let vc = ScheduleMessageViewController()
-                        self.show(vc, sender: self)
-                    case 7:
                         let vc = AppInfoViewController()
                         self.show(vc, sender: self)
                     default: alertLogout()

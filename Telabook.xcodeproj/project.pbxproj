@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		07EE2475CAADE7AD32CD00F9 /* Pods_Telabook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A24D2E2A3583492FDB7723EF /* Pods_Telabook.framework */; };
-		6F010CAE246F81B600C20DC6 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = 6F010CAD246F81B600C20DC6 /* SwiftPackageProductDependency */; };
+		6F010CAE246F81B600C20DC6 /* MenuController in Frameworks */ = {isa = PBXBuildFile; productRef = 6F010CAD246F81B600C20DC6 /* MenuController */; };
 		6F02B2D92461C03F00FFB34E /* AutoResponseCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F02B2D82461C03F00FFB34E /* AutoResponseCodable.swift */; };
 		6F02B2DB2461C47300FFB34E /* AutoResponseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F02B2DA2461C47300FFB34E /* AutoResponseView.swift */; };
 		6F02B2DD2461C6A000FFB34E /* AutoResponseHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F02B2DC2461C6A000FFB34E /* AutoResponseHelpers.swift */; };
@@ -72,6 +72,11 @@
 		6F37E24A2460A8E7003E9126 /* QuickResponsesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F37E2492460A8E7003E9126 /* QuickResponsesView.swift */; };
 		6F37E24F2460ABFE003E9126 /* QuickResponseOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F37E24E2460ABFE003E9126 /* QuickResponseOperations.swift */; };
 		6F37E2512460AE29003E9126 /* QuickResponses+FetchedResultsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F37E2502460AE29003E9126 /* QuickResponses+FetchedResultsHelpers.swift */; };
+		6F395C90248015E90023255F /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F395C8F248015E90023255F /* Constants.swift */; };
+		6F395C9324802E100023255F /* AuthenticationOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F395C9224802E100023255F /* AuthenticationOperations.swift */; };
+		6F395C95248033880023255F /* MoreServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F395C94248033880023255F /* MoreServiceProvider.swift */; };
+		6F395C9724804B160023255F /* Login+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F395C9624804B160023255F /* Login+Helpers.swift */; };
+		6F395C9924804B1F0023255F /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F395C9824804B1F0023255F /* LoginView.swift */; };
 		6F41013722DDF8950038AA76 /* CallGroupsAPIProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F41013622DDF8950038AA76 /* CallGroupsAPIProtocol.swift */; };
 		6F41013922DDF8A30038AA76 /* CallGroupsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F41013822DDF8A30038AA76 /* CallGroupsAPI.swift */; };
 		6F41013B22DDF8B50038AA76 /* CallGroupsCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F41013A22DDF8B50038AA76 /* CallGroupsCodable.swift */; };
@@ -311,6 +316,11 @@
 		6F37E2492460A8E7003E9126 /* QuickResponsesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponsesView.swift; sourceTree = "<group>"; };
 		6F37E24E2460ABFE003E9126 /* QuickResponseOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponseOperations.swift; sourceTree = "<group>"; };
 		6F37E2502460AE29003E9126 /* QuickResponses+FetchedResultsHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QuickResponses+FetchedResultsHelpers.swift"; sourceTree = "<group>"; };
+		6F395C8F248015E90023255F /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		6F395C9224802E100023255F /* AuthenticationOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationOperations.swift; sourceTree = "<group>"; };
+		6F395C94248033880023255F /* MoreServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreServiceProvider.swift; sourceTree = "<group>"; };
+		6F395C9624804B160023255F /* Login+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Login+Helpers.swift"; sourceTree = "<group>"; };
+		6F395C9824804B1F0023255F /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		6F41013622DDF8950038AA76 /* CallGroupsAPIProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallGroupsAPIProtocol.swift; sourceTree = "<group>"; };
 		6F41013822DDF8A30038AA76 /* CallGroupsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallGroupsAPI.swift; sourceTree = "<group>"; };
 		6F41013A22DDF8B50038AA76 /* CallGroupsCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallGroupsCodable.swift; sourceTree = "<group>"; };
@@ -503,7 +513,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				07EE2475CAADE7AD32CD00F9 /* Pods_Telabook.framework in Frameworks */,
-				6F010CAE246F81B600C20DC6 /* BuildFile in Frameworks */,
+				6F010CAE246F81B600C20DC6 /* MenuController in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -927,6 +937,14 @@
 			path = Operations;
 			sourceTree = "<group>";
 		};
+		6F395C9124802DFB0023255F /* Operations */ = {
+			isa = PBXGroup;
+			children = (
+				6F395C9224802E100023255F /* AuthenticationOperations.swift */,
+			);
+			path = Operations;
+			sourceTree = "<group>";
+		};
 		6F41012F22DDF7E00038AA76 /* Call Groups */ = {
 			isa = PBXGroup;
 			children = (
@@ -1214,6 +1232,7 @@
 		6F987A3F2454AAB700C6046E /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
+				6F395C9124802DFB0023255F /* Operations */,
 				6F987A402454AAC900C6046E /* API */,
 				6F987A422454AAD900C6046E /* Model */,
 				6F987A412454AAD000C6046E /* View */,
@@ -1233,6 +1252,7 @@
 		6F987A412454AAD000C6046E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				6F395C9824804B1F0023255F /* LoginView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1256,6 +1276,7 @@
 			isa = PBXGroup;
 			children = (
 				6F987A452454AB5C00C6046E /* LoginServiceProvider.swift */,
+				6F395C9624804B160023255F /* Login+Helpers.swift */,
 			);
 			path = "Extensions+Helpers";
 			sourceTree = "<group>";
@@ -1492,6 +1513,7 @@
 			isa = PBXGroup;
 			children = (
 				6FB11B0C229BFA430098D050 /* MoreViewController.swift */,
+				6F395C94248033880023255F /* MoreServiceProvider.swift */,
 				6F987A6224587F6700C6046E /* App Info */,
 				6F987A5024570E8D00C6046E /* Select Company */,
 				6F23BCF822D723E30001A888 /* Schedule Message */,
@@ -1518,6 +1540,7 @@
 				6F02E9AB22DF45BF005708B0 /* AssertionModalController.swift */,
 				6FB11B24229E59F00098D050 /* Config.swift */,
 				6FEE9A2E247F118F00709E2D /* Configuration.swift */,
+				6F395C8F248015E90023255F /* Constants.swift */,
 				6F987A70245B159400C6046E /* LaunchCounter.swift */,
 				6F987A71245B159400C6046E /* TapticEngine.swift */,
 				6FB11B13229C3FCA0098D050 /* BadgeBarItem.swift */,
@@ -1811,7 +1834,7 @@
 			);
 			name = Telabook;
 			packageProductDependencies = (
-				6F010CAD246F81B600C20DC6 /* SwiftPackageProductDependency */,
+				6F010CAD246F81B600C20DC6 /* MenuController */,
 			);
 			productName = Telabook;
 			productReference = 6FB11AE0229BDDBD0098D050 /* Telabook.app */;
@@ -1850,7 +1873,7 @@
 			);
 			mainGroup = 6FB11AD7229BDDBD0098D050;
 			packageReferences = (
-				6F010CAC246F81B600C20DC6 /* RemoteSwiftPackageReference */,
+				6F010CAC246F81B600C20DC6 /* XCRemoteSwiftPackageReference "MenuController" */,
 			);
 			productRefGroup = 6FB11AE1229BDDBD0098D050 /* Products */;
 			projectDirPath = "";
@@ -2016,6 +2039,8 @@
 				6FC6022E2464464D00C1BF6D /* AgentsView.swift in Sources */,
 				6FC823132475AF4B002421F0 /* BlacklistCellView.swift in Sources */,
 				6FEE9A03247C841B00709E2D /* ExponentOperator.swift in Sources */,
+				6F395C9324802E100023255F /* AuthenticationOperations.swift in Sources */,
+				6F395C90248015E90023255F /* Constants.swift in Sources */,
 				6F0653472464881100F857C1 /* CustomerCell.swift in Sources */,
 				6F098BBB22BE9A4100AF19AA /* BlockedUsersVCTableViewExtensions.swift in Sources */,
 				6FBDEC7C22B3F1DA00A8511E /* SMSDetailVC+CollectionView.swift in Sources */,
@@ -2099,6 +2124,7 @@
 				6FB11B07229BFA240098D050 /* CallsViewController.swift in Sources */,
 				6FC823072475ADFA002421F0 /* BlacklistView.swift in Sources */,
 				6F41013722DDF8950038AA76 /* CallGroupsAPIProtocol.swift in Sources */,
+				6F395C9724804B160023255F /* Login+Helpers.swift in Sources */,
 				6F23BD0922D9F28A0001A888 /* ScheduleMessageVCTableViewExtensions.swift in Sources */,
 				6FC602382464482900C1BF6D /* AgentCellView.swift in Sources */,
 				6F69BE8A22D4786300F8903F /* ManageAgentsTableViewExtensions.swift in Sources */,
@@ -2126,9 +2152,11 @@
 				6FB11B12229C31DF0098D050 /* Enums.swift in Sources */,
 				6F987A5D2457313C00C6046E /* SelectCompanyServiceProvider.swift in Sources */,
 				6F23BD0B22D9F33A0001A888 /* ScheduleMessageAPIProtocol.swift in Sources */,
+				6F395C95248033880023255F /* MoreServiceProvider.swift in Sources */,
 				6F05628122E08EF500424BF5 /* ChatVCHelpers.swift in Sources */,
 				6FEE9A01247BF69C00709E2D /* FirebaseMessage.swift in Sources */,
 				6F58C33722D618B30091C785 /* AutoResponseAPI.swift in Sources */,
+				6F395C9924804B1F0023255F /* LoginView.swift in Sources */,
 				6F21378224743529002AB150 /* MessagesController.swift in Sources */,
 				6F9453CB22DC3CBB00047C7F /* ChangePasswordDataProvider.swift in Sources */,
 				6F1BD2EA22C4AD250053D0CC /* FollowUpsIndexCodable.swift in Sources */,
@@ -2240,7 +2268,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 18;
+				CURRENT_PROJECT_VERSION = 19;
 				DEVELOPMENT_TEAM = 7QD3V9UN4D;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2382,7 +2410,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 18;
+				CURRENT_PROJECT_VERSION = 19;
 				DEVELOPMENT_TEAM = 7QD3V9UN4D;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2404,7 +2432,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 18;
+				CURRENT_PROJECT_VERSION = 19;
 				DEVELOPMENT_TEAM = 7QD3V9UN4D;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2483,7 +2511,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 18;
+				CURRENT_PROJECT_VERSION = 19;
 				DEVELOPMENT_TEAM = 7QD3V9UN4D;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2526,7 +2554,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		6F010CAC246F81B600C20DC6 /* RemoteSwiftPackageReference */ = {
+		6F010CAC246F81B600C20DC6 /* XCRemoteSwiftPackageReference "MenuController" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/anmolrajpal/MenuController.git";
 			requirement = {
@@ -2537,9 +2565,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		6F010CAD246F81B600C20DC6 /* SwiftPackageProductDependency */ = {
+		6F010CAD246F81B600C20DC6 /* MenuController */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6F010CAC246F81B600C20DC6 /* RemoteSwiftPackageReference */;
+			package = 6F010CAC246F81B600C20DC6 /* XCRemoteSwiftPackageReference "MenuController" */;
 			productName = MenuController;
 		};
 /* End XCSwiftPackageProductDependency section */
