@@ -31,9 +31,11 @@ extension MessagesController {
     
     internal func configureMessageInputBar() {
         messageInputBar.delegate = self
+        messageInputBar.shouldManageSendButtonEnabledState = false
         messageInputBar.inputTextView.textColor = .telaWhite
         messageInputBar.sendButton.setImage(#imageLiteral(resourceName: "autoresponse_icon"), for: .normal)
         messageInputBar.sendButton.title = nil
+        messageInputBar.sendButton.isEnabled = true
         messageInputBar.separatorLine.isHidden = true
         messageInputBar.backgroundView.backgroundColor = UIColor.telaGray1
         messageInputBar.contentView.backgroundColor = UIColor.telaGray1

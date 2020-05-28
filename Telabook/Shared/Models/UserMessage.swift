@@ -10,9 +10,43 @@ import Foundation
 import CoreData
 import MessageKit
 
+struct NewMessage:MessageType {
+    var sender: SenderType { messageSender }
+    var messageSender:MessageSender
+    var messageId: String
+    var sentDate: Date
+    var kind: MessageKind
+    
+    init(kind:MessageKind, messageId:String, sender:MessageSender, sentDate:Date) {
+        self.messageSender = sender
+        self.messageId = messageId
+        self.sentDate = sentDate
+        self.kind = kind
+    }
+    
+}
+
 extension UserMessage {
     
-    
+    convenience init(context: NSManagedObjectContext, newMessageEntryFromCurrentUser message:NewMessage, forConversationWithCustomer conversation:Customer) {
+        self.init(context: context)
+        self.firebaseKey = message.messageId
+        self.conversation = conversation
+        self.date = message.sentDate
+        self.isSentByWorker = message.messageSender == worker
+        
+        switch message.kind {
+            case .text(let text):
+                self.textMessage = text
+            case .photo(let image):
+                guard let image = image as? ImageItem else { return }
+                if let text = image.imageText, !text.isBlank {
+                    self.textMessage = text
+                }
+                self.imageURL = image.url
+            default: break
+        }
+    }
     convenience init(context: NSManagedObjectContext, messageEntryFromFirebase entry:FirebaseMessage, forConversationWithCustomer conversation:Customer) {
         self.init(context: context)
         self.accountSID = entry.accountSID
@@ -55,14 +89,19 @@ extension UserMessage: MessageType {
     
     public var kind: MessageKind { self.messageKind() }
     
-    
-    var messageSender: MessageSender {
-        let customerName = self.conversation?.addressBookName ?? ""
+    var worker:MessageSender {
         let workerName = self.conversation?.agent?.personName ?? ""
-        let customerID = String(self.conversation?.customerID ?? 0)
         let workerID = String(self.conversation?.agent?.workerID ?? 0)
-        let customer = MessageSender(senderId: customerID, displayName: customerName)
         let worker = MessageSender(senderId: workerID, displayName: workerName)
+        return worker
+    }
+    var customer:MessageSender {
+        let customerName = self.conversation?.addressBookName ?? ""
+        let customerID = String(self.conversation?.customerID ?? 0)
+        let customer = MessageSender(senderId: customerID, displayName: customerName)
+        return customer
+    }
+    var messageSender: MessageSender {
         return self.isSentByWorker ? worker : customer
     }
     private func messageKind() -> MessageKind {

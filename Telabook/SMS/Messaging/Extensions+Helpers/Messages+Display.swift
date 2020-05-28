@@ -117,6 +117,13 @@ extension MessagesController: MessagesDisplayDelegate {
             textView.sizeToFit()
             textView.isScrollEnabled = false
             textView.textContainerInset = UIEdgeInsets(top: 6, left: 7, bottom: 6, right: 7)
+            textView.clipsToBounds = false
+            textView.layer.shadowColor = UIColor.gray.cgColor
+            textView.layer.shadowRadius = 10
+            textView.layer.shadowOpacity = 1
+            textView.layer.shadowOffset = .zero
+            textView.layer.shadowPath = UIBezierPath(rect: textView.bounds).cgPath
+            textView.layer.masksToBounds = false
             imageView.addSubview(textView)
             textView.anchor(top: nil, left: imageView.leftAnchor, bottom: imageView.bottomAnchor, right: imageView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
         }
