@@ -47,7 +47,9 @@ struct FirebaseCustomer {
     
     init?(snapshot: DataSnapshot) {
 //        print(snapshot)
-        guard let value = snapshot.value as? [String: AnyObject] else {
+        guard let key = Int(snapshot.key),
+            key > 0,
+            let value = snapshot.value as? [String: AnyObject] else {
             print("Error: Failed to unwrap snapshot value")
             return nil
         }
@@ -74,7 +76,7 @@ struct FirebaseCustomer {
         let is_deleted = mapToInt(value: value["deleted"])
         let delivered_by_provider = mapToInt(value: value["delivered_by_provider"])
         let external_conversation_black_list = mapToInt(value: value["external_conversation_black_list"])
-        let external_conversation_id = mapToInt(value: value["external_conversation_id"]) != 0 ? mapToInt(value: value["external_conversation_id"]) : Int(snapshot.key)!
+        let external_conversation_id = mapToInt(value: value["external_conversation_id"]) != 0 ? mapToInt(value: value["external_conversation_id"]) : key
         let incoming = mapToInt(value: value["incoming"])
         let internal_address_book_id = mapToInt(value: value["internal_address_book_id"])
         let internal_address_book_name_active = mapToInt(value: value["internal_address_book_name_active"])
@@ -135,10 +137,14 @@ struct FirebaseCustomer {
     
     init?(snapshot: DataSnapshot, workerID:String) {
 //        print(snapshot)
-        guard let value = snapshot.value as? [String: AnyObject] else {
+        guard let key = Int(snapshot.key),
+            key > 0,
+            let value = snapshot.value as? [String: AnyObject] else {
             print("Error: Failed to unwrap snapshot value")
             return nil
         }
+        
+    
         let explicitNode = "\(workerID)-\(snapshot.key)-Customer"
         func mapToInt(value:AnyObject?) -> Int {
             switch value {
@@ -161,7 +167,7 @@ struct FirebaseCustomer {
         let is_deleted = mapToInt(value: value["deleted"])
         let delivered_by_provider = mapToInt(value: value["delivered_by_provider"])
         let external_conversation_black_list = mapToInt(value: value["external_conversation_black_list"])
-        let external_conversation_id = mapToInt(value: value["external_conversation_id"]) != 0 ? mapToInt(value: value["external_conversation_id"]) : Int(snapshot.key)!
+        let external_conversation_id = mapToInt(value: value["external_conversation_id"]) != 0 ? mapToInt(value: value["external_conversation_id"]) : key
         let incoming = mapToInt(value: value["incoming"])
         let internal_address_book_id = mapToInt(value: value["internal_address_book_id"])
         let internal_address_book_name_active = mapToInt(value: value["internal_address_book_name_active"])

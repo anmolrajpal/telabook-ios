@@ -253,7 +253,7 @@ extension CustomersViewController: UITableViewDelegate {
         return configuration
     }
     
-    private func openChat(forSelectedCustomer customer:Customer, at indexPath:IndexPath) {
+    internal func openChat(forSelectedCustomer customer:Customer, at indexPath:IndexPath) {
         let id = customer.customerID
         print(customer.node as Any)
         guard

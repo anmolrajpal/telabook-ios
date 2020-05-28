@@ -11,9 +11,10 @@ import InteractiveModal
 
 extension CustomersViewController: StartNewConversationDelegate {
     func conversation(didStartNewConversationWithID id: Int, node:String) {
-        if let conversation = self.fetchedResultsController.fetchedObjects?.first(where: { $0.externalConversationID == id }) {
-            let indexPath = self.fetchedResultsController.indexPath(forObject: conversation)
+        if let conversation = self.fetchedResultsController.fetchedObjects?.first(where: { $0.externalConversationID == id }),
+            let indexPath = self.fetchedResultsController.indexPath(forObject: conversation) {
             self.subview.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .top)
+            self.openChat(forSelectedCustomer: conversation, at: indexPath)
             print("selecting from fetched results controller as new firebase entry is loaded into core data store")
         } else {
             print("pushing view controller from delegate (with node) as new firebase entry not yet loaded into core data store")

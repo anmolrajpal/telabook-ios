@@ -56,17 +56,16 @@ extension MessagesController: MessagesDataSource {
     func messageBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
         
         
-        guard let message = message as? UserMessage else { print("Shit"); return nil }
+        guard let message = message as? UserMessage else {
+            #if !RELEASE
+            print("Unresolved Error: Failed to cast Message Type as UserMessage")
+            #endif
+            return nil
+        }
         
         let time = Date.getStringFromDate(date: message.sentDate, dateFormat: CustomDateFormat.hmma)
         
-        
-//        let attachment = NSTextAttachment()
-//        let checkmark = SFSymbol.checkmark.image(withSymbolConfiguration: .init(textStyle: .footnote)).withTintColor(.telaGray6)
-//        attachment.image = checkmark
-//        attachment.bounds = CGRect(x: 0, y: -2.0, width: attachment.image!.size.width, height: attachment.image!.size.height)
-//        let attachmentString = NSAttributedString(attachment: attachment)
-        
+
         let singleTickAttachment = NSTextAttachment()
         let singleTickImage = #imageLiteral(resourceName: "tick.single.glyph").image(scaledTo: .init(width: 15, height: 15))!.withTintColor(.telaGray6)
         singleTickAttachment.image = singleTickImage
@@ -95,16 +94,6 @@ extension MessagesController: MessagesDataSource {
         }
         
         return attributedText
-        
-        /*
-        return NSAttributedString(
-            string: time,
-            attributes: [
-                .font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 10.0)!,
-                .foregroundColor: UIColor.telaGray6
-            ]
-        )
-        */
     }
     
     

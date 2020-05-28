@@ -1112,3 +1112,9 @@ extension Numeric where Self: LosslessStringConvertible {
     /// Returns count of array of integer digits from called integer.
     var digitsCount:Int { string.digits.count }
 }
+extension String {
+  var isBlank: Bool { allSatisfy({ $0.isWhitespace }) }
+}
+extension Optional where Wrapped == String {
+  var isBlank: Bool { self?.isBlank ?? true }
+}

@@ -16,11 +16,14 @@ struct Config {
     
     struct APIConfig {
         static var baseURL:String {
+            return try! Configuration.value(for: "BASE_URL")
+            /*
             switch Config.environment {
                 case .Development: return "https://fornax.aimservices.tech"
                 case .Staging: return "https://api.noandosaldo.com"
                 case .Production: return "https://fornax.aimservices.tech"
             }
+            */
         }
         static var urlScheme:String {
             switch Config.environment {
@@ -30,11 +33,14 @@ struct Config {
             }
         }
         static var apiHost:String {
+            try! Configuration.value(for: "API_HOST")
+            /*
             switch Config.environment {
                 case .Development: return "fornax.aimservices.tech"
                 case .Staging: return "api.noandosaldo.com"
                 case .Production: return "fornax.aimservices.tech"
             }
+             */
         }
         static var port:Int? {
             switch Config.environment {

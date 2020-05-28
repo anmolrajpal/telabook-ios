@@ -42,6 +42,14 @@ extension MessagesController: MessagesDisplayDelegate {
             } else {
                 return [.foregroundColor: UIColor.lightGray]
             }
+            case .date:
+                return isFromCurrentSender(message: message) ? [
+                    .foregroundColor: UIColor.telaGray7,
+                    .underlineStyle: NSUnderlineStyle.single.rawValue,
+                    .underlineColor: UIColor.telaGray7 ] : [
+                        .foregroundColor: UIColor.telaGray5,
+                        .underlineStyle: NSUnderlineStyle.single.rawValue,
+                        .underlineColor: UIColor.telaGray5 ]
         default: return MessageLabel.defaultAttributes
         }
     }
@@ -96,22 +104,26 @@ extension MessagesController: MessagesDisplayDelegate {
                 print("Optional Message Item")
                 return
         }
-        
         if let text = msg.textMessage,
-            !text.isEmpty {
-            print("Image Text here is => \(text)")
-            let textView = UIView(frame: CGRect.zero)
+            !text.isBlank {
+            #if !RELEASE
+            print("Image Text for image with URL: \(url) is => \(text)")
+            #endif            
+            let textView = UITextView(frame: CGRect.zero)
+            textView.text = text
+            textView.isEditable = false
+            textView.textAlignment = .left
+            textView.isSelectable = false
             textView.backgroundColor = isFromCurrentSender(message: message) ? .telaBlue : .telaGray7
-            textView.clipsToBounds = true
-            let label = UILabel()
-            label.text = text
-            label.numberOfLines = 2
-            label.textColor = UIColor.telaWhite
-            textView.addSubview(label)
-            label.anchor(top: textView.topAnchor, left: textView.leftAnchor, bottom: textView.bottomAnchor, right: textView.rightAnchor, topConstant: 5, leftConstant: 15, bottomConstant: 5, rightConstant: 10, widthConstant: 0, heightConstant: 0)
+            textView.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 14)
+            textView.textColor = UIColor.telaWhite
+            textView.sizeToFit()
+            textView.isScrollEnabled = false
+            textView.textContainerInset = UIEdgeInsets(top: 6, left: 7, bottom: 6, right: 7)
             imageView.addSubview(textView)
-            textView.anchor(top: nil, left: imageView.leftAnchor, bottom: imageView.bottomAnchor, right: imageView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+            textView.anchor(top: nil, left: imageView.leftAnchor, bottom: imageView.bottomAnchor, right: imageView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
         }
         imageView.loadImageUsingCache(with: url.absoluteString)
     }
 }
+

@@ -28,7 +28,8 @@ public enum SFSymbol { case
     speak,
     tag,
     checkmark,
-    messageDeleted
+    messageDeleted,
+    downIndicator
     
     private var imageName:String {
         switch self {
@@ -51,6 +52,7 @@ public enum SFSymbol { case
             case .tag: return "tag"
             case .checkmark: return "checkmark"
             case .messageDeleted: return "nosign"
+            case .downIndicator: return "chevron.down.circle"
         }
     }
     

@@ -1,0 +1,20 @@
+//
+//  Config-Staging.xcconfig
+//  Telabook
+//
+//  Created by Anmol Rajpal on 28/05/20.
+//  Copyright © 2020 Natovi. All rights reserved.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+#include "Pods/Target Support Files/Pods-Telabook/Pods-Telabook.prerelease.xcconfig"
+
+BASE_URL              = https://api.noandosaldo.com
+API_HOST              = api.noandosaldo.com
+URL_SCHEME            = https
+SUBDOMAIN             = /api
+TIMEOUT_INTERVAL      = 15
+APP_NAME              = Telabook-PreRelease
+BUNDLE_ID             = com.anmolrajpal.telabook-prerelease

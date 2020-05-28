@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		07EE2475CAADE7AD32CD00F9 /* Pods_Telabook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A24D2E2A3583492FDB7723EF /* Pods_Telabook.framework */; };
-		6F010CAE246F81B600C20DC6 /* MenuController in Frameworks */ = {isa = PBXBuildFile; productRef = 6F010CAD246F81B600C20DC6 /* MenuController */; };
+		6F010CAE246F81B600C20DC6 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = 6F010CAD246F81B600C20DC6 /* SwiftPackageProductDependency */; };
 		6F02B2D92461C03F00FFB34E /* AutoResponseCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F02B2D82461C03F00FFB34E /* AutoResponseCodable.swift */; };
 		6F02B2DB2461C47300FFB34E /* AutoResponseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F02B2DA2461C47300FFB34E /* AutoResponseView.swift */; };
 		6F02B2DD2461C6A000FFB34E /* AutoResponseHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F02B2DC2461C6A000FFB34E /* AutoResponseHelpers.swift */; };
@@ -103,6 +103,7 @@
 		6F69BE9222D4DCE600F8903F /* QuickResponsesAPIProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE9122D4DCE600F8903F /* QuickResponsesAPIProtocol.swift */; };
 		6F69BE9422D4DCF600F8903F /* QuickResponsesAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE9322D4DCF600F8903F /* QuickResponsesAPI.swift */; };
 		6F69BE9622D4DE4900F8903F /* QuickResponsesDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE9522D4DE4900F8903F /* QuickResponsesDataProvider.swift */; };
+		6F6F9F8A247FB76900C9114D /* Config-PreRelease.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 6F6F9F89247FB76900C9114D /* Config-PreRelease.xcconfig */; };
 		6F83FC2124608C6A00518201 /* QuickResponsesHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F83FC2024608C6A00518201 /* QuickResponsesHelpers.swift */; };
 		6F83FC232460A39B00518201 /* QuickResponsesTableViewHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F83FC222460A39B00518201 /* QuickResponsesTableViewHelpers.swift */; };
 		6F9011D422AC3B130046F5E3 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9011D322AC3B130046F5E3 /* ChatViewController.swift */; };
@@ -181,7 +182,6 @@
 		6FB11B2F229EB4F20098D050 /* FollowUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B2E229EB4F20098D050 /* FollowUpViewController.swift */; };
 		6FB11B31229EB5020098D050 /* CallGroupsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B30229EB5020098D050 /* CallGroupsViewController.swift */; };
 		6FB11B33229EB5190098D050 /* OnlineUsersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B32229EB5190098D050 /* OnlineUsersViewController.swift */; };
-		6FB11B35229ED6750098D050 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6FB11B34229ED6740098D050 /* GoogleService-Info.plist */; };
 		6FB11B37229EF4300098D050 /* ManageAgentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B36229EF42F0098D050 /* ManageAgentsViewController.swift */; };
 		6FB11B39229EF4430098D050 /* GalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B38229EF4430098D050 /* GalleryViewController.swift */; };
 		6FB11B3B229EF4500098D050 /* BlockedUsersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B3A229EF4500098D050 /* BlockedUsersViewController.swift */; };
@@ -237,7 +237,7 @@
 		6FEE9A15247D5BE000709E2D /* Messages+ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE9A14247D5BE000709E2D /* Messages+ServiceProvider.swift */; };
 		6FEE9A17247E696000709E2D /* Messages+Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE9A16247E696000709E2D /* Messages+Cell.swift */; };
 		6FEE9A19247ED6A400709E2D /* BotMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE9A18247ED6A300709E2D /* BotMessageCell.swift */; };
-		6FEE9A1B247EFA8800709E2D /* GoogleService-Staging-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6FEE9A1A247EFA8700709E2D /* GoogleService-Staging-Info.plist */; };
+		6FEE9A2F247F118F00709E2D /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE9A2E247F118F00709E2D /* Configuration.swift */; };
 		6FEF96A222A6677900F2FF83 /* ExternalConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF96A122A6677900F2FF83 /* ExternalConversation.swift */; };
 		6FEF96A422A6679400F2FF83 /* ExternalConversationsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF96A322A6679400F2FF83 /* ExternalConversationsAPI.swift */; };
 		6FEF96A622A67F2900F2FF83 /* SMSDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF96A522A67F2900F2FF83 /* SMSDetailViewController.swift */; };
@@ -247,6 +247,7 @@
 
 /* Begin PBXFileReference section */
 		18D4D0AF3685AEAA6D585A79 /* Pods-Telabook.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.release.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.release.xcconfig"; sourceTree = "<group>"; };
+		594AEB846DD88B412E481F44 /* Pods-Telabook.prerelease.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.prerelease.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.prerelease.xcconfig"; sourceTree = "<group>"; };
 		6F02B2D82461C03F00FFB34E /* AutoResponseCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoResponseCodable.swift; sourceTree = "<group>"; };
 		6F02B2DA2461C47300FFB34E /* AutoResponseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoResponseView.swift; sourceTree = "<group>"; };
 		6F02B2DC2461C6A000FFB34E /* AutoResponseHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoResponseHelpers.swift; sourceTree = "<group>"; };
@@ -341,6 +342,8 @@
 		6F69BE9122D4DCE600F8903F /* QuickResponsesAPIProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponsesAPIProtocol.swift; sourceTree = "<group>"; };
 		6F69BE9322D4DCF600F8903F /* QuickResponsesAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponsesAPI.swift; sourceTree = "<group>"; };
 		6F69BE9522D4DE4900F8903F /* QuickResponsesDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponsesDataProvider.swift; sourceTree = "<group>"; };
+		6F6F9F88247FB72F00C9114D /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		6F6F9F89247FB76900C9114D /* Config-PreRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Config-PreRelease.xcconfig"; sourceTree = "<group>"; };
 		6F83FC2024608C6A00518201 /* QuickResponsesHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponsesHelpers.swift; sourceTree = "<group>"; };
 		6F83FC222460A39B00518201 /* QuickResponsesTableViewHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponsesTableViewHelpers.swift; sourceTree = "<group>"; };
 		6F9011D322AC3B130046F5E3 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
@@ -421,7 +424,6 @@
 		6FB11B2E229EB4F20098D050 /* FollowUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FollowUpViewController.swift; path = ../../FollowUpViewController.swift; sourceTree = "<group>"; };
 		6FB11B30229EB5020098D050 /* CallGroupsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallGroupsViewController.swift; sourceTree = "<group>"; };
 		6FB11B32229EB5190098D050 /* OnlineUsersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineUsersViewController.swift; sourceTree = "<group>"; };
-		6FB11B34229ED6740098D050 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6FB11B36229EF42F0098D050 /* ManageAgentsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsViewController.swift; sourceTree = "<group>"; };
 		6FB11B38229EF4430098D050 /* GalleryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryViewController.swift; sourceTree = "<group>"; };
 		6FB11B3A229EF4500098D050 /* BlockedUsersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUsersViewController.swift; sourceTree = "<group>"; };
@@ -478,7 +480,13 @@
 		6FEE9A14247D5BE000709E2D /* Messages+ServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Messages+ServiceProvider.swift"; sourceTree = "<group>"; };
 		6FEE9A16247E696000709E2D /* Messages+Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Messages+Cell.swift"; sourceTree = "<group>"; };
 		6FEE9A18247ED6A300709E2D /* BotMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BotMessageCell.swift; sourceTree = "<group>"; };
-		6FEE9A1A247EFA8700709E2D /* GoogleService-Staging-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Staging-Info.plist"; sourceTree = "<group>"; };
+		6FEE9A21247EFE6F00709E2D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		6FEE9A25247F055B00709E2D /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		6FEE9A26247F058600709E2D /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		6FEE9A2B247F0CE300709E2D /* Config-Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Config-Development.xcconfig"; sourceTree = "<group>"; };
+		6FEE9A2C247F0D0300709E2D /* Config-Staging.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Config-Staging.xcconfig"; sourceTree = "<group>"; };
+		6FEE9A2D247F0D1200709E2D /* Config-Production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Config-Production.xcconfig"; sourceTree = "<group>"; };
+		6FEE9A2E247F118F00709E2D /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		6FEF96A122A6677900F2FF83 /* ExternalConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalConversation.swift; sourceTree = "<group>"; };
 		6FEF96A322A6679400F2FF83 /* ExternalConversationsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalConversationsAPI.swift; sourceTree = "<group>"; };
 		6FEF96A522A67F2900F2FF83 /* SMSDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSDetailViewController.swift; sourceTree = "<group>"; };
@@ -486,6 +494,7 @@
 		6FEF96A922A7BDCA00F2FF83 /* ExternalConversationsAPIProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalConversationsAPIProtocol.swift; sourceTree = "<group>"; };
 		7B80F0AE73DD0782D1289F23 /* Pods-Telabook.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.debug.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.debug.xcconfig"; sourceTree = "<group>"; };
 		A24D2E2A3583492FDB7723EF /* Pods_Telabook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Telabook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3D13E12DA10A4904B024B3C /* Pods-Telabook.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.staging.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.staging.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -494,7 +503,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				07EE2475CAADE7AD32CD00F9 /* Pods_Telabook.framework in Frameworks */,
-				6F010CAE246F81B600C20DC6 /* MenuController in Frameworks */,
+				6F010CAE246F81B600C20DC6 /* BuildFile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1182,6 +1191,14 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		6F6F9F87247FB6C100C9114D /* PreRelease */ = {
+			isa = PBXGroup;
+			children = (
+				6FEE9A21247EFE6F00709E2D /* GoogleService-Info.plist */,
+			);
+			path = PreRelease;
+			sourceTree = "<group>";
+		};
 		6F9011D222AC3A9B0046F5E3 /* Extensions+Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -1391,8 +1408,11 @@
 				6FB11B4722A462340098D050 /* Telabook.entitlements */,
 				6FB11AFC229BF36B0098D050 /* LaunchScreen.storyboard */,
 				6FB11AEF229BDDBE0098D050 /* Info.plist */,
-				6FEE9A1A247EFA8700709E2D /* GoogleService-Staging-Info.plist */,
-				6FB11B34229ED6740098D050 /* GoogleService-Info.plist */,
+				6FEE9A2B247F0CE300709E2D /* Config-Development.xcconfig */,
+				6FEE9A2C247F0D0300709E2D /* Config-Staging.xcconfig */,
+				6F6F9F89247FB76900C9114D /* Config-PreRelease.xcconfig */,
+				6FEE9A2D247F0D1200709E2D /* Config-Production.xcconfig */,
+				6FEE9A1C247EFE1D00709E2D /* Support Files */,
 				6FB11B4222A2A2E10098D050 /* Telabook.xcdatamodeld */,
 				6FB11AEA229BDDBE0098D050 /* Assets.xcassets */,
 				6FB11AE3229BDDBD0098D050 /* AppDelegate.swift */,
@@ -1497,6 +1517,7 @@
 				6FB11B18229D06BB0098D050 /* CustomUtils.swift */,
 				6F02E9AB22DF45BF005708B0 /* AssertionModalController.swift */,
 				6FB11B24229E59F00098D050 /* Config.swift */,
+				6FEE9A2E247F118F00709E2D /* Configuration.swift */,
 				6F987A70245B159400C6046E /* LaunchCounter.swift */,
 				6F987A71245B159400C6046E /* TapticEngine.swift */,
 				6FB11B13229C3FCA0098D050 /* BadgeBarItem.swift */,
@@ -1698,6 +1719,49 @@
 			path = Operations;
 			sourceTree = "<group>";
 		};
+		6FEE9A1C247EFE1D00709E2D /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				6FEE9A1D247EFE2700709E2D /* Firebase */,
+			);
+			path = "Support Files";
+			sourceTree = "<group>";
+		};
+		6FEE9A1D247EFE2700709E2D /* Firebase */ = {
+			isa = PBXGroup;
+			children = (
+				6F6F9F87247FB6C100C9114D /* PreRelease */,
+				6FEE9A20247EFE4B00709E2D /* Production */,
+				6FEE9A1F247EFE3200709E2D /* Development */,
+				6FEE9A1E247EFE2B00709E2D /* Staging */,
+			);
+			path = Firebase;
+			sourceTree = "<group>";
+		};
+		6FEE9A1E247EFE2B00709E2D /* Staging */ = {
+			isa = PBXGroup;
+			children = (
+				6F6F9F88247FB72F00C9114D /* GoogleService-Info.plist */,
+			);
+			path = Staging;
+			sourceTree = "<group>";
+		};
+		6FEE9A1F247EFE3200709E2D /* Development */ = {
+			isa = PBXGroup;
+			children = (
+				6FEE9A25247F055B00709E2D /* GoogleService-Info.plist */,
+			);
+			path = Development;
+			sourceTree = "<group>";
+		};
+		6FEE9A20247EFE4B00709E2D /* Production */ = {
+			isa = PBXGroup;
+			children = (
+				6FEE9A26247F058600709E2D /* GoogleService-Info.plist */,
+			);
+			path = Production;
+			sourceTree = "<group>";
+		};
 		6FEF969E22A50F2000F2FF83 /* API */ = {
 			isa = PBXGroup;
 			children = (
@@ -1713,6 +1777,8 @@
 			children = (
 				7B80F0AE73DD0782D1289F23 /* Pods-Telabook.debug.xcconfig */,
 				18D4D0AF3685AEAA6D585A79 /* Pods-Telabook.release.xcconfig */,
+				E3D13E12DA10A4904B024B3C /* Pods-Telabook.staging.xcconfig */,
+				594AEB846DD88B412E481F44 /* Pods-Telabook.prerelease.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -1735,6 +1801,7 @@
 				509F6DBAB8E92E189B376ABC /* [CP] Check Pods Manifest.lock */,
 				6FB11ADC229BDDBD0098D050 /* Sources */,
 				6FB11ADD229BDDBD0098D050 /* Frameworks */,
+				6FEE9A23247EFFDE00709E2D /* Setup Firebase Support Files */,
 				6FB11ADE229BDDBD0098D050 /* Resources */,
 				A0B9B358AB19358D241F9FE4 /* [CP] Embed Pods Frameworks */,
 			);
@@ -1744,7 +1811,7 @@
 			);
 			name = Telabook;
 			packageProductDependencies = (
-				6F010CAD246F81B600C20DC6 /* MenuController */,
+				6F010CAD246F81B600C20DC6 /* SwiftPackageProductDependency */,
 			);
 			productName = Telabook;
 			productReference = 6FB11AE0229BDDBD0098D050 /* Telabook.app */;
@@ -1783,7 +1850,7 @@
 			);
 			mainGroup = 6FB11AD7229BDDBD0098D050;
 			packageReferences = (
-				6F010CAC246F81B600C20DC6 /* XCRemoteSwiftPackageReference "MenuController" */,
+				6F010CAC246F81B600C20DC6 /* RemoteSwiftPackageReference */,
 			);
 			productRefGroup = 6FB11AE1229BDDBD0098D050 /* Products */;
 			projectDirPath = "";
@@ -1799,12 +1866,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F6F9F8A247FB76900C9114D /* Config-PreRelease.xcconfig in Resources */,
 				6FB11AEB229BDDBE0098D050 /* Assets.xcassets in Resources */,
 				6FB11AF9229BE2400098D050 /* Gotham-Book.otf in Resources */,
 				6FB11AF8229BE2400098D050 /* Gotham-Medium.otf in Resources */,
 				6FB11AFD229BF36B0098D050 /* LaunchScreen.storyboard in Resources */,
-				6FEE9A1B247EFA8800709E2D /* GoogleService-Staging-Info.plist in Resources */,
-				6FB11B35229ED6750098D050 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1832,6 +1898,24 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
+		};
+		6FEE9A23247EFFDE00709E2D /* Setup Firebase Support Files */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Setup Firebase Support Files";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Name of the resource we're selectively copying\nGOOGLESERVICE_INFO_PLIST=GoogleService-Info.plist\n\n# Get references to development, staging, pre-release and production versions of the GoogleService-Info.plist\n# NOTE: These should only live on the file system and should NOT be part of the target (since we'll be adding them to the target manually)\nGOOGLESERVICE_INFO_DEVELOPMENT=${PROJECT_DIR}/${TARGET_NAME}/Support\\ Files/Firebase/Development/${GOOGLESERVICE_INFO_PLIST}\nGOOGLESERVICE_INFO_PRODUCTION=${PROJECT_DIR}/${TARGET_NAME}/Support\\ Files/Firebase/Production/${GOOGLESERVICE_INFO_PLIST}\nGOOGLESERVICE_INFO_STAGING=${PROJECT_DIR}/${TARGET_NAME}/Support\\ Files/Firebase/Staging/${GOOGLESERVICE_INFO_PLIST}\nGOOGLESERVICE_INFO_PRE_RELEASE=${PROJECT_DIR}/${TARGET_NAME}/Support\\ Files/Firebase/PreRelease/${GOOGLESERVICE_INFO_PLIST}\n\n# Make sure the dev version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_DEVELOPMENT}\"\nif [ ! -f $GOOGLESERVICE_INFO_DEVELOPMENT ]\nthen\n    echo \"No Development GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\n    exit 1\nfi\n\n# Make sure the prod version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_PRODUCTION}\"\nif [ ! -f $GOOGLESERVICE_INFO_PRODUCTION ]\nthen\n    echo \"No Production GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\n    exit 1\nfi\n\n# Make sure the staging version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_STAGING}\"\nif [ ! -f $GOOGLESERVICE_INFO_STAGING ]\nthen\n    echo \"No Staging GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\n    exit 1\nfi\n\n# Make sure the pre release version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_PRE_RELEASE}\"\nif [ ! -f $GOOGLESERVICE_INFO_PRE_RELEASE ]\nthen\n    echo \"No Pre-Release GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\n    exit 1\nfi\n\n# Get a reference to the destination location for the GoogleService-Info.plist\nPLIST_DESTINATION=${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app\necho \"Will copy ${GOOGLESERVICE_INFO_PLIST} to final destination: ${PLIST_DESTINATION}\"\n\n# Copy over the prod GoogleService-Info.plist for Release builds\nif [ \"${CONFIGURATION}\" == \"Release\" ]\nthen\n    echo \"Using ${GOOGLESERVICE_INFO_PRODUCTION}\"\n    cp \"${GOOGLESERVICE_INFO_PRODUCTION}\" \"${PLIST_DESTINATION}\"\nelif [ \"${CONFIGURATION}\" == \"PreRelease\" ]\nthen\n    echo \"Using ${GOOGLESERVICE_INFO_PRE_RELEASE}\"\n    cp \"${GOOGLESERVICE_INFO_PRE_RELEASE}\" \"${PLIST_DESTINATION}\"\nelif [ \"${CONFIGURATION}\" == \"Staging\" ]\nthen\n    echo \"Using ${GOOGLESERVICE_INFO_STAGING}\"\n    cp \"${GOOGLESERVICE_INFO_STAGING}\" \"${PLIST_DESTINATION}\"\nelse\n    echo \"Using ${GOOGLESERVICE_INFO_DEVELOPMENT}\"\n    cp \"${GOOGLESERVICE_INFO_DEVELOPMENT}\" \"${PLIST_DESTINATION}\"\nfi\n";
 		};
 		A0B9B358AB19358D241F9FE4 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2024,6 +2108,7 @@
 				6F58C33522D6178B0091C785 /* AutoResponseViewController.swift in Sources */,
 				6F9453C722DBA45F00047C7F /* ScheduleNewMessageDataProvider.swift in Sources */,
 				6F69BE8C22D4A63900F8903F /* AgentDetailsViewController.swift in Sources */,
+				6FEE9A2F247F118F00709E2D /* Configuration.swift in Sources */,
 				6F987A4A2456C8FA00C6046E /* APIServiceMethods.swift in Sources */,
 				6FAD46EA245066F10050F7F2 /* SceneDelegate.swift in Sources */,
 				6F2137782473EED8002AB150 /* AddressBookCodable.swift in Sources */,
@@ -2091,8 +2176,88 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		6F6F9F8B247FB79300C9114D /* PreRelease */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6F6F9F89247FB76900C9114D /* Config-PreRelease.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = PreRelease;
+		};
+		6F6F9F8C247FB79300C9114D /* PreRelease */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6F6F9F89247FB76900C9114D /* Config-PreRelease.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 18;
+				DEVELOPMENT_TEAM = 7QD3V9UN4D;
+				INFOPLIST_FILE = Telabook/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.Natovi.Telabook;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = PreRelease;
+		};
 		6FB11AF0229BDDBE0098D050 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6FEE9A2B247F0CE300709E2D /* Config-Development.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -2155,6 +2320,7 @@
 		};
 		6FB11AF1229BDDBE0098D050 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6FEE9A2D247F0D1200709E2D /* Config-Production.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -2211,7 +2377,7 @@
 		};
 		6FB11AF3229BDDBE0098D050 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7B80F0AE73DD0782D1289F23 /* Pods-Telabook.debug.xcconfig */;
+			baseConfigurationReference = 6FEE9A2B247F0CE300709E2D /* Config-Development.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
@@ -2233,7 +2399,7 @@
 		};
 		6FB11AF4229BDDBE0098D050 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 18D4D0AF3685AEAA6D585A79 /* Pods-Telabook.release.xcconfig */;
+			baseConfigurationReference = 6FEE9A2D247F0D1200709E2D /* Config-Production.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
@@ -2253,6 +2419,85 @@
 			};
 			name = Release;
 		};
+		6FEE9A29247F098A00709E2D /* Staging */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6FEE9A2C247F0D0300709E2D /* Config-Staging.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Staging;
+		};
+		6FEE9A2A247F098A00709E2D /* Staging */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6FEE9A2C247F0D0300709E2D /* Config-Staging.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 18;
+				DEVELOPMENT_TEAM = 7QD3V9UN4D;
+				INFOPLIST_FILE = Telabook/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.Natovi.Telabook;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Staging;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2261,6 +2506,8 @@
 			buildConfigurations = (
 				6FB11AF0229BDDBE0098D050 /* Debug */,
 				6FB11AF1229BDDBE0098D050 /* Release */,
+				6FEE9A29247F098A00709E2D /* Staging */,
+				6F6F9F8B247FB79300C9114D /* PreRelease */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -2270,6 +2517,8 @@
 			buildConfigurations = (
 				6FB11AF3229BDDBE0098D050 /* Debug */,
 				6FB11AF4229BDDBE0098D050 /* Release */,
+				6FEE9A2A247F098A00709E2D /* Staging */,
+				6F6F9F8C247FB79300C9114D /* PreRelease */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -2277,7 +2526,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		6F010CAC246F81B600C20DC6 /* XCRemoteSwiftPackageReference "MenuController" */ = {
+		6F010CAC246F81B600C20DC6 /* RemoteSwiftPackageReference */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/anmolrajpal/MenuController.git";
 			requirement = {
@@ -2288,9 +2537,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		6F010CAD246F81B600C20DC6 /* MenuController */ = {
+		6F010CAD246F81B600C20DC6 /* SwiftPackageProductDependency */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6F010CAC246F81B600C20DC6 /* XCRemoteSwiftPackageReference "MenuController" */;
+			package = 6F010CAC246F81B600C20DC6 /* RemoteSwiftPackageReference */;
 			productName = MenuController;
 		};
 /* End XCSwiftPackageProductDependency section */

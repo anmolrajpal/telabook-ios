@@ -125,7 +125,7 @@ class CustomersViewController: UIViewController {
                     print(snapshot)
                     guard let conversation = FirebaseCustomer(snapshot: snapshot, workerID: workerIDstring) else {
                         print("Unresolved Error: Unable to create conversation from Firebase Customer")
-                        return
+                        continue
                     }
 //                    print(conversation)
                     conversations.append(conversation)

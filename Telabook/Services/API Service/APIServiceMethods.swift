@@ -18,7 +18,7 @@ extension APIService {
                 }
                 return
             }
-            #if DEBUG
+            #if !RELEASE
             print("\n\n------------------------------------------------ Firebase Token: BEGIN ------------------------------------------------\n\nFirebase Bearer Token: \(bearerToken)\n\n--------------------------------------------------- Firebase Token: END ------------------------------------------------\n\n")
             #endif
             guard let url = self.constructURL(forEndpoint: endpoint) else {
@@ -26,7 +26,7 @@ extension APIService {
                 completion(.failure(.invalidURL))
                 return
             }
-            #if DEBUG
+            #if !RELEASE
             print("Endpoint URL= \(url)")
             #endif
             var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.defaultConfiguration.timeOutInterval)
@@ -49,7 +49,7 @@ extension APIService {
                 }
                 let responseCode = (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)
                 let responseStatus = ResponseStatus.getResponseStatusBy(statusCode: responseCode)
-                #if DEBUG
+                #if !RELEASE
                 print("\n\n------------------------------------------------ Response: BEGIN ------------------------------------------------\n\nResponse Status => \(responseStatus)\nResponse Code => \(responseCode)\n\n--------------------------------------------------- Response: END ------------------------------------------------\n\n")
                 #endif
                 if let expectedResponse = guardResponse {
@@ -73,7 +73,7 @@ extension APIService {
                     }
                     return
                 }
-                #if DEBUG
+                #if !RELEASE
                 let jsonString = String(data: data, encoding: .utf8)!
                 print("\n\n------------------------------------------------ Raw JSON Object: BEGIN ------------------------------------------------\n\n"+jsonString+"\n\n--------------------------------------------------- Raw JSON Object: END ------------------------------------------------\n\n")
                 #endif
@@ -84,7 +84,7 @@ extension APIService {
                     }
                 } catch let error {
                     DispatchQueue.main.async {
-                        #if DEBUG
+                        #if !RELEASE
                         print("JSON Decoding Error: \(error.localizedDescription)")
                         #endif
                         completion(.failure(.jsonDecodingError(error: error)))
@@ -105,7 +105,7 @@ extension APIService {
                 }
                 return
             }
-            #if DEBUG
+            #if !RELEASE
             print("\n\n------------------------------------------------ Firebase Token: BEGIN ------------------------------------------------\n\nFirebase Bearer Token: \(bearerToken)\n\n--------------------------------------------------- Firebase Token: END ------------------------------------------------\n\n")
             #endif
             guard let url = self.constructURL(forEndpoint: endpoint, parameters: params) else {
@@ -113,7 +113,7 @@ extension APIService {
                 completion(.failure(.invalidURL))
                 return
             }
-            #if DEBUG
+            #if !RELEASE
             print("Endpoint URL= \(url)")
             #endif
             var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.defaultConfiguration.timeOutInterval)
@@ -138,7 +138,7 @@ extension APIService {
                 }
                 let responseCode = (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)
                 let responseStatus = ResponseStatus.getResponseStatusBy(statusCode: responseCode)
-                #if DEBUG
+                #if !RELEASE
                 print("\n\n------------------------------------------------ Response: BEGIN ------------------------------------------------\n\nResponse Status => \(responseStatus)\nResponse Code => \(responseCode)\n\n--------------------------------------------------- Response: END ------------------------------------------------\n\n")
                 #endif
                 if let expectedResponse = guardResponse {
@@ -162,7 +162,7 @@ extension APIService {
                     }
                     return
                 }
-                #if DEBUG
+                #if !RELEASE
                 let jsonString = String(data: data, encoding: .utf8)!
                 print("\n\n------------------------------------------------ Raw JSON Object: BEGIN ------------------------------------------------\n\n"+jsonString+"\n\n--------------------------------------------------- Raw JSON Object: END ------------------------------------------------\n\n")
                 #endif
@@ -173,7 +173,7 @@ extension APIService {
                     }
                 } catch let error {
                     DispatchQueue.main.async {
-                        #if DEBUG
+                        #if !RELEASE
                         print("JSON Decoding Error: \(error.localizedDescription)")
                         #endif
                         completion(.failure(.jsonDecodingError(error: error)))
@@ -194,7 +194,7 @@ extension APIService {
                 }
                 return
             }
-            #if DEBUG
+            #if !RELEASE
             print("\n\n------------------------------------------------ Firebase Token: BEGIN ------------------------------------------------\n\nFirebase Bearer Token: \(bearerToken)\n\n--------------------------------------------------- Firebase Token: END ------------------------------------------------\n\n")
             #endif
             guard let url = self.constructURL(forEndpoint: endpoint, parameters: params) else {
@@ -202,7 +202,7 @@ extension APIService {
                 completion(.failure(.invalidURL))
                 return
             }
-            #if DEBUG
+            #if !RELEASE
             print("Endpoint URL= \(url)")
             #endif
             var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.defaultConfiguration.timeOutInterval)
@@ -227,7 +227,7 @@ extension APIService {
                 }
                 let responseCode = (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)
                 let responseStatus = ResponseStatus.getResponseStatusBy(statusCode: responseCode)
-                #if DEBUG
+                #if !RELEASE
                 print("\n\n------------------------------------------------ Response: BEGIN ------------------------------------------------\n\nResponse Status => \(responseStatus)\nResponse Code => \(responseCode)\n\n--------------------------------------------------- Response: END ------------------------------------------------\n\n")
                 #endif
                 if let expectedResponse = guardResponse {
@@ -253,7 +253,7 @@ extension APIService {
                         }
                         return
                     }
-                    #if DEBUG
+                    #if !RELEASE
                     let jsonString = String(data: data, encoding: .utf8)!
                     print("\n\n------------------------------------------------ Raw JSON Object: BEGIN ------------------------------------------------\n\n"+jsonString+"\n\n--------------------------------------------------- Raw JSON Object: END ------------------------------------------------\n\n")
                     #endif
@@ -264,7 +264,7 @@ extension APIService {
                         }
                     } catch let error {
                         DispatchQueue.main.async {
-                            #if DEBUG
+                            #if !RELEASE
                             print("JSON Decoding Error: \(error.localizedDescription)")
                             #endif
                             completion(.failure(.jsonDecodingError(error: error)))
@@ -291,7 +291,7 @@ extension APIService {
                 }
                 return
             }
-            #if DEBUG
+            #if !RELEASE
             print("\n\n------------------------------------------------ Firebase Token: BEGIN ------------------------------------------------\n\nFirebase Bearer Token: \(bearerToken)\n\n--------------------------------------------------- Firebase Token: END ------------------------------------------------\n\n")
             #endif
             guard let url = self.constructURL(forEndpoint: endpoint, parameters: params) else {
@@ -299,7 +299,7 @@ extension APIService {
                 completion(.failure(.invalidURL))
                 return
             }
-            #if DEBUG
+            #if !RELEASE
             print("Endpoint URL= \(url)")
             #endif
             var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.defaultConfiguration.timeOutInterval)
@@ -322,7 +322,7 @@ extension APIService {
                 }
                 let responseCode = (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)
                 let responseStatus = ResponseStatus.getResponseStatusBy(statusCode: responseCode)
-                #if DEBUG
+                #if !RELEASE
                 print("\n\n------------------------------------------------ Response: BEGIN ------------------------------------------------\n\nResponse Status => \(responseStatus)\nResponse Code => \(responseCode)\n\n--------------------------------------------------- Response: END ------------------------------------------------\n\n")
                 #endif
                 if let expectedResponse = guardResponse {
@@ -346,7 +346,7 @@ extension APIService {
                     }
                     return
                 }
-                #if DEBUG
+                #if !RELEASE
                 let jsonString = String(data: data, encoding: .utf8)!
                 print("\n\n------------------------------------------------ Raw JSON Object: BEGIN ------------------------------------------------\n\n"+jsonString+"\n\n--------------------------------------------------- Raw JSON Object: END ------------------------------------------------\n\n")
                 #endif
@@ -357,7 +357,7 @@ extension APIService {
                     }
                 } catch let error {
                     DispatchQueue.main.async {
-                        #if DEBUG
+                        #if !RELEASE
                         print("JSON Decoding Error: \(error.localizedDescription)")
                         #endif
                         completion(.failure(.jsonDecodingError(error: error)))
@@ -376,7 +376,7 @@ extension APIService {
                 }
                 return
             }
-            #if DEBUG
+            #if !RELEASE
             print("\n\n------------------------------------------------ Firebase Token: BEGIN ------------------------------------------------\n\nFirebase Bearer Token: \(bearerToken)\n\n--------------------------------------------------- Firebase Token: END ------------------------------------------------\n\n")
             #endif
             guard let url = self.constructURL(forEndpoint: endpoint, parameters: params) else {
@@ -384,7 +384,7 @@ extension APIService {
                 completion(.failure(.invalidURL))
                 return
             }
-            #if DEBUG
+            #if !RELEASE
             print("Endpoint URL= \(url)")
             #endif
             var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.defaultConfiguration.timeOutInterval)
@@ -409,7 +409,7 @@ extension APIService {
                 }
                 let responseCode = (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)
                 let responseStatus = ResponseStatus.getResponseStatusBy(statusCode: responseCode)
-                #if DEBUG
+                #if !RELEASE
                 print("\n\n------------------------------------------------ Response: BEGIN ------------------------------------------------\n\nResponse Status => \(responseStatus)\nResponse Code => \(responseCode)\n\n--------------------------------------------------- Response: END ------------------------------------------------\n\n")
                 #endif
                 if let expectedResponse = guardResponse {
@@ -433,7 +433,7 @@ extension APIService {
                     }
                     return
                 }
-                #if DEBUG
+                #if !RELEASE
                 let jsonString = String(data: data, encoding: .utf8)!
                 print("\n\n------------------------------------------------ Raw JSON Object: BEGIN ------------------------------------------------\n\n"+jsonString+"\n\n--------------------------------------------------- Raw JSON Object: END ------------------------------------------------\n\n")
                 #endif
@@ -444,7 +444,7 @@ extension APIService {
                     }
                 } catch let error {
                     DispatchQueue.main.async {
-                        #if DEBUG
+                        #if !RELEASE
                         print("JSON Decoding Error: \(error.localizedDescription)")
                         #endif
                         completion(.failure(.jsonDecodingError(error: error)))
@@ -464,7 +464,7 @@ extension APIService {
                 }
                 return
             }
-            #if DEBUG
+            #if !RELEASE
             print("\n\n------------------------------------------------ Firebase Token: BEGIN ------------------------------------------------\n\nFirebase Bearer Token: \(bearerToken)\n\n--------------------------------------------------- Firebase Token: END ------------------------------------------------\n\n")
             #endif
             guard let url = self.constructURL(forEndpoint: endpoint, parameters: params) else {
@@ -472,7 +472,7 @@ extension APIService {
                 completion(.failure(.invalidURL))
                 return
             }
-            #if DEBUG
+            #if !RELEASE
             print("Endpoint URL= \(url)")
             #endif
             var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.defaultConfiguration.timeOutInterval)
@@ -495,7 +495,7 @@ extension APIService {
                 }
                 let responseCode = (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)
                 let responseStatus = ResponseStatus.getResponseStatusBy(statusCode: responseCode)
-                #if DEBUG
+                #if !RELEASE
                 print("\n\n------------------------------------------------ Response: BEGIN ------------------------------------------------\n\nResponse Status => \(responseStatus)\nResponse Code => \(responseCode)\n\n--------------------------------------------------- Response: END ------------------------------------------------\n\n")
                 #endif
                 if let expectedResponse = guardResponse {
@@ -519,7 +519,7 @@ extension APIService {
                     }
                     return
                 }
-                #if DEBUG
+                #if !RELEASE
                 let jsonString = String(data: data, encoding: .utf8)!
                 print("\n\n------------------------------------------------ Raw JSON Object: BEGIN ------------------------------------------------\n\n"+jsonString+"\n\n--------------------------------------------------- Raw JSON Object: END ------------------------------------------------\n\n")
                 #endif
@@ -530,7 +530,7 @@ extension APIService {
                     }
                 } catch let error {
                     DispatchQueue.main.async {
-                        #if DEBUG
+                        #if !RELEASE
                         print("JSON Decoding Error: \(error.localizedDescription)")
                         #endif
                         completion(.failure(.jsonDecodingError(error: error)))
@@ -550,7 +550,7 @@ extension APIService {
                 }
                 return
             }
-            #if DEBUG
+            #if !RELEASE
             print("\n\n------------------------------------------------ Firebase Token: BEGIN ------------------------------------------------\n\nFirebase Bearer Token: \(bearerToken)\n\n--------------------------------------------------- Firebase Token: END ------------------------------------------------\n\n")
             #endif
             guard let url = self.constructURL(forEndpoint: endpoint, parameters: params) else {
@@ -558,7 +558,7 @@ extension APIService {
                 completion(.failure(.invalidURL))
                 return
             }
-            #if DEBUG
+            #if !RELEASE
             print("Endpoint URL= \(url)")
             #endif
             var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.defaultConfiguration.timeOutInterval)
@@ -581,7 +581,7 @@ extension APIService {
                 }
                 let responseCode = (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)
                 let responseStatus = ResponseStatus.getResponseStatusBy(statusCode: responseCode)
-                #if DEBUG
+                #if !RELEASE
                 print("\n\n------------------------------------------------ Response: BEGIN ------------------------------------------------\n\nResponse Status => \(responseStatus)\nResponse Code => \(responseCode)\n\n--------------------------------------------------- Response: END ------------------------------------------------\n\n")
                 #endif
                 if let expectedResponse = guardResponse {
@@ -605,7 +605,7 @@ extension APIService {
                     }
                     return
                 }
-                #if DEBUG
+                #if !RELEASE
                 let jsonString = String(data: data, encoding: .utf8)!
                 print("\n\n------------------------------------------------ Raw JSON Object: BEGIN ------------------------------------------------\n\n"+jsonString+"\n\n--------------------------------------------------- Raw JSON Object: END ------------------------------------------------\n\n")
                 #endif
@@ -616,7 +616,7 @@ extension APIService {
                     }
                 } catch let error {
                     DispatchQueue.main.async {
-                        #if DEBUG
+                        #if !RELEASE
                         print("JSON Decoding Error: \(error.localizedDescription)")
                         #endif
                         completion(.failure(.jsonDecodingError(error: error)))
@@ -646,7 +646,7 @@ extension APIService {
             }
             return nil
         }
-        #if DEBUG
+        #if !RELEASE
         print("\n\n------------------------------------------------ Firebase Token: BEGIN ------------------------------------------------\n\nFirebase Bearer Token: \(bearerToken)\n\n--------------------------------------------------- Firebase Token: END ------------------------------------------------\n\n")
         #endif
         guard let url = self.constructURL(forEndpoint: endpoint, parameters: params) else {
@@ -654,7 +654,7 @@ extension APIService {
             completion(.failure(.invalidURL))
             return nil
         }
-        #if DEBUG
+        #if !RELEASE
         print("Endpoint URL= \(url)")
         #endif
         var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.defaultConfiguration.timeOutInterval)
@@ -679,7 +679,7 @@ extension APIService {
             }
             let responseCode = (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)
             let responseStatus = ResponseStatus.getResponseStatusBy(statusCode: responseCode)
-            #if DEBUG
+            #if !RELEASE
             print("\n\n------------------------------------------------ Response: BEGIN ------------------------------------------------\n\nResponse Status => \(responseStatus)\nResponse Code => \(responseCode)\n\n--------------------------------------------------- Response: END ------------------------------------------------\n\n")
             #endif
             if let expectedResponse = guardResponse {
@@ -703,7 +703,7 @@ extension APIService {
                 }
                 return
             }
-            #if DEBUG
+            #if !RELEASE
             let jsonString = String(data: data, encoding: .utf8)!
             print("\n\n------------------------------------------------ Raw JSON Object: BEGIN ------------------------------------------------\n\n"+jsonString+"\n\n--------------------------------------------------- Raw JSON Object: END ------------------------------------------------\n\n")
             #endif
@@ -714,7 +714,7 @@ extension APIService {
                 }
             } catch let error {
                 DispatchQueue.main.async {
-                    #if DEBUG
+                    #if !RELEASE
                     print("JSON Decoding Error: \(error.localizedDescription)")
                     #endif
                     completion(.failure(.jsonDecodingError(error: error)))
@@ -734,7 +734,7 @@ extension APIService {
             }
             return nil
         }
-        #if DEBUG
+        #if !RELEASE
         print("\n\n------------------------------------------------ Firebase Token: BEGIN ------------------------------------------------\n\nFirebase Bearer Token: \(bearerToken)\n\n--------------------------------------------------- Firebase Token: END ------------------------------------------------\n\n")
         #endif
         guard let url = self.constructURL(forEndpoint: endpoint, parameters: params) else {
@@ -742,7 +742,7 @@ extension APIService {
             completion(.failure(.invalidURL))
             return nil
         }
-        #if DEBUG
+        #if !RELEASE
         print("Endpoint URL= \(url)")
         #endif
         var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.defaultConfiguration.timeOutInterval)
@@ -767,7 +767,7 @@ extension APIService {
             }
             let responseCode = (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)
             let responseStatus = ResponseStatus.getResponseStatusBy(statusCode: responseCode)
-            #if DEBUG
+            #if !RELEASE
             print("\n\n------------------------------------------------ Response: BEGIN ------------------------------------------------\n\nResponse Status => \(responseStatus)\nResponse Code => \(responseCode)\n\n--------------------------------------------------- Response: END ------------------------------------------------\n\n")
             #endif
             if let expectedResponse = guardResponse {
@@ -793,7 +793,7 @@ extension APIService {
                     }
                     return
                 }
-                #if DEBUG
+                #if !RELEASE
                 let jsonString = String(data: data, encoding: .utf8)!
                 print("\n\n------------------------------------------------ Raw JSON Object: BEGIN ------------------------------------------------\n\n"+jsonString+"\n\n--------------------------------------------------- Raw JSON Object: END ------------------------------------------------\n\n")
                 #endif
@@ -804,7 +804,7 @@ extension APIService {
                     }
                 } catch let error {
                     DispatchQueue.main.async {
-                        #if DEBUG
+                        #if !RELEASE
                         print("JSON Decoding Error: \(error.localizedDescription)")
                         #endif
                         completion(.failure(.jsonDecodingError(error: error)))

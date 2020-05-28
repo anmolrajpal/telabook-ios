@@ -88,7 +88,7 @@ extension UserMessage: MessageType {
             }
             case .multimedia:
                 if let url = self.imageURL {
-                    if let imageText = self.textMessage {
+                    if let imageText = self.textMessage, !imageText.isBlank {
                         return .photo(ImageItem(imageUrl: url, imageText: imageText))
                     } else {
                         return .photo(ImageItem(imageUrl: url))
