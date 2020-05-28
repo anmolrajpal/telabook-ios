@@ -3,7 +3,7 @@
 //  Telabook
 //
 //  Created by Anmol Rajpal on 26/05/20.
-//  Copyright © 2020 Natovi. All rights reserved.
+//  Copyright © 2020 Anmol Rajpal. All rights reserved.
 //
 
 import UIKit
