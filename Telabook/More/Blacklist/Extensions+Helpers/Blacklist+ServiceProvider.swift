@@ -102,7 +102,7 @@ extension BlacklistViewController {
                 case let operation as MarkUnblockCustomerInStore_Operation:
                     operation.completionBlock = {
                         if let error = operation.error {
-                            #if DEBUG
+                            #if !RELEASE
                             print("Error updating Blacklist operation in Store: \(error)")
                             #endif
                             os_log("Error updating Blacklist operation in Store: %@", log: .coredata, type: .error, error.localizedDescription)
@@ -121,7 +121,7 @@ extension BlacklistViewController {
                         let blockedConversation = operation.blockedUser
                         self.markConversation(isUnblocking: false, for: blockedConversation)
                         self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
-                        #if DEBUG
+                        #if !RELEASE
                         print("Error updating Archiving operation on server: \(error)")
                         #endif
                         os_log("Error updating Archiving operation on server: %@", log: .network, type: .error, error.localizedDescription)
@@ -129,7 +129,7 @@ extension BlacklistViewController {
                 case let operation as DeleteBlockedUserEntryFromStore_Operation:
                     operation.completionBlock = {
                         if let error = operation.error {
-                            #if DEBUG
+                            #if !RELEASE
                             print(error.localizedDescription)
                             #endif
                             os_log("%@", log: .coredata, type: .error, error.localizedDescription)

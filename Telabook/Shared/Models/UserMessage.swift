@@ -31,21 +31,25 @@ extension UserMessage {
     convenience init(context: NSManagedObjectContext, newMessageEntryFromCurrentUser message:NewMessage, forConversationWithCustomer conversation:Customer) {
         self.init(context: context)
         self.firebaseKey = message.messageId
+        self.conversationID = Int64(conversation.externalConversationID)
         self.conversation = conversation
         self.date = message.sentDate
-        self.isSentByWorker = message.messageSender == worker
-        
+        self.sentByAppAt = message.sentDate
+        self.isSentByWorker = true
         switch message.kind {
             case .text(let text):
                 self.textMessage = text
+                self.type = MessageCategory.text.serverValue
             case .photo(let image):
                 guard let image = image as? ImageItem else { return }
                 if let text = image.imageText, !text.isBlank {
                     self.textMessage = text
                 }
                 self.imageURL = image.url
+                self.type = MessageCategory.multimedia.serverValue
             default: break
         }
+        self.isSending = true
     }
     convenience init(context: NSManagedObjectContext, messageEntryFromFirebase entry:FirebaseMessage, forConversationWithCustomer conversation:Customer) {
         self.init(context: context)
@@ -78,7 +82,24 @@ extension UserMessage {
         MessageCategory(stringValue: self.type!)
     }
 }
-
+extension UserMessage {
+    func toFirebaseObject() -> Any {
+        var dictionary:[String:Any] = [
+            "conversationId":NSNumber(value: self.conversationID),
+            "type":self.type!,
+            "sent_by_app":self.sentByAppAt!.milliSecondsSince1970,
+            "date":self.date!.milliSecondsSince1970,
+            "sender_is_worker":self.isSentByWorker
+        ]
+        if let textMessage = self.textMessage {
+            dictionary["message"] = textMessage
+        }
+        if let imageUrlString = self.imageUrlString {
+            dictionary["img"] = imageUrlString
+        }
+        return dictionary
+    }
+}
 
 extension UserMessage: MessageType {
     public var sender: SenderType { self.messageSender }
@@ -123,7 +144,10 @@ extension UserMessage: MessageType {
                     attributedText.append(messageString)
                     return .attributedText(attributedText)
                 } else {
-                    return .text(self.textMessage ?? "")
+                    return .attributedText(NSAttributedString(string: self.textMessage ?? "", attributes: [
+                        .font: UIFont(name: CustomFonts.gothamBook.rawValue, size: 15)!,
+                        .foregroundColor: UIColor.telaWhite
+                    ]))
             }
             case .multimedia:
                 if let url = self.imageURL {
@@ -136,9 +160,27 @@ extension UserMessage: MessageType {
                     return .text(self.textMessage ?? "")
             }
             case .scheduled:
-                return .attributedText(NSAttributedString(string: self.textMessage ?? "", attributes: [
-                    .font : UIFont(name: CustomFonts.gothamBook.rawValue, size: 15)!
-                ]))
+                let messageAttributedString = NSAttributedString(string: self.textMessage ?? "", attributes: [
+                    .font : UIFont(name: CustomFonts.gothamBook.rawValue, size: 15)!,
+                    .foregroundColor: UIColor.telaWhite
+                ])
+                let typeAttributedString = NSAttributedString(string: "Scheduled Message: ", attributes: [
+                    .font : UIFont(name: CustomFonts.gothamMedium.rawValue, size: 11)!,
+                    .foregroundColor: UIColor.telaGray6
+                ])
+                let dateAttributedString = NSAttributedString(string: "\nTelabook 🤖 @ \(Date.getStringFromDate(date: self.date!, dateFormat: .ddMMyyyy·hmma))", attributes: [
+                    .font : UIFont(name: CustomFonts.gothamBook.rawValue, size: 12)!,
+                    .foregroundColor: UIColor.telaGray5
+                ])
+                let paragraphStyle = NSMutableParagraphStyle()
+                paragraphStyle.lineSpacing = 4
+//                paragraphStyle.alignment = .center
+                let attributedText = NSMutableAttributedString()
+                attributedText.append(typeAttributedString)
+                attributedText.append(messageAttributedString)
+                attributedText.append(dateAttributedString)
+                attributedText.addAttribute(.paragraphStyle, value:paragraphStyle, range:NSMakeRange(0, attributedText.length))
+                return .attributedText(attributedText)
             
             case .system:
                 let messageAttributedString = NSAttributedString(string: self.textMessage?.replacingOccurrences(of: "_", with: " ").capitalized ?? "", attributes: [

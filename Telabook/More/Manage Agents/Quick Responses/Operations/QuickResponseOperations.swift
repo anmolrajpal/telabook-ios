@@ -21,7 +21,7 @@ struct QuickResponseOperations {
 
         let passFetchResultsToStore_Operation = BlockOperation { [unowned fetchFromStore_Operation, unowned deleteRedundantEntriesFromStore_Operation] in
             guard case let .success(entries) = fetchFromStore_Operation.result else {
-                #if DEBUG
+                #if !RELEASE
                 print("Unresolved Error: Unable to get result(QuickResponses) from fetchFromStore_Operation")
                 #endif
                 deleteRedundantEntriesFromStore_Operation.cancel()
@@ -34,7 +34,7 @@ struct QuickResponseOperations {
         
         let passServerResultsToStore_Operation = BlockOperation { [unowned downloadFromServer_Operation, unowned deleteRedundantEntriesFromStore_Operation, unowned addToStore_Operation] in
             guard case let .success(entries)? = downloadFromServer_Operation.result else {
-                #if DEBUG
+                #if !RELEASE
                 print("Unresolved Error: unable to get result from download from server operation")
                 #endif
                 deleteRedundantEntriesFromStore_Operation.cancel()
@@ -140,7 +140,7 @@ class FetchSavedQuickResponsesEntries_Operation: Operation {
                 self.result = .success(fetchResults)
             } catch {
                 let message = "Error fetching from context: \(error)"
-                #if DEBUG
+                #if !RELEASE
                 print(message)
                 #endif
                 os_log("%@", log: .coredata, type: .error, message)
@@ -299,7 +299,7 @@ class AddQuickResponseEntryFromServerToStore_Operation: Operation {
     
     override func main() {
         guard let serverEntries = serverEntries else {
-            #if DEBUG
+            #if !RELEASE
             print("No Server Entry to add, returning")
             #endif
             return

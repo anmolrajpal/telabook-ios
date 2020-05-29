@@ -40,6 +40,7 @@ extension MessagesController: InputBarAccessoryViewDelegate {
             if let str = component as? String {
                 let message = NewMessage(kind: .text(str), messageId: key, sender: thisSender, sentDate: Date())
                 print(message)
+                self.sendNewTextMessage(newMessage: message)
             } else if let _ = component as? UIImage {
 
             }

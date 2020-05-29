@@ -22,7 +22,7 @@ struct BlacklistOperations {
         
         let passFetchResultsToStore_Operation = BlockOperation { [unowned fetchFromStore_Operation, unowned deleteFromStore_Operation] in
             guard case let .success(entries) = fetchFromStore_Operation.result else {
-                #if DEBUG
+                #if !RELEASE
                 print("Unresolved Error: Unable to get result(Blocked User) from fetchFromStore_Operation")
                 #endif
                 deleteFromStore_Operation.cancel()
@@ -37,7 +37,7 @@ struct BlacklistOperations {
         
         let passServerResultsToStore_Operation = BlockOperation { [unowned fetchFromServer_Operation, unowned deleteFromStore_Operation, unowned addToStore_Operation] in
             guard case let .success(entries) = fetchFromServer_Operation.result else {
-                #if DEBUG
+                #if !RELEASE
                 print("Unresolved Error: Unable to get result(Blacklist) from fetchFromServer_Operation")
                 #endif
                 deleteFromStore_Operation.cancel()
@@ -133,7 +133,7 @@ class FetchSavedBlacklistEntries_Operation: Operation {
                 self.result = .success(fetchResults)
             } catch {
                 let message = "Error fetching from context: \(error)"
-                #if DEBUG
+                #if !RELEASE
                 print(message)
                 #endif
                 os_log("%@", log: .coredata, type: .error, message)
@@ -333,7 +333,7 @@ class AddBlacklistEntriesFromServerToStore_Operation: Operation {
     
     override func main() {
         guard let serverEntries = serverEntries else {
-            #if DEBUG
+            #if !RELEASE
             print("No Server Entry to add, returning")
             #endif
             return

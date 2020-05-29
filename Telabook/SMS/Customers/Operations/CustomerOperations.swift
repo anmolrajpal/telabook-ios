@@ -24,7 +24,7 @@ struct CustomerOperations {
 
         let passFetchResultsToStore_Operation = BlockOperation { [unowned fetchFromStore_Operation, unowned deleteRedundantEntriesFromStore_Operation, unowned addToStore_Operation] in
             guard case let .success(entries) = fetchFromStore_Operation.result else {
-                #if DEBUG
+                #if !RELEASE
                 print("Unresolved Error: Unable to get result(Customer) from fetchFromStore_Operation")
                 #endif
                 deleteRedundantEntriesFromStore_Operation.cancel()
@@ -114,7 +114,7 @@ class FetchSavedCustomersEntries_Operation: Operation {
                 self.result = .success(fetchResults)
             } catch {
                 let message = "Error fetching from context: \(error)"
-                #if DEBUG
+                #if !RELEASE
                 print(message)
                 #endif
                 os_log("%@", log: .coredata, type: .error, message)
@@ -290,7 +290,7 @@ class AddCustomerEntriesFromServerToStore_Operation: Operation {
     
     override func main() {
         guard let serverEntries = serverEntries else {
-            #if DEBUG
+            #if !RELEASE
             print("No Server Entry to add, returning")
             #endif
             return

@@ -19,7 +19,7 @@ struct AutoResponseOperations {
         
         let passFetchResultsToStore_Operation = BlockOperation { [unowned fetchFromStore_Operation, unowned addToStore_Operation] in
             guard case let .success(entry) = fetchFromStore_Operation.result else {
-                #if DEBUG
+                #if !RELEASE
                 print("no fetched result(AutoResponse) in passFetchResultsToStore_Operation")
                 #endif
                 return
@@ -31,7 +31,7 @@ struct AutoResponseOperations {
         
         let passServerResultsToStore_Operation = BlockOperation { [unowned downloadFromServer_Operation, unowned addToStore_Operation] in
             guard case let .success(entry)? = downloadFromServer_Operation.result else {
-                #if DEBUG
+                #if !RELEASE
                 print("Unresolved Error: unable to get result from download from server operation")
                 #endif
                 addToStore_Operation.cancel()
@@ -64,7 +64,7 @@ struct AutoResponseOperations {
         
         let passServerResultsToStore_Operation = BlockOperation { [unowned updateEntryOnServer_Operation, unowned syncEntryToStore_Operation] in
             guard case let .success(entry)? = updateEntryOnServer_Operation.result else {
-                #if DEBUG
+                #if !RELEASE
                 print("Unresolved Error: unable to get result from download from server operation")
                 #endif
                 syncEntryToStore_Operation.cancel()
@@ -127,7 +127,7 @@ class FetchSavedAgentAutoResponseEntry_Operation: Operation {
             do {
                 let fetchResults = try context.fetch(request)
                 guard !fetchResults.isEmpty, let autoResponse = fetchResults.first else {
-                    #if DEBUG
+                    #if !RELEASE
                     print("No Fetch Results in Fetch Auto Response from Core Data Operation")
                     #endif
                     return
@@ -226,7 +226,7 @@ class AddAgentAutoResponseEntryToCoreDataStore_Operation: Operation {
     override func main() {
         //        self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
         guard let serverEntry = serverEntry else {
-            #if DEBUG
+            #if !RELEASE
             print("No Server Entry to add, returning")
             #endif
             return
@@ -395,7 +395,7 @@ class SyncUserUpdatedAutoResponseEntryFromServerToStore_Operation: Operation {
     override func main() {
         //        self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
         guard let serverEntry = serverEntry else {
-            #if DEBUG
+            #if !RELEASE
             print("Failed to unwrap server entry in SyncUserUpdatedAutoResponseEntryFromServerToStore Operation")
             #endif
             return

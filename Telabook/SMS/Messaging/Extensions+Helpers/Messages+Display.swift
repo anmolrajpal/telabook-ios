@@ -22,11 +22,11 @@ extension MessagesController: MessagesDisplayDelegate {
         }
         
     }
-    func textColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
-//        guard let message = message as? UserMessage else { return }
-//        if message.isMessageDeleted { return .black }
-        return .telaWhite
-    }
+//    func textColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
+////        guard let message = message as? UserMessage else { return }
+////        if message.isMessageDeleted { return .black }
+//        return .telaWhite
+//    }
     
 //    func shouldDisplayHeader(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> Bool {
 //        return indexPath.section == 3

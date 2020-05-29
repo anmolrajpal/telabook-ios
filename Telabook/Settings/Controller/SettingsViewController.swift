@@ -26,7 +26,7 @@ class SettingsViewController: UIViewController {
             }
 //            if let dids = profile.user?.did {
 //                let arr = dids.map { $0.number }.compactMap { $0 }
-//                #if DEBUG
+//                #if !RELEASE
 //                print("Assigned DIDs: \(arr)")
 //                #endif
 //                let didStr = arr.joined(separator: ", ")

@@ -23,6 +23,8 @@ final class FirebaseAuthService:NSObject {
         case authenticationError(Error)
         case noIDToken(Error)
         case unknown
+        case databaseSetValueError(Error)
+        case databaseUpdateValueError(Error)
         
         var localizedDescription: String {
             switch self {
@@ -31,6 +33,8 @@ final class FirebaseAuthService:NSObject {
                 case .referenceError: return "Firebase Internal Error"
                 case let .authenticationError(error): return "Firebase Authentication Error: \(error.localizedDescription)"
                 case let .noIDToken(error): return "Firebase Token Error: \(error.localizedDescription)"
+                case let .databaseSetValueError(error): return "Error setting value in Firebase Database: \(error.localizedDescription)"
+                case let .databaseUpdateValueError(error): return "Error updating value in Firebase Database: \(error.localizedDescription)"
                 case .unknown: return "Firebase Error (Reason: Unknown). Please try signin in again."
             }
         }
@@ -157,14 +161,14 @@ final class FirebaseAuthService:NSObject {
                         completion(.success(token))
                     }
                 } else if let err = error {
-                    #if DEBUG
+                    #if !RELEASE
                     print("Error fetching token: \(err.localizedDescription)")
                     #endif
                     DispatchQueue.main.async {
                         completion(.failure(.noIDToken(err)))
                     }
                 } else {
-                    #if DEBUG
+                    #if !RELEASE
                     print("Error fetching token: Unknown Error")
                     #endif
                     DispatchQueue.main.async {
@@ -173,7 +177,7 @@ final class FirebaseAuthService:NSObject {
                 }
             })
         } else {
-            #if DEBUG
+            #if !RELEASE
             print("Failed to unwrap Firebase Current User. Error: \(FirebaseError.noCurrentUser.localizedDescription)")
             #endif
             defer {

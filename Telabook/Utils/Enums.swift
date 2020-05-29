@@ -250,7 +250,14 @@ public enum MessageCategory {
         }
     }
     var rawValue:String { String(describing: self) }
-    
+    var serverValue:String {
+        switch self {
+            case .text: return "TEXT"
+            case .multimedia: return "MULTIMEDIA"
+            case .scheduled: return "SCHEDULED_MESSAGE"
+            case .system: return "SYSTEM_MESSAGE"
+        }
+    }
 }
 public enum ConversationPriority {
     case Low

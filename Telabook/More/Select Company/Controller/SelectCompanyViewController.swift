@@ -20,7 +20,7 @@ class SelectCompanyViewController: UIViewController {
     var selectedCompany:UserCompaniesCodable! {
         didSet {
             guard let company = selectedCompany else { print("No Selected Company"); return }
-            #if DEBUG
+            #if !RELEASE
             print("Selected Company- \(company.name ?? "nil"), ID: \(company.id ?? 0)")
             #endif
         }
@@ -28,7 +28,7 @@ class SelectCompanyViewController: UIViewController {
     var userCompanies:[UserCompaniesCodable] = [] {
         didSet {
             guard !userCompanies.isEmpty else {
-                #if DEBUG
+                #if !RELEASE
                 print("No User Companies")
                 #endif
                 return

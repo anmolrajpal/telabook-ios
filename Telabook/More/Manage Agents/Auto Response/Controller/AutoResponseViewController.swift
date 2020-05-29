@@ -49,7 +49,7 @@ class AutoResponseViewController: UIViewController {
     }
     internal func updateSnapshot() {
         guard let autoResponse = self.fetchedResultsController.fetchedObjects?.first else {
-            #if DEBUG
+            #if !RELEASE
             print("Prefetched Auto Response Snapshot not available in Core Data")
             #endif
             return

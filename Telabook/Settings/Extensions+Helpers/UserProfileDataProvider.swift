@@ -75,7 +75,7 @@ extension SettingsViewController {
         }
     }
     private func handleUpdateUserProfileFaliure(error: APIService.APIError) {
-        #if DEBUG
+        #if !RELEASE
         print("***Error Updating Password****\n\(error.localizedDescription)")
         #endif
         DispatchQueue.main.async {
@@ -129,7 +129,7 @@ extension SettingsViewController {
         }
     }
     private func handleFetchUserProfileFaliure(error: APIService.APIError) {
-        #if DEBUG
+        #if !RELEASE
         print("***Error Updating Password****\n\(error.localizedDescription)")
         #endif
         DispatchQueue.main.async {

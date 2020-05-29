@@ -25,7 +25,7 @@ final class NetworkManager: NSObject {
     }
     @objc func reachabilityChanged(_ notification: Notification) {
         let reachability = notification.object as! Reachability
-        #if DEBUG
+        #if !RELEASE
         switch reachability.connection {
         case .wifi:
             print("Network Reachable via WiFi")

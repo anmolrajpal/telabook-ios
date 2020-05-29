@@ -54,7 +54,7 @@ struct APIOperations {
             hitEndpointOperation.bearerToken = bearerToken
             
             os_log("Firebase Bearer Token: %{PRIVATE}@", log: .firebase, type: .info, bearerToken)
-            #if DEBUG
+            #if !RELEASE
             print("\n\n------------------------------------------------ Firebase Token: BEGIN ------------------------------------------------\n\nFirebase Bearer Token: \(bearerToken)\n\n--------------------------------------------------- Firebase Token: END ------------------------------------------------\n\n")
             #endif
         }
@@ -156,7 +156,7 @@ class HitEndpointOperation<T:Codable>: Operation {
             finish(result: .failure(.cancelled))
             return
         }
-        #if DEBUG
+        #if !RELEASE
         print("Endpoint URL => \(url)")
         #endif
         os_log("Endpoint URL => %@", log: .network, type: .info, url.absoluteString)
@@ -201,7 +201,7 @@ class HitEndpointOperation<T:Codable>: Operation {
             let responseCode = (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)
             let responseStatus = ResponseStatus.getResponseStatusBy(statusCode: responseCode)
             
-            #if DEBUG
+            #if !RELEASE
             print("\n\n------------------------------------------------ Response: BEGIN ------------------------------------------------\n\nResponse Status => \(responseStatus)\nResponse Code => \(responseCode)\n\n--------------------------------------------------- Response: END ------------------------------------------------\n\n")
             #endif
             let message = "Response Status: \(responseStatus.rawValue) | Code: \(responseCode) | for URL: \(url.absoluteString)"
@@ -224,7 +224,7 @@ class HitEndpointOperation<T:Codable>: Operation {
                     self.finish(result: .failure(.noData(response: ResponseStatus.getResponseStatusBy(statusCode: (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)))))
                     return
                 }
-                #if DEBUG
+                #if !RELEASE
                 let jsonString = String(data: data, encoding: .utf8)!
                 print("\n\n------------------------------------------------ Raw JSON Object: BEGIN ------------------------------------------------\n\n"+jsonString+"\n\n--------------------------------------------------- Raw JSON Object: END ------------------------------------------------\n\n")
                 #endif
@@ -232,7 +232,7 @@ class HitEndpointOperation<T:Codable>: Operation {
                     let object = try self.decoder.decode(T.self, from: data)
                     self.finish(result: .success(object))
                 } catch let error {
-                    #if DEBUG
+                    #if !RELEASE
                     print("JSON Decoding Error: \(error)")
                     #endif
                     os_log("JSON Decoding Error: %@", log: .network, type: .error, error.localizedDescription)

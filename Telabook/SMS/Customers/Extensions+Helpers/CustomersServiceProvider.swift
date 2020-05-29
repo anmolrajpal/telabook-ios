@@ -190,7 +190,7 @@ extension CustomersViewController {
                 case let operation as UpdateConversationInStore_ArchivingOperation:
                     operation.completionBlock = {
                         if let error = operation.error {
-                            #if DEBUG
+                            #if !RELEASE
                             print("Error updating Archiving operation in Store: \(error)")
                             #endif
                             os_log("Error updating Archiving operation in Store: %@", log: .coredata, type: .error, error.localizedDescription)
@@ -208,7 +208,7 @@ extension CustomersViewController {
                         guard case let .failure(error) = operation.result else { return }
                         self.updateConversationInStore(for: operation.customer, archiving: !operation.shouldArchive, completion: {_ in})
                         self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
-                        #if DEBUG
+                        #if !RELEASE
                         print("Error updating Archiving operation on server: \(error)")
                         #endif
                         os_log("Error updating Archiving operation on server: %@", log: .network, type: .error, error.localizedDescription)
@@ -225,7 +225,7 @@ extension CustomersViewController {
                 case let operation as UpdateConversationInStore_PinningOperation:
                     operation.completionBlock = {
                         if let error = operation.error {
-                            #if DEBUG
+                            #if !RELEASE
                             print("Error updating Pinning operation in Store: \(error)")
                             #endif
                             os_log("Error updating Pinning operation in Store: %@", log: .coredata, type: .error, error.localizedDescription)
@@ -248,7 +248,7 @@ extension CustomersViewController {
                 case let operation as MarkBlockCustomerInStore_Operation:
                     operation.completionBlock = {
                         if let error = operation.error {
-                            #if DEBUG
+                            #if !RELEASE
                             print("Error updating Blacklist operation in Store: \(error)")
                             #endif
                             os_log("Error updating Blacklist operation in Store: %@", log: .coredata, type: .error, error.localizedDescription)
@@ -266,7 +266,7 @@ extension CustomersViewController {
                         guard case let .failure(error) = operation.result else { return }
                         self.markConversationInStore(isBlocking: false, for: operation.customer)
                         self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
-                        #if DEBUG
+                        #if !RELEASE
                         print("Error updating Blocking operation on server: \(error)")
                         #endif
                         os_log("Error updating Blocking operation on server: %@", log: .network, type: .error, error.localizedDescription)
@@ -281,7 +281,7 @@ extension CustomersViewController {
                case let operation as MarkDeleteCustomerInStore_Operation:
                    operation.completionBlock = {
                        if let error = operation.error {
-                           #if DEBUG
+                           #if !RELEASE
                            print("Error updating Delete operation in Store: \(error)")
                            #endif
                            os_log("Error updating Delete operation in Store: %@", log: .coredata, type: .error, error.localizedDescription)
@@ -299,7 +299,7 @@ extension CustomersViewController {
                        guard case let .failure(error) = operation.result else { return }
                        self.markConversationInStore(isDeleted: false, for: operation.customer)
                        self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
-                       #if DEBUG
+                       #if !RELEASE
                        print("Error updating Deletion operation on server: \(error)")
                        #endif
                        os_log("Error updating Deletion operation on server: %@", log: .network, type: .error, error.localizedDescription)

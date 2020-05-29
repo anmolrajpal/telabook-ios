@@ -108,6 +108,10 @@ public struct APIService: APIServiceProtocol {
         
         /// Endpoint to request forgot password
         case ForgotPassword
+        
+        /// Endpoint to send new  message
+        case SendMessage
+        
         /**
         Returns the path of a specified Endpoint.
         ## Example Usage ##
@@ -140,6 +144,7 @@ public struct APIService: APIServiceProtocol {
                 case .UnblockConversation: return "/remove_number_blacklist"
                 case let .DeleteConversation(conversationID): return "/external_conversations/\(conversationID)"
                 case .ForgotPassword: return "/password/email"
+                case .SendMessage: return "/send"
             }
         }
     }

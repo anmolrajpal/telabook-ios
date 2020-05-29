@@ -47,7 +47,7 @@ extension ChangePasswordViewController {
     }
     internal func handleUpdatePasswordFaliure(error: APIService.APIError) {
         DispatchQueue.main.async {
-            #if DEBUG
+            #if !RELEASE
             print("***Error Updating Password****\n\(error.localizedDescription)")
             #endif
             UIAlertController.dismissModalSpinner(controller: self, completion: {

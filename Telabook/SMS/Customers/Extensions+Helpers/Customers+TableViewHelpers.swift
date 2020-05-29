@@ -259,7 +259,7 @@ extension CustomersViewController: UITableViewDelegate {
         guard
             id != 0,
             customer.node != nil else { return }
-        let vc = MessagesController(context: context, customer: customer)
+        let vc = MessagesController(context: context, customer: customer, conversationReference: self.reference)
         navigationController?.pushViewController(vc, animated: true)
     }
 }

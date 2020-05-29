@@ -13,7 +13,7 @@ extension SelectCompanyViewController {
         subview.selectButton.addTarget(self, action: #selector(didTapSelectButton), for: .touchUpInside)
     }
     @objc fileprivate func didTapSelectButton(_ sender:UIButton) {
-        #if DEBUG
+        #if !RELEASE
         print("didTapSelectButton")
         #endif
         guard let selectedCompanyId = selectedCompany.id, selectedCompanyId != 0 else {

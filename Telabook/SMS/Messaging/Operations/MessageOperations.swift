@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreData
+import Firebase
 
 struct MessageOperations {
     
@@ -22,7 +23,7 @@ struct MessageOperations {
         /*
         let passFetchResultsToStore_Operation = BlockOperation { [unowned fetchFromStore_Operation, unowned deleteRedundantEntriesFromStore_Operation, unowned addToStore_Operation] in
             guard case let .success(entries) = fetchFromStore_Operation.result else {
-                #if DEBUG
+                #if !RELEASE
                 print("Unresolved Error: Unable to get result(Customer) from fetchFromStore_Operation")
                 #endif
                 deleteRedundantEntriesFromStore_Operation.cancel()
@@ -43,6 +44,108 @@ struct MessageOperations {
         ]
          */
     }
+    
+    
+    
+    
+    
+    static func getOperationsToSend(newTextMessage message:NewMessage, using context:NSManagedObjectContext, forConversationWithCustomer conversation:Customer, messageReference:DatabaseReference, conversationReference:DatabaseReference) -> [Operation] {
+        let addToStore_Operation = AddNewMessageEntryToStore_Operation(context: context, conversation: conversation, message: message)
+        let updateEntryToFirebase_Operation = UpdateNewMessageEntryToFirebase_Operation(messageReference: messageReference, conversationReference: conversationReference)
+        let sendOnServer_Operation = SendNewTextMessageOnServer_Operation(customer: conversation)
+        
+        
+        let passNewlyCreatedEntryFromStore_Operation = BlockOperation { [unowned addToStore_Operation, unowned updateEntryToFirebase_Operation, unowned sendOnServer_Operation] in
+            guard let messageFromStore = addToStore_Operation.newMessageFromStore else {
+                #if !RELEASE
+                print("Unresolved Error: Unable to get newly created result(UserMessage) from addToStore_Operation")
+                #endif
+                updateEntryToFirebase_Operation.cancel()
+                sendOnServer_Operation.cancel()
+                return
+            }
+            updateEntryToFirebase_Operation.newMessageFromStore = messageFromStore
+            sendOnServer_Operation.newlyCreatedMessage = messageFromStore
+        }
+        passNewlyCreatedEntryFromStore_Operation.addDependency(addToStore_Operation)
+        updateEntryToFirebase_Operation.addDependency(passNewlyCreatedEntryFromStore_Operation)
+        sendOnServer_Operation.addDependency(passNewlyCreatedEntryFromStore_Operation)
+        
+        
+        let guardFirebaseEntry_Operation = BlockOperation { [unowned updateEntryToFirebase_Operation, unowned sendOnServer_Operation] in
+            guard case let .success(success) = updateEntryToFirebase_Operation.result, success else {
+                if case let .failure(error) = updateEntryToFirebase_Operation.result {
+                    print(error)
+                }
+                #if !RELEASE
+                print("Unresolved Error: Unable to update message on Firebase")
+                #endif
+                sendOnServer_Operation.cancel()
+                return
+            }
+        }
+        guardFirebaseEntry_Operation.addDependency(updateEntryToFirebase_Operation)
+        sendOnServer_Operation.addDependency(guardFirebaseEntry_Operation)
+        return [
+            addToStore_Operation,
+            passNewlyCreatedEntryFromStore_Operation,
+            updateEntryToFirebase_Operation,
+            guardFirebaseEntry_Operation,
+            sendOnServer_Operation
+        ]
+    }
+    
+    
+    
+    static func getOperationsToSend(newMultimediaMessage message:NewMessage, using context:NSManagedObjectContext, forConversationWithCustomer conversation:Customer) -> [Operation] {
+        let addToStore_Operation = AddNewMessageEntryToStore_Operation(context: context, conversation: conversation, message: message)
+        let sendOnServer_Operation = SendNewTextMessageOnServer_Operation(customer: conversation)
+        
+        let passNewlyCreatedEntryFromStore_Operation = BlockOperation { [unowned addToStore_Operation, unowned sendOnServer_Operation] in
+            guard let messageFromStore = addToStore_Operation.newMessageFromStore else {
+                #if !RELEASE
+                print("Unresolved Error: Unable to get newly created result(UserMessage) from addToStore_Operation")
+                #endif
+                sendOnServer_Operation.cancel()
+                return
+            }
+            sendOnServer_Operation.newlyCreatedMessage = messageFromStore
+        }
+        passNewlyCreatedEntryFromStore_Operation.addDependency(addToStore_Operation)
+        sendOnServer_Operation.addDependency(passNewlyCreatedEntryFromStore_Operation)
+        return [
+            addToStore_Operation,
+            passNewlyCreatedEntryFromStore_Operation,
+            sendOnServer_Operation
+        ]
+    }
+    
+    
+    
+    
+    
+    fileprivate static func updateNewMessageToFirebase(message:UserMessage, messageReference:DatabaseReference, conversationReference:DatabaseReference, completion: @escaping (Result<Bool, FirebaseAuthService.FirebaseError>) -> ()) {
+        messageReference.child(message.messageId).setValue(message.toFirebaseObject()) { (error, _) in
+            if let error = error {
+                #if !RELEASE
+                print(error.localizedDescription)
+                #endif
+                completion(.failure(.databaseSetValueError(error)))
+            } else {
+                conversationReference.child(String(message.conversationID)).updateChildValues(FirebaseCustomer.getUpdatedConversationObject(fromLastMessage: message)) { (error, _) in
+                    if let error = error {
+                        #if !RELEASE
+                        print(error.localizedDescription)
+                        #endif
+                        completion(.failure(.databaseUpdateValueError(error)))
+                    } else {
+                        completion(.success(true))
+                    }
+                }
+                
+            }
+        }
+    }
 }
 
 
@@ -60,7 +163,7 @@ class MergeMessageEntriesFromFirebaseToStore_Operation: Operation {
         }
     }
     var error:OperationError?
-//    var fetchedEntries:[Customer]?
+
     private let context: NSManagedObjectContext
     private let conversation:Customer
     private let serverEntries:[FirebaseMessage]?
@@ -74,7 +177,7 @@ class MergeMessageEntriesFromFirebaseToStore_Operation: Operation {
     
     override func main() {
         guard let serverEntries = serverEntries else {
-            #if DEBUG
+            #if !RELEASE
             print("No Server Entry to add, returning")
             #endif
             return
@@ -95,5 +198,226 @@ class MergeMessageEntriesFromFirebaseToStore_Operation: Operation {
             }
         }
         
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+/// Add new user message entry created by user pressing send button to the Core Data store.
+class AddNewMessageEntryToStore_Operation: Operation {
+    enum OperationError: Error, LocalizedError {
+        case coreDataError(error:Error)
+        
+        var localizedDescription: String {
+            switch self {
+                case let .coreDataError(error): return "Core Data Error: \(error.localizedDescription)"
+            }
+        }
+    }
+    var error:OperationError?
+    private let context: NSManagedObjectContext
+    private let conversation:Customer
+    private let newMessage:NewMessage
+    var newMessageFromStore:UserMessage?
+    init(context: NSManagedObjectContext, conversation:Customer, message:NewMessage) {
+        self.context = context
+        self.conversation = conversation
+        self.newMessage = message
+    }
+    
+    override func main() {
+        context.performAndWait {
+            do {
+                newMessageFromStore = UserMessage(context: context, newMessageEntryFromCurrentUser: newMessage, forConversationWithCustomer: conversation)
+                try context.save()
+            } catch {
+                #if !RELEASE
+                print("Error adding entries to store: \(error))")
+                #endif
+                self.error = .coreDataError(error: error)
+            }
+        }
+        
+    }
+}
+
+
+
+
+/// Update Newly created message entry from core date store to Firebase..
+class UpdateNewMessageEntryToFirebase_Operation: Operation {
+    enum OperationError: Error, LocalizedError {
+        case messageReference(error:Error)
+        case conversationReference(error:Error)
+        var localizedDescription: String {
+            switch self {
+                case let .messageReference(error): return "Firebase Message Reference Error: \(error.localizedDescription)"
+                case let .conversationReference(error): return "Firebase Conversation Reference Error: \(error.localizedDescription)"
+            }
+        }
+    }
+    var result:Result<Bool, FirebaseAuthService.FirebaseError>?
+    private var downloading = false
+    
+    var newMessageFromStore:UserMessage?
+    let messageReference:DatabaseReference
+    let conversationReference:DatabaseReference
+    
+    init(messageReference:DatabaseReference, conversationReference:DatabaseReference) {
+        self.messageReference = messageReference
+        self.conversationReference = conversationReference
+    }
+    override var isAsynchronous: Bool {
+        return true
+    }
+    
+    override var isExecuting: Bool {
+        return downloading
+    }
+    
+    override var isFinished: Bool {
+        return result != nil
+    }
+    
+    override func cancel() {
+        super.cancel()
+        finish(result: .failure(.cancelled))
+    }
+    
+    func finish(result: Result<Bool, FirebaseAuthService.FirebaseError>) {
+        guard downloading else { return }
+        
+        willChangeValue(forKey: #keyPath(isExecuting))
+        willChangeValue(forKey: #keyPath(isFinished))
+        
+        downloading = false
+        self.result = result
+        
+        didChangeValue(forKey: #keyPath(isFinished))
+        didChangeValue(forKey: #keyPath(isExecuting))
+    }
+    
+    override func start() {
+        guard let message = newMessageFromStore else {
+            #if !RELEASE
+            print("Unresolved Error: Failed to unwrap new message entry from store.")
+            #endif
+            return
+        }
+        willChangeValue(forKey: #keyPath(isExecuting))
+        downloading = true
+        didChangeValue(forKey: #keyPath(isExecuting))
+        
+        guard !isCancelled else {
+            finish(result: .failure(.cancelled))
+            return
+        }
+        MessageOperations.updateNewMessageToFirebase(message: message, messageReference: messageReference, conversationReference: conversationReference, completion: finish)
+    }
+}
+
+
+
+
+
+/// Send New Text Message on the server operation.
+class SendNewTextMessageOnServer_Operation: Operation {
+    var result: Result<Bool, APIService.APIError>?
+    
+    private var downloading = false
+    
+    let customer:Customer
+    var newlyCreatedMessage:UserMessage?
+    private let headers:[HTTPHeader] = [
+        HTTPHeader(key: .contentType, value: "application/json")
+    ]
+
+    init(customer:Customer) {
+        self.customer = customer
+    }
+    
+    override var isAsynchronous: Bool {
+        return true
+    }
+    
+    override var isExecuting: Bool {
+        return downloading
+    }
+    
+    override var isFinished: Bool {
+        return result != nil
+    }
+    
+    override func cancel() {
+        super.cancel()
+        finish(result: .failure(.cancelled))
+    }
+    
+    func finish(result: Result<APIService.RecurrentResult, APIService.APIError>) {
+        guard downloading else { return }
+        
+        willChangeValue(forKey: #keyPath(isExecuting))
+        willChangeValue(forKey: #keyPath(isFinished))
+        
+        downloading = false
+        
+        let errorMessage = "Error: No results from server"
+        
+        guard case let .success(resultData) = result else {
+            if case let .failure(error) = result {
+                self.result = .failure(error)
+                didChangeValue(forKey: #keyPath(isFinished))
+                didChangeValue(forKey: #keyPath(isExecuting))
+            }
+            return
+        }
+        guard let serverResultValue = resultData.result else {
+            self.result = .failure(.resultError(message: errorMessage))
+            didChangeValue(forKey: #keyPath(isFinished))
+            didChangeValue(forKey: #keyPath(isExecuting))
+            return
+        }
+        let serverResult = ServerResult(rawValue: serverResultValue)
+        guard serverResult == .success else {
+            self.result = .failure(.resultError(message: resultData.message ?? errorMessage))
+            didChangeValue(forKey: #keyPath(isFinished))
+            didChangeValue(forKey: #keyPath(isExecuting))
+            return
+        }
+        self.result = .success(true)
+        
+        didChangeValue(forKey: #keyPath(isFinished))
+        didChangeValue(forKey: #keyPath(isExecuting))
+    }
+    
+    override func start() {
+        guard let message = newlyCreatedMessage else {
+            return
+        }
+        let companyID = String(AppData.companyId)
+        let params = [
+            "company_id":companyID,
+            "id":String(customer.externalConversationID),
+            "fb_key":message.messageId,
+            "message": message.textMessage ?? ""
+        ]
+        print(params)
+        willChangeValue(forKey: #keyPath(isExecuting))
+        downloading = true
+        didChangeValue(forKey: #keyPath(isExecuting))
+        
+        guard !isCancelled else {
+            finish(result: .failure(.cancelled))
+            return
+        }
+        APIServer<APIService.RecurrentResult>(apiVersion: .v2).hitEndpoint(endpoint: .SendMessage, httpMethod: .POST, params: params, headers: headers, completion: finish)
     }
 }

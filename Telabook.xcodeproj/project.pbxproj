@@ -109,7 +109,6 @@
 		6F69BE9222D4DCE600F8903F /* QuickResponsesAPIProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE9122D4DCE600F8903F /* QuickResponsesAPIProtocol.swift */; };
 		6F69BE9422D4DCF600F8903F /* QuickResponsesAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE9322D4DCF600F8903F /* QuickResponsesAPI.swift */; };
 		6F69BE9622D4DE4900F8903F /* QuickResponsesDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE9522D4DE4900F8903F /* QuickResponsesDataProvider.swift */; };
-		6F6F9F8A247FB76900C9114D /* Config-PreRelease.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 6F6F9F89247FB76900C9114D /* Config-PreRelease.xcconfig */; };
 		6F83FC2124608C6A00518201 /* QuickResponsesHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F83FC2024608C6A00518201 /* QuickResponsesHelpers.swift */; };
 		6F83FC232460A39B00518201 /* QuickResponsesTableViewHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F83FC222460A39B00518201 /* QuickResponsesTableViewHelpers.swift */; };
 		6F9011D422AC3B130046F5E3 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9011D322AC3B130046F5E3 /* ChatViewController.swift */; };
@@ -1850,7 +1849,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1020;
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1150;
 				ORGANIZATIONNAME = "Anmol Rajpal";
 				TargetAttributes = {
 					6FB11ADF229BDDBD0098D050 = {
@@ -1892,7 +1891,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6F6F9F8A247FB76900C9114D /* Config-PreRelease.xcconfig in Resources */,
 				6FB11AEB229BDDBE0098D050 /* Assets.xcassets in Resources */,
 				6FB11AF9229BE2400098D050 /* Gotham-Book.otf in Resources */,
 				6FB11AF8229BE2400098D050 /* Gotham-Medium.otf in Resources */,

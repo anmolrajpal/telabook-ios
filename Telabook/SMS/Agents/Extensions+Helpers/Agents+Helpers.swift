@@ -41,7 +41,7 @@ extension AgentsViewController {
                 let thresholdRefreshTime = lastRefreshedAt.addingTimeInterval(120)
                 let currentTime = Date()
                 currentTime > thresholdRefreshTime ? initiateFetchAgentsSequence(withRefreshMode: .refreshControl) : ()
-                #if DEBUG
+                #if !RELEASE
                 print("\n\n\tLast Refreshed At: \(Date.getStringFromDate(date: lastRefreshedAt, dateFormat: "yyyy-MM-dd HH:mm:ss")) | Threshold Refresh Time: \(Date.getStringFromDate(date: thresholdRefreshTime, dateFormat: "yyyy-MM-dd HH:mm:ss")) | Current time: \(Date.getStringFromDate(date: currentTime, dateFormat: "yyyy-MM-dd HH:mm:ss")))\n\n")
                 #endif
             }
