@@ -1172,3 +1172,8 @@ extension UIImage {
 
     */
  }
+extension Array {
+    @inlinable public var second: Element? {
+        return count >= 2 ? self[1] : nil
+    }
+}

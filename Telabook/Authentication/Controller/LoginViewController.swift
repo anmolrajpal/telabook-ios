@@ -18,7 +18,8 @@ class LoginViewController: UIViewController {
     var userInfo:UserInfoCodable?
     var isEmailValid = false
     var isPasswordValid = false
-    
+    var alertController:UIAlertController!
+    var submitAction:UIAlertAction!
     
     
     // MARK: - Constructors
