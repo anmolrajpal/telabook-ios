@@ -9,18 +9,21 @@
 import UIKit
 import MessageKit
 import InputBarAccessoryView
+import InteractiveModal
 
 extension MessagesController: InputBarAccessoryViewDelegate {
     func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
         let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
         let isEnabled = !trimmedText.isEmpty
         guard isEnabled else {
-            print("Should present quick responses")
+            showQuickResponsePicker()
             return
         }
         
         guard let key = reference.childByAutoId().key else {
+            #if !RELEASE
             print("Failed to create Firebase new key")
+            #endif
             return
         }
         
@@ -46,4 +49,62 @@ extension MessagesController: InputBarAccessoryViewDelegate {
             }
         }
     }
+    
+    
+    private func showQuickResponsePicker() {
+        /*
+        guard let quickResponses = customer.agent?.quickResponses?.allObjects as? [QuickResponse] else {
+            #if !RELEASE
+            print("Failed to cast NSSet to quick responses")
+            #endif
+            return
+        }
+         */
+//        let vc = QuickResponsePickerController(quickResponses: quickResponses)
+        guard let worker = customer.agent else {
+            #if !RELEASE
+            print("Failed to get access agent from customer")
+            #endif
+            return
+        }
+        let vc = QuickResponsePickerController()
+        vc.agent = worker
+        vc.delegate = self
+        let navController = UINavigationController(rootViewController: vc)
+        let presenter = InteractiveModalViewController(controller: navController)
+        self.present(presenter, animated: true, completion: nil)
+    }
 }
+extension MessagesController: QuickResponsePickerDelegate {
+    func quickResponseDidPick(at indexPath: IndexPath, response: QuickResponse) {
+        guard let text = response.answer else { return }
+        guard let key = reference.childByAutoId().key else {
+            #if !RELEASE
+            print("Failed to create Firebase new key")
+            #endif
+            return
+        }
+        let message = NewMessage(kind: .text(text), messageId: key, sender: thisSender, sentDate: Date())
+        self.sendNewTextMessage(newMessage: message)
+    }
+}
+
+
+
+// MARK: - Apple's new Background API Implementation
+/*
+// Guarding Important Tasks While App is Still in the Foreground
+func send(_ message: Message) {
+    let sendOperation = SendOperation(message: message)
+    var identifier: UIBackgroundTaskIdentifier!
+    identifier = UIApplication.shared.beginBackgroundTask(expirationHandler: {
+        sendOperation.cancel()
+        postUserNotification("Message not sent, please resend")
+    })
+    // Background task will be ended in the operation's completion block below
+    sendOperation.completionBlock = {
+    }
+    UIApplication.shared.endBackgroundTask(identifier)
+    operationQueue.addOperation(sendOperation)
+}
+*/

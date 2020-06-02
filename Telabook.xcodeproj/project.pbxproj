@@ -248,6 +248,10 @@
 		6FEF96A622A67F2900F2FF83 /* SMSDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF96A522A67F2900F2FF83 /* SMSDetailViewController.swift */; };
 		6FEF96A822A682E700F2FF83 /* SMSDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF96A722A682E700F2FF83 /* SMSDetailCell.swift */; };
 		6FEF96AA22A7BDCA00F2FF83 /* ExternalConversationsAPIProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF96A922A7BDCA00F2FF83 /* ExternalConversationsAPIProtocol.swift */; };
+		6FF842162482EACD0069A789 /* QuickResponsePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF842152482EACD0069A789 /* QuickResponsePickerController.swift */; };
+		6FF842182482EADD0069A789 /* QuickResponsePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF842172482EADD0069A789 /* QuickResponsePickerView.swift */; };
+		6FF8421A2482EFF00069A789 /* QuickResponsePicker+TableViewHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF842192482EFF00069A789 /* QuickResponsePicker+TableViewHelpers.swift */; };
+		6FF8421C2482F0030069A789 /* QuickResponsePicker+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF8421B2482F0030069A789 /* QuickResponsePicker+Helpers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -503,6 +507,10 @@
 		6FEF96A522A67F2900F2FF83 /* SMSDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSDetailViewController.swift; sourceTree = "<group>"; };
 		6FEF96A722A682E700F2FF83 /* SMSDetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSDetailCell.swift; sourceTree = "<group>"; };
 		6FEF96A922A7BDCA00F2FF83 /* ExternalConversationsAPIProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalConversationsAPIProtocol.swift; sourceTree = "<group>"; };
+		6FF842152482EACD0069A789 /* QuickResponsePickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponsePickerController.swift; sourceTree = "<group>"; };
+		6FF842172482EADD0069A789 /* QuickResponsePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponsePickerView.swift; sourceTree = "<group>"; };
+		6FF842192482EFF00069A789 /* QuickResponsePicker+TableViewHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QuickResponsePicker+TableViewHelpers.swift"; sourceTree = "<group>"; };
+		6FF8421B2482F0030069A789 /* QuickResponsePicker+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QuickResponsePicker+Helpers.swift"; sourceTree = "<group>"; };
 		7B80F0AE73DD0782D1289F23 /* Pods-Telabook.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.debug.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.debug.xcconfig"; sourceTree = "<group>"; };
 		A24D2E2A3583492FDB7723EF /* Pods_Telabook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Telabook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3D13E12DA10A4904B024B3C /* Pods-Telabook.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.staging.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.staging.xcconfig"; sourceTree = "<group>"; };
@@ -734,6 +742,8 @@
 				6FEE9A16247E696000709E2D /* Messages+Cell.swift */,
 				6FEE9A10247D4D0200709E2D /* Messages+InputBar.swift */,
 				6FEE9A14247D5BE000709E2D /* Messages+ServiceProvider.swift */,
+				6FF842192482EFF00069A789 /* QuickResponsePicker+TableViewHelpers.swift */,
+				6FF8421B2482F0030069A789 /* QuickResponsePicker+Helpers.swift */,
 			);
 			path = "Extensions+Helpers";
 			sourceTree = "<group>";
@@ -742,6 +752,7 @@
 			isa = PBXGroup;
 			children = (
 				6F21378124743529002AB150 /* MessagesController.swift */,
+				6FF842152482EACD0069A789 /* QuickResponsePickerController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -751,6 +762,7 @@
 			children = (
 				6F21378324743535002AB150 /* MessagesView.swift */,
 				6FEE9A18247ED6A300709E2D /* BotMessageCell.swift */,
+				6FF842172482EADD0069A789 /* QuickResponsePickerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1970,6 +1982,7 @@
 				6FB11AFB229BF0590098D050 /* TabBarController.swift in Sources */,
 				6FEE9A13247D4FFF00709E2D /* MessageOperations.swift in Sources */,
 				6F9011D422AC3B130046F5E3 /* ChatViewController.swift in Sources */,
+				6FF842182482EADD0069A789 /* QuickResponsePickerView.swift in Sources */,
 				6FB11B29229E75710098D050 /* FirebaseAuthService.swift in Sources */,
 				6FC823092475AE23002421F0 /* Blacklist+CoreDataHelpers.swift in Sources */,
 				6FC60236246447E500C1BF6D /* Agents+Helpers.swift in Sources */,
@@ -1991,6 +2004,7 @@
 				6F29FD5522B909A600BCA2AB /* TextInputCell.swift in Sources */,
 				6F987A72245B159500C6046E /* LaunchCounter.swift in Sources */,
 				6F6457DB24633D8600CECF03 /* QuickResponsesServiceProvider.swift in Sources */,
+				6FF8421C2482F0030069A789 /* QuickResponsePicker+Helpers.swift in Sources */,
 				6F23BD0522D8BB9B0001A888 /* UserProfileAPI.swift in Sources */,
 				6F065357246741C900F857C1 /* Reachability+ViewHelpers.swift in Sources */,
 				6FBDEC7822B28D5E00A8511E /* EditDetailsViewController.swift in Sources */,
@@ -2077,6 +2091,7 @@
 				6F46A8BB22D062750042A667 /* FollowUpAPI.swift in Sources */,
 				6F58C33B22D61FAE0091C785 /* AutoResponseDataProvider.swift in Sources */,
 				6FC822FB24757E63002421F0 /* NewConversation+ServiceProvider.swift in Sources */,
+				6FF842162482EACD0069A789 /* QuickResponsePickerController.swift in Sources */,
 				6F37E24A2460A8E7003E9126 /* QuickResponsesView.swift in Sources */,
 				6F987A462454AB5D00C6046E /* LoginServiceProvider.swift in Sources */,
 				6FD89561245EDAD40083D79A /* AgentDetailsHelpers.swift in Sources */,
@@ -2173,6 +2188,7 @@
 				6FEE99FF247BB8E900709E2D /* UserMessage.swift in Sources */,
 				6FB11B4622A2A5110098D050 /* PersistenceService.swift in Sources */,
 				6F23BCFF22D724A70001A888 /* UserProfileCodable.swift in Sources */,
+				6FF8421A2482EFF00069A789 /* QuickResponsePicker+TableViewHelpers.swift in Sources */,
 				6F69BE8622D4742E00F8903F /* ManageAgentsAPIProtocol.swift in Sources */,
 				6FC823112475AF41002421F0 /* BlacklistCell.swift in Sources */,
 				6F41013D22DDF8E40038AA76 /* CallGroupsCell.swift in Sources */,

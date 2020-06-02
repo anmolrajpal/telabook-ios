@@ -12,4 +12,5 @@ target 'Telabook' do
 	pod 'ReachabilitySwift'
   # Swift 5.0
   pod 'MessageKit'
+  pod 'PINRemoteImage'
 end

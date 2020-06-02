@@ -15,16 +15,15 @@ extension MessagesController: MessagesDataSource {
     }
     
     func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
-        var messages = self.fetchedResultsController.fetchedObjects ?? []
-        messages.sort(by: { $0.sentDate < $1.sentDate })
+        let messages = self.fetchedResults ?? []
+        
+//        messages.sort(by: { $0.sentDate < $1.sentDate })
         return messages[indexPath.section]
     }
-    func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int {
-        return self.fetchedResultsController.fetchedObjects?.count ?? 0
-    }
+    func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int { fetchedResultsCount }
     
     func isEarliest(_ message:UserMessage) -> Bool {
-        guard let messages = self.fetchedResultsController.fetchedObjects else { return false }
+        guard let messages = self.fetchedResults else { return false }
         let filteredMessages = messages.filter{( Date.isDateSame(date1: message.sentDate, date2: $0.sentDate) )}
         return message == filteredMessages.min() ? true : false
     }
@@ -53,6 +52,9 @@ extension MessagesController: MessagesDataSource {
     func customCellSizeCalculator(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CellSizeCalculator {
         CustomMessageSizeCalculator(layout: messagesCollectionView.messagesCollectionViewFlowLayout)
     }
+    
+    
+    
     func messageBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
         
         
@@ -65,7 +67,7 @@ extension MessagesController: MessagesDataSource {
         
         let time = Date.getStringFromDate(date: message.sentDate, dateFormat: CustomDateFormat.hmma)
         
-
+        /*
         let singleTickAttachment = NSTextAttachment()
         let singleTickImage = #imageLiteral(resourceName: "tick.single.glyph").image(scaledTo: .init(width: 15, height: 15))!.withTintColor(.telaGray6)
         singleTickAttachment.image = singleTickImage
@@ -78,6 +80,12 @@ extension MessagesController: MessagesDataSource {
         doubleTickAttachment.bounds = CGRect(x: 0, y: -4.0, width: doubleTickAttachment.image!.size.width, height: doubleTickAttachment.image!.size.height)
         let doubleTick = NSAttributedString(attachment: doubleTickAttachment)
         
+        let blueDoubleTickAttachment = NSTextAttachment()
+        let blueDoubleTickImage = #imageLiteral(resourceName: "tick.double.glyph").image(scaledTo: .init(width: 15, height: 15))!.withTintColor(.telaGray6)
+        blueDoubleTickAttachment.image = blueDoubleTickImage
+        blueDoubleTickAttachment.bounds = CGRect(x: 0, y: -4.0, width: blueDoubleTickAttachment.image!.size.width, height: blueDoubleTickAttachment.image!.size.height)
+        let blueDoubleTick = NSAttributedString(attachment: blueDoubleTickAttachment)
+        */
         
         let attributedText = NSMutableAttributedString(string: "")
         let prefix = NSAttributedString(
@@ -90,7 +98,12 @@ extension MessagesController: MessagesDataSource {
         
         attributedText.append(prefix)
         if isFromCurrentSender(message: message) {
-            indexPath.section % 3 == 0 ? attributedText.append(doubleTick) : attributedText.append(singleTick)
+            switch true {
+                case message.sentByProviderAt != nil: attributedText.append(blueDoubleTick)
+                case message.sentByApiAt != nil: attributedText.append(grayDoubleTick)
+                case message.sentByAppAt != nil: attributedText.append(singleTick)
+                default: break
+            }
         }
         
         return attributedText
@@ -98,17 +111,81 @@ extension MessagesController: MessagesDataSource {
     
     
     func messageHeaderView(for indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageReusableView {
+        let view = messagesCollectionView.dequeueReusableHeaderView(SpinnerReusableView.self, for: indexPath)
+        headerSpinnerView = view
+        return view
+    }
+    func messageFooterView(for indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageReusableView {
+        let view = messagesCollectionView.dequeueReusableFooterView(NewMessagesCountReusableView.self, for: indexPath)
+        view.count = 4
+        return view
+    }
+    func collectionView(_ collectionView: UICollectionView, willDisplaySupplementaryView view: UICollectionReusableView, forElementKind elementKind: String, at indexPath: IndexPath) {
+        if elementKind == UICollectionView.elementKindSectionHeader {
+            headerSpinnerView?.spinner.startAnimating()
+        }
+    }
+    func collectionView(_ collectionView: UICollectionView, didEndDisplayingSupplementaryView view: UICollectionReusableView, forElementOfKind elementKind: String, at indexPath: IndexPath) {
+        if elementKind == UICollectionView.elementKindSectionHeader {
+            headerSpinnerView?.spinner.stopAnimating()
+        }
+    }
+}
+class SpinnerReusableView:MessageReusableView {
+    static let viewHeight = CGFloat(60)
+    
+    lazy var spinner: UIActivityIndicatorView = {
+        let aiView = UIActivityIndicatorView(style: .medium)
+        aiView.backgroundColor = .clear
+        aiView.hidesWhenStopped = true
+        aiView.color = UIColor.telaGray7
+        aiView.clipsToBounds = true
+        aiView.translatesAutoresizingMaskIntoConstraints = false
+        return aiView
+    }()
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        addSubview(spinner)
+        spinner.centerXAnchor.constraint(equalTo: centerXAnchor).activate()
+        spinner.centerYAnchor.constraint(equalTo: centerYAnchor).activate()
+    }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    override class var requiresConstraintBasedLayout: Bool { true }
+}
+
+class NewMessagesCountReusableView:MessageReusableView {
+    static let viewHeight = CGFloat(60)
+    
+    var count:Int? {
+        didSet {
+            if let count = count {
+                countLabel.text = "\(count) NEW MESSAGES"
+            } else {
+                countLabel.text = nil
+            }
+        }
+    }
+    
+    private lazy var countLabel: UILabel = {
         let label = UILabel()
-        label.text = "5 UNREAD MESSAGES"
         label.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 13)
         label.textColor = .telaGray7
         label.backgroundColor = UIColor.telaGray3.withAlphaComponent(0.5)
         label.textAlignment = .center
-        let view = messagesCollectionView.dequeueReusableHeaderView(MessageReusableView.self, for: indexPath)
-        view.addSubview(label)
-        label.frame = view.bounds
-        return view
+        return label
+    }()
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        addSubview(countLabel)
+        countLabel.anchor(top: nil, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, heightConstant: 30)
+        countLabel.centerYAnchor.constraint(equalTo: centerYAnchor).activate()
     }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    override class var requiresConstraintBasedLayout: Bool { true }
 }
 open class CustomMessagesFlowLayout: MessagesCollectionViewFlowLayout {
     

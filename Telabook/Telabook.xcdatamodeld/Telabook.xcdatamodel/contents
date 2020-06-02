@@ -228,6 +228,7 @@
         <attribute name="isMessageDeleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isSending" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isSentByWorker" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="lastRefreshedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="messageSID" optional="YES" attributeType="String"/>
         <attribute name="sentByApiAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="sentByAppAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -270,7 +271,7 @@
         <element name="Permission" positionX="639.96484375" positionY="830.390625" width="128" height="148"/>
         <element name="Person" positionX="490.1484375" positionY="-384.12890625" width="128" height="105"/>
         <element name="QuickResponse" positionX="-939.1953125" positionY="409.9609375" width="128" height="178"/>
-        <element name="UserMessage" positionX="-167.7734375" positionY="-1.8046875" width="128" height="358"/>
+        <element name="UserMessage" positionX="-167.7734375" positionY="-1.8046875" width="128" height="373"/>
         <element name="UserObject" positionX="233.99609375" positionY="682.64453125" width="128" height="225"/>
     </elements>
 </model>

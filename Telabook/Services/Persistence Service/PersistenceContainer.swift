@@ -16,6 +16,10 @@ class PersistentContainer: NSPersistentContainer {
 //        ValueTransformer.setValueTransformer(ColorTransformer(), forName: NSValueTransformerName(rawValue: String(describing: ColorTransformer.self)))
         
         let container = PersistentContainer(name: "Telabook")
+        container.persistentStoreDescriptions.forEach { storeDesc in
+            storeDesc.shouldMigrateStoreAutomatically = true
+            storeDesc.shouldInferMappingModelAutomatically = true
+        }
         container.loadPersistentStores { (desc, error) in
             if let error = error {
                 fatalError("Unresolved error \(error)")

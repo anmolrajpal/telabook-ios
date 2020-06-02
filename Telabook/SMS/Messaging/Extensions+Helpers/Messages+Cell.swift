@@ -10,25 +10,30 @@ import UIKit
 import MessageKit
 
 extension MessagesController: MessageCellDelegate {
+    
     func didTapAvatar(in cell: MessageCollectionViewCell) {
         print("Avatar tapped")
     }
-    
     func didTapMessage(in cell: MessageCollectionViewCell) {
-        print("Message tapped")
         guard let cell  = cell as? MessageContentCell else { return }
         guard let indexPath = messagesCollectionView.indexPath(for: cell),
             let _ = messagesCollectionView.messagesDataSource?.messageForItem(at: indexPath, in: messagesCollectionView) else {
                 print("Failed to identify message when audio cell receive tap gesture")
                 return
         }
-        cell.cellBottomLabel.heightAnchor.constraint(equalToConstant: 0).activate()
-        
-        
+        indexPathForMessageBottomLabelToShow = indexPathForMessageBottomLabelToShow == indexPath ? nil : indexPath
+        messagesCollectionView.reloadItems(at: [indexPath])
     }
     
     func didTapImage(in cell: MessageCollectionViewCell) {
-        print("Image tapped")
+        guard let cell  = cell as? MessageContentCell else { return }
+        guard let indexPath = messagesCollectionView.indexPath(for: cell),
+            let _ = messagesCollectionView.messagesDataSource?.messageForItem(at: indexPath, in: messagesCollectionView) else {
+                print("Failed to identify message when audio cell receive tap gesture")
+                return
+        }
+        indexPathForMessageBottomLabelToShow = indexPathForMessageBottomLabelToShow == indexPath ? nil : indexPath
+        messagesCollectionView.reloadItems(at: [indexPath])
     }
     
     func didTapCellTopLabel(in cell: MessageCollectionViewCell) {
@@ -64,7 +69,13 @@ extension MessagesController: MessageCellDelegate {
     }
 
     func didTapAccessoryView(in cell: MessageCollectionViewCell) {
-        print("Accessory view tapped")
+        guard let cell  = cell as? MessageContentCell else { return }
+        guard let indexPath = messagesCollectionView.indexPath(for: cell),
+            let _ = messagesCollectionView.messagesDataSource?.messageForItem(at: indexPath, in: messagesCollectionView) else {
+                print("Failed to identify message when audio cell receive tap gesture")
+                return
+        }
+        
     }
 
 }

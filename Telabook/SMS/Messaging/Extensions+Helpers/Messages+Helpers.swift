@@ -15,11 +15,50 @@ extension MessagesController {
         setupViews()
         configureMessageCollectionView()
         configureMessageInputBar()
+        setupTargetActions()
     }
     private func setupViews() {
         messagesCollectionView.addSubview(spinner)
+
+        downIndicatorContainerView.addSubview(scrollToBottomButton)
+        downIndicatorContainerView.addSubview(newMessagesCountLabel)
+        view.addSubview(downIndicatorContainerView)
+//        messagesCollectionView.addSubview(downIndicatorContainerView)
+//        view.insertSubview(downIndicatorContainerView, aboveSubview: messagesCollectionView)
+        layoutConstraints()
+//        view.bringSubviewToFront(downIndicatorContainerView)
+    }
+    private func layoutConstraints() {
         spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).activate()
         spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor).activate()
+        
+        
+        
+        scrollToBottomButton.anchor(top: downIndicatorContainerView.topAnchor, left: nil, bottom: nil, right: nil, topConstant: 6, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 30, heightConstant: 30)
+        scrollToBottomButton.centerXAnchor.constraint(equalTo: downIndicatorContainerView.centerXAnchor).activate()
+        
+        
+        
+        
+        newMessagesCountLabel.anchor(top: scrollToBottomButton.bottomAnchor, left: nil, bottom: downIndicatorContainerView.bottomAnchor, right: nil, topConstant: 5, leftConstant: 5, bottomConstant: 5, rightConstant: 5)
+        newMessagesCountLabel.centerXAnchor.constraint(equalTo: scrollToBottomButton.centerXAnchor).activate()
+        newMessagesCountLabelHeightConstraint = newMessagesCountLabel.heightAnchor.constraint(equalToConstant: 0)
+        newMessagesCountLabelHeightConstraint.activate()
+        
+        downIndicatorContainerView.anchor(top: nil, left: nil, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 50, rightConstant: 0, widthConstant: 60, heightConstant: 0)
+        downIndicatorBottomConstraint = downIndicatorContainerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -(messagesCollectionView.adjustedContentInset.bottom + 60))
+        downIndicatorBottomConstraint.activate()
+//        downIndicatorContainerView.anchor(top: nil, left: nil, bottom: messageInputBar.topAnchor, right: messageInputBar.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 50, rightConstant: 0, widthConstant: 60, heightConstant: 0)
+        
+//        downIndicatorContainerView.anchor(top: nil, left: nil, bottom: messagesCollectionView.bottomAnchor, right: messagesCollectionView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 100, rightConstant: 0, widthConstant: 60, heightConstant: 0)
+    }
+    private func setupTargetActions() {
+        scrollToBottomButton.addTarget(self, action: #selector(downButtonDidTap(_:)), for: .touchUpInside)
+    }
+    @objc
+    private func downButtonDidTap(_ button:UIButton) {
+        print("down button tapped")
+        messagesCollectionView.scrollToBottom(animated: true)
     }
     internal func startSpinner() {
         DispatchQueue.main.async {

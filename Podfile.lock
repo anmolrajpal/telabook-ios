@@ -115,6 +115,21 @@ PODS:
     - nanopb/encode (= 0.3.9011)
   - nanopb/decode (0.3.9011)
   - nanopb/encode (0.3.9011)
+  - PINCache (3.0.1-beta.8):
+    - PINCache/Arc-exception-safe (= 3.0.1-beta.8)
+    - PINCache/Core (= 3.0.1-beta.8)
+  - PINCache/Arc-exception-safe (3.0.1-beta.8):
+    - PINCache/Core
+  - PINCache/Core (3.0.1-beta.8):
+    - PINOperation (~> 1.1.1)
+  - PINOperation (1.1.2)
+  - PINRemoteImage (3.0.0):
+    - PINRemoteImage/PINCache (= 3.0.0)
+  - PINRemoteImage/Core (3.0.0):
+    - PINOperation
+  - PINRemoteImage/PINCache (3.0.0):
+    - PINCache (= 3.0.1-beta.8)
+    - PINRemoteImage/Core
   - PromisesObjC (1.2.8)
   - Protobuf (3.11.4)
   - ReachabilitySwift (5.0.0)
@@ -127,6 +142,7 @@ DEPENDENCIES:
   - Firebase/Messaging
   - Firebase/Storage
   - MessageKit
+  - PINRemoteImage
   - ReachabilitySwift
 
 SPEC REPOS:
@@ -153,6 +169,9 @@ SPEC REPOS:
     - leveldb-library
     - MessageKit
     - nanopb
+    - PINCache
+    - PINOperation
+    - PINRemoteImage
     - PromisesObjC
     - Protobuf
     - ReachabilitySwift
@@ -180,10 +199,13 @@ SPEC CHECKSUMS:
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
   MessageKit: 3beb578737a5aa2bba25cc27c7b6d6faa09af5a7
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
+  PINCache: 534fd41d358d828dfdf227a0d327f3673a65e20b
+  PINOperation: 24b774353ca248fcf87d67b2d61eef42087c125a
+  PINRemoteImage: e2b89e19fb6e77ffc099f9d9f3b3fe1745e3f9f9
   PromisesObjC: c119f3cd559f50b7ae681fa59dc1acd19173b7e6
   Protobuf: 176220c526ad8bd09ab1fb40a978eac3fef665f7
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
 
-PODFILE CHECKSUM: fe7da99f748230cc3141887a99f9ce13fca2bb5e
+PODFILE CHECKSUM: 46f3dd90babc9618199ad6d08aa40d0d0a0131f6
 
 COCOAPODS: 1.8.4

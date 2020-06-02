@@ -76,6 +76,8 @@ extension UserMessage {
         self.textMessage = entry.messageText
         self.updatedAt = entry.updatedAt
         
+        self.lastRefreshedAt = Date()
+        
         self.conversation = conversation
     }
     var messageType:MessageCategory {
@@ -227,7 +229,7 @@ struct MessageSender: SenderType, Equatable {
         self.displayName = displayName
     }
 }
-private struct ImageItem: MediaItem {
+struct ImageItem: MediaItem {
     
     var url: URL?
     var image: UIImage?

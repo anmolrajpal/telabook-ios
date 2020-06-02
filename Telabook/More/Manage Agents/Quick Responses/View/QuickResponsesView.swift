@@ -12,6 +12,7 @@ class QuickResponsesView: UIView {
     
     // MARK: Setup Views
     fileprivate func setupViews() {
+        backgroundColor = .telaGray1
         addSubview(doneButton)
         addSubview(headingLabel)
         addSubview(addResponseHeadingLabel)
