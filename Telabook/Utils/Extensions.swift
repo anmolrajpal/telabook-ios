@@ -434,7 +434,8 @@ extension UIAlertController {
         controller.present(alert, animated: true, completion: nil)
     }
     static func dismissModalSpinner(animated:Bool = true, controller:UIViewController, completion: (() -> Void)? = nil) {
-        controller.dismiss(animated: animated, completion: completion)
+        guard let alert = controller.presentedViewController as? UIAlertController else { return }
+        alert.dismiss(animated: animated, completion: completion)
     }
     static public func telaAlertController(title:String, message:String = "\n") -> UIAlertController {
         
@@ -460,7 +461,13 @@ extension UIAlertController {
         let alert = UIAlertController.telaAlertController(title: title, message: message)
         alert.addAction(action)
         if let vc = controller {
-            vc.present(alert, animated: true, completion: completion)
+            if let currentAlert = vc.presentedViewController as? UIAlertController {
+                currentAlert.dismiss(animated: true) {
+                    vc.present(alert, animated: true, completion: completion)
+                }
+            } else {
+                vc.present(alert, animated: true, completion: completion)
+            }
         } else {
             var rootViewController = UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.rootViewController
             if let navigationController = rootViewController as? UINavigationController {

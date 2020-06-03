@@ -16,6 +16,7 @@ extension MessagesController {
         configureMessageCollectionView()
         configureMessageInputBar()
         setupTargetActions()
+        clearUnreadMessagesCount()
     }
     private func setupViews() {
         messagesCollectionView.addSubview(spinner)

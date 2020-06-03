@@ -247,6 +247,12 @@ extension FirebaseCustomer {
         }
         return dictionary
     }
+    static func getClearMessagesCountConversationObject(updatedAt:Date) -> UpdatedConversation {
+        return  [
+            "unread_messages":0,
+            "updated_at":updatedAt.milliSecondsSince1970
+        ]
+    }
 }
 
 

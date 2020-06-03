@@ -32,7 +32,7 @@ extension MessagesController {
         fetchRequest.sortDescriptors = [
             NSSortDescriptor(key: #keyPath(UserMessage.date), ascending: false)
         ]
-//        fetchRequest.fetchBatchSize = 30
+//        fetchRequest.fetchBatchSize = 15
         fetchRequest.fetchLimit = self.limit
         
         fetchRequest.returnsObjectsAsFaults = true
@@ -65,6 +65,7 @@ extension MessagesController: NSFetchedResultsControllerDelegate {
         DispatchQueue.main.async {
             if self.isFirstLayout {
                 self.messagesCollectionView.reloadData()
+                self.messagesCollectionView.layoutIfNeeded()
                 self.messagesCollectionView.scrollToBottom(animated: false)
             } else {
                 self.reloadDataKeepingOffset()
@@ -126,7 +127,7 @@ extension MessagesController: NSFetchedResultsControllerDelegate {
     }
     
     
-    
+    /*
    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
        collectionViewOperations.removeAll(keepingCapacity: false)
    }
@@ -189,4 +190,5 @@ extension MessagesController: NSFetchedResultsControllerDelegate {
         
         
     }
+    */
 }

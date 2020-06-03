@@ -52,6 +52,35 @@ extension MessagesController {
     
     
     
+    
+    
+    /* ------------------------------------------------------------------------------------------------------------ */
+    internal func clearUnreadMessagesCount() {
+        
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+        
+        let context = PersistentContainer.shared.newBackgroundContext()
+        let objectID = customer.objectID
+        let referenceCustomer = context.object(with: objectID) as! Customer
+        
+        let wasNotSeenNodeReference = Config.FirebaseConfig.Node.unreadMessages(conversationID: Int(referenceCustomer.externalConversationID)).reference
+        
+        let operations = MessageOperations.getOperationsToClearUnreadMessagesCount(using: context, forConversationWithCustomer: referenceCustomer, unreadMessagesCountNodeReference: wasNotSeenNodeReference, conversationReference: self.conversationReference, updatedAt: self.screenEntryTime)
+        handleViewsStateForOperations(operations: operations, onOperationQueue: queue, completion: {_ in })
+        
+        queue.addOperations(operations, waitUntilFinished: false)
+    }
+    /* ------------------------------------------------------------------------------------------------------------ */
+    
+    
+    
+    
+    
+    
+    
+    
     internal func updateNewMessageToFirebase(message:UserMessage) {
         self.reference.child(message.messageId).setValue(message.toFirebaseObject()) { (error, _) in
             if let error = error {

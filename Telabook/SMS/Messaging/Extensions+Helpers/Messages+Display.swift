@@ -88,13 +88,13 @@ extension MessagesController: MessagesDisplayDelegate {
         
         
         if isFromCurrentSender(message: message) {
-            if !isNextMessageSameSender(at: indexPath) {
+            if !isNextMessageSameSender(at: indexPath) || !isNextMessageDateInSameDay(at: indexPath) {
                 return .bubbleTail(.bottomRight, .curved)
             } else {
                 return .bubble
             }
         } else {
-            if !isNextMessageSameSender(at: indexPath) {
+            if !isNextMessageSameSender(at: indexPath) || !isNextMessageDateInSameDay(at: indexPath) {
                 return .bubbleTail(.bottomLeft, .curved)
             } else {
                 return .bubble
@@ -188,14 +188,14 @@ extension MessagesController: MessagesDisplayDelegate {
             textView.layer.shadowPath = UIBezierPath(rect: textView.bounds).cgPath
             textView.layer.masksToBounds = false
              */
-            imageView.addSubview(textView)
-            textView.anchor(top: nil, left: imageView.leftAnchor, bottom: imageView.bottomAnchor, right: imageView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
+//            imageView.addSubview(textView)
+//            textView.anchor(top: nil, left: imageView.leftAnchor, bottom: imageView.bottomAnchor, right: imageView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
         }
 //        imageView.loadImageUsingCache(with: url.absoluteString)
-        imageView.pin_updateWithProgress = true
-        imageView.pin_setImage(from: url) { result in
+//        imageView.pin_updateWithProgress = true
+//        imageView.pin_setImage(from: url) { result in
             // should save image to file directory
-        }
+//        }
     }
 }
 

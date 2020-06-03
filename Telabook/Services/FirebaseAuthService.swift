@@ -25,6 +25,7 @@ final class FirebaseAuthService:NSObject {
         case unknown
         case databaseSetValueError(Error)
         case databaseUpdateValueError(Error)
+        case databaseRemoveValueError(Error)
         
         var localizedDescription: String {
             switch self {
@@ -35,6 +36,7 @@ final class FirebaseAuthService:NSObject {
                 case let .noIDToken(error): return "Firebase Token Error: \(error.localizedDescription)"
                 case let .databaseSetValueError(error): return "Error setting value in Firebase Database: \(error.localizedDescription)"
                 case let .databaseUpdateValueError(error): return "Error updating value in Firebase Database: \(error.localizedDescription)"
+                case let .databaseRemoveValueError(error): return "Error removing value from Firebase Database: \(error.localizedDescription)"
                 case .unknown: return "Firebase Error (Reason: Unknown). Please try signin in again."
             }
         }

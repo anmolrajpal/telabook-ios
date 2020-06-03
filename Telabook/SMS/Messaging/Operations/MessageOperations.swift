@@ -124,6 +124,28 @@ struct MessageOperations {
     
     
     
+    
+    
+    
+    
+    static func getOperationsToClearUnreadMessagesCount(using context:NSManagedObjectContext, forConversationWithCustomer conversation:Customer, unreadMessagesCountNodeReference:DatabaseReference, conversationReference:DatabaseReference, updatedAt:Date) -> [Operation] {
+        let updateEntryInStore_Operation = ClearUnreadMessagesCountInStore_Operation(context: context, conversation: conversation, updatedAt: updatedAt)
+        let updateEntryToFirebase_Operation = ClearUnreadMessagesCountOnFirebase_Operation(unreadMessagesCountNodeReference: unreadMessagesCountNodeReference, conversationReference: conversationReference, conversation: conversation, updatedAt: updatedAt)
+        return [updateEntryInStore_Operation, updateEntryToFirebase_Operation]
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     fileprivate static func updateNewMessageToFirebase(message:UserMessage, messageReference:DatabaseReference, conversationReference:DatabaseReference, completion: @escaping (Result<Bool, FirebaseAuthService.FirebaseError>) -> ()) {
         messageReference.child(message.messageId).setValue(message.toFirebaseObject()) { (error, _) in
             if let error = error {
@@ -143,6 +165,37 @@ struct MessageOperations {
                     }
                 }
                 
+            }
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    fileprivate static func clearUnreadMessagesCountOnFirebase(conversationID:String, unreadMessagesCountNodeReference:DatabaseReference, conversationsNodeReference:DatabaseReference, updatedAt:Date, completion: @escaping (Result<Bool, FirebaseAuthService.FirebaseError>) -> ()) {
+        unreadMessagesCountNodeReference.removeValue { (error, _) in
+            if let error = error {
+                #if !RELEASE
+                print(error.localizedDescription)
+                #endif
+                completion(.failure(.databaseRemoveValueError(error)))
+            } else {
+                conversationsNodeReference.child(conversationID).updateChildValues(FirebaseCustomer.getClearMessagesCountConversationObject(updatedAt: updatedAt)) { (error, _) in
+                    if let error = error {
+                        #if !RELEASE
+                        print(error.localizedDescription)
+                        #endif
+                        completion(.failure(.databaseUpdateValueError(error)))
+                    } else {
+                        completion(.success(true))
+                    }
+                }
             }
         }
     }
@@ -419,5 +472,134 @@ class SendNewTextMessageOnServer_Operation: Operation {
             return
         }
         APIServer<APIService.RecurrentResult>(apiVersion: .v2).hitEndpoint(endpoint: .SendMessage, httpMethod: .POST, params: params, headers: headers, completion: finish)
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/// Set `0` for unread messages count property for specified conversation with customer in the Core Data store.
+class ClearUnreadMessagesCountInStore_Operation: Operation {
+    enum OperationError: Error, LocalizedError {
+        case coreDataError(error:Error)
+        
+        var localizedDescription: String {
+            switch self {
+                case let .coreDataError(error): return "Core Data Error: \(error.localizedDescription)"
+            }
+        }
+    }
+    var error:OperationError?
+    private let context: NSManagedObjectContext
+    private let conversation:Customer
+    private let updatedAt:Date
+    init(context: NSManagedObjectContext, conversation:Customer, updatedAt:Date) {
+        self.context = context
+        self.conversation = conversation
+        self.updatedAt = updatedAt
+    }
+    
+    override func main() {
+        context.performAndWait {
+            do {
+                conversation.unreadMessagesCount = 0
+                conversation.updatedAt = updatedAt
+                try context.save()
+            } catch {
+                #if !RELEASE
+                print("Error adding entries to store: \(error))")
+                #endif
+                self.error = .coreDataError(error: error)
+            }
+        }
+        
+    }
+}
+
+
+
+
+/// Update the Unread Message count value for conversation with custome on Firebase.
+class ClearUnreadMessagesCountOnFirebase_Operation: Operation {
+    enum OperationError: Error, LocalizedError {
+        case conversationReference(error:Error)
+        var localizedDescription: String {
+            switch self {
+                case let .conversationReference(error): return "Firebase Conversation Reference Error: \(error.localizedDescription)"
+            }
+        }
+    }
+    var result:Result<Bool, FirebaseAuthService.FirebaseError>?
+    private var downloading = false
+    
+    let unreadMessagesCountNodeReference:DatabaseReference
+    let conversationReference:DatabaseReference
+    let conversation:Customer
+    let updatedAt:Date
+    init(unreadMessagesCountNodeReference:DatabaseReference, conversationReference:DatabaseReference, conversation:Customer, updatedAt:Date) {
+        self.unreadMessagesCountNodeReference = unreadMessagesCountNodeReference
+        self.conversationReference = conversationReference
+        self.conversation = conversation
+        self.updatedAt = updatedAt
+    }
+    override var isAsynchronous: Bool {
+        return true
+    }
+    
+    override var isExecuting: Bool {
+        return downloading
+    }
+    
+    override var isFinished: Bool {
+        return result != nil
+    }
+    
+    override func cancel() {
+        super.cancel()
+        finish(result: .failure(.cancelled))
+    }
+    
+    func finish(result: Result<Bool, FirebaseAuthService.FirebaseError>) {
+        guard downloading else { return }
+        
+        willChangeValue(forKey: #keyPath(isExecuting))
+        willChangeValue(forKey: #keyPath(isFinished))
+        
+        downloading = false
+        self.result = result
+        
+        didChangeValue(forKey: #keyPath(isFinished))
+        didChangeValue(forKey: #keyPath(isExecuting))
+    }
+    
+    override func start() {
+    
+        willChangeValue(forKey: #keyPath(isExecuting))
+        downloading = true
+        didChangeValue(forKey: #keyPath(isExecuting))
+        
+        guard !isCancelled else {
+            finish(result: .failure(.cancelled))
+            return
+        }
+        MessageOperations.clearUnreadMessagesCountOnFirebase(conversationID: String(conversation.externalConversationID), unreadMessagesCountNodeReference: unreadMessagesCountNodeReference, conversationsNodeReference: conversationReference, updatedAt: updatedAt, completion: finish)
     }
 }

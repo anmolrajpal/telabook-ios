@@ -142,7 +142,7 @@ extension LoginViewController {
             submitAction.isEnabled = true
             DispatchQueue.main.async {
                 self.alertController.dismiss(animated: true) {
-                    self.initiateForgotPasswordSequence(for: email)
+                    self.initiateForgotPasswordSequence(forEmail: email)
                 }
             }
         }
@@ -155,10 +155,50 @@ extension LoginViewController {
         textField.text = textField.text?.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
+    private func initiateForgotPasswordSequence(forEmail email:String) {
+        DispatchQueue.global(qos: .userInteractive).async {
+            TapticEngine.generateFeedback(ofType: .Medium)
+            DispatchQueue.main.async {
+                UIAlertController.showModalSpinner(with: "Requesting...", controller: self)
+            }
+            sleep(1)
+            APIServer<APIService.RecurrentResult>(apiVersion: .v2).hitEndpoint(endpoint: .ForgotPassword, requiresBearerToken: false, httpMethod: .POST, params: ["email":email]) { (result: Result<APIService.RecurrentResult, APIService.APIError>) in
+                switch result {
+                    case .failure(let error):
+                        TapticEngine.generateFeedback(ofType: .Error)
+                        DispatchQueue.main.async {
+                            UIAlertController.dismissModalSpinner(controller: self, completion: {
+                                UIAlertController.showTelaAlert(title: "Error", message: error.localizedDescription, action: UIAlertAction(title: "Ok", style: .destructive, handler: { _ in
+                                    self.showForgotPasswordDialogBox()
+                                }), controller: self)
+                            })
+                        }
+                    case .success:
+                        TapticEngine.generateFeedback(ofType: .Success)
+                        DispatchQueue.main.async {
+                            UIAlertController.dismissModalSpinner(controller: self, completion: {
+                                UIAlertController.showTelaAlert(title: "Check Email", message: "Please check your email & follow the instructions to reset your password", controller: self)
+                            })
+                        }
+                }
+            }
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
     fileprivate func initiateForgotPasswordSequence(for email:String) {
         DispatchQueue.main.async {
             UIAlertController.showModalSpinner(with: "Requesting...", controller: self)
         }
+        
+        
+        
         AuthenticationService.shared.forgotPassword(for: email) { (responseStatus, data, serviceError, error) in
             if let err = error {
                 DispatchQueue.main.async {

@@ -54,9 +54,9 @@ class AgentCellView: UIView {
     private func setupData(parameters:Parameters?, animated:Bool) {
         agentNameLabel.text = parameters?.name
         agentDesignationLabel.text = parameters?.role.stringValue
-        if parameters?.lowPriorityCheck == true { stackView.addArrangedSubview(lowPriorityImageView) }
-        if parameters?.mediumPriorityCheck == true { stackView.addArrangedSubview(mediumPriorityImageView) }
-        if parameters?.highPriorityCheck == true { stackView.addArrangedSubview(highPriorityImageView) }
+//        if parameters?.lowPriorityCheck == true { stackView.addArrangedSubview(lowPriorityImageView) }
+//        if parameters?.mediumPriorityCheck == true { stackView.addArrangedSubview(mediumPriorityImageView) }
+//        if parameters?.highPriorityCheck == true { stackView.addArrangedSubview(highPriorityImageView) }
         badgeCountLabel.text = String(parameters?.pendingMessagesCount ?? 0)
         badgeCountLabel.isHidden = parameters?.pendingMessagesCount == 0
         if let urlStr = parameters?.profileImageURLString {

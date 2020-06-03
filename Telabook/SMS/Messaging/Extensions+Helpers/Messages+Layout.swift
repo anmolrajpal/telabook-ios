@@ -15,6 +15,7 @@ extension MessagesController: MessagesLayoutDelegate {
    
 
     func cellTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+        guard !(message as! UserMessage).isFault else { return 0 }
         return isEarliest(message as! UserMessage) ? 30.0 : 0
     }
     
@@ -28,14 +29,15 @@ extension MessagesController: MessagesLayoutDelegate {
     }
     
     func messageBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        if isNextMessageSameSender(at: indexPath) {
+        guard !(message as! UserMessage).isFault else { return 0 }
+        if !isNextMessageSameSender(at: indexPath) || !isNextMessageDateInSameDay(at: indexPath) {
+            return 20
+        } else {
             if let indexPathToShow = indexPathForMessageBottomLabelToShow, indexPathToShow == indexPath {
                 return 20
             } else {
                 return 0
             }
-        } else {
-            return 20
         }
 //        return (!isNextMessageSameSender(at: indexPath)) ? 20 : 0
     }

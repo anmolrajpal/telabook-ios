@@ -147,7 +147,7 @@ extension UserMessage: MessageType {
                     return .attributedText(attributedText)
                 } else {
                     return .attributedText(NSAttributedString(string: self.textMessage ?? "", attributes: [
-                        .font: UIFont(name: CustomFonts.gothamBook.rawValue, size: 15)!,
+                        .font: UIFont.systemFont(ofSize: 17, weight: .regular),
                         .foregroundColor: UIColor.telaWhite
                     ]))
             }

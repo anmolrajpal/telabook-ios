@@ -55,7 +55,7 @@ class MessagesController: MessagesViewController {
     internal var fetchedResultsController: NSFetchedResultsController<UserMessage>!
     
     
-    var limit: Int = 25
+    var limit: Int = 20
     
     /*
     lazy var fetchedResultsController: NSFetchedResultsController<UserMessage> = {
@@ -170,6 +170,9 @@ class MessagesController: MessagesViewController {
         
         
     }
+    
+    
+    
     
     
     
@@ -353,9 +356,13 @@ class MessagesController: MessagesViewController {
     }
     
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-//        if indexPath.section < 10 {
-//            print("Should call loader")
-//        }
+        if indexPath.section == 0 {
+            let offsetTime = Calendar.current.date(byAdding: .second, value: 2, to: screenEntryTime)!
+            if !isLoading && Date() > offsetTime {
+//                firstMessage = fetchedResults?.first
+//                self.fetchMoreMessages()
+            }
+        }
     }
     var shouldFetchMore = true {
         didSet {
@@ -366,11 +373,22 @@ class MessagesController: MessagesViewController {
             }
         }
     }
+    
+    
+    var firstMessage:UserMessage? {
+        didSet {
+            if oldValue == firstMessage {
+                print("First item is same. should not load more.")
+                self.shouldFetchMore = false
+            }
+        }
+    }
+    
     func fetchMoreMessages() {
         guard !isLoading else { return }
         isLoading = true
 //        self.offset += 20
-        self.limit += 25
+        self.limit += 20
         fetchedResultsController.fetchRequest.fetchLimit = self.limit
         do {
             NSFetchedResultsController<UserMessage>.deleteCache(withName: fetchedResultsController.cacheName)
@@ -378,10 +396,10 @@ class MessagesController: MessagesViewController {
             DispatchQueue.global(qos: .userInitiated).async {
                 DispatchQueue.main.async {
                     self.reloadDataKeepingOffset()
-                    let offset = self.messagesCollectionView.contentOffset.y - self.messagesCollectionView.adjustedContentInset.bottom
-                    self.shouldFetchMore = offset >= 100
+//                    let offset = self.messagesCollectionView.contentOffset.y - self.messagesCollectionView.adjustedContentInset.bottom
+//                    self.shouldFetchMore = offset >= 100
                 }
-                self.loadMoreMessagesFromFirebase()
+//                self.loadMoreMessagesFromFirebase()
                 self.isLoading = false
             }
             
@@ -538,7 +556,11 @@ class MessagesController: MessagesViewController {
         return messages[indexPath.section].messageSender == messages[indexPath.section + 1].messageSender
     }
     
-    
+    func isNextMessageDateInSameDay(at indexPath:IndexPath) -> Bool {
+        guard let messages = self.fetchedResults, !messages.isEmpty else { return false }
+        guard indexPath.section + 1 < messages.count else { return false }
+        return Calendar.current.isDate(messages[indexPath.section].sentDate, inSameDayAs: messages[indexPath.section + 1].sentDate)
+    }
     
     
     func setTypingIndicatorViewHidden(_ isHidden: Bool, performUpdates updates: (() -> Void)? = nil) {

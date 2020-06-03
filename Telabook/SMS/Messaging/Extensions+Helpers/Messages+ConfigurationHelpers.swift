@@ -16,14 +16,19 @@ extension MessagesController {
         messagesCollectionView.register(BotMessageCell.self)
         messagesCollectionView.register(SpinnerReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader)
         messagesCollectionView.register(NewMessagesCountReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter)
+        
         messagesCollectionView.backgroundColor = .telaGray1
+        
+        
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messageCellDelegate = self
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
-        messagesCollectionView.scrollToBottom(animated: false)
         messagesCollectionView.delegate = self
+        
         let layout = messagesCollectionView.collectionViewLayout as? MessagesCollectionViewFlowLayout
+//        layout?.estimatedItemSize = .init(width: messagesCollectionView.frame.width, height: 40)
+//        layout?.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         layout?.sectionInset = UIEdgeInsets(top: 1, left: 8, bottom: 1, right: 8)
         layout?.setMessageOutgoingAvatarSize(.zero)
         layout?.setMessageIncomingAvatarSize(.zero)
@@ -43,10 +48,11 @@ extension MessagesController {
         
         scrollsToBottomOnKeyboardBeginsEditing = false
         maintainPositionOnKeyboardFrameChanged = true
+        messagesCollectionView.scrollToBottom(animated: false)
     }
-    func shouldCacheLayoutAttributes(for message: MessageType) -> Bool {
-        return true
-    }
+//    func shouldCacheLayoutAttributes(for message: MessageType) -> Bool {
+//        return true
+//    }
     
     
     
@@ -252,14 +258,15 @@ extension MessagesController {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let total = self.messagesCollectionView.contentSize.height - self.messagesCollectionView.frame.height
         let offset = self.messagesCollectionView.contentOffset.y - messagesCollectionView.adjustedContentInset.bottom
+        let reverseOffset = total - offset
         if total > 700 {
-            self.downIndicatorShouldShow = (total - offset) > 300 /* minimum distance */
+            self.downIndicatorShouldShow = reverseOffset > 400 /* minimum distance */
         }
 //        print("Total: \(total) & offset: \(offset) :Difference=> \(total - offset)")
         let now = Date()
         let offsetTime = Calendar.current.date(byAdding: .second, value: 2, to: screenEntryTime)!
         if offset < 100 && !isLoading && shouldFetchMore && now > offsetTime {
-            self.fetchMoreMessages()
+//            self.fetchMoreMessages()
 //            if let message = fetchedResults?.first {
 //                loadMoreMessagesFromFirebase(offsetMessage: message)
 //            }

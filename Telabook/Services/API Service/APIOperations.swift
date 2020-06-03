@@ -12,7 +12,7 @@ import os
 protocol Server: class {
     init(apiVersion:APIService.APIVersion)
 //    var apiVersion:APIService.APIVersion { get }
-    func hitEndpoint<T:Codable>(endpoint:APIService.Endpoint, httpMethod:HTTPMethod, params: [String: String]?, httpBody: Data?, headers: [HTTPHeader]?, guardResponse: ResponseStatus?, expectData:Bool, completion: @escaping APIService.APICompletion<T>)
+    func hitEndpoint<T:Codable>(endpoint:APIService.Endpoint, requiresBearerToken:Bool, httpMethod:HTTPMethod, params: [String: String]?, httpBody: Data?, headers: [HTTPHeader]?, guardResponse: ResponseStatus?, expectData:Bool, completion: @escaping APIService.APICompletion<T>)
 }
 
 class APIServer<T:Codable> : Server {
@@ -20,10 +20,10 @@ class APIServer<T:Codable> : Server {
     required init(apiVersion: APIService.APIVersion) {
         self.apiVersion = apiVersion
     }
-    func hitEndpoint<T>(endpoint:APIService.Endpoint, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, completion: @escaping APIService.APICompletion<T>) where T : Decodable, T : Encodable {
+    func hitEndpoint<T>(endpoint:APIService.Endpoint, requiresBearerToken:Bool = true, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, completion: @escaping APIService.APICompletion<T>) where T : Decodable, T : Encodable {
         switch apiVersion {
             case .v1: APIOperations.triggerAPIEndpointOperations(endpoint: endpoint, httpMethod: httpMethod, params: params, httpBody: httpBody, headers: headers, guardResponse: guardResponse, expectData: expectData, completion: completion)
-            case .v2: APIOperations.triggerAPIEndpointOperations(endpoint: endpoint, httpMethod: httpMethod, params: params, httpBody: httpBody, headers: headers, guardResponse: guardResponse, expectData: expectData, configuration: .init(apiCommonPath: "\(Config.APIConfig.urlPrefix)/\(apiVersion.stringValue)"), completion: completion)
+            case .v2: APIOperations.triggerAPIEndpointOperations(endpoint: endpoint, requiresBearerToken: requiresBearerToken, httpMethod: httpMethod, params: params, httpBody: httpBody, headers: headers, guardResponse: guardResponse, expectData: expectData, configuration: .init(apiCommonPath: "\(Config.APIConfig.urlPrefix)/\(apiVersion.stringValue)"), completion: completion)
             case .mock: print("Mock")
         }
     }
@@ -33,34 +33,39 @@ class APIServer<T:Codable> : Server {
 struct APIOperations {
     
     /// Returns an array of operations for creating and hitting API Endpoint
-    static func triggerAPIEndpointOperations<T:Codable>(endpoint:APIService.Endpoint, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, configuration:APIService.Configuration = .defaultConfiguration, completion: @escaping APIService.APICompletion<T>) {
-        
+    static func triggerAPIEndpointOperations<T:Codable>(endpoint:APIService.Endpoint, requiresBearerToken:Bool = true, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, configuration:APIService.Configuration = .defaultConfiguration, completion: @escaping APIService.APICompletion<T>) {
+        var operations = [Operation]()
         let queue = OperationQueue()
         queue.name = "Endpoint Queue"
         queue.maxConcurrentOperationCount = 1
         
-        let fetchFirebaseTokenOperation = FetchTokenOperation()
         
-        let hitEndpointOperation = HitEndpointOperation<T>(endpoint: endpoint, httpMethod: httpMethod, params: params, httpBody: httpBody, headers: headers, guardResponse: guardResponse, expectData: expectData, configuration: configuration)
         
-        let passFirebaseTokenToAPIEndpointOperation = BlockOperation { [unowned fetchFirebaseTokenOperation, unowned hitEndpointOperation] in
-            guard case let .success(bearerToken)? = fetchFirebaseTokenOperation.result else {
-                if case let .failure(error) = fetchFirebaseTokenOperation.result {
-                    completion(.failure(.noFirebaseToken(error: error)))
+        let hitEndpointOperation = HitEndpointOperation<T>(endpoint: endpoint, requiresBearerToken: requiresBearerToken, httpMethod: httpMethod, params: params, httpBody: httpBody, headers: headers, guardResponse: guardResponse, expectData: expectData, configuration: configuration)
+        
+        if requiresBearerToken {
+            let fetchFirebaseTokenOperation = FetchTokenOperation()
+            let passFirebaseTokenToAPIEndpointOperation = BlockOperation { [unowned fetchFirebaseTokenOperation, unowned hitEndpointOperation] in
+                guard case let .success(bearerToken)? = fetchFirebaseTokenOperation.result else {
+                    if case let .failure(error) = fetchFirebaseTokenOperation.result {
+                        completion(.failure(.noFirebaseToken(error: error)))
+                    }
+                    hitEndpointOperation.cancel()
+                    return
                 }
-                hitEndpointOperation.cancel()
-                return
+                hitEndpointOperation.bearerToken = bearerToken
+                
+                os_log("Firebase Bearer Token: %{PRIVATE}@", log: .firebase, type: .info, bearerToken)
+                #if !RELEASE
+                print("\n\n------------------------------------------------ Firebase Token: BEGIN ------------------------------------------------\n\nFirebase Bearer Token: \(bearerToken)\n\n--------------------------------------------------- Firebase Token: END ------------------------------------------------\n\n")
+                #endif
             }
-            hitEndpointOperation.bearerToken = bearerToken
+            passFirebaseTokenToAPIEndpointOperation.addDependency(fetchFirebaseTokenOperation)
+            hitEndpointOperation.addDependency(passFirebaseTokenToAPIEndpointOperation)
             
-            os_log("Firebase Bearer Token: %{PRIVATE}@", log: .firebase, type: .info, bearerToken)
-            #if !RELEASE
-            print("\n\n------------------------------------------------ Firebase Token: BEGIN ------------------------------------------------\n\nFirebase Bearer Token: \(bearerToken)\n\n--------------------------------------------------- Firebase Token: END ------------------------------------------------\n\n")
-            #endif
+            operations.append(fetchFirebaseTokenOperation)
+            operations.append(passFirebaseTokenToAPIEndpointOperation)
         }
-        passFirebaseTokenToAPIEndpointOperation.addDependency(fetchFirebaseTokenOperation)
-        hitEndpointOperation.addDependency(passFirebaseTokenToAPIEndpointOperation)
-        
         hitEndpointOperation.completionBlock = {
             guard let result = hitEndpointOperation.result else {
                 os_log("Operation Error: HitEndpointOperation must return a result.", log: .network, type: .error)
@@ -68,7 +73,8 @@ struct APIOperations {
             }
             completion(result)
         }
-        queue.addOperations([fetchFirebaseTokenOperation, passFirebaseTokenToAPIEndpointOperation, hitEndpointOperation], waitUntilFinished: false)
+        operations.append(hitEndpointOperation)
+        queue.addOperations(operations, waitUntilFinished: false)
     }
 }
 
@@ -85,6 +91,7 @@ class HitEndpointOperation<T:Codable>: Operation {
     
     private let configuration:APIService.Configuration
     private let endpoint:APIService.Endpoint
+    private let requiresBearerToken:Bool
     private let httpMethod:HTTPMethod
     private let params:[String:String]?
     private let httpBody:Data?
@@ -93,8 +100,9 @@ class HitEndpointOperation<T:Codable>: Operation {
     private let expectData:Bool
     var bearerToken:String?
     
-    init(endpoint:APIService.Endpoint, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, configuration:APIService.Configuration = .defaultConfiguration) {
+    init(endpoint:APIService.Endpoint, requiresBearerToken:Bool = true, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, configuration:APIService.Configuration = .defaultConfiguration) {
         self.endpoint = endpoint
+        self.requiresBearerToken = requiresBearerToken
         self.httpMethod = httpMethod
         self.params = params
         self.httpBody = httpBody
@@ -170,11 +178,13 @@ class HitEndpointOperation<T:Codable>: Operation {
             finish(result: .failure(.cancelled))
             return
         }
-        guard let token = bearerToken else {
-            finish(result: .failure(.noFirebaseToken(error: nil)))
-            return
+        if requiresBearerToken {
+            guard let token = bearerToken else {
+                finish(result: .failure(.noFirebaseToken(error: nil)))
+                return
+            }
+            request.setValue("Bearer \(token)", forHTTPHeaderField: Header.headerName.Authorization.rawValue)
         }
-        request.setValue("Bearer \(token)", forHTTPHeaderField: Header.headerName.Authorization.rawValue)
         guard !isCancelled else {
             finish(result: .failure(.cancelled))
             return
