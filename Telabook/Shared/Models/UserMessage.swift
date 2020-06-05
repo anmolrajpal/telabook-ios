@@ -50,6 +50,7 @@ extension UserMessage {
             default: break
         }
         self.isSending = true
+        self.lastRefreshedAt = Date()
     }
     convenience init(context: NSManagedObjectContext, messageEntryFromFirebase entry:FirebaseMessage, forConversationWithCustomer conversation:Customer) {
         self.init(context: context)
@@ -101,6 +102,15 @@ extension UserMessage {
         }
         return dictionary
     }
+    
+    
+    func getDeletedFirebaseObject(updatedAt:Date) -> [AnyHashable:Any] {
+        return  [
+            "deleted":1,
+            "updated_at":updatedAt.milliSecondsSince1970
+        ]
+    }
+    
 }
 
 extension UserMessage: MessageType {
@@ -146,10 +156,15 @@ extension UserMessage: MessageType {
                     attributedText.append(messageString)
                     return .attributedText(attributedText)
                 } else {
-                    return .attributedText(NSAttributedString(string: self.textMessage ?? "", attributes: [
-                        .font: UIFont.systemFont(ofSize: 17, weight: .regular),
-                        .foregroundColor: UIColor.telaWhite
-                    ]))
+                    let text = self.textMessage ?? ""
+                    if text.containsOnlyEmoji {
+                        return .emoji(text)
+                    } else {
+                        return .attributedText(NSAttributedString(string: self.textMessage ?? "", attributes: [
+                            .font: UIFont.preferredFont(forTextStyle: .body),
+                            .foregroundColor: UIColor.telaWhite
+                        ]))
+                    }
             }
             case .multimedia:
                 if let url = self.imageURL {

@@ -12,10 +12,14 @@ import PINRemoteImage
 extension MessagesController: MessagesDisplayDelegate {
     
     func backgroundColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
+        let message = message as! UserMessage
+        guard !message.isFault else { return .clear}
         switch message.kind {
         case .photo:
             return UIColor.telaGray7.withAlphaComponent(0.4)
         case .custom:
+            return .clear
+        case .emoji:
             return .clear
         default:
             return isFromCurrentSender(message: message) ? .telaBlue : .telaGray7
@@ -35,6 +39,8 @@ extension MessagesController: MessagesDisplayDelegate {
     
     
     func detectorAttributes(for detector: DetectorType, and message: MessageType, at indexPath: IndexPath) -> [NSAttributedString.Key: Any] {
+        let message = message as! UserMessage
+        guard !message.isFault else { return [:]}
         switch detector {
         case .hashtag, .mention:
             if isFromCurrentSender(message: message) {
@@ -84,7 +90,8 @@ extension MessagesController: MessagesDisplayDelegate {
         
         
         
-        
+        let message = message as! UserMessage
+        guard !message.isFault else { return .none }
         
         
         if isFromCurrentSender(message: message) {
@@ -141,10 +148,12 @@ extension MessagesController: MessagesDisplayDelegate {
     func configureAccessoryView(_ accessoryView: UIView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
         // Cells are reused, so only add a button here once. For real use you would need to
         // ensure any subviews are removed if not needed
+
         accessoryView.subviews.forEach { $0.removeFromSuperview() }
         accessoryView.backgroundColor = .clear
-        
-        guard let message = message as? UserMessage,
+        let message = message as! UserMessage
+        guard !message.isFault else { return }
+        guard
             isFromCurrentSender(message: message) else { return }
         
         if !message.errorSending || !message.hasError { return }
@@ -161,9 +170,11 @@ extension MessagesController: MessagesDisplayDelegate {
     }
     
     func configureMediaMessageImageView(_ imageView: UIImageView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
-        guard let msg = message as? UserMessage,
-            let url = msg.imageURL else { return }
-        if let text = msg.textMessage,
+        let message = message as! UserMessage
+        guard !message.isFault else { return }
+        guard
+            let url = message.imageURL else { return }
+        if let text = message.textMessage,
             !text.isBlank {
             #if !RELEASE
             print("Image Text for image with URL: \(url) is => \(text)")

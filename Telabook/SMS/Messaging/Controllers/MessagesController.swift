@@ -20,6 +20,8 @@ class MessagesController: MessagesViewController {
     
     let screenEntryTime = Date()
     var handle:UInt!
+    var childUpdatedHandle:UInt!
+    var childAddedHandle:UInt!
     let customer:Customer
     let node:Config.FirebaseConfig.Node
     let reference:DatabaseReference
@@ -38,9 +40,11 @@ class MessagesController: MessagesViewController {
         self.conversationID = Int(customer.externalConversationID)
         self.thisSender = .init(senderId: String(customer.agent?.workerID ?? 0), displayName: customer.agent?.personName ?? "")
         super.init(nibName: nil, bundle: nil)
-//        setupFetchedResultsController()
         
-//        self.performInitialFetch()
+        setupFetchedResultsController()
+        
+        performFetch()
+//        fetchMoreMessages()
         
     }
     required init?(coder aDecoder: NSCoder) {
@@ -56,6 +60,26 @@ class MessagesController: MessagesViewController {
     
     
     var limit: Int = 20
+    
+    
+    
+    
+    var didSentNewMessage = false
+    
+    /*
+    var messages:[UserMessage] = [] {
+        didSet {
+            if !messages.isEmpty {
+                self.stopSpinner()
+            }
+        }
+    }
+    */
+    var messages:[UserMessage] {
+        fetchedResultsController.fetchedObjects?.reversed() ?? []
+    }
+    
+    
     
     /*
     lazy var fetchedResultsController: NSFetchedResultsController<UserMessage> = {
@@ -79,7 +103,7 @@ class MessagesController: MessagesViewController {
         return controller
     }()
     */
-    
+    /*
     internal var isFetchedResultsAvailable:Bool {
         return fetchedResultsController.sections?.first?.numberOfObjects == 0 ? false : true
     }
@@ -89,6 +113,9 @@ class MessagesController: MessagesViewController {
     internal var fetchedResultsCount:Int {
         return fetchedResultsController.fetchedObjects?.count ?? 0
     }
+    */
+    
+    
     var headerSpinnerView:SpinnerReusableView?
     
     lazy var spinner: UIActivityIndicatorView = {
@@ -137,19 +164,25 @@ class MessagesController: MessagesViewController {
         super.viewDidLoad()
         view.backgroundColor = .telaGray1
         setUpNavBar()
-        setupFetchedResultsController()
+//        setupFetchedResultsController()
         commonInit()
+        loadInitialMessagesFromFirebase()
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        reference.removeObserver(withHandle: handle)
+//        reference.removeObserver(withHandle: handle)
         stopObservingReachability()
+        removeFirebaseObservers()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         title = customer.addressBookName?.isEmpty ?? true ? customer.phoneNumber : customer.addressBookName
         observeReachability()
-        loadMessages()
+//        loadMessages()
+    }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        addFirebaseObservers()
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -171,6 +204,31 @@ class MessagesController: MessagesViewController {
         
     }
     
+    func addFirebaseObservers() {
+        childAddedHandle = observeNewMessages()
+        childUpdatedHandle = observeExistingMessages()
+    }
+    func removeFirebaseObservers() {
+        reference.removeObserver(withHandle: childAddedHandle)
+        reference.removeObserver(withHandle: childUpdatedHandle)
+    }
+    
+    
+
+//    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//        guard let messagesFlowLayout = collectionViewLayout as? MessagesCollectionViewFlowLayout else { return .zero }
+//        let dataSource = messagesFlowLayout.messagesDataSource
+//        let message = dataSource.messageForItem(at: indexPath, in: messagesCollectionView) as! UserMessage
+////        messagesFlowLayout.estimatedItemSize = MessagesCollectionViewFlowLayout.automaticSize
+//        if message.isFault {
+//            print("Fault at indexPath: \(indexPath)")
+//            return .zero
+//        } else {
+//            print("Firing Fault at indexPath: \(indexPath)")
+//            return messagesFlowLayout.sizeForItem(at: indexPath)
+//        }
+////        return .init(width: collectionView.frame.width, height: 200)
+//    }
     
     
     
@@ -214,10 +272,52 @@ class MessagesController: MessagesViewController {
         }
     }
  */
-    func loadMessages() {
-        if !isFetchedResultsAvailable {
-            self.startSpinner()
+    
+    func observeNewMessages() -> UInt {
+        return reference.queryOrdered(byChild: "date").queryStarting(atValue: screenEntryTime.milliSecondsSince1970).observe(.childAdded, with: { snapshot in
+            if snapshot.exists() {
+                print("New Message Child Added: \(snapshot)")
+                guard let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) else {
+                    #if !RELEASE
+                    print("###\(#function) Invalid Data for Snapshot key: \(snapshot.key). Error: Failed to create message from Firebase Message")
+                    #endif
+                    os_log("Invalid Data for Snapshot key: %@. Unable to create Message from Firebase Message due to invalid data. Hence not saving it in local db and the message will not be visible to user.", log: .firebase, type: .debug, snapshot.key)
+                    return
+                }
+                self.persistFirebaseMessagesInStore(entries: [message])
+            }
+        }) { error in
+            #if !RELEASE
+            print("###\(#function) Child Added Observer Event Error: \(error)")
+            #endif
+            os_log("Firebase Child Added Observer Event Error while observing new Messages: %@", log: .firebase, type: .error, error.localizedDescription)
         }
+    }
+    func observeExistingMessages() -> UInt {
+        return reference.queryOrdered(byChild: "date").queryStarting(atValue: screenEntryTime.milliSecondsSince1970).observe(.childChanged, with: { snapshot in
+            if snapshot.exists() {
+                print("Existing Message Child Updated: \(snapshot)")
+                guard let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) else {
+                    #if !RELEASE
+                    print("###\(#function) Invalid Data for Snapshot key: \(snapshot.key). Error: Failed to create updated message from Firebase Message.")
+                    #endif
+                    os_log("Invalid Data for Snapshot key: %@. Unable to create updated Message from Firebase Message due to invalid data. Hence not updating it in core data and the updated message will not be visible to user.", log: .firebase, type: .debug, snapshot.key)
+                    return
+                }
+                self.persistFirebaseMessagesInStore(entries: [message])
+            }
+        }) { error in
+            #if !RELEASE
+            print("###\(#function) Child Changed Observer Event Error: \(error)")
+            #endif
+            os_log("Firebase Child Changed Observer Event Error while observing existing Messages: %@", log: .firebase, type: .error, error.localizedDescription)
+        }
+    }
+    
+    
+    func loadMessages() {
+        if messages.isEmpty { self.startSpinner() }
+        
         handle = reference.queryLimited(toLast: UInt(limit)).observe(.value, with: { snapshot in
             guard snapshot.exists() else {
                 #if !RELEASE
@@ -252,13 +352,12 @@ class MessagesController: MessagesViewController {
     }
     
     
-    func loadMoreMessagesFromFirebase() {
-        print("Sequence Calling")
-        guard let offsetMessage = fetchedResults?.first else {
-            return
-        }
-        let key = offsetMessage.firebaseKey!
-        reference.queryEnding(atValue: key).queryLimited(toLast: UInt(limit + 1)).observeSingleEvent(of: .value, with: { snapshot in
+    
+    
+    func loadInitialMessagesFromFirebase() {
+        print("Loading Initial Messages from Firebase")
+      
+        reference.queryLimited(toLast: 20).observeSingleEvent(of: .value, with: { snapshot in
             guard snapshot.exists() else {
                 #if !RELEASE
                 print("Snapshot Does not exists: returning")
@@ -269,6 +368,45 @@ class MessagesController: MessagesViewController {
             for child in snapshot.children {
                 if let snapshot = child as? DataSnapshot {
                     //                    print(snapshot)
+                    guard let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) else {
+                        #if !RELEASE
+                        print("Invalid Data Error: Failed to create message from Firebase Message")
+                        #endif
+                        os_log("Invalid Data, Unable to create Message from Firebase Message due to invalid data. Hence not saving it in local db and the message will not be visible to user.", log: .firebase, type: .debug)
+                        continue
+                    }
+                    //                    print(conversation)
+                    messages.append(message)
+                }
+            }
+            self.persistFirebaseMessagesInStore(entries: Array(messages))
+        }) { error in
+            #if !RELEASE
+            print("Value Single Event Observer Error: \(error)")
+            #endif
+            os_log("Firebase Single Event Observer Error while observing Messages: %@", log: .firebase, type: .error, error.localizedDescription)
+        }
+    }
+    
+    
+    func loadMoreMessagesFromFirebase(offsetMessage:UserMessage) {
+        print("Loading More Messages from Firebase")
+        
+        let key = offsetMessage.firebaseKey!
+        print("### \(#function) Message Count : \(messages.count) | offset message text: \(offsetMessage.textMessage ?? "---") | Key: \(key)")
+        
+        reference.queryEnding(atValue: key).queryLimited(toLast: UInt(21)).observeSingleEvent(of: .value, with: { snapshot in
+            guard snapshot.exists() else {
+                #if !RELEASE
+                print("Snapshot Does not exists: returning")
+                #endif
+                return
+            }
+            var messages:[FirebaseMessage] = []
+            print("Snapshot Children Count: \(snapshot.children.allObjects.count)")
+            for child in snapshot.children {
+                if let snapshot = child as? DataSnapshot {
+//                                        print(snapshot)
                     guard let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) else {
                         #if !RELEASE
                         print("Invalid Data Error: Failed to create message from Firebase Message")
@@ -293,77 +431,53 @@ class MessagesController: MessagesViewController {
     
     
     
-    func preLoadChats(node:String?, completion: @escaping ([Message]) -> Void) {
-           var preLoadedMessages:[Message] = []
-           let companyId = AppData.companyId
-           if let node = node {
-               let query = Config.DatabaseConfig.getChats(companyId: String(companyId), node: node)
-               query.observe(.childAdded, with: { snapshot in
-                   let messageId = snapshot.key
-                   if let data = snapshot.value as? [String: Any] {
-                       if let imageUrl = data["img"] as? String,
-                           let text = data["message"] as? String,
-                           let senderId = data["sender"] as? Int,
-                           let senderName = data["sender_name"] as? String,
-                           let date = data["date"] as? Double {
-                           guard let url = URL(string: imageUrl) else {
-                               print("Unable to construct URL from imageURL => \(imageUrl)")
-                               return
-                           }
-                           print("Image Message with text => \(text)")
-                           let message = Message(imageUrl: url, text: text, sender: Sender(senderId: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
-                           preLoadedMessages.append(message)
-                       } else if let imageUrl = data["img"] as? String,
-                           let senderId = data["sender"] as? Int,
-                           let senderName = data["sender_name"] as? String,
-                           let date = data["date"] as? Double {
-                           guard let url = URL(string: imageUrl) else {
-                               print("Unable to construct URL from imageURL => \(imageUrl)")
-                               return
-                           }
-                           let message = Message(imageUrl: url, sender: Sender(senderId: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
-                           preLoadedMessages.append(message)
-                       } else if let text = data["message"] as? String,
-                           let senderId = data["sender"] as? Int,
-                           let senderName = data["sender_name"] as? String,
-                           let date = data["date"] as? Double {
-                           let message = Message(text: text, sender: Sender(senderId: String(senderId), displayName: senderName), messageId: messageId, date: Date(timeIntervalSince1970: TimeInterval(date) / 1000))
-                           preLoadedMessages.append(message)
-                       } else {
-                           print("Unknown Scenario : ")
-                           print(data)
-                       }
-                   }
-                   DispatchQueue.main.async {
-                       completion(preLoadedMessages)
-                   }
-               }) { (error) in
-                   print("Error retrieving observer: \(error.localizedDescription)")
-               }
-           }
-       }
+   
     
     
-    
+    var shouldShowLoader = true {
+        didSet {
+            print("Should Show Loader = \(shouldShowLoader)")
+        }
+    }
     
     func reloadDataKeepingOffset() {
-        let oldOffset = self.messagesCollectionView.contentSize.height - self.messagesCollectionView.contentOffset.y
-        messagesCollectionView.reloadData()
-//        UIView.animate(withDuration: 0.1) {
+        let offset = self.messagesCollectionView.contentOffset.y + messagesCollectionView.adjustedContentInset.bottom
+        let oldY = self.messagesCollectionView.contentSize.height - offset
+        self.messagesCollectionView.reloadData()
+        self.messagesCollectionView.layoutIfNeeded()
+        let y = self.messagesCollectionView.contentSize.height - oldY
+        let newOffset = CGPoint(x: 0, y: y)
+        self.messagesCollectionView.contentOffset = newOffset
+//        print("Old Offset: \(oldOffset) & New Offset: \(newOffset)")
+//        guard let topVisibleMessage = messagesCollectionView.messagesDataSource?.messageForItem(at: messagesCollectionView.indexPathForItem(at: newOffset) ?? IndexPath(item: 0, section: 0), in: messagesCollectionView) as? UserMessage else { return }
+        print("Old Offset: \(offset) | Old Y : \(oldY) | New Offset: \(newOffset)")
+        if newOffset.y <= 0 {
+            self.shouldShowLoader = false
+            self.messagesCollectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
+            self.messagesCollectionView.reloadSections([0])
             self.messagesCollectionView.layoutIfNeeded()
-//        }
-        messagesCollectionView.contentOffset = CGPoint(x: 0, y: messagesCollectionView.contentSize.height - oldOffset)
+        } else {
+            self.shouldShowLoader = true
+        }
+    
     }
     
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if indexPath.section == 0 {
             let offsetTime = Calendar.current.date(byAdding: .second, value: 2, to: screenEntryTime)!
             if !isLoading && Date() > offsetTime {
+                print("isLoading: \(isLoading)")
 //                firstMessage = fetchedResults?.first
-//                self.fetchMoreMessages()
+                guard let offsetMessage = messagesCollectionView.messagesDataSource?.messageForItem(at: indexPath, in: messagesCollectionView) as? UserMessage else {
+                    return
+                }
+                self.fetchMoreMessages(offsetMessage: offsetMessage)
             }
         }
     }
+//    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+//
+//    }
     var shouldFetchMore = true {
         didSet {
             if shouldFetchMore == false {
@@ -384,6 +498,96 @@ class MessagesController: MessagesViewController {
         }
     }
     
+    func fetchMoreMessages(offsetMessage:UserMessage) {
+        if self.isLoading == false {
+            self.isLoading = true
+        }
+        limit += 20
+        fetchedResultsController.fetchRequest.fetchLimit = limit
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.performFetch()
+            self.reloadDataKeepingOffset()
+            DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.3) {
+                self.loadMoreMessagesFromFirebase(offsetMessage: offsetMessage)
+            }
+            self.isLoading = false
+        }
+        
+        
+        
+        
+        
+//        let objectsAfter = self.fetchedResultsController.fetchedObjects
+            
+        /*
+        DispatchQueue.main.async {
+            self.messagesCollectionView.performBatchUpdates({
+                if let objectsBefore = objectsBefore,
+                    !objectsBefore.isEmpty {
+                    objectsBefore.forEach({
+                        if objectsAfter?.firstIndex(of: $0) == nil {
+                            self.messagesCollectionView.deleteSections([objectsBefore.firstIndex(of: $0)!])
+                        }
+                    })
+                }
+                
+                if let objectsAfter = objectsAfter,
+                    !objectsAfter.isEmpty {
+                    objectsAfter.forEach({
+                        if objectsBefore?.firstIndex(of: $0) == nil {
+                            self.messagesCollectionView.insertSections([objectsAfter.firstIndex(of: $0)!])
+                        }
+                    })
+                }
+            }, completion: { [weak self] finished in
+                self?.messagesCollectionView.layoutIfNeeded()
+            })
+        }
+        */
+        
+        
+        /*
+        let operation = BlockOperation { [weak self] in
+            if let objectsBefore = objectsBefore,
+                !objectsBefore.isEmpty {
+                objectsBefore.forEach({
+                    if objectsAfter?.firstIndex(of: $0) == nil {
+                        self?.messagesCollectionView.deleteSections([objectsBefore.firstIndex(of: $0)!])
+                    }
+                })
+            }
+            
+            if let objectsAfter = objectsAfter,
+                !objectsAfter.isEmpty {
+                objectsAfter.forEach({
+                    if objectsBefore?.firstIndex(of: $0) == nil {
+                        self?.messagesCollectionView.insertSections([objectsAfter.firstIndex(of: $0)!])
+                    }
+                })
+            }
+        }
+        
+        collectionViewOperations.append(operation)
+        
+        DispatchQueue.main.async {
+            self.messagesCollectionView.performBatchUpdates({
+                self.collectionViewOperations.forEach { $0.start() }
+            }, completion: { [weak self] finished in
+                self?.collectionViewOperations.removeAll(keepingCapacity: false)
+            })
+        }
+        */
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    /*
     func fetchMoreMessages() {
         guard !isLoading else { return }
         isLoading = true
@@ -419,9 +623,45 @@ class MessagesController: MessagesViewController {
             os_log("Core Data Error: %@", log: .coredata, type: .error, error.localizedDescription)
         }
     }
+    */
     
     
+    func loadInitialMessages() {
+        DispatchQueue.global(qos: .userInitiated).async {
+            self.fetchMessagesFromStore(count: self.limit) { messages in
+                DispatchQueue.main.async {
+//                    self.messages = messages
+                    self.messagesCollectionView.reloadData()
+                    self.messagesCollectionView.scrollToBottom()
+                }
+            }
+        }
+    }
     
+    func fetchMessagesFromStore(count:Int, completion: @escaping (([UserMessage]) -> Void)) {
+        let fetchRequest:NSFetchRequest = UserMessage.fetchRequest()
+        let conversationPredicate = NSPredicate(format: "\(#keyPath(UserMessage.conversation)) == %@", customer)
+        
+        
+        fetchRequest.predicate = conversationPredicate
+        
+        fetchRequest.sortDescriptors = [
+            NSSortDescriptor(keyPath: \UserMessage.date, ascending: false)
+        ]
+        fetchRequest.fetchLimit = count
+        fetchRequest.returnsObjectsAsFaults = false
+        
+        
+        viewContext.perform {
+            do {
+                let result = try fetchRequest.execute()
+                print(result)
+                completion(result)
+            } catch let error {
+                print(error)
+            }
+        }
+    }
     
     
     var isLoading = false
@@ -463,14 +703,14 @@ class MessagesController: MessagesViewController {
     }()
     lazy var grayDoubleTick:NSAttributedString = {
         let doubleTickAttachment = NSTextAttachment()
-        let doubleTickImage = #imageLiteral(resourceName: "tick.double.glyph").image(scaledTo: .init(width: 15, height: 15))!.withTintColor(.telaBlue)
+        let doubleTickImage = #imageLiteral(resourceName: "tick.double.glyph").image(scaledTo: .init(width: 15, height: 15))!.withTintColor(.telaGray6)
         doubleTickAttachment.image = doubleTickImage
         doubleTickAttachment.bounds = CGRect(x: 0, y: -4.0, width: doubleTickAttachment.image!.size.width, height: doubleTickAttachment.image!.size.height)
         return NSAttributedString(attachment: doubleTickAttachment)
     }()
     lazy var blueDoubleTick:NSAttributedString = {
         let blueDoubleTickAttachment = NSTextAttachment()
-        let blueDoubleTickImage = #imageLiteral(resourceName: "tick.double.glyph").image(scaledTo: .init(width: 15, height: 15))!.withTintColor(.telaGray6)
+        let blueDoubleTickImage = #imageLiteral(resourceName: "tick.double.glyph").image(scaledTo: .init(width: 15, height: 15))!.withTintColor(.telaBlue)
         blueDoubleTickAttachment.image = blueDoubleTickImage
         blueDoubleTickAttachment.bounds = CGRect(x: 0, y: -4.0, width: blueDoubleTickAttachment.image!.size.width, height: blueDoubleTickAttachment.image!.size.height)
         return NSAttributedString(attachment: blueDoubleTickAttachment)
@@ -503,13 +743,28 @@ class MessagesController: MessagesViewController {
     internal var indexPathForMessageBottomLabelToShow:IndexPath?
     
     func isLastSectionVisible() -> Bool {
-        let count = fetchedResultsCount
+        let count = messages.count
         guard count != 0 else { return false }
-        
         let lastIndexPath = IndexPath(item: 0, section: count - 1)
         return messagesCollectionView.indexPathsForVisibleItems.contains(lastIndexPath)
     }
+    func isPreviousMessageSameSender(at indexPath: IndexPath) -> Bool {
+        guard !messages.isEmpty else { return false }
+        guard indexPath.section - 1 >= 0 else { return false }
+        return messages[indexPath.section].messageSender == messages[indexPath.section - 1].messageSender
+    }
     
+    func isNextMessageSameSender(at indexPath: IndexPath) -> Bool {
+        guard !messages.isEmpty else { return false }
+        guard indexPath.section + 1 < messages.count else { return false }
+        return messages[indexPath.section].messageSender == messages[indexPath.section + 1].messageSender
+    }
+    
+    func isNextMessageDateInSameDay(at indexPath:IndexPath) -> Bool {
+        guard !messages.isEmpty else { return false }
+        guard indexPath.section + 1 < messages.count else { return false }
+        return Calendar.current.isDate(messages[indexPath.section].sentDate, inSameDayAs: messages[indexPath.section + 1].sentDate)
+    }
     /*
     func isPreviousMessageSenderSame(for message:UserMessage, at indexPath:IndexPath) -> Bool {
         guard indexPath.section - 1 >= 0 else { return false }
@@ -544,6 +799,7 @@ class MessagesController: MessagesViewController {
     
     
     
+    /*
     func isPreviousMessageSameSender(at indexPath: IndexPath) -> Bool {
         guard let messages = self.fetchedResults, !messages.isEmpty else { return false }
         guard indexPath.section - 1 >= 0 else { return false }
@@ -561,7 +817,7 @@ class MessagesController: MessagesViewController {
         guard indexPath.section + 1 < messages.count else { return false }
         return Calendar.current.isDate(messages[indexPath.section].sentDate, inSameDayAs: messages[indexPath.section + 1].sentDate)
     }
-    
+    */
     
     func setTypingIndicatorViewHidden(_ isHidden: Bool, performUpdates updates: (() -> Void)? = nil) {
 //        updateTitleView(title: "MessageKit", subtitle: isHidden ? "2 Online" : "Typing...")

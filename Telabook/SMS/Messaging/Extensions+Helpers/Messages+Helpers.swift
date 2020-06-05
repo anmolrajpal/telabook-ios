@@ -10,13 +10,16 @@ import UIKit
 import Photos
 import FirebaseStorage
 
+
 extension MessagesController {
     internal func commonInit() {
         setupViews()
         configureMessageCollectionView()
         configureMessageInputBar()
+//        performInitialFetch()
+//        loadInitialMessages()
         setupTargetActions()
-        clearUnreadMessagesCount()
+//        clearUnreadMessagesCount()
     }
     private func setupViews() {
         messagesCollectionView.addSubview(spinner)

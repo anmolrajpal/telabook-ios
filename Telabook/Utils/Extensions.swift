@@ -593,6 +593,44 @@ extension String {
         return formattedPhoneNumber
     }
 }
+
+
+
+extension Character {
+    var isSimpleEmoji: Bool {
+        guard let firstScalar = unicodeScalars.first else {
+            return false
+        }
+        return firstScalar.properties.isEmoji && firstScalar.value > 0x238C
+    }
+    var isCombinedIntoEmoji: Bool {
+        unicodeScalars.count > 1 && unicodeScalars.first?.properties.isEmoji ?? false
+    }
+    var isEmoji: Bool { isSimpleEmoji || isCombinedIntoEmoji }
+}
+extension String {
+    var isSingleEmoji: Bool {
+        return count == 1 && containsEmoji
+    }
+    var containsEmoji: Bool {
+        return contains { $0.isEmoji }
+    }
+    var containsOnlyEmoji: Bool {
+        return !isEmpty && !contains { !$0.isEmoji }
+    }
+    var emojiString: String {
+        return emojis.map { String($0) }.reduce("", +)
+    }
+    var emojis: [Character] {
+        return filter { $0.isEmoji }
+    }
+    var emojiScalars: [UnicodeScalar] {
+        return filter { $0.isEmoji }.flatMap { $0.unicodeScalars }
+    }
+}
+
+
+
 let imageCache = NSCache<NSString, UIImage>()
 extension UIImage {
     func rotate(radians: Float) -> UIImage? {
@@ -1179,8 +1217,19 @@ extension UIImage {
 
     */
  }
+
+extension Array where Self.Element : Comparable {
+    
+//    @inlinable public func secondLargest() -> Element? {
+//        guard self.count > 1, let max = self.max() else { return nil }
+//        return self.drop(while: { $0 == max }).max()
+//    }
+    @inlinable public func secondLargest() -> Element? {
+        return self.sorted() { $0 > $1 }.second
+    }
+}
 extension Array {
     @inlinable public var second: Element? {
-        return count >= 2 ? self[1] : nil
+        return count > 1 ? self[1] : nil
     }
 }

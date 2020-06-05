@@ -79,6 +79,24 @@ extension MessagesController {
     
     
     
+    /* ------------------------------------------------------------------------------------------------------------ */
+    internal func deleteUserMessage(message:UserMessage) {
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+        
+        let messageReference = reference.child(message.messageId)
+        let context = self.viewContext
+        let operations = MessageOperations.getOperationsToDeleteUserMessage(using: context, message: message, messageReference: messageReference, updatedAt: Date())
+        
+        handleViewsStateForOperations(operations: operations, onOperationQueue: queue, completion: {_ in})
+        
+        queue.addOperations(operations, waitUntilFinished: false)
+    }
+    /* ------------------------------------------------------------------------------------------------------------ */
+    
+    
+    
     
     
     internal func updateNewMessageToFirebase(message:UserMessage) {
@@ -175,6 +193,33 @@ extension MessagesController {
                 
                 
                 
+                /* ------------------------------------------------------------------------------------------------------------ */
+                //MARK: Delete User Message Operations completion
+                case let operation as MarkMessageDeletedInStore_Operation:
+                    operation.completionBlock = {
+                        if let error = operation.error {
+                            #if !RELEASE
+                            print("Error marking message as deleted in Store: \(error)")
+                            #endif
+                            os_log("Error marking message as deleted in Store: %@", log: .coredata, type: .error, error.localizedDescription)
+                            
+                        } else {
+                            let message = "Successfully, marked message as deleted in Core Data Store. Now Updating message on Firebase."
+                            printAndLog(message: message, log: .coredata, logType: .info)
+                        }
+                }
+                case let operation as MarkMessageDeletedOnFirebase_Operation:
+                    operation.completionBlock = {
+                        guard case let .failure(error) = operation.result else {
+                            print("Successfully deleted message")
+                            return
+                        }
+                        self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+                        operation.message.isMessageDeleted = false
+                        let message = "Error deleting message on Firebase: \(error.localizedDescription)"
+                        printAndLog(message: message, log: .firebase, logType: .error)
+                }
+                /* ------------------------------------------------------------------------------------------------------------ */
                 default: break
             }
         }
@@ -189,4 +234,13 @@ extension MessagesController {
             })
         }
     }
+}
+
+
+
+public func printAndLog(message:String, log:OSLog, logType:OSLogType) {
+    #if !RELEASE
+    print(message)
+    #endif
+    os_log("%@", log: log, type: logType, message)
 }

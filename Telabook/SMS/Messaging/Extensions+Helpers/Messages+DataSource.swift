@@ -15,15 +15,15 @@ extension MessagesController: MessagesDataSource {
     }
     
     func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
-        let messages = self.fetchedResults ?? []
+//        let messages = self.fetchedResults ?? []
         
 //        messages.sort(by: { $0.sentDate < $1.sentDate })
         return messages[indexPath.section]
     }
-    func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int { fetchedResultsCount }
+    func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int { messages.count }
     
     func isEarliest(_ message:UserMessage) -> Bool {
-        guard let messages = self.fetchedResults else { return false }
+//        guard let messages = self.fetchedResults else { return false }
         let filteredMessages = messages.filter{( Date.isDateSame(date1: message.sentDate, date2: $0.sentDate) )}
         return message == filteredMessages.min() ? true : false
     }
@@ -99,9 +99,9 @@ extension MessagesController: MessagesDataSource {
         attributedText.append(prefix)
         if isFromCurrentSender(message: message) {
             switch true {
-                case message.sentByProviderAt != nil: attributedText.append(blueDoubleTick)
-                case message.sentByApiAt != nil: attributedText.append(grayDoubleTick)
-                case message.sentByAppAt != nil: attributedText.append(singleTick)
+                case message.deliveredByProviderAt != nil: attributedText.append(blueDoubleTick)
+                case message.sentByProviderAt != nil: attributedText.append(grayDoubleTick)
+                case message.sentByApiAt != nil: attributedText.append(singleTick)
                 default: break
             }
         }
@@ -121,12 +121,12 @@ extension MessagesController: MessagesDataSource {
         return view
     }
     func collectionView(_ collectionView: UICollectionView, willDisplaySupplementaryView view: UICollectionReusableView, forElementKind elementKind: String, at indexPath: IndexPath) {
-        if elementKind == UICollectionView.elementKindSectionHeader {
+        if elementKind == UICollectionView.elementKindSectionHeader && shouldShowLoader {
             headerSpinnerView?.spinner.startAnimating()
         }
     }
     func collectionView(_ collectionView: UICollectionView, didEndDisplayingSupplementaryView view: UICollectionReusableView, forElementOfKind elementKind: String, at indexPath: IndexPath) {
-        if elementKind == UICollectionView.elementKindSectionHeader {
+        if elementKind == UICollectionView.elementKindSectionHeader || !shouldShowLoader{
             headerSpinnerView?.spinner.stopAnimating()
         }
     }

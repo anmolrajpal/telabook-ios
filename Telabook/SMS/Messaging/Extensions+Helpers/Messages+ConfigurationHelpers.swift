@@ -81,7 +81,6 @@ extension MessagesController {
     */
     
     
-    
     internal func configureMessageInputBar() {
         messageInputBar.delegate = self
         messageInputBar.shouldManageSendButtonEnabledState = false
@@ -167,7 +166,7 @@ extension MessagesController {
                 
             }
             let deleteAction = UIAction(title: "Delete", image: SFSymbol.delete.image, attributes: .destructive) { _ in
-//                self.deleteConversation(for: customer, completion: {_ in})
+                self.promptDeleteMessageAlert(forMessage: message)
             }
             
             
@@ -190,6 +189,32 @@ extension MessagesController {
             return UIMenu(title: "", children: menuItems)
         }
     }
+    
+    
+    func promptDeleteMessageAlert(forMessage message:UserMessage) {
+        let alert = UIAlertController(title: "", message: nil, preferredStyle: .actionSheet)
+        let attributedString = NSAttributedString(string: "Confirm Delete", attributes: [
+            NSAttributedString.Key.font : UIFont(name: CustomFonts.gothamMedium.rawValue, size: 13)!,
+            NSAttributedString.Key.foregroundColor : UIColor.telaBlue
+        ])
+        let attributedMessageString = NSAttributedString(string: "This can't be undone", attributes: [
+            NSAttributedString.Key.font : UIFont(name: CustomFonts.gothamBook.rawValue, size: 11)!,
+            NSAttributedString.Key.foregroundColor : UIColor.telaGray6
+        ])
+        alert.setValue(attributedString, forKey: "attributedTitle")
+        alert.setValue(attributedMessageString, forKey: "attributedMessage")
+        alert.view.subviews[0].subviews[0].subviews[0].backgroundColor = UIColor.telaGray5
+        alert.view.tintColor = UIColor.telaBlue
+        
+        alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { _ in
+            self.deleteUserMessage(message: message)
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
         func collectionView(_ collectionView: UICollectionView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
             makeTargetedPreview(for: configuration)
         }
@@ -201,7 +226,7 @@ extension MessagesController {
 //        }
     private func makeTargetedPreview(for configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
         guard let identifier = configuration.identifier as? String else { return nil }
-        guard let messages = self.fetchedResults else { return nil }
+//        guard let messages = self.fetchedResults else { return nil }
 //        let totalMessages = messages.count
         guard let section = messages.firstIndex(where: { $0.firebaseKey == identifier }) else { return nil }
 //        guard let index = messages.firstIndex(where: { $0.firebaseKey == identifier }) else { return nil }

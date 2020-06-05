@@ -56,7 +56,7 @@ struct MessageOperations {
         
         
         let passNewlyCreatedEntryFromStore_Operation = BlockOperation { [unowned addToStore_Operation, unowned updateEntryToFirebase_Operation, unowned sendOnServer_Operation] in
-            guard let messageFromStore = addToStore_Operation.newMessageFromStore else {
+            guard let messageFromStore = addToStore_Operation.newMessageFromStore, addToStore_Operation.error == nil else {
                 #if !RELEASE
                 print("Unresolved Error: Unable to get newly created result(UserMessage) from addToStore_Operation")
                 #endif
@@ -141,6 +141,16 @@ struct MessageOperations {
     
     
     
+    static func getOperationsToDeleteUserMessage(using context:NSManagedObjectContext, message:UserMessage, messageReference:DatabaseReference, updatedAt:Date) -> [Operation] {
+        let updateEntryInStore_Operation = MarkMessageDeletedInStore_Operation(context: context, message: message, updatedAt: updatedAt)
+        let updateEntryToFirebase_Operation = MarkMessageDeletedOnFirebase_Operation(message: message, messageReference: messageReference, updatedAt: updatedAt)
+        return [updateEntryInStore_Operation, updateEntryToFirebase_Operation]
+    }
+    
+    
+    
+    
+    
     
     
     
@@ -196,6 +206,23 @@ struct MessageOperations {
                         completion(.success(true))
                     }
                 }
+            }
+        }
+    }
+    
+    
+    
+    
+    
+    fileprivate static func deleteUserMessageOnFirebase(message:UserMessage, updatedAt:Date, messageReference:DatabaseReference, completion: @escaping (Result<Bool, FirebaseAuthService.FirebaseError>) -> Void) {
+        messageReference.updateChildValues(message.getDeletedFirebaseObject(updatedAt: updatedAt)) { (error, _) in
+            if let error = error {
+                #if !RELEASE
+                print(error.localizedDescription)
+                #endif
+                completion(.failure(.databaseUpdateValueError(error)))
+            } else {
+                completion(.success(true))
             }
         }
     }
@@ -492,8 +519,7 @@ class SendNewTextMessageOnServer_Operation: Operation {
 
 
 
-
-
+// MARK: - /**************************************** CLEAR UNREAD MESSAGES COUNT OPERATIONS <BEGIN> ****************************************/
 
 
 /// Set `0` for unread messages count property for specified conversation with customer in the Core Data store.
@@ -537,7 +563,7 @@ class ClearUnreadMessagesCountInStore_Operation: Operation {
 
 
 
-/// Update the Unread Message count value for conversation with custome on Firebase.
+/// Update the Unread Message count value for conversation with customer on Firebase.
 class ClearUnreadMessagesCountOnFirebase_Operation: Operation {
     enum OperationError: Error, LocalizedError {
         case conversationReference(error:Error)
@@ -603,3 +629,123 @@ class ClearUnreadMessagesCountOnFirebase_Operation: Operation {
         MessageOperations.clearUnreadMessagesCountOnFirebase(conversationID: String(conversation.externalConversationID), unreadMessagesCountNodeReference: unreadMessagesCountNodeReference, conversationsNodeReference: conversationReference, updatedAt: updatedAt, completion: finish)
     }
 }
+
+// MARK: /**************************************** CLEAR UNREAD MESSAGES COUNT OPERATIONS <END> ****************************************/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// MARK: - /**************************************** DELETE USER MESSAGE OPERATIONS <BEGIN> ****************************************/
+
+
+/// Set  message's deleted flag to`1`  in the Core Data store.
+class MarkMessageDeletedInStore_Operation: Operation {
+    enum OperationError: Error, LocalizedError {
+        case coreDataError(error:Error)
+        
+        var localizedDescription: String {
+            switch self {
+                case let .coreDataError(error): return "Core Data Error: \(error.localizedDescription)"
+            }
+        }
+    }
+    var error:OperationError?
+    private let context: NSManagedObjectContext
+    private let updatedAt:Date
+    private let message:UserMessage
+    init(context: NSManagedObjectContext, message:UserMessage, updatedAt:Date) {
+        self.context = context
+        self.message = message
+        self.updatedAt = updatedAt
+    }
+    
+    override func main() {
+        context.performAndWait {
+            do {
+                message.isMessageDeleted = true
+                message.updatedAt = updatedAt
+                try context.save()
+            } catch {
+                #if !RELEASE
+                print("Error adding entries to store: \(error))")
+                #endif
+                self.error = .coreDataError(error: error)
+            }
+        }
+        
+    }
+}
+
+
+
+
+/// Update the User Message and set  message's deleted flag to`1`  on Firebase.
+class MarkMessageDeletedOnFirebase_Operation: Operation {
+    
+    var result:Result<Bool, FirebaseAuthService.FirebaseError>?
+    private var downloading = false
+    
+    let messageReference:DatabaseReference
+    let message:UserMessage
+    private let updatedAt:Date
+    init(message:UserMessage, messageReference:DatabaseReference, updatedAt:Date) {
+        self.message = message
+        self.messageReference = messageReference
+        self.updatedAt = updatedAt
+    }
+    override var isAsynchronous: Bool {
+        return true
+    }
+    
+    override var isExecuting: Bool {
+        return downloading
+    }
+    
+    override var isFinished: Bool {
+        return result != nil
+    }
+    
+    override func cancel() {
+        super.cancel()
+        finish(result: .failure(.cancelled))
+    }
+    
+    func finish(result: Result<Bool, FirebaseAuthService.FirebaseError>) {
+        guard downloading else { return }
+        
+        willChangeValue(forKey: #keyPath(isExecuting))
+        willChangeValue(forKey: #keyPath(isFinished))
+        
+        downloading = false
+        self.result = result
+        
+        didChangeValue(forKey: #keyPath(isFinished))
+        didChangeValue(forKey: #keyPath(isExecuting))
+    }
+    
+    override func start() {
+    
+        willChangeValue(forKey: #keyPath(isExecuting))
+        downloading = true
+        didChangeValue(forKey: #keyPath(isExecuting))
+        
+        guard !isCancelled else {
+            finish(result: .failure(.cancelled))
+            return
+        }
+        MessageOperations.deleteUserMessageOnFirebase(message: message, updatedAt: updatedAt, messageReference: messageReference, completion: finish)
+    }
+}
+
+// MARK: /**************************************** DELETE USER MESSAGE OPERATIONS <END> ****************************************/

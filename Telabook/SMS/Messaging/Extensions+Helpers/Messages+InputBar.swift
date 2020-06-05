@@ -30,6 +30,7 @@ extension MessagesController: InputBarAccessoryViewDelegate {
         let components = inputBar.inputTextView.components
         messageInputBar.inputTextView.text = String()
         messageInputBar.invalidatePlugins()
+        didSentNewMessage = true
         DispatchQueue.global(qos: .default).async {
             DispatchQueue.main.async { [weak self] in
                 self?.analyseMessage(fromComponents: components, key: key)
