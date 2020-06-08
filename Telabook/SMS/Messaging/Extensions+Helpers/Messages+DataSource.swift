@@ -110,26 +110,26 @@ extension MessagesController: MessagesDataSource {
     }
     
     
-    func messageHeaderView(for indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageReusableView {
-        let view = messagesCollectionView.dequeueReusableHeaderView(SpinnerReusableView.self, for: indexPath)
-        headerSpinnerView = view
-        return view
-    }
+//    func messageHeaderView(for indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageReusableView {
+//        let view = messagesCollectionView.dequeueReusableHeaderView(SpinnerReusableView.self, for: indexPath)
+//        headerSpinnerView = view
+//        return view
+//    }
     func messageFooterView(for indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageReusableView {
         let view = messagesCollectionView.dequeueReusableFooterView(NewMessagesCountReusableView.self, for: indexPath)
         view.count = 4
         return view
     }
-    func collectionView(_ collectionView: UICollectionView, willDisplaySupplementaryView view: UICollectionReusableView, forElementKind elementKind: String, at indexPath: IndexPath) {
-        if elementKind == UICollectionView.elementKindSectionHeader && shouldShowLoader {
-            headerSpinnerView?.spinner.startAnimating()
-        }
-    }
-    func collectionView(_ collectionView: UICollectionView, didEndDisplayingSupplementaryView view: UICollectionReusableView, forElementOfKind elementKind: String, at indexPath: IndexPath) {
-        if elementKind == UICollectionView.elementKindSectionHeader || !shouldShowLoader{
-            headerSpinnerView?.spinner.stopAnimating()
-        }
-    }
+//    func collectionView(_ collectionView: UICollectionView, willDisplaySupplementaryView view: UICollectionReusableView, forElementKind elementKind: String, at indexPath: IndexPath) {
+//        if elementKind == UICollectionView.elementKindSectionHeader && shouldShowLoader {
+//            headerSpinnerView?.spinner.startAnimating()
+//        }
+//    }
+//    func collectionView(_ collectionView: UICollectionView, didEndDisplayingSupplementaryView view: UICollectionReusableView, forElementOfKind elementKind: String, at indexPath: IndexPath) {
+//        if elementKind == UICollectionView.elementKindSectionHeader || !shouldShowLoader{
+//            headerSpinnerView?.spinner.stopAnimating()
+//        }
+//    }
 }
 class SpinnerReusableView:MessageReusableView {
     static let viewHeight = CGFloat(60)

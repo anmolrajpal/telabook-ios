@@ -83,7 +83,7 @@ extension Agent {
         self.date = (agentEntry.date != nil && agentEntry.date != 0) ? Date(timeIntervalSince1970: Double(agentEntry.date!)) : nil
         self.isAgentDeleted = agentEntry.deleted != nil ? agentEntry.deleted!.boolValue : false
         self.didNumber = agentEntry.didNumber
-        self.externalPendingMessagesCount = agentEntry.externalPendingMessages != nil ? Int16(agentEntry.externalPendingMessages!) : 0
+//        self.externalPendingMessagesCount = agentEntry.externalPendingMessages != nil ? Int16(agentEntry.externalPendingMessages!) : 0
         self.internalConversationID = agentEntry.internalConversationId != nil ? Int32(agentEntry.internalConversationId!) : 0
         self.lastMessageDate = (agentEntry.internalLastMessageDate != nil) ? Date.getDateFromString(dateString: agentEntry.internalLastMessageDate, dateFormat: "yyyy-MM-dd HH:mm:ss") : nil
         self.lastMessageSeenDate = (agentEntry.internalLastMessageSeen != nil) ? Date.getDateFromString(dateString: agentEntry.internalLastMessageSeen, dateFormat: "yyyy-MM-dd HH:mm:ss") : nil

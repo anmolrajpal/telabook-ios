@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>183479373124-82ccldg348ffgtl0h3rugv4jmoo1v6ke.apps.googleusercontent.com</string>
+	<string>183479373124-cen5blsvoh28469bq3e3rpjmcruq2t6j.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.183479373124-82ccldg348ffgtl0h3rugv4jmoo1v6ke</string>
+	<string>com.googleusercontent.apps.183479373124-cen5blsvoh28469bq3e3rpjmcruq2t6j</string>
 	<key>API_KEY</key>
 	<string>AIzaSyAjmijYR0BN3iffVwO9jDxEQkEbUS7OTq4</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.Natovi.Telabook</string>
+	<string>com.telabook.web-staging</string>
 	<key>PROJECT_ID</key>
 	<string>stagingtelabook</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,7 +29,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:183479373124:ios:11e421da9834295cbf1b11</string>
+	<string>1:183479373124:ios:db35bd35895c60d9bf1b11</string>
 	<key>DATABASE_URL</key>
 	<string>https://stagingtelabook.firebaseio.com</string>
 </dict>

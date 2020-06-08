@@ -8,8 +8,12 @@
 
 import UIKit
 import CoreData
-
+protocol QuickResponsesModificationDelegate {
+    func didExitQuickResponsesSettings()
+}
 class QuickResponsesViewController: UIViewController {
+    var delegate:QuickResponsesModificationDelegate?
+    
     // MARK: Constructors
     lazy private(set) var subview: QuickResponsesView = {
         return QuickResponsesView(frame: UIScreen.main.bounds)
@@ -67,6 +71,10 @@ class QuickResponsesViewController: UIViewController {
         hideKeyboardWhenTappedAround()
         setupTargetActions()
         fetchWithTimeLogic()
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        delegate?.didExitQuickResponsesSettings()
     }
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent

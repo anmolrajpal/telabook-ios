@@ -22,33 +22,28 @@ extension MessagesController {
         
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messageCellDelegate = self
-        messagesCollectionView.messagesLayoutDelegate = self
-        messagesCollectionView.messagesDisplayDelegate = self
+        
         messagesCollectionView.delegate = self
         
         let layout = messagesCollectionView.collectionViewLayout as? MessagesCollectionViewFlowLayout
-//        layout?.estimatedItemSize = .init(width: messagesCollectionView.frame.width, height: 40)
-//        layout?.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         layout?.sectionInset = UIEdgeInsets(top: 1, left: 8, bottom: 1, right: 8)
         layout?.setMessageOutgoingAvatarSize(.zero)
         layout?.setMessageIncomingAvatarSize(.zero)
-        
-        
         layout?.setMessageOutgoingMessageBottomLabelAlignment(LabelAlignment(textAlignment: .right, textInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 15)))
         layout?.setMessageIncomingMessageBottomLabelAlignment(LabelAlignment(textAlignment: .left, textInsets: UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 0)))
-        
+        layout?.setMessageOutgoingAccessoryViewSize(CGSize(width: 30, height: 30))
+        layout?.setMessageOutgoingAccessoryViewPadding(HorizontalEdgeInsets(left: 0, right: 8))
 //        layout?.setMessageIncomingMessagePadding(UIEdgeInsets(top: 7, left: 26, bottom: 7, right: 16))
 //        layout?.setMessageOutgoingMessagePadding(UIEdgeInsets(top: 7, left: 16, bottom: 7, right: 26))
         
+        messagesCollectionView.messagesLayoutDelegate = self
+        messagesCollectionView.messagesDisplayDelegate = self
         
-        
-        layout?.setMessageOutgoingAccessoryViewSize(CGSize(width: 30, height: 30))
-        layout?.setMessageOutgoingAccessoryViewPadding(HorizontalEdgeInsets(left: 0, right: 8))
-        
-        
-        scrollsToBottomOnKeyboardBeginsEditing = false
+        scrollsToLastItemOnKeyboardBeginsEditing = false
         maintainPositionOnKeyboardFrameChanged = true
         messagesCollectionView.scrollToBottom(animated: false)
+        
+//        messagesCollectionView.scrollToLastItem()
     }
 //    func shouldCacheLayoutAttributes(for message: MessageType) -> Bool {
 //        return true
@@ -84,22 +79,24 @@ extension MessagesController {
     internal func configureMessageInputBar() {
         messageInputBar.delegate = self
         messageInputBar.shouldManageSendButtonEnabledState = false
-        messageInputBar.inputTextView.textColor = .telaWhite
-        messageInputBar.sendButton.setImage(#imageLiteral(resourceName: "autoresponse_icon"), for: .normal)
-        messageInputBar.sendButton.title = nil
-        messageInputBar.sendButton.isEnabled = true
         messageInputBar.separatorLine.isHidden = true
+        messageInputBar.inputTextView.textColor = .telaWhite
         messageInputBar.backgroundView.backgroundColor = UIColor.telaGray1
         messageInputBar.contentView.backgroundColor = UIColor.telaGray1
         messageInputBar.inputTextView.backgroundColor = UIColor.telaGray5
+        messageInputBar.inputTextView.textContainerInset = UIEdgeInsets(top: 8, left: 10, bottom: 8, right: 10)
+        messageInputBar.inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 15, bottom: 8, right: 36)
+        messageInputBar.inputTextView.scrollIndicatorInsets = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
         messageInputBar.inputTextView.keyboardAppearance = UIKeyboardAppearance.dark
         messageInputBar.inputTextView.layer.borderWidth = 0
         messageInputBar.inputTextView.layer.cornerRadius = 20.0
         messageInputBar.inputTextView.layer.masksToBounds = true
-        messageInputBar.inputTextView.textContainerInset = UIEdgeInsets(top: 8, left: 10, bottom: 8, right: 10)
-        messageInputBar.inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 15, bottom: 8, right: 36)
-        messageInputBar.inputTextView.scrollIndicatorInsets = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
-        
+        configureMessageInputBarItems()
+    }
+    private func configureMessageInputBarItems() {
+        messageInputBar.sendButton.setImage(#imageLiteral(resourceName: "autoresponse_icon"), for: .normal)
+        messageInputBar.sendButton.title = nil
+        messageInputBar.sendButton.isEnabled = true
         let cameraItem = InputBarButtonItem(type: .custom)
         cameraItem.image = #imageLiteral(resourceName: "camera_icon")
         cameraItem.addTarget(
@@ -112,7 +109,6 @@ extension MessagesController {
         messageInputBar.setLeftStackViewWidthConstant(to: 50, animated: false)
         messageInputBar.setStackViewItems([cameraItem], forStack: .left, animated: false)
     }
-    
     
     @objc func image(_ image: UIImage, didFinishSavingWithError error: NSError?, contextInfo: UnsafeRawPointer) {
         if let error = error {
@@ -277,8 +273,10 @@ extension MessagesController {
     
     
     func scrollViewDidChangeAdjustedContentInset(_ scrollView: UIScrollView) {
-        if downIndicatorBottomConstraint != nil { downIndicatorBottomConstraint.constant = -messagesCollectionView.adjustedContentInset.bottom }
-        UIView.animate(withDuration: 0.3) { self.view.layoutIfNeeded() }
+        if downIndicatorBottomConstraint != nil {
+            downIndicatorBottomConstraint.constant = -messagesCollectionView.adjustedContentInset.bottom
+            UIView.animate(withDuration: 0.3) { self.view.layoutIfNeeded() }
+        }
     }
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let total = self.messagesCollectionView.contentSize.height - self.messagesCollectionView.frame.height
@@ -288,14 +286,14 @@ extension MessagesController {
             self.downIndicatorShouldShow = reverseOffset > 400 /* minimum distance */
         }
 //        print("Total: \(total) & offset: \(offset) :Difference=> \(total - offset)")
-        let now = Date()
-        let offsetTime = Calendar.current.date(byAdding: .second, value: 2, to: screenEntryTime)!
-        if offset < 100 && !isLoading && shouldFetchMore && now > offsetTime {
+//        let now = Date()
+//        let offsetTime = Calendar.current.date(byAdding: .second, value: 2, to: screenEntryTime)!
+//        if offset < 100 && !isLoading && shouldFetchMore && now > offsetTime {
 //            self.fetchMoreMessages()
 //            if let message = fetchedResults?.first {
 //                loadMoreMessagesFromFirebase(offsetMessage: message)
 //            }
-        }
+//        }
     }
    
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {

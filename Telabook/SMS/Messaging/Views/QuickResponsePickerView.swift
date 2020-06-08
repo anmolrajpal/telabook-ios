@@ -20,6 +20,10 @@ class QuickResponsePickerView:UIView {
         
         addSubview(tableView)
         tableView.frame = bounds
+        
+        
+        addSubview(placeholderLabel)
+        placeholderLabel.anchor(top: tableView.topAnchor, left: safeAreaLayoutGuide.leftAnchor, bottom: nil, right: safeAreaLayoutGuide.rightAnchor, topConstant: 200, leftConstant: 22, bottomConstant: 0, rightConstant: 22)
     }
     
     
@@ -41,14 +45,38 @@ class QuickResponsePickerView:UIView {
         tv.showsHorizontalScrollIndicator = false
         tv.showsVerticalScrollIndicator = false
         tv.tableFooterView = UIView(frame: CGRect.zero)
-        tv.contentInset = UIEdgeInsets(top: 35, left: 0, bottom: 24, right: 0)
+        tv.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 24, right: 0)
         tv.sectionHeaderHeight = .leastNonzeroMagnitude
         tv.sectionFooterHeight = .leastNonzeroMagnitude
-        tv.rowHeight = 50.0
+        tv.rowHeight = UITableView.automaticDimension
+        tv.estimatedRowHeight = 70.0
         tv.separatorStyle = .none
         return tv
     }()
-    
+    lazy var cancelButton:UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(SFSymbol.cancel.image(withSymbolConfiguration: .init(textStyle: .largeTitle)), for: .normal)
+        button.tintColor = UIColor.white.withAlphaComponent(0.2)
+        button.backgroundColor = .clear
+        return button
+    }()
+    lazy var placeholderLabel:UILabel = {
+        let label = UILabel()
+        label.text = "You have no quick responses set. You can manage your quick responses in settings."
+        label.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 16)
+        label.textColor = .telaGray7
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    lazy var manageButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Manage", for: .normal)
+        button.titleLabel?.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 14)
+        button.setTitleColor(.telaBlue, for: .normal)
+        return button
+    }()
     
     
     // MARK: - Lifecycle

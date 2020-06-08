@@ -27,9 +27,13 @@ extension QuickResponsePickerController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(UITableViewCell.self), for: indexPath)
         let quickResponse = quickResponses[indexPath.section]
-//        let parameters = UIControlMenuCell.Parameters(title: action.title, image: action.image)
-//        cell.parameters = parameters
+        
+        
         cell.textLabel?.text = quickResponse.answer
+        cell.textLabel?.numberOfLines = 0
+        cell.textLabel?.lineBreakMode = .byWordWrapping
+        cell.textLabel?.textColor = UIColor.white
+        
         cell.backgroundColor = .clear
         
         cell.contentView.backgroundColor = UIColor.lightGray.withAlphaComponent(0.1)
@@ -52,6 +56,6 @@ extension QuickResponsePickerController: UITableViewDelegate {
         CGFloat.leastNonzeroMagnitude
     }
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        8
+        9
     }
 }

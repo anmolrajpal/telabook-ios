@@ -9,6 +9,17 @@
 import UIKit
 
 extension AgentsViewController {
+    
+    internal func addFirebaseObservers() {
+        handle = observePendingMessagesCount()
+    }
+    internal func removeFirebaseObservers() {
+        if handle != nil {
+            reference.removeObserver(withHandle: handle)
+        }
+    }
+    
+    
     /// Manages the UI state based on the fetched results available
     internal func handleState() {
         if self.fetchedResultsController.sections?.first?.numberOfObjects == 0 {

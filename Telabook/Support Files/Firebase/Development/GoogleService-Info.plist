@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>497421892744-qpu4qqn1kpn81ludbpfhcm9k5kpn7eaq.apps.googleusercontent.com</string>
+	<string>497421892744-hbrhgc2kdhj8subclok2sbpmbu8b4e4u.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.497421892744-qpu4qqn1kpn81ludbpfhcm9k5kpn7eaq</string>
+	<string>com.googleusercontent.apps.497421892744-hbrhgc2kdhj8subclok2sbpmbu8b4e4u</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>497421892744-c4tv88nm0vd1h21712fhlj11fkn2ajoi.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.aimservices.telabook</string>
+	<string>com.telabook.web-debug</string>
 	<key>PROJECT_ID</key>
 	<string>telebookchat</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,7 +31,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:497421892744:ios:36e21d4e315dc091</string>
+	<string>1:497421892744:ios:5ad82f0bd3400ee3b0f33d</string>
 	<key>DATABASE_URL</key>
 	<string>https://telebookchat.firebaseio.com</string>
 </dict>

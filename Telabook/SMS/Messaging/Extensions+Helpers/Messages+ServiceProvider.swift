@@ -12,7 +12,22 @@ import os
 
 
 extension MessagesController {
-    
+    internal func reloadQuickResponses() {
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+        
+        let context = PersistentContainer.shared.newBackgroundContext()
+        
+        guard let worker = customer.agent else { return }
+        let objectID = worker.objectID
+        let referenceAgent = context.object(with: objectID) as! Agent
+        let userID = Int(worker.userID)
+
+        let operations = QuickResponseOperations.getOperationsToFetchAndSaveQuickResponses(using: context, userID: userID, forAgent: referenceAgent)
+        
+        queue.addOperations(operations, waitUntilFinished: false)
+    }
     
     /* ------------------------------------------------------------------------------------------------------------ */
     internal func persistFirebaseMessagesInStore(entries:[FirebaseMessage]) {

@@ -8,8 +8,10 @@
 
 import UIKit
 import CoreData
-
+import Firebase
 class AgentsViewController: UIViewController {
+    var handle:UInt!
+    let reference = Config.FirebaseConfig.Node.wasNotSeen.reference
     let fetchRequest: NSFetchRequest<Agent>
     let context:NSManagedObjectContext
     init(fetchRequest: NSFetchRequest<Agent>, viewContext: NSManagedObjectContext) {
@@ -41,6 +43,9 @@ class AgentsViewController: UIViewController {
     internal var isFetchedResultsAvailable:Bool {
         return fetchedResultsController.sections?.first?.numberOfObjects == 0 ? false : true
     }
+    internal var agents:[Agent] {
+        return fetchedResultsController.fetchedObjects ?? []
+    }
     let searchController = UISearchController(searchResultsController: nil)
     var isSearchBarEmpty: Bool {
         return searchController.searchBar.text?.isEmpty ?? true
@@ -55,13 +60,14 @@ class AgentsViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        setup()
+        commonInit()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationItem.title = "SMS"
         observeReachability()
+        addFirebaseObservers()
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -70,12 +76,14 @@ class AgentsViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 //        observeReachability()
+        
         if let selectionIndexPath = self.subview.tableView.indexPathForSelectedRow {
             self.subview.tableView.deselectRow(at: selectionIndexPath, animated: animated)
         }
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+        removeFirebaseObservers()
 //        stopObservingReachability()
     }
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -83,7 +91,7 @@ class AgentsViewController: UIViewController {
     }
     
     // MARK: Common setup
-    private func setup() {
+    private func commonInit() {
         setUpNavBar()
         setupTableView()
         setupTargetActions()

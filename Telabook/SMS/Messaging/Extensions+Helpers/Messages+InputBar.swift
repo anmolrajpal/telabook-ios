@@ -53,23 +53,14 @@ extension MessagesController: InputBarAccessoryViewDelegate {
     
     
     private func showQuickResponsePicker() {
-        /*
+        
         guard let quickResponses = customer.agent?.quickResponses?.allObjects as? [QuickResponse] else {
             #if !RELEASE
             print("Failed to cast NSSet to quick responses")
             #endif
             return
         }
-         */
-//        let vc = QuickResponsePickerController(quickResponses: quickResponses)
-        guard let worker = customer.agent else {
-            #if !RELEASE
-            print("Failed to get access agent from customer")
-            #endif
-            return
-        }
-        let vc = QuickResponsePickerController()
-        vc.agent = worker
+        let vc = QuickResponsePickerController(responses: quickResponses)
         vc.delegate = self
         let navController = UINavigationController(rootViewController: vc)
         let presenter = InteractiveModalViewController(controller: navController)
@@ -87,6 +78,20 @@ extension MessagesController: QuickResponsePickerDelegate {
         }
         let message = NewMessage(kind: .text(text), messageId: key, sender: thisSender, sentDate: Date())
         self.sendNewTextMessage(newMessage: message)
+    }
+    
+    func manageButtonDidTap() {
+        guard let worker = customer.agent else {
+            #if !RELEASE
+            print("Failed to get access agent from customer")
+            #endif
+            return
+        }
+        let objectID = worker.objectID
+        let referenceAgent = viewContext.object(with: objectID) as! Agent
+        let vc = QuickResponsesViewController(userID: Int(worker.userID), agent: referenceAgent)
+        vc.delegate = self
+        self.present(vc, animated: true, completion: nil)
     }
 }
 
@@ -109,3 +114,8 @@ func send(_ message: Message) {
     operationQueue.addOperation(sendOperation)
 }
 */
+extension MessagesController: QuickResponsesModificationDelegate {
+    func didExitQuickResponsesSettings() {
+        self.reloadQuickResponses()
+    }
+}

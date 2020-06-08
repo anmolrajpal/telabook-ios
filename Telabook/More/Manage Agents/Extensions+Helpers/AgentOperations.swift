@@ -411,3 +411,49 @@ class DeleteAgentEntriesOperation: Operation {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+/// Updatess the unread messages count property in the core data store.
+class UpdatePendingMessagesCount_Operation: Operation {
+    
+    private let context: NSManagedObjectContext
+    
+    enum OperationError: Error, LocalizedError {
+        case coreDataError(error:Error)
+        
+        var localizedDescription: String {
+            switch self {
+                case let .coreDataError(error): return "Core Data Error: \(error.localizedDescription)"
+            }
+        }
+    }
+    var error: OperationError?
+    let pendingMessages:[PendingMessage]
+    init(context: NSManagedObjectContext, pendingMessages:[PendingMessage]) {
+        self.context = context
+        self.pendingMessages = pendingMessages
+    }
+    
+    override func main() {
+        context.performAndWait {
+            do {
+                for object in pendingMessages {
+                    object.agent.externalPendingMessagesCount = Int16(object.count)
+                    try context.save()
+                }
+            } catch {
+                let message = "Error updating pending messages count: \(error.localizedDescription)"
+                printAndLog(message: message, log: .coredata, logType: .error)
+                self.error = .coreDataError(error: error)
+            }
+        }
+        context.reset()
+    }
+}

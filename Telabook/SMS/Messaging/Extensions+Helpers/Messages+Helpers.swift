@@ -13,13 +13,14 @@ import FirebaseStorage
 
 extension MessagesController {
     internal func commonInit() {
+        title = customer.addressBookName?.isEmpty ?? true ? customer.phoneNumber : customer.addressBookName
+        setUpNavBar()
         setupViews()
         configureMessageCollectionView()
         configureMessageInputBar()
-//        performInitialFetch()
-//        loadInitialMessages()
         setupTargetActions()
-//        clearUnreadMessagesCount()
+        reloadQuickResponses()
+        clearUnreadMessagesCount()
     }
     private func setupViews() {
         messagesCollectionView.addSubview(spinner)
@@ -74,6 +75,93 @@ extension MessagesController {
             self.spinner.stopAnimating()
         }
     }
+    
+    
+    
+    
+    // MARK: - Message Helpers
+    
+    func changeDownIndicatorState(show:Bool, animated:Bool = true) {
+            if show {
+                UIView.animate(withDuration: 0.2) {
+                    self.downIndicatorContainerView.alpha = 1
+                }
+                self.scrollToBottomButton.isEnabled = true
+            } else {
+                UIView.animate(withDuration: 0.2) {
+                    self.downIndicatorContainerView.alpha = 0
+                }
+                self.scrollToBottomButton.isEnabled = false
+            }
+        }
+        
+        func isLastSectionVisible() -> Bool {
+            let count = messages.count
+            guard count != 0 else { return false }
+            let lastIndexPath = IndexPath(item: 0, section: count - 1)
+            return messagesCollectionView.indexPathsForVisibleItems.contains(lastIndexPath)
+        }
+        func isPreviousMessageSameSender(at indexPath: IndexPath) -> Bool {
+            guard !messages.isEmpty else { return false }
+            guard indexPath.section - 1 >= 0 else { return false }
+            return messages[indexPath.section].messageSender == messages[indexPath.section - 1].messageSender
+        }
+        
+        func isNextMessageSameSender(at indexPath: IndexPath) -> Bool {
+            guard !messages.isEmpty else { return false }
+            guard indexPath.section + 1 < messages.count else { return false }
+            return messages[indexPath.section].messageSender == messages[indexPath.section + 1].messageSender
+        }
+        
+        func isNextMessageDateInSameDay(at indexPath:IndexPath) -> Bool {
+            guard !messages.isEmpty else { return false }
+            guard indexPath.section + 1 < messages.count else { return false }
+            return Calendar.current.isDate(messages[indexPath.section].sentDate, inSameDayAs: messages[indexPath.section + 1].sentDate)
+        }
+        
+        func shouldShowNewMessagesCountFooter(at section:Int) -> Bool {
+    //        print("Last message: \(messages[section]) : section: \(section) & refresh time: \(String(describing: messages[section].lastRefreshedAt))")
+            guard !messages.isEmpty else { return false }
+            guard section + 1 < messages.count else { return false }
+            guard !isFromCurrentSender(message: messages[section + 1]) else { return false }
+            guard let match = messages.firstIndex(where: { $0.sentDate > self.screenEntryTime }) else { return false }
+            return section == match - 1
+        }
+        
+        func reloadDataKeepingOffset() {
+            let offset = self.messagesCollectionView.contentOffset.y + messagesCollectionView.adjustedContentInset.bottom + messagesCollectionView.verticalScrollIndicatorInsets.bottom
+            let oldY = self.messagesCollectionView.contentSize.height - offset
+            self.messagesCollectionView.reloadData()
+            self.messagesCollectionView.layoutIfNeeded()
+            let y = self.messagesCollectionView.contentSize.height - oldY
+            let newOffset = CGPoint(x: 0, y: y)
+            self.messagesCollectionView.contentOffset = newOffset
+        }
+        func insertMessages(messages:[UserMessage]) {
+            messagesCollectionView.performBatchUpdates({
+                messagesCollectionView.insertSections([messages.count - 1])
+                if messages.count >= 2 {
+                    messagesCollectionView.reloadSections([messages.count - 2])
+                }
+            }, completion: { [weak self] _ in
+                //            self?.messagesCollectionView.scrollToBottom(animated: true)
+                if self?.isLastSectionVisible() == true {
+                    self?.messagesCollectionView.scrollToBottom(animated: true)
+                }
+            })
+        }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     @objc internal func cameraButtonDidTap() {
         messageInputBar.inputTextView.resignFirstResponder()
         promptPhotosPickerMenu()
@@ -397,4 +485,40 @@ extension MessagesController: UIImagePickerControllerDelegate, UINavigationContr
         picker.dismiss(animated: true, completion: nil)
     }
     
+}
+
+
+
+
+extension MessagesController {
+    // MARK: - Inset Computation
+    
+
+    
+    private func requiredScrollViewBottomInset(forKeyboardFrame keyboardFrame: CGRect) -> CGFloat {
+        // we only need to adjust for the part of the keyboard that covers (i.e. intersects) our collection view;
+        // see https://developer.apple.com/videos/play/wwdc2017/242/ for more details
+        let intersection = messagesCollectionView.frame.intersection(keyboardFrame)
+        
+        if intersection.isNull || intersection.maxY < messagesCollectionView.frame.maxY {
+            // The keyboard is hidden, is a hardware one, or is undocked and does not cover the bottom of the collection view.
+            // Note: intersection.maxY may be less than messagesCollectionView.frame.maxY when dealing with undocked keyboards.
+            return max(0, additionalBottomInset - automaticallyAddedBottomInset)
+        } else {
+            return max(0, intersection.height + additionalBottomInset - automaticallyAddedBottomInset)
+        }
+    }
+    
+    internal func requiredInitialScrollViewBottomInset() -> CGFloat {
+        guard let inputAccessoryView = inputAccessoryView else { return 0 }
+        return max(0, inputAccessoryView.frame.height + additionalBottomInset - automaticallyAddedBottomInset)
+    }
+    
+    /// iOS 11's UIScrollView can automatically add safe area insets to its contentInset,
+    /// which needs to be accounted for when setting the contentInset based on screen coordinates.
+    ///
+    /// - Returns: The distance automatically added to contentInset.bottom, if any.
+    private var automaticallyAddedBottomInset: CGFloat {
+        return messagesCollectionView.adjustedContentInset.bottom - messagesCollectionView.contentInset.bottom
+    }
 }

@@ -83,11 +83,16 @@ struct Config {
             /// `wasnotseen` Node to get reference for Unread messages count. It'll be used to display badge with unread messages count on Tab Item in the tab bar.
             case unreadMessages(conversationID:Int)
             
+            /// `wasnotseen` node to get reference for all conversations which are under this tree.
+            case wasNotSeen
+            
+            
             var reference:DatabaseReference {
                 switch self {
                     case let .conversations(companyID, workerID): return databaseRoot.child("companies/\(companyID)/inbox/\(workerID)")
                     case let .messages(companyID, node): return databaseRoot.child("companies/\(companyID)/conversations/\(node)")
-                    case let .unreadMessages(conversationID): return databaseRoot.child("wasnotseen/\(conversationID)")
+                    case let .unreadMessages(conversationID): return databaseRoot.child("companies/\(AppData.companyId)/wasnotseen/\(conversationID)")
+                    case .wasNotSeen: return databaseRoot.child("companies/\(AppData.companyId)/wasnotseen")
                 }
             }
         }

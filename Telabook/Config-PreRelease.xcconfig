@@ -17,4 +17,4 @@ URL_SCHEME            = https
 SUBDOMAIN             = /api
 TIMEOUT_INTERVAL      = 15
 APP_NAME              = Telabook-PreRelease
-BUNDLE_ID             = com.anmolrajpal.telabook-prerelease
+BUNDLE_ID             = com.telabook.web-prerelease

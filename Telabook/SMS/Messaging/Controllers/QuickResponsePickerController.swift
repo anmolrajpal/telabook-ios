@@ -7,7 +7,9 @@
 //
 
 import UIKit
+
 protocol QuickResponsePickerDelegate {
+    func manageButtonDidTap()
     func quickResponseDidPick(at indexPath:IndexPath, response:QuickResponse)
 }
 class QuickResponsePickerController:UIViewController {
@@ -16,28 +18,19 @@ class QuickResponsePickerController:UIViewController {
         return QuickResponsePickerView(frame: UIScreen.main.bounds)
     }()
     var delegate:QuickResponsePickerDelegate?
-    internal var agent:Agent! {
-        didSet {
-            
-            guard let responses = agent.quickResponses?.allObjects as? [QuickResponse] else {
-                return
-            }
-            quickResponses = responses
-            subview.tableView.reloadData()
-        }
-    }
-    var quickResponses = [QuickResponse]()
     
-    /*
+    let quickResponses:[QuickResponse]
+    
+    
     // MARK: - init
-    required init(agent:Agent) {
-        self.quickResponses = quickResponses
+    required init(responses:[QuickResponse]) {
+        self.quickResponses = responses
         super.init(nibName: nil, bundle: nil)
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    */
+    
     
     
     // MARK: - Lifecycle
@@ -53,6 +46,6 @@ class QuickResponsePickerController:UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         commonInit()
-        title = "Quick Responses"
+        title = "Select Quick Response"
     }
 }

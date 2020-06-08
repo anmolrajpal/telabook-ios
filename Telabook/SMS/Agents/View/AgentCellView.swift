@@ -53,7 +53,7 @@ class AgentCellView: UIView {
     }
     private func setupData(parameters:Parameters?, animated:Bool) {
         agentNameLabel.text = parameters?.name
-        agentDesignationLabel.text = parameters?.role.stringValue
+//        agentDesignationLabel.text = parameters?.role.stringValue
 //        if parameters?.lowPriorityCheck == true { stackView.addArrangedSubview(lowPriorityImageView) }
 //        if parameters?.mediumPriorityCheck == true { stackView.addArrangedSubview(mediumPriorityImageView) }
 //        if parameters?.highPriorityCheck == true { stackView.addArrangedSubview(highPriorityImageView) }
@@ -107,8 +107,8 @@ class AgentCellView: UIView {
         addSubview(profileImageView)
         addSubview(containerView)
         containerView.addSubview(agentNameLabel)
-        containerView.addSubview(agentDesignationLabel)
-        containerView.addSubview(stackView)
+//        containerView.addSubview(agentDesignationLabel)
+//        containerView.addSubview(stackView)
         addSubview(badgeCountLabel)
     }
     
@@ -124,12 +124,13 @@ class AgentCellView: UIView {
         containerView.anchor(top: topAnchor, left: profileImageView.rightAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 10)
         
         
-        agentNameLabel.anchor(top: nil, left: containerView.leftAnchor, bottom: containerView.centerYAnchor, right: containerView.rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 10, rightConstant: 10)
+        agentNameLabel.anchor(top: nil, left: containerView.leftAnchor, bottom: nil, right: containerView.rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 10)
+        agentNameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).activate()
         
-        agentDesignationLabel.anchor(top: containerView.centerYAnchor, left: agentNameLabel.leftAnchor, bottom: nil, right: agentNameLabel.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
+//        agentDesignationLabel.anchor(top: containerView.centerYAnchor, left: agentNameLabel.leftAnchor, bottom: nil, right: agentNameLabel.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
         
-        stackView.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0).activate()
-        stackView.centerYAnchor.constraint(equalTo: agentDesignationLabel.centerYAnchor).activate()
+//        stackView.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0).activate()
+//        stackView.centerYAnchor.constraint(equalTo: agentDesignationLabel.centerYAnchor).activate()
         
         badgeCountLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -5).activate()
         badgeCountLabel.centerYAnchor.constraint(equalTo: centerYAnchor).activate()
@@ -162,7 +163,7 @@ class AgentCellView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 1
         label.textColor = UIColor.telaWhite
-        label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 13.0)
+        label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 16.0)
         return label
     }()
     lazy var agentDesignationLabel:UILabel = {

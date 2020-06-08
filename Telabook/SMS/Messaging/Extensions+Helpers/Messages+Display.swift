@@ -9,6 +9,8 @@
 import UIKit
 import MessageKit
 import PINRemoteImage
+
+
 extension MessagesController: MessagesDisplayDelegate {
     
     func backgroundColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
@@ -156,7 +158,7 @@ extension MessagesController: MessagesDisplayDelegate {
         guard
             isFromCurrentSender(message: message) else { return }
         
-        if !message.errorSending || !message.hasError { return }
+        if !message.errorSending && !message.hasError { return }
         
         print("Should show error button")
         let button = UIButton(type: UIButton.ButtonType.custom)
@@ -170,6 +172,7 @@ extension MessagesController: MessagesDisplayDelegate {
     }
     
     func configureMediaMessageImageView(_ imageView: UIImageView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
+//        imageView.subviews.forEach { $0.removeFromSuperview() }
         let message = message as! UserMessage
         guard !message.isFault else { return }
         guard
@@ -178,35 +181,26 @@ extension MessagesController: MessagesDisplayDelegate {
             !text.isBlank {
             #if !RELEASE
             print("Image Text for image with URL: \(url) is => \(text)")
-            #endif            
-            let textView = UITextView(frame: CGRect.zero)
+            #endif
+            let textView = mediaTextView
             textView.text = text
-            textView.isEditable = false
-            textView.textAlignment = .left
-            textView.isSelectable = false
             textView.backgroundColor = isFromCurrentSender(message: message) ? .telaBlue : .telaGray7
-            textView.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 14)
-            textView.textColor = UIColor.telaWhite
-            textView.sizeToFit()
-            textView.isScrollEnabled = false
-            textView.textContainerInset = UIEdgeInsets(top: 6, left: 7, bottom: 6, right: 7)
-//            textView.clipsToBounds = false
-            /*
-            textView.layer.shadowColor = UIColor.gray.cgColor
-            textView.layer.shadowRadius = 5
-            textView.layer.shadowOpacity = 1
-            textView.layer.shadowOffset = .zero
-            textView.layer.shadowPath = UIBezierPath(rect: textView.bounds).cgPath
-            textView.layer.masksToBounds = false
-             */
-//            imageView.addSubview(textView)
-//            textView.anchor(top: nil, left: imageView.leftAnchor, bottom: imageView.bottomAnchor, right: imageView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
+            imageView.addSubview(textView)
+            textView.anchor(top: nil, left: imageView.leftAnchor, bottom: imageView.bottomAnchor, right: imageView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
+            
         }
 //        imageView.loadImageUsingCache(with: url.absoluteString)
-//        imageView.pin_updateWithProgress = true
-//        imageView.pin_setImage(from: url) { result in
-            // should save image to file directory
-//        }
+        imageView.pin_updateWithProgress = true
+        
+        imageView.pin_setImage(from: url) { result in
+//             should save image to file directory
+//            messagesCollectionView.layoutIfNeeded()
+        }
+        
     }
+
+ 
+ 
+    
 }
 

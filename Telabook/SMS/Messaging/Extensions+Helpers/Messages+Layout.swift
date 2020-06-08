@@ -43,31 +43,10 @@ extension MessagesController: MessagesLayoutDelegate {
     }
 
     func headerViewSize(for section: Int, in messagesCollectionView: MessagesCollectionView) -> CGSize {
-        section == 0 && shouldShowLoader ? .init(width: messagesCollectionView.frame.width, height: SpinnerReusableView.viewHeight) : .zero
+//        section == 0 && shouldShowLoader ? .init(width: messagesCollectionView.frame.width, height: SpinnerReusableView.viewHeight) : .zero
+        return .zero
     }
     func footerViewSize(for section: Int, in messagesCollectionView: MessagesCollectionView) -> CGSize {
-        section == 10 ? .init(width: messagesCollectionView.frame.width, height: NewMessagesCountReusableView.viewHeight) : .zero
+        shouldShowNewMessagesCountFooter(at: section) ? .init(width: messagesCollectionView.frame.width, height: NewMessagesCountReusableView.viewHeight) : .zero
     }
-    
-    
-    /*
-    func cellTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        if isTimeLabelVisible(at: indexPath) {
-            return 18
-        }
-        return 0
-    }
-    
-    func messageTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        if isFromCurrentSender(message: message) {
-            return !isPreviousMessageSameSender(at: indexPath) ? 20 : 0
-        } else {
-            return !isPreviousMessageSameSender(at: indexPath) ? (20 + 20) : 0
-        }
-    }
-
-    func messageBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        return (!isNextMessageSameSender(at: indexPath)) ? 16 : 0
-    }
-    */
 }
