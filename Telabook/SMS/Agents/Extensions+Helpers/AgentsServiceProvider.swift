@@ -15,6 +15,7 @@ import CoreData
 struct PendingMessage {
     let agent:Agent
     let count:Int
+    let lastMessageDate:Date?
 }
 extension AgentsViewController {
     
@@ -27,26 +28,36 @@ extension AgentsViewController {
                 default: return 0
             }
         }
+        func mapToDate(value:AnyObject?) -> Date? {
+            switch value {
+                case let value as Int: return .getDate(fromSecondsOrMilliseconds: value)
+                case let value as NSNumber: return .getDate(fromSecondsOrMilliseconds: value.intValue)
+                case let value as String: return value.dateFromFormattedString
+                default: return nil
+            }
+        }
         return reference.observe(.value, with: { snapshot in
             guard !self.agents.isEmpty else { return }
-            if snapshot.exists() {
 //                print("Wasnotseen snapshot: \(snapshot)")
                 let context = PersistentContainer.shared.newBackgroundContext()
                 let agents = self.agents.compactMap { context.object(with: $0.objectID) as? Agent }
                 var pendingMessages:[PendingMessage] = []
                 for agent in agents {
                     var count = 0
+                    var lastMessageDate:Date?
                     for child in snapshot.children {
                         if let snapshot = child as? DataSnapshot,
                             let value = snapshot.value as? [String: AnyObject] {
                             let workerID = mapToInt(value: value["worker_id"])
-                            if workerID == agent.workerID { count += 1 }
+                            if workerID == agent.workerID {
+                                count += 1
+                                lastMessageDate = mapToDate(value: value["date"])
+                            }
                         }
                     }
-                    pendingMessages.append(.init(agent: agent, count: count))
+                    pendingMessages.append(.init(agent: agent, count: count, lastMessageDate: lastMessageDate))
                 }
                 self.updateAgents(with: pendingMessages, context: context)
-            }
         }) { error in
             let message = "### \(#function) - Error observing wasnotseen reference node: \(error.localizedDescription)"
             printAndLog(message: message, log: .firebase, logType: .error)

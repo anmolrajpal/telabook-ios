@@ -57,8 +57,9 @@ class AgentCellView: UIView {
 //        if parameters?.lowPriorityCheck == true { stackView.addArrangedSubview(lowPriorityImageView) }
 //        if parameters?.mediumPriorityCheck == true { stackView.addArrangedSubview(mediumPriorityImageView) }
 //        if parameters?.highPriorityCheck == true { stackView.addArrangedSubview(highPriorityImageView) }
-        badgeCountLabel.text = String(parameters?.pendingMessagesCount ?? 0)
         badgeCountLabel.isHidden = parameters?.pendingMessagesCount == 0
+        badgeCountLabel.text = String(parameters?.pendingMessagesCount ?? 0)
+        
         if let urlStr = parameters?.profileImageURLString {
             self.profileImageView.loadImageUsingCache(with: urlStr, placeHolder: UIImage.placeholderInitialsImage(text: parameters?.initials ?? "NN"))
         } else {
@@ -214,13 +215,13 @@ class AgentCellView: UIView {
     lazy var badgeCountLabel:UILabel = {
         let label = InsetLabel(3.5, 3.5, 7, 7)
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "10"
         label.textColor = .telaWhite
         label.layer.cornerRadius = label.frame.height / 2
         label.backgroundColor = .telaRed
         label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 13)
         label.numberOfLines = 1
         label.clipsToBounds = true
+        label.isHidden = true
         return label
     }()
 }

@@ -24,14 +24,10 @@ extension MessagesController {
     }
     private func setupViews() {
         messagesCollectionView.addSubview(spinner)
-
         downIndicatorContainerView.addSubview(scrollToBottomButton)
         downIndicatorContainerView.addSubview(newMessagesCountLabel)
         view.addSubview(downIndicatorContainerView)
-//        messagesCollectionView.addSubview(downIndicatorContainerView)
-//        view.insertSubview(downIndicatorContainerView, aboveSubview: messagesCollectionView)
         layoutConstraints()
-//        view.bringSubviewToFront(downIndicatorContainerView)
     }
     private func layoutConstraints() {
         spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).activate()

@@ -15,7 +15,7 @@ struct AgentOperations {
         let fetchMostRecentEntry = FetchMostRecentAgentsEntryOperation(context: context)
         let downloadFromServer = DownloadAgentsEntriesFromServerOperation()
         let deleteRedundantAgentEntriesOperation = DeleteRedundantAgentEntriesOperation(context: context)
-        let updateAgentEntriesOperation = UpdateAgentEntriesOperation(context: context)
+//        let updateAgentEntriesOperation = UpdateAgentEntriesOperation(context: context)
         let addToStore = AddAgentEntriesToStoreOperation(context: context)
         
         let passFetchedEntriesToStore = BlockOperation { [unowned fetchMostRecentEntry, unowned deleteRedundantAgentEntriesOperation, unowned addToStore] in
@@ -32,22 +32,22 @@ struct AgentOperations {
         deleteRedundantAgentEntriesOperation.addDependency(passFetchedEntriesToStore)
         addToStore.addDependency(passFetchedEntriesToStore)
         
-        let passServerResultsToStore = BlockOperation { [unowned downloadFromServer, unowned deleteRedundantAgentEntriesOperation, unowned updateAgentEntriesOperation, unowned addToStore] in
+        let passServerResultsToStore = BlockOperation { [unowned downloadFromServer, unowned deleteRedundantAgentEntriesOperation, unowned addToStore] in
             guard case let .success(entries)? = downloadFromServer.result else {
                 print("Unresolved Error: unable to get result from download from server operation")
                 deleteRedundantAgentEntriesOperation.cancel()
-                updateAgentEntriesOperation.cancel()
+//                updateAgentEntriesOperation.cancel()
                 addToStore.cancel()
                 return
             }
             deleteRedundantAgentEntriesOperation.serverEntries = entries
-            updateAgentEntriesOperation.serverEntries = entries
+//            updateAgentEntriesOperation.serverEntries = entries
             addToStore.serverEntries = entries
         }
         
         passServerResultsToStore.addDependency(downloadFromServer)
         deleteRedundantAgentEntriesOperation.addDependency(passServerResultsToStore)
-        updateAgentEntriesOperation.addDependency(passServerResultsToStore)
+//        updateAgentEntriesOperation.addDependency(passServerResultsToStore)
         addToStore.addDependency(passServerResultsToStore)
         
         return [fetchMostRecentEntry,
@@ -55,7 +55,7 @@ struct AgentOperations {
                 downloadFromServer,
                 passServerResultsToStore,
                 deleteRedundantAgentEntriesOperation,
-                updateAgentEntriesOperation,
+//                updateAgentEntriesOperation,
                 addToStore]
     }
 }
@@ -258,7 +258,7 @@ class UpdateAgentEntriesOperation: Operation {
                 guard !entriesToUpdate.isEmpty else  { return }
                 for entry in entriesToUpdate {
                     if let serverEntry = serverEntries.first(where: { Int(entry.userID) == $0.userId }) {
-                        _ = Agent(context: context, agentEntryFromServer: serverEntry)
+                        _ = Agent(context: context, agentEntryFromServer: serverEntry, pendingMessagesCount: 0)
                     }
                 }
                 try context.save()
@@ -310,55 +310,18 @@ class AddAgentEntriesToStoreOperation: Operation {
             print("No Server Entry to add, returning")
             return
         }
-        
-        if let fetchedEntries = fetchedEntries,
-            !fetchedEntries.isEmpty {
-            
-            let newServerEntries = serverEntries.filter { (agent) -> Bool in
-                !fetchedEntries.contains(where: { Int($0.userID) == agent.userId })
-            }
-            context.performAndWait {
-                do {
-                    for entry in newServerEntries {
-                        _ = Agent(context: context, agentEntryFromServer: entry)
-                        
-                        print("Adding Agent entry with name: \(entry.personName ?? "nil")")
-                        
-                        // Simulate a slow process by sleeping
-                        if delay > 0 {
-                            Thread.sleep(forTimeInterval: delay)
-                        }
-                        try context.save()
-                        if isCancelled {
-                            break
-                        }
-                    }
-                } catch {
-                    print("Error adding entries to store: \(error))")
-                    self.error = .coreDataError(error: error)
+        context.performAndWait {
+            do {
+                _ = serverEntries.map { serverEntry -> Agent in
+                    let count = fetchedEntries?.first(where: { agent -> Bool in
+                        Int(agent.workerID) == serverEntry.workerId
+                    })?.externalPendingMessagesCount ?? 0
+                    return Agent(context: context, agentEntryFromServer: serverEntry, pendingMessagesCount: count)
                 }
-            }
-        } else {
-            context.performAndWait {
-                do {
-                    for entry in serverEntries {
-                        _ = Agent(context: context, agentEntryFromServer: entry)
-                        
-                        print("Adding Agent entry with name: \(entry.personName ?? "nil")")
-                        
-                        // Simulate a slow process by sleeping
-                        if delay > 0 {
-                            Thread.sleep(forTimeInterval: delay)
-                        }
-                        try context.save()
-                        if isCancelled {
-                            break
-                        }
-                    }
-                } catch {
-                    print("Error adding entries to store: \(error))")
-                    self.error = .coreDataError(error: error)
-                }
+                try context.save()
+            } catch {
+                print("Error adding entries to store: \(error))")
+                self.error = .coreDataError(error: error)
             }
         }
     }
@@ -446,14 +409,18 @@ class UpdatePendingMessagesCount_Operation: Operation {
             do {
                 for object in pendingMessages {
                     object.agent.externalPendingMessagesCount = Int16(object.count)
-                    try context.save()
+                    if let date = object.lastMessageDate {
+                        object.agent.lastMessageDate = date
+                        object.agent.date = date
+                    }
                 }
+                try context.save()
             } catch {
                 let message = "Error updating pending messages count: \(error.localizedDescription)"
                 printAndLog(message: message, log: .coredata, logType: .error)
                 self.error = .coreDataError(error: error)
             }
         }
-        context.reset()
+//        context.reset()
     }
 }

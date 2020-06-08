@@ -9,6 +9,18 @@
 import Foundation
 import Firebase
 
+//extension NSObject {
+//    var mapToDate:Date? {
+//        switch self {
+//            case let self as Int: return .getDate(fromSecondsOrMilliseconds: self)
+//            case let self as NSNumber: return .getDate(fromSecondsOrMilliseconds: self.intValue)
+//            case let self as String: return self.dateFromFormattedString
+//            default: return nil
+//        }
+//    }
+//}
+
+
 struct FirebaseMessage {
     
     let ref: DatabaseReference?
