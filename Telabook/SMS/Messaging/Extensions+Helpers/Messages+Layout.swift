@@ -15,8 +15,9 @@ extension MessagesController: MessagesLayoutDelegate {
    
 
     func cellTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        guard !(message as! UserMessage).isFault else { return 0 }
-        return isEarliest(message as! UserMessage) ? 30.0 : 0
+//        return isEarliest(message as! UserMessage) ? 30.0 : 0
+        return !isPreviousMessageDateInSameDay(at: indexPath) ? 30.0 : 0
+        
     }
     
     func cellBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
@@ -29,7 +30,6 @@ extension MessagesController: MessagesLayoutDelegate {
     }
     
     func messageBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        guard !(message as! UserMessage).isFault else { return 0 }
         if !isNextMessageSameSender(at: indexPath) || !isNextMessageDateInSameDay(at: indexPath) {
             return 20
         } else {
@@ -49,4 +49,5 @@ extension MessagesController: MessagesLayoutDelegate {
     func footerViewSize(for section: Int, in messagesCollectionView: MessagesCollectionView) -> CGSize {
         shouldShowNewMessagesCountFooter(at: section) ? .init(width: messagesCollectionView.frame.width, height: NewMessagesCountReusableView.viewHeight) : .zero
     }
+    
 }

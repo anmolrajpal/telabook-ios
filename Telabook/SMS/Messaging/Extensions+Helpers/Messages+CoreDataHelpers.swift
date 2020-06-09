@@ -32,11 +32,12 @@ extension MessagesController {
     internal func setupFetchedResultsController() {
         let fetchRequest:NSFetchRequest = UserMessage.fetchRequest()
         let conversationPredicate = NSPredicate(format: "\(#keyPath(UserMessage.conversation)) == %@", customer)
+        let datePredicate = NSPredicate(format: "\(#keyPath(UserMessage.updatedAt)) >= %@", screenEntryTime as NSDate)
+        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [conversationPredicate, datePredicate])
+        fetchRequest.predicate = predicate
         
-        fetchRequest.predicate = conversationPredicate
-        
-        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \UserMessage.date, ascending: false)]
-        fetchRequest.fetchLimit = self.limit
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \UserMessage.date, ascending: true)]
+//        fetchRequest.fetchLimit = self.limit
         
         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
                                                               managedObjectContext: viewContext,
@@ -168,7 +169,7 @@ extension MessagesController: NSFetchedResultsControllerDelegate {
     }
     */
     
-    
+   /*
    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
        collectionViewOperations.removeAll(keepingCapacity: false)
    }
@@ -211,38 +212,124 @@ extension MessagesController: NSFetchedResultsControllerDelegate {
     }
  
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-//        DispatchQueue.main.async {
-        
-//        UIView.performWithoutAnimation {
-            self.messagesCollectionView.performBatchUpdates({
-                            self.collectionViewOperations.forEach { $0.start() }
-                        }, completion: { [weak self] finished in
-                            self?.collectionViewOperations.removeAll(keepingCapacity: false)
-                            
-            //                self?.messagesCollectionView.layoutIfNeeded()
-                            if self?.isLastSectionVisible() == true {
-                                self?.messagesCollectionView.scrollToBottom(animated: true)
-                            } else if let lastRefreshedTime = self?.messages.last?.lastRefreshedAt,
-                                let screenEntryTime = self?.screenEntryTime {
-                                if screenEntryTime > lastRefreshedTime {
-                                    print("Should scroll to bottom")
-            //                        DispatchQueue.main.async {
-                                        self?.messagesCollectionView.scrollToBottom(animated: false)
-            //                        }
-                                }
-                            }
-                            if self?.messages.isEmpty == true { self?.stopSpinner() }
-                            if self?.didSentNewMessage == true, let sections = self?.messagesCollectionView.indexPathsForVisibleItems.compactMap({ $0.section }),
-                                let secondLastSection = sections.secondLargest() {
-                                self?.didSentNewMessage = false
-                                self?.messagesCollectionView.reloadSections([secondLastSection])
-                                self?.messagesCollectionView.layoutIfNeeded()
-                            }
-                        })
-//        }
-            
-//        }
+        self.messagesCollectionView.performBatchUpdates({
+            self.collectionViewOperations.forEach { $0.start() }
+        }, completion: { [weak self] finished in
+            self?.collectionViewOperations.removeAll(keepingCapacity: false)
+            if self?.isLastSectionVisible() == true {
+                self?.messagesCollectionView.scrollToBottom(animated: true)
+            } else if let lastRefreshedTime = self?.messages.last?.lastRefreshedAt,
+                let screenEntryTime = self?.screenEntryTime {
+                if screenEntryTime > lastRefreshedTime {
+                    self?.messagesCollectionView.scrollToBottom(animated: false)
+                }
+            }
+            if self?.messages.isEmpty == true { self?.stopSpinner() }
+            if self?.didSentNewMessage == true, let sections = self?.messagesCollectionView.indexPathsForVisibleItems.compactMap({ $0.section }),
+                let secondLastSection = sections.secondLargest() {
+                self?.didSentNewMessage = false
+                self?.messagesCollectionView.reloadSections([secondLastSection])
+                self?.messagesCollectionView.layoutIfNeeded()
+            }
+        })
     }
+    */
+    
+    
+    
+    
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+           collectionViewOperations.removeAll(keepingCapacity: false)
+       }
+        func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+            let operation: BlockOperation
+//            let count = controller.fetchedObjects?.count ?? 0
+            switch type {
+            case .insert:
+                guard let newIndexPath = newIndexPath else { return }
+//                print("Inserting Section: \(section) when messages count = \(count) | from core data indexPath row = \(newIndexPath.row)")
+                let message = controller.object(at: newIndexPath) as! UserMessage
+                
+                
+                operation = BlockOperation { [weak self] in
+                    guard let self = self else { return }
+                    if let index = self.messages.firstIndex(where: { $0.firebaseKey == message.firebaseKey }) {
+                        print("Core Data<Insert Case>: Updating existing message at section : \(index) where message:\n\(message)")
+                        self.messages[index] = message
+                        let indexPath = IndexPath(item: 0, section: index)
+                        let messagesCollectionView = self.messagesCollectionView
+                          if let cell = messagesCollectionView.cellForItem(at: indexPath) as? MessageContentCell {
+                            cell.configure(with: message, at: indexPath, and: messagesCollectionView)
+                        }
+                    } else {
+                        print("Core Data<Insert Case>: Inserting new message at core data indexPath: \(newIndexPath) & message: \(message)")
+                        self.messages.append(message)
+                        self.messagesCollectionView.insertSections([self.messages.count - 1])
+                        if self.messages.count >= 2 {
+                            self.messagesCollectionView.reloadSections([self.messages.count - 2])
+                        }
+                    }
+                }
+            case .delete:
+                guard let indexPath = indexPath else { return }
+                fatalError("Core Data: Delete case triggered at core data indexPath: \(indexPath)")
+//                let section = count - 1 - indexPath.row
+//                print("Deleting Section: \(section) when messages count = \(count) | from core data indexPath row = \(indexPath.row)")
+//                operation = BlockOperation { [weak self] in self?.messagesCollectionView.deleteSections([section]) }
+            case .move:
+                guard let indexPath = indexPath,  let newIndexPath = newIndexPath else { return }
+                fatalError("Core Data Move case triggered from core data old indexPath: \(indexPath) to new indexPath: \(newIndexPath)")
+//                let oldSection = count - 1 - indexPath.row
+//                let newSection = count - 1 - newIndexPath.row
+//                print("Moving Section: \(oldSection) when messages count = \(count) | from core data indexPath row = \(indexPath.row)\n To New Section: \(newSection) when messages count = \(count) | from core data indexPath row = \(newIndexPath.row)")
+//                operation = BlockOperation { [weak self] in self?.messagesCollectionView.moveSection(oldSection, toSection: newSection) }
+            case .update:
+                guard let indexPath = indexPath else { return }
+                let message = controller.object(at: indexPath) as! UserMessage
+                
+//                let section = count - 1 - indexPath.row
+//                print("Updating Section: \(section) when messages count = \(count) | from core data indexPath row = \(indexPath.row)")
+                
+                operation = BlockOperation { [weak self] in
+                    guard let self = self else { return }
+                    if let index = self.messages.firstIndex(where: { $0.firebaseKey == message.firebaseKey }) {
+                        print("Core Data<Update Case>: Updating message at section: \(index) | message:\n \(message)")
+                        self.messages[index] = message
+                        let indexPath = IndexPath(item: 0, section: index)
+                        let messagesCollectionView = self.messagesCollectionView
+                           if let cell = messagesCollectionView.cellForItem(at: indexPath) as? MessageContentCell {
+                            cell.configure(with: message, at: indexPath, and: messagesCollectionView)
+                        }
+                    }
+    //                self?.messagesCollectionView.reloadSections([section])
+                }
+                default: fatalError()
+            }
+            collectionViewOperations.append(operation)
+        }
+     
+        func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+            self.messagesCollectionView.performBatchUpdates({
+                self.collectionViewOperations.forEach { $0.start() }
+            }, completion: { [weak self] finished in
+                self?.collectionViewOperations.removeAll(keepingCapacity: false)
+                if self?.isLastSectionVisible() == true {
+                    self?.messagesCollectionView.scrollToBottom(animated: true)
+                } else if let lastRefreshedTime = self?.messages.last?.lastRefreshedAt,
+                    let screenEntryTime = self?.screenEntryTime {
+                    if screenEntryTime > lastRefreshedTime {
+                        self?.messagesCollectionView.scrollToBottom(animated: false)
+                    }
+                }
+                if self?.messages.isEmpty == true { self?.stopSpinner() }
+                if self?.didSentNewMessage == true, let sections = self?.messagesCollectionView.indexPathsForVisibleItems.compactMap({ $0.section }),
+                    let secondLastSection = sections.secondLargest() {
+                    self?.didSentNewMessage = false
+                    self?.messagesCollectionView.reloadSections([secondLastSection])
+                    self?.messagesCollectionView.layoutIfNeeded()
+                }
+            })
+        }
 }
 
 

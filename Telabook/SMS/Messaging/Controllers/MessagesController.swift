@@ -61,6 +61,7 @@ class MessagesController: MessagesViewController {
     internal var indexPathForMessageBottomLabelToShow:IndexPath?
     var isLoading = false
     var limit: Int = 20
+    var offset:Int = 0
     var didSentNewMessage = false
     
     var collectionViewOperations: [BlockOperation] = []
@@ -86,13 +87,13 @@ class MessagesController: MessagesViewController {
     var shouldFetchMore = true {
         didSet {
             if shouldFetchMore == false {
-                print("should stop spinner")
+                print("should not fetch more")
                 //                self.headerSpinnerView?.spinner.stopAnimating()
                 //                self.messagesCollectionView.reloadSections([0])
             }
         }
     }
-    /*
+    
     var messages:[UserMessage] = [] {
         didSet {
             if !messages.isEmpty {
@@ -100,10 +101,10 @@ class MessagesController: MessagesViewController {
             }
         }
     }
-    */
-    var messages:[UserMessage] {
-        fetchedResultsController.fetchedObjects?.reversed() ?? []
-    }
+    
+//    var messages:[UserMessage] {
+//        fetchedResultsController.fetchedObjects?.reversed() ?? []
+//    }
     
     
     
@@ -137,7 +138,6 @@ class MessagesController: MessagesViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         commonInit()
-        loadInitialMessagesFromFirebase()
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
@@ -172,18 +172,19 @@ class MessagesController: MessagesViewController {
     //MARK: - Override
     
     // MARK: Implementation may be faulty as the top key from core data is the proper key but there may be possible loss where app is unable to create conversation from Firebase and save it to core data. and hence, at first load, new entries from firebase get appends in core data. Thus, offset difference is there and some firebase entries won't be overwritten when updated.
-    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        guard messages.count > 5 else { return }
-        if indexPath.section == 0 {
-            let offsetTime = Calendar.current.date(byAdding: .second, value: 2, to: screenEntryTime)!
-            if !isLoading && Date() > offsetTime {
-                print("isLoading: \(isLoading)")
-//                firstMessage = fetchedResults?.first
-             
-                self.fetchMoreMessages(offsetMessage: messages[0])
-            }
-        }
-    }
+//    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+//        guard messages.count > 2 else { return }
+//        if indexPath.section == 0 {
+//            let offsetTime = Calendar.current.date(byAdding: .second, value: 2, to: screenEntryTime)!
+//            if !isLoading && Date() > offsetTime {
+//                print("isLoading: \(isLoading)")
+////                firstMessage = fetchedResults?.first
+//
+//                self.loadMoreMessages(offsetMessage: messages[0])
+////                self.fetchMoreMessages(offsetMessage: messages[0])
+//            }
+//        }
+//    }
     //    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
     //        guard let messagesFlowLayout = collectionViewLayout as? MessagesCollectionViewFlowLayout else { return .zero }
     //        let dataSource = messagesFlowLayout.messagesDataSource
@@ -200,7 +201,21 @@ class MessagesController: MessagesViewController {
     //    }
 
     
-    
+//    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+//        if indexPath.section == 0 {
+//            let offsetTime = Calendar.current.date(byAdding: .second, value: 2, to: screenEntryTime)!
+//            if !isLoading && Date() > offsetTime {
+//                print("isLoading: \(isLoading)")
+//                //                firstMessage = fetchedResults?.first
+//                self.loadMoreMessages(offsetMessage: messages[0])
+//                //                self.fetchMoreMessages(offsetMessage: messages[0])
+//            }
+//        }
+//        let cell = super.collectionView(collectionView, cellForItemAt: indexPath)
+////        cell.layer.shouldRasterize = true
+////        cell.layer.rasterizationScale = UIScreen.main.scale
+//        return cell
+//    }
     
     
     

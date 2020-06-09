@@ -29,6 +29,15 @@ extension MessagesController: MessagesDataSource {
     }
     
     func cellTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
+        if !isPreviousMessageDateInSameDay(at: indexPath) {
+            let date = Date.getStringFromDate(date: message.sentDate, dateFormat: CustomDateFormat.chatHeaderDate)
+            return NSAttributedString(string: date, attributes: [
+                .font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 12.0)!,
+                .foregroundColor: UIColor.telaGray7
+                ]
+            )
+        }
+        /*
         if isEarliest(message as! UserMessage) {
             let date = Date.getStringFromDate(date: message.sentDate, dateFormat: CustomDateFormat.chatHeaderDate)
             return NSAttributedString(
@@ -39,6 +48,7 @@ extension MessagesController: MessagesDataSource {
                 ]
             )
         }
+ */
         return nil
     }
     

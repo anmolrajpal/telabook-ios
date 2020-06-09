@@ -146,9 +146,9 @@ extension MessagesController {
                             print(error.localizedDescription)
                             self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
                         } else {
-                            DispatchQueue.main.async {
-                                //                                    self.stopRefreshers()
-                                //                                self.updateSnapshot(animated: true)
+                            if self.messages.isEmpty { self.loadInitialMessages(animated: true) }
+                            if operation.serverEntries?.isEmpty == true {
+                                self.shouldFetchMore = false
                             }
                         }
                 }

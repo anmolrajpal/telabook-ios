@@ -34,6 +34,7 @@ extension UserMessage {
         self.conversationID = Int64(conversation.externalConversationID)
         self.conversation = conversation
         self.date = message.sentDate
+        self.updatedAt = message.sentDate
         self.sentByAppAt = message.sentDate
         self.isSentByWorker = true
         switch message.kind {
@@ -87,11 +88,13 @@ extension UserMessage {
 }
 extension UserMessage {
     func toFirebaseObject() -> Any {
+        let time = self.sentByAppAt!.milliSecondsSince1970
         var dictionary:[String:Any] = [
             "conversationId":NSNumber(value: self.conversationID),
             "type":self.type!,
-            "sent_by_app":self.sentByAppAt!.milliSecondsSince1970,
-            "date":self.date!.milliSecondsSince1970,
+            "sent_by_app":time,
+            "updated_at":time,
+            "date":time,
             "sender_is_worker":self.isSentByWorker
         ]
         if let textMessage = self.textMessage {

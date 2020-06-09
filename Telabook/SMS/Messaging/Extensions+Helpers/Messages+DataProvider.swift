@@ -63,7 +63,7 @@ extension MessagesController {
     
     func loadInitialMessagesFromFirebase() {
         print("Loading Initial Messages from Firebase")
-        
+        if messages.isEmpty { self.startSpinner() }
         reference.queryLimited(toLast: 20).observeSingleEvent(of: .value, with: { snapshot in
             guard snapshot.exists() else {
                 #if !RELEASE
@@ -74,12 +74,10 @@ extension MessagesController {
             var messages:[FirebaseMessage] = []
             for child in snapshot.children {
                 if let snapshot = child as? DataSnapshot {
-                    //                    print(snapshot)
+                                        print(snapshot)
                     guard let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) else {
-                        #if !RELEASE
-                        print("Invalid Data Error: Failed to create message from Firebase Message")
-                        #endif
-                        os_log("Invalid Data, Unable to create Message from Firebase Message due to invalid data. Hence not saving it in local db and the message will not be visible to user.", log: .firebase, type: .debug)
+                        let errorMessage = "Invalid Data Error: Failed to create message from Firebase Message"
+                        printAndLog(message: errorMessage, log: .firebase, logType: .debug)
                         continue
                     }
                     //                    print(conversation)
@@ -87,11 +85,13 @@ extension MessagesController {
                 }
             }
             self.persistFirebaseMessagesInStore(entries: Array(messages))
+//            DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
+//                self.loadInitialMessages()
+//            }
+            
         }) { error in
-            #if !RELEASE
-            print("Value Single Event Observer Error: \(error)")
-            #endif
-            os_log("Firebase Single Event Observer Error while observing Messages: %@", log: .firebase, type: .error, error.localizedDescription)
+            let errorMessage = "Firebase Single Event Observer Error while observing Messages: \(error.localizedDescription)"
+            printAndLog(message: errorMessage, log: .firebase, logType: .error)
         }
     }
     
@@ -115,24 +115,19 @@ extension MessagesController {
                 if let snapshot = child as? DataSnapshot {
                     //                    print(snapshot)
                     guard let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) else {
-                        #if !RELEASE
-                        print("Invalid Data Error: Failed to create message from Firebase Message")
-                        #endif
-                        os_log("Invalid Data, Unable to create Message from Firebase Message due to invalid data. Hence not saving it in local db and the message will not be visible to user.", log: .firebase, type: .debug)
+                        let errorMessage = "Invalid Data, Unable to create Message from Firebase Message due to invalid data. Hence not saving it in local db and the message will not be visible to user."
+                        printAndLog(message: errorMessage, log: .firebase, logType: .debug)
                         continue
                     }
                     //                    print(conversation)
-                    
                     messages.insert(message, at: 0)
                 }
             }
-            print(messages)
+//            print(messages)
             self.persistFirebaseMessagesInStore(entries: Array(messages.dropFirst()))
         }) { error in
-            #if !RELEASE
-            print("Value Single Event Observer Error: \(error)")
-            #endif
-            os_log("Firebase Single Event Observer Error while observing Messages: %@", log: .firebase, type: .error, error.localizedDescription)
+            let errorMessage = "Firebase Single Event Observer Error while observing Messages: \(error.localizedDescription)"
+            printAndLog(message: errorMessage, log: .firebase, logType: .error)
         }
     }
     
@@ -245,18 +240,34 @@ extension MessagesController {
     
     
     
-    func loadInitialMessages() {
+    func loadInitialMessages(animated:Bool = false) {
         DispatchQueue.global(qos: .userInitiated).async {
             self.fetchMessagesFromStore(count: self.limit) { messages in
                 DispatchQueue.main.async {
-                    //                    self.messages = messages
+                    self.messages = messages
                     self.messagesCollectionView.reloadData()
-                    self.messagesCollectionView.scrollToBottom()
+                    self.messagesCollectionView.scrollToBottom(animated: animated)
                 }
             }
         }
     }
-    
+    func loadMoreMessages(offsetMessage:UserMessage) {
+        if self.isLoading == false { self.isLoading = true }
+        DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now()) {
+            self.fetchMessagesFromStore(count: self.limit) { messages in
+                DispatchQueue.main.async {
+                    self.messages.insert(contentsOf: messages, at: 0)
+//                    self.messagesCollectionView.reloadDataAndKeepOffset()
+                    self.reloadDataKeepingOffset()
+                    DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.5) {
+                        self.loadMoreMessagesFromFirebase(offsetMessage: offsetMessage)
+                        self.isLoading = false
+                    }
+                    
+                }
+            }
+        }
+    }
     func fetchMessagesFromStore(count:Int, completion: @escaping (([UserMessage]) -> Void)) {
         let fetchRequest:NSFetchRequest = UserMessage.fetchRequest()
         let conversationPredicate = NSPredicate(format: "\(#keyPath(UserMessage.conversation)) == %@", customer)
@@ -267,15 +278,17 @@ extension MessagesController {
         fetchRequest.sortDescriptors = [
             NSSortDescriptor(keyPath: \UserMessage.date, ascending: false)
         ]
+        offset = messages.count
         fetchRequest.fetchLimit = count
+        fetchRequest.fetchOffset = offset
         fetchRequest.returnsObjectsAsFaults = false
         
         
         viewContext.perform {
             do {
                 let result = try fetchRequest.execute()
-                print(result)
-                completion(result)
+//                print(result)
+                completion(result.reversed())
             } catch let error {
                 print(error)
             }

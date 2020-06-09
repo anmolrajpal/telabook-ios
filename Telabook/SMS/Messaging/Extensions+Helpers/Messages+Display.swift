@@ -93,8 +93,6 @@ extension MessagesController: MessagesDisplayDelegate {
         
         
         let message = message as! UserMessage
-        guard !message.isFault else { return .none }
-        
         
         if isFromCurrentSender(message: message) {
             if !isNextMessageSameSender(at: indexPath) || !isNextMessageDateInSameDay(at: indexPath) {
@@ -174,19 +172,17 @@ extension MessagesController: MessagesDisplayDelegate {
     func configureMediaMessageImageView(_ imageView: UIImageView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
 //        imageView.subviews.forEach { $0.removeFromSuperview() }
         let message = message as! UserMessage
-        guard !message.isFault else { return }
-        guard
-            let url = message.imageURL else { return }
+        guard let url = message.imageURL else { return }
         if let text = message.textMessage,
             !text.isBlank {
             #if !RELEASE
             print("Image Text for image with URL: \(url) is => \(text)")
             #endif
-            let textView = mediaTextView
-            textView.text = text
-            textView.backgroundColor = isFromCurrentSender(message: message) ? .telaBlue : .telaGray7
-            imageView.addSubview(textView)
-            textView.anchor(top: nil, left: imageView.leftAnchor, bottom: imageView.bottomAnchor, right: imageView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
+//            let textView = mediaTextView
+//            textView.text = text
+//            textView.backgroundColor = isFromCurrentSender(message: message) ? .telaBlue : .telaGray7
+//            imageView.addSubview(textView)
+//            textView.anchor(top: nil, left: imageView.leftAnchor, bottom: imageView.bottomAnchor, right: imageView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
             
         }
 //        imageView.loadImageUsingCache(with: url.absoluteString)

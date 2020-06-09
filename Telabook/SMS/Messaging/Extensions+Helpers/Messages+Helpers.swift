@@ -18,6 +18,8 @@ extension MessagesController {
         setupViews()
         configureMessageCollectionView()
         configureMessageInputBar()
+        loadInitialMessages()
+        loadInitialMessagesFromFirebase()
         setupTargetActions()
         reloadQuickResponses()
         clearUnreadMessagesCount()
@@ -114,7 +116,11 @@ extension MessagesController {
             guard indexPath.section + 1 < messages.count else { return false }
             return Calendar.current.isDate(messages[indexPath.section].sentDate, inSameDayAs: messages[indexPath.section + 1].sentDate)
         }
-        
+        func isPreviousMessageDateInSameDay(at indexPath:IndexPath) -> Bool {
+            guard !messages.isEmpty else { return false }
+            guard indexPath.section - 1 >= 0 else { return false }
+            return Calendar.current.isDate(messages[indexPath.section].sentDate, inSameDayAs: messages[indexPath.section - 1].sentDate)
+        }
         func shouldShowNewMessagesCountFooter(at section:Int) -> Bool {
     //        print("Last message: \(messages[section]) : section: \(section) & refresh time: \(String(describing: messages[section].lastRefreshedAt))")
             guard !messages.isEmpty else { return false }

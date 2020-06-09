@@ -246,7 +246,7 @@ class MergeMessageEntriesFromFirebaseToStore_Operation: Operation {
 
     private let context: NSManagedObjectContext
     private let conversation:Customer
-    private let serverEntries:[FirebaseMessage]?
+    let serverEntries:[FirebaseMessage]?
     
     init(context: NSManagedObjectContext, conversation:Customer, serverEntries:[FirebaseMessage]?) {
         self.context = context

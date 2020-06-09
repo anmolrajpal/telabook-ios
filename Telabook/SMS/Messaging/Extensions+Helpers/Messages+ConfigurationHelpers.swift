@@ -278,12 +278,23 @@ extension MessagesController {
             UIView.animate(withDuration: 0.3) { self.view.layoutIfNeeded() }
         }
     }
+    
+
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let total = self.messagesCollectionView.contentSize.height - self.messagesCollectionView.frame.height
         let offset = self.messagesCollectionView.contentOffset.y - messagesCollectionView.adjustedContentInset.bottom
         let reverseOffset = total - offset
         if total > 700 {
             self.downIndicatorShouldShow = reverseOffset > 400 /* minimum distance */
+        }
+        print(offset)
+        if offset <= 150 && messages.count > 3 && shouldFetchMore {
+            let offsetTime = Calendar.current.date(byAdding: .second, value: 1, to: screenEntryTime)!
+            if !isLoading && Date() > offsetTime {
+                print("isLoading: \(isLoading)")
+                //                firstMessage = fetchedResults?.first
+                self.loadMoreMessages(offsetMessage: messages[0])
+            }
         }
 //        print("Total: \(total) & offset: \(offset) :Difference=> \(total - offset)")
 //        let now = Date()
