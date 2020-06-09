@@ -9,7 +9,7 @@
 
 import UIKit
 import os
-
+import PINCache
 extension MoreViewController {
     /* ------------------------------------------------------------------------------------------------------------ */
     internal func dumpCoreData() {
@@ -23,6 +23,31 @@ extension MoreViewController {
         queue.addOperations([operation], waitUntilFinished: false)
     }
     /* ------------------------------------------------------------------------------------------------------------ */
+    
+    
+    
+    /* ------------------------------------------------------------------------------------------------------------ */
+    internal func clearCache() {
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+        
+        let operation = DeleteAllEntities_Operation(context: PersistentContainer.shared.newBackgroundContext())
+        operation.completionBlock = {
+            if let error = operation.error {
+                self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+            } else {
+                PINCache.shared.removeAllObjects()
+                imageCache.removeAllObjects()
+            }
+        }
+        queue.addOperations([operation], waitUntilFinished: false)
+    }
+    /* ------------------------------------------------------------------------------------------------------------ */
+    
+    
+    
+    
     
     
     

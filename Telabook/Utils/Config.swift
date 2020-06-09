@@ -107,6 +107,21 @@ struct Config {
             let reference = databaseRoot.child("companies").child(String(companyId)).child("online")
             return reference
         }
+        
+        
+        struct StorageConfig {
+            private static let root = Storage.storage().reference()
+            enum Node {
+                case profileImage
+                
+                var reference:StorageReference {
+                    switch self {
+                        case .profileImage: return root.child("companies/\(AppData.companyId)/profile-images")
+                    }
+                }
+            }
+        }
+        
     }
     
     struct DatabaseConfig {

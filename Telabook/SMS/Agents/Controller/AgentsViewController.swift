@@ -75,6 +75,7 @@ class AgentsViewController: UIViewController {
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        synchronizeWithTimeLogic()
 //        observeReachability()
         
         if let selectionIndexPath = self.subview.tableView.indexPathForSelectedRow {
@@ -96,6 +97,5 @@ class AgentsViewController: UIViewController {
         setupTableView()
         setupTargetActions()
         setupSearchController()
-        synchronizeWithTimeLogic()
     }
 }

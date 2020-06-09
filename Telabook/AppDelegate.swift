@@ -51,7 +51,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         PersistenceService.shared.applicationDocumentsDirectory()
         return true
     }
-    
+    func launchAppSettings() {
+        let url = URL(string: UIApplication.openSettingsURLString)!
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+    }
     // MARK: UISceneSession Lifecycle
 
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {

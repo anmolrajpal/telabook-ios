@@ -452,9 +452,9 @@ extension UIAlertController {
         alertVC.setValue(alertMessageAttributedString, forKey: "attributedMessage")
     alertVC.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = UIColor.telaGray5
         
-        alertVC.view.tintColor = UIColor.telaBlue
-        alertVC.view.subviews.first?.subviews.first?.backgroundColor = .clear
-        alertVC.view.subviews.first?.backgroundColor = .clear
+//        alertVC.view.tintColor = UIColor.telaBlue
+//        alertVC.view.subviews.first?.subviews.first?.backgroundColor = .clear
+//        alertVC.view.subviews.first?.backgroundColor = .clear
         return alertVC
     }
     static public func showTelaAlert(title:String, message: String, action:UIAlertAction = UIAlertAction(title: "Ok", style: .destructive, handler: nil), controller: UIViewController? = nil, completion: (() -> Void)? = nil) {

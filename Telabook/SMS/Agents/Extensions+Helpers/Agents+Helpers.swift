@@ -49,7 +49,7 @@ extension AgentsViewController {
         if isFetchedResultsAvailable {
             if let firstObject = fetchedResultsController.sections?.first?.objects?.first as? Agent,
                 let lastRefreshedAt = firstObject.lastRefreshedAt {
-                let thresholdRefreshTime = lastRefreshedAt.addingTimeInterval(120)
+                let thresholdRefreshTime = lastRefreshedAt.addingTimeInterval(5)
                 let currentTime = Date()
                 currentTime > thresholdRefreshTime ? initiateFetchAgentsSequence(withRefreshMode: .refreshControl) : ()
                 #if !RELEASE

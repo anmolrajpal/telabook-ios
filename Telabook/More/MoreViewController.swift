@@ -53,11 +53,18 @@ class MoreViewController: UIViewController {
         alertLogout()
     }
     private func alertLogout() {
+        if let selectionIndexPath = self.tableView.indexPathForSelectedRow {
+            self.tableView.deselectRow(at: selectionIndexPath, animated: true)
+        }
         let alertVC = UIAlertController.telaAlertController(title: "Confirm Logout", message: "Are you sure you want to log out?")
-        alertVC.addAction(UIAlertAction(title: "Log Out", style: UIAlertAction.Style.destructive) { (action:UIAlertAction) in
-            self.callSignOutSequence()
-        })
-        alertVC.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        cancelAction.setTitleColor(color: .telaBlue)
+        let logoutAction = UIAlertAction(title: "Log Out", style: .default) { _ in self.callSignOutSequence() }
+        logoutAction.setTitleColor(color: .systemRed)
+        
+        alertVC.addAction(logoutAction)
+        alertVC.addAction(cancelAction)
+        alertVC.preferredAction = logoutAction
         self.present(alertVC, animated: true, completion: nil)
     }
     
@@ -108,10 +115,10 @@ class MoreViewController: UIViewController {
     var options:[String] = {
         let role = AppData.getUserRole()
         switch role {
-            case .Developer: return ["Profile Settings", "Companies", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "Application Information", "Log Out"]
-            case .Owner: return ["Profile Settings", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "Application Information", "Log Out"]
-            case .Operator: return ["Profile Settings", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "Application Information", "Log Out"]
-            case .Agent: return ["Profile Settings", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "Application Information", "Log Out"]
+            case .Developer: return ["Profile Settings", "Companies", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "Clear Cache", "Application Information", "Log Out"]
+            case .Owner: return ["Profile Settings", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "Clear Cache", "Application Information", "Log Out"]
+            case .Operator: return ["Profile Settings", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "Clear Cache", "Application Information", "Log Out"]
+            case .Agent: return ["Profile Settings", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "Clear Cache", "Application Information", "Log Out"]
         }
 //        if role != .Agent {
 //            return ["Manage Agents", "Gallery", "Blocked Users", "Schedule Message", "Archived SMSes", "Clear Cache"]
@@ -136,19 +143,21 @@ class MoreViewController: UIViewController {
         return tv
     }()
     
-    fileprivate func handleClearCache() {
+    fileprivate func alertClearCache() {
         if let selectionIndexPath = self.tableView.indexPathForSelectedRow {
             self.tableView.deselectRow(at: selectionIndexPath, animated: true)
         }
-        let alertVC = UIAlertController.telaAlertController(title: "Confirm clear cache?", message: "This will clear all cached images from the app")
-        alertVC.addAction(UIAlertAction(title: "Clear", style: UIAlertAction.Style.destructive) { (action:UIAlertAction) in
+        let alert = UIAlertController.telaAlertController(title: "Clear Cache", message: "This will clear all cached images and data from the app")
+        let clearAction = UIAlertAction(title: "Clear", style: .default) { (action:UIAlertAction) in
             self.clearCache()
-        })
-        alertVC.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
-        self.present(alertVC, animated: true, completion: nil)
-    }
-    fileprivate func clearCache() {
-        imageCache.removeAllObjects()
+        }
+        clearAction.setTitleColor(color: .systemRed)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        cancelAction.setTitleColor(color: .telaBlue)
+        alert.addAction(clearAction)
+        alert.addAction(cancelAction)
+        alert.preferredAction = clearAction
+        self.present(alert, animated: true, completion: nil)
     }
     
 }
@@ -201,6 +210,8 @@ extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
                         let vc = ScheduleMessageViewController()
                         self.show(vc, sender: self)
                     case 7:
+                        alertClearCache()
+                    case 8:
                         let vc = AppInfoViewController()
                         self.show(vc, sender: self)
                     default: alertLogout()
@@ -226,6 +237,8 @@ extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
                         let vc = ScheduleMessageViewController()
                         self.show(vc, sender: self)
                     case 6:
+                        alertClearCache()
+                    case 7:
                         let vc = AppInfoViewController()
                         self.show(vc, sender: self)
                     default: alertLogout()
@@ -270,7 +283,6 @@ extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
                 }
             */
         }
-        tableView.deselectRow(at: indexPath, animated: true)
         
         /*
         
@@ -319,4 +331,63 @@ extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
         return 50.0
     }
     
+}
+
+
+
+
+
+
+extension UIAlertAction {
+    func setTitleColor(color:UIColor) {
+        self.setValue(color, forKey: "titleTextColor")
+    }
+}
+
+
+extension UIAlertController {
+    
+    //Set background color of UIAlertController
+    func configureBackgroundColor(color: UIColor) {
+        if let bgView = self.view.subviews.first, let groupView = bgView.subviews.first, let contentView = groupView.subviews.first {
+            contentView.backgroundColor = color
+        }
+    }
+    
+    //Set title font and title color
+    func configureTitle(font: UIFont?, color: UIColor?) {
+        guard let title = self.title else { return }
+        let attributeString = NSMutableAttributedString(string: title)//1
+        if let titleFont = font {
+            attributeString.addAttributes([NSAttributedString.Key.font : titleFont],//2
+                                          range: NSMakeRange(0, title.utf8.count))
+        }
+        
+        if let titleColor = color {
+            attributeString.addAttributes([NSAttributedString.Key.foregroundColor : titleColor],//3
+                                          range: NSMakeRange(0, title.utf8.count))
+        }
+        self.setValue(attributeString, forKey: "attributedTitle")//4
+    }
+    
+    //Set message font and message color
+    func configureMessage(font: UIFont?, color: UIColor?) {
+        guard let message = self.message else { return }
+        let attributeString = NSMutableAttributedString(string: message)
+        if let messageFont = font {
+            attributeString.addAttributes([NSAttributedString.Key.font : messageFont],
+                                          range: NSMakeRange(0, message.utf8.count))
+        }
+        
+        if let messageColorColor = color {
+            attributeString.addAttributes([NSAttributedString.Key.foregroundColor : messageColorColor],
+                                          range: NSMakeRange(0, message.utf8.count))
+        }
+        self.setValue(attributeString, forKey: "attributedMessage")
+    }
+    
+    //Set tint color of UIAlertController
+    func configureTint(color: UIColor) {
+        self.view.tintColor = color
+    }
 }

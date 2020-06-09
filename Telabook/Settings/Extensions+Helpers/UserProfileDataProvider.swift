@@ -71,6 +71,7 @@ extension SettingsViewController {
             self.spinner.stopAnimating()
             self.fetchUserProfile()
             self.disableUpdateButton()
+            TapticEngine.generateFeedback(ofType: .Success)
             AssertionModalController(title: "Updated").show()
         }
     }
@@ -79,6 +80,7 @@ extension SettingsViewController {
         print("***Error Updating Password****\n\(error.localizedDescription)")
         #endif
         DispatchQueue.main.async {
+            TapticEngine.generateFeedback(ofType: .Error)
             self.updateButton.isHidden = false
             self.spinner.stopAnimating()
             UIAlertController.showTelaAlert(title: "Error", message: error.localizedDescription, controller: self)

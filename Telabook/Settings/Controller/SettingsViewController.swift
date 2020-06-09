@@ -9,9 +9,11 @@
 import UIKit
 import Firebase
 import CoreData
-import Photos
+
 class SettingsViewController: UIViewController {
     static let shared = SettingsViewController()
+    var uploadTask:StorageUploadTask!
+    
     internal var userProfile:UserInfoCodable? {
         didSet {
             guard let profile = userProfile else { return }
@@ -106,22 +108,37 @@ class SettingsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpNavBar()
-        setUpNavBarItems()
+//        setUpNavBarItems()
         
         hideKeyboardWhenTappedAround()
         setupTextFields()
         setupTextFieldsDelegates()
-//        setupData()
+
         scrollView.delegate = self
-        
         scrollView.setContentOffset(CGPoint(x: 0, y: self.scrollView.contentOffset.y), animated: true)
         self.userProfile = AppData.userInfo
         self.fetchUserProfile()
+        
+        configureProgressAlert()
+        configureProfileImageView()
 //        self.initiateFetchUserProfileSequence(userId: userId)
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         setupConstraints()
+    }
+    
+    private func configureProfileImageView() {
+        profileImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profileImageViewDidTap)))
+    }
+    @objc
+    private func profileImageViewDidTap() {
+        guard let image = profileImageView.image else { return }
+        
+        let frame = view.convert(profileImageView.frame, from: topContainerView)
+        let vc = FullImageViewController(image: image, fromRect: frame)
+        vc.modalPresentationStyle = .overFullScreen
+        present(vc, animated: false)
     }
     
     func setupUserData(details:UserProfileCodable.User) {
@@ -312,134 +329,23 @@ class SettingsViewController: UIViewController {
         spinner.centerXAnchor.constraint(equalTo: updateButton.centerXAnchor).activate()
         spinner.centerYAnchor.constraint(equalTo: updateButton.centerYAnchor).activate()
     }
-    func checkPhotoLibraryPermissions() {
-        let photoAuthorizationStatus = PHPhotoLibrary.authorizationStatus()
-        switch photoAuthorizationStatus {
-        case .authorized:
-            print("Access is granted by user")
-        case .notDetermined:
-            PHPhotoLibrary.requestAuthorization({
-                (newStatus) in
-                print("status is \(newStatus)")
-                if newStatus ==  PHAuthorizationStatus.authorized {
-                    /* do stuff here */
-                    print("success")
-                }
-            })
-            print("It is not determined until now")
-        case .restricted:
-            // same same
-            print("User do not have access to photo album.")
-        case .denied:
-            // same same
-            print("User has denied the permission.")
-        @unknown default: fatalError()
-        }
-    }
-    fileprivate func checkCameraPermissions() {
-        let authStatus = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
-        switch authStatus {
-            case .authorized: break
-            case .denied: alertToEncourageCameraAccessInitially()
-            case .notDetermined: alertPromptToAllowCameraAccessViaSetting()
-            default: alertToEncourageCameraAccessInitially()
-        }
-    }
-    func alertToEncourageCameraAccessInitially() {
-        let alert = UIAlertController(
-            title: "IMPORTANT",
-            message: "Camera access required for clicking photo",
-            preferredStyle: UIAlertController.Style.alert
-        )
-        
-        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
-        alert.addAction(UIAlertAction(title: "Allow Camera", style: .cancel, handler: { (alert) -> Void in
-            guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
-                return
-            }
-            if UIApplication.shared.canOpenURL(settingsUrl) {
-                UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
-                    print("Settings opened: \(success)") // Prints true
-                })
-            }
-        }))
-        present(alert, animated: true, completion: nil)
-    }
-    
-    func alertPromptToAllowCameraAccessViaSetting() {
-        
-        let alert = UIAlertController(
-            title: "IMPORTANT",
-            message: "Please allow camera access for clicking photo",
-            preferredStyle: UIAlertController.Style.alert
-        )
-        alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel) { alert in
-            AVCaptureDevice.requestAccess(for: AVMediaType.video) { granted in
-                DispatchQueue.main.async() {
-                    self.checkCameraPermissions()
-                }
-            }
-        })
-        present(alert, animated: true, completion: nil)
-    }
-    internal func promptPhotosPickerMenu() {
-        let alert = UIAlertController(title: "Choose Image Source", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
-        
-     
-        
-        let cameraAction = UIAlertAction(title: "Camera", style: UIAlertAction.Style.default, handler: { (action) in
-            self.handleSourceTypeCamera()
-        })
-        
-        let galleryAction = UIAlertAction(title: "Gallery", style: UIAlertAction.Style.default, handler: { (action) in
-            self.handleSourceTypeGallery()
-        })
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil)
-        
-        alert.addAction(cameraAction)
-        alert.addAction(galleryAction)
-        alert.addAction(cancelAction)
-        alert.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = UIColor.telaGray6
-        
-        alert.view.tintColor = UIColor.telaBlue
-        alert.view.subviews.first?.subviews.first?.backgroundColor = .clear
-        alert.view.subviews.first?.backgroundColor = .clear
-        self.present(alert, animated: true, completion: nil)
-    }
-    private func viewCurrentProfileImage() {
-        
-    }
-    private func handleSourceTypeCamera() {
-        checkCameraPermissions()
-        let picker = UIImagePickerController()
-        picker.allowsEditing = true
-        
-        picker.delegate = self
-        
-        if UIImagePickerController.isSourceTypeAvailable(.camera) {
-            picker.sourceType = .camera
-        } else {
-            picker.sourceType = .photoLibrary
-        }
-        picker.modalPresentationStyle = .overFullScreen
-        present(picker, animated: true, completion: nil)
-    }
-    private func handleSourceTypeGallery() {
-        checkPhotoLibraryPermissions()
-        let picker = UIImagePickerController()
-        picker.allowsEditing = true
-        picker.delegate = self
-        picker.sourceType = .photoLibrary
-        picker.modalPresentationStyle = .overFullScreen
-        present(picker, animated: true, completion: nil)
-    }
     
     
     
     
     
-    fileprivate var uploadTask:StorageUploadTask!
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /*
+    
     private func uploadImage(_ image: UIImage) {
         
         guard let scaledImage = image.scaledToSafeUploadSize, let data = scaledImage.jpegData(compressionQuality: 0.4) else {
@@ -529,10 +435,34 @@ class SettingsViewController: UIViewController {
         }
     }
     
+    */
     
-    
-    
-    
+    lazy var progressAlert:UIAlertController = {
+        let alert = UIAlertController.telaAlertController(title: "Uploading...")
+        return alert
+    }()
+    lazy var progressTitleLabel:UILabel = {
+        let label = UILabel()
+        let margin:CGFloat = 8.0
+        let alertWidth:CGFloat = 270.0
+        let frame = CGRect(x: margin, y: 50.0, width: alertWidth - margin * 2.0 , height: 20)
+        label.frame = frame
+        label.textAlignment = .center
+        label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 13)
+        label.text = "0 %"
+        label.textColor = UIColor.white
+        return label
+    }()
+    lazy var progressBar:UIProgressView = {
+        let view = UIProgressView(progressViewStyle: .default)
+        let margin:CGFloat = 8.0
+        let alertWidth:CGFloat = 270.0
+        let frame = CGRect(x: margin, y: 80.0, width: alertWidth - margin * 2.0 , height: 2.0)
+        view.frame = frame
+        view.progressTintColor = UIColor.telaBlue
+        view.setProgress(0, animated: false)
+        return view
+    }()
     lazy var spinner: UIActivityIndicatorView = {
         let aiView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
         aiView.backgroundColor = .clear
@@ -552,6 +482,7 @@ class SettingsViewController: UIViewController {
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.telaBlue.cgColor
         imageView.clipsToBounds = true
+        imageView.isUserInteractionEnabled = true
         return imageView
     }()
     lazy var cameraIconImageView:UIImageView = {
@@ -560,11 +491,7 @@ class SettingsViewController: UIViewController {
         
         imageView.contentMode = UIImageView.ContentMode.scaleAspectFit
         imageView.image = #imageLiteral(resourceName: "camera_icon").withInsets(UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset))
-//        imageView.image = #imageLiteral(resourceName: "camera_icon").withAlignmentRectInsets(UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset))
-//        imageView.image = #imageLiteral(resourceName: "camera_icon").resizableImage(withCapInsets: UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset), resizingMode: UIImage.ResizingMode.stretch)
-        
         imageView.backgroundColor = UIColor.telaGray1
-        
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.layer.cornerRadius = 14
         imageView.layer.borderWidth = 0.8
@@ -945,26 +872,5 @@ class Line:UIView {
     }
 }
 
-extension SettingsViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        picker.dismiss(animated: true, completion: nil)
-        
-        if let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
-            uploadImage(image)
-            
-        }
-        else if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            uploadImage(image)
-        } else {
-            print("Unknown stuff")
-        }
-        
-    }
-    
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        picker.dismiss(animated: true, completion: nil)
-    }
-    
-}
+
 

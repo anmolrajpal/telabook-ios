@@ -249,6 +249,16 @@
 		6FEF96A622A67F2900F2FF83 /* SMSDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF96A522A67F2900F2FF83 /* SMSDetailViewController.swift */; };
 		6FEF96A822A682E700F2FF83 /* SMSDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF96A722A682E700F2FF83 /* SMSDetailCell.swift */; };
 		6FEF96AA22A7BDCA00F2FF83 /* ExternalConversationsAPIProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEF96A922A7BDCA00F2FF83 /* ExternalConversationsAPIProtocol.swift */; };
+		6FF2E69A248F848C00502B99 /* CropViewController in Frameworks */ = {isa = PBXBuildFile; productRef = 6FF2E699248F848B00502B99 /* CropViewController */; };
+		6FF2E69C248F848C00502B99 /* TOCropViewController in Frameworks */ = {isa = PBXBuildFile; productRef = 6FF2E69B248F848C00502B99 /* TOCropViewController */; };
+		6FF2E6A3248FA4B300502B99 /* Profile+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF2E6A2248FA4B300502B99 /* Profile+Helpers.swift */; };
+		6FF2E6A5248FA4CE00502B99 /* Profile+Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF2E6A4248FA4CE00502B99 /* Profile+Image.swift */; };
+		6FF2E6A7248FA4E500502B99 /* Profile+ServicePorvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF2E6A6248FA4E500502B99 /* Profile+ServicePorvider.swift */; };
+		6FF2E6A9248FF19500502B99 /* FullImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF2E6A8248FF19500502B99 /* FullImageView.swift */; };
+		6FF2E6AB248FF1A500502B99 /* FullImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF2E6AA248FF1A500502B99 /* FullImageViewController.swift */; };
+		6FF2E6AD248FF6A800502B99 /* ImageZoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF2E6AC248FF6A800502B99 /* ImageZoomView.swift */; };
+		6FF2E6AF248FF72400502B99 /* HoldPinchImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF2E6AE248FF72400502B99 /* HoldPinchImageView.swift */; };
+		6FF2E6B1249002BF00502B99 /* FullImage+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF2E6B0249002BF00502B99 /* FullImage+Helpers.swift */; };
 		6FF842162482EACD0069A789 /* QuickResponsePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF842152482EACD0069A789 /* QuickResponsePickerController.swift */; };
 		6FF842182482EADD0069A789 /* QuickResponsePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF842172482EADD0069A789 /* QuickResponsePickerView.swift */; };
 		6FF8421A2482EFF00069A789 /* QuickResponsePicker+TableViewHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF842192482EFF00069A789 /* QuickResponsePicker+TableViewHelpers.swift */; };
@@ -509,6 +519,14 @@
 		6FEF96A522A67F2900F2FF83 /* SMSDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSDetailViewController.swift; sourceTree = "<group>"; };
 		6FEF96A722A682E700F2FF83 /* SMSDetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSDetailCell.swift; sourceTree = "<group>"; };
 		6FEF96A922A7BDCA00F2FF83 /* ExternalConversationsAPIProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalConversationsAPIProtocol.swift; sourceTree = "<group>"; };
+		6FF2E6A2248FA4B300502B99 /* Profile+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Profile+Helpers.swift"; sourceTree = "<group>"; };
+		6FF2E6A4248FA4CE00502B99 /* Profile+Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Profile+Image.swift"; sourceTree = "<group>"; };
+		6FF2E6A6248FA4E500502B99 /* Profile+ServicePorvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Profile+ServicePorvider.swift"; sourceTree = "<group>"; };
+		6FF2E6A8248FF19500502B99 /* FullImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullImageView.swift; sourceTree = "<group>"; };
+		6FF2E6AA248FF1A500502B99 /* FullImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullImageViewController.swift; sourceTree = "<group>"; };
+		6FF2E6AC248FF6A800502B99 /* ImageZoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageZoomView.swift; sourceTree = "<group>"; };
+		6FF2E6AE248FF72400502B99 /* HoldPinchImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoldPinchImageView.swift; sourceTree = "<group>"; };
+		6FF2E6B0249002BF00502B99 /* FullImage+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FullImage+Helpers.swift"; sourceTree = "<group>"; };
 		6FF842152482EACD0069A789 /* QuickResponsePickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponsePickerController.swift; sourceTree = "<group>"; };
 		6FF842172482EADD0069A789 /* QuickResponsePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponsePickerView.swift; sourceTree = "<group>"; };
 		6FF842192482EFF00069A789 /* QuickResponsePicker+TableViewHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QuickResponsePicker+TableViewHelpers.swift"; sourceTree = "<group>"; };
@@ -525,6 +543,8 @@
 			files = (
 				07EE2475CAADE7AD32CD00F9 /* Pods_Telabook.framework in Frameworks */,
 				6F010CAE246F81B600C20DC6 /* MenuController in Frameworks */,
+				6FF2E69C248F848C00502B99 /* TOCropViewController in Frameworks */,
+				6FF2E69A248F848C00502B99 /* CropViewController in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1531,6 +1551,7 @@
 			children = (
 				6FB11B0C229BFA430098D050 /* MoreViewController.swift */,
 				6F395C94248033880023255F /* MoreServiceProvider.swift */,
+				6FF2E69D248FA43000502B99 /* Profile Settings */,
 				6F987A6224587F6700C6046E /* App Info */,
 				6F987A5024570E8D00C6046E /* Select Company */,
 				6F23BCF822D723E30001A888 /* Schedule Message */,
@@ -1812,6 +1833,53 @@
 			path = API;
 			sourceTree = "<group>";
 		};
+		6FF2E69D248FA43000502B99 /* Profile Settings */ = {
+			isa = PBXGroup;
+			children = (
+				6FF2E6A1248FA46100502B99 /* Operations */,
+				6FF2E6A0248FA45300502B99 /* Views */,
+				6FF2E69F248FA44D00502B99 /* Controllers */,
+				6FF2E69E248FA43D00502B99 /* Extensions+Helpers */,
+			);
+			path = "Profile Settings";
+			sourceTree = "<group>";
+		};
+		6FF2E69E248FA43D00502B99 /* Extensions+Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				6FF2E6A2248FA4B300502B99 /* Profile+Helpers.swift */,
+				6FF2E6A4248FA4CE00502B99 /* Profile+Image.swift */,
+				6FF2E6A6248FA4E500502B99 /* Profile+ServicePorvider.swift */,
+				6FF2E6B0249002BF00502B99 /* FullImage+Helpers.swift */,
+			);
+			path = "Extensions+Helpers";
+			sourceTree = "<group>";
+		};
+		6FF2E69F248FA44D00502B99 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				6FF2E6AA248FF1A500502B99 /* FullImageViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		6FF2E6A0248FA45300502B99 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				6FF2E6A8248FF19500502B99 /* FullImageView.swift */,
+				6FF2E6AC248FF6A800502B99 /* ImageZoomView.swift */,
+				6FF2E6AE248FF72400502B99 /* HoldPinchImageView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		6FF2E6A1248FA46100502B99 /* Operations */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Operations;
+			sourceTree = "<group>";
+		};
 		9D78E82FCB5E6192D5C81890 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -1852,6 +1920,8 @@
 			name = Telabook;
 			packageProductDependencies = (
 				6F010CAD246F81B600C20DC6 /* MenuController */,
+				6FF2E699248F848B00502B99 /* CropViewController */,
+				6FF2E69B248F848C00502B99 /* TOCropViewController */,
 			);
 			productName = Telabook;
 			productReference = 6FB11AE0229BDDBD0098D050 /* Telabook.app */;
@@ -1891,6 +1961,7 @@
 			mainGroup = 6FB11AD7229BDDBD0098D050;
 			packageReferences = (
 				6F010CAC246F81B600C20DC6 /* XCRemoteSwiftPackageReference "MenuController" */,
+				6FF2E698248F848B00502B99 /* XCRemoteSwiftPackageReference "TOCropViewController" */,
 			);
 			productRefGroup = 6FB11AE1229BDDBD0098D050 /* Products */;
 			projectDirPath = "";
@@ -2050,6 +2121,7 @@
 				6FA9537824606963006DAF53 /* QuickResponseCodable.swift in Sources */,
 				6F23BD0722D9F0570001A888 /* ScheduleMessageViewController.swift in Sources */,
 				6F23BD0F22D9F9610001A888 /* ScheduleMessageDataProvider.swift in Sources */,
+				6FF2E6AB248FF1A500502B99 /* FullImageViewController.swift in Sources */,
 				6FB11B27229E5F6F0098D050 /* AuthenticationService.swift in Sources */,
 				6FB11B31229EB5020098D050 /* CallGroupsViewController.swift in Sources */,
 				6F23BD0122D7299A0001A888 /* UserProfileDataProvider.swift in Sources */,
@@ -2078,8 +2150,10 @@
 				6FB11B21229D894A0098D050 /* SectionItemCell.swift in Sources */,
 				6F37E2512460AE29003E9126 /* QuickResponses+FetchedResultsHelpers.swift in Sources */,
 				6FEE9A05247D305D00709E2D /* Messages+CoreDataHelpers.swift in Sources */,
+				6FF2E6A3248FA4B300502B99 /* Profile+Helpers.swift in Sources */,
 				6F395C9B248135A30023255F /* Login+ForgotPassword.swift in Sources */,
 				6F1BD2EF22C4B0ED0053D0CC /* Protocols.swift in Sources */,
+				6FF2E6B1249002BF00502B99 /* FullImage+Helpers.swift in Sources */,
 				6FB11B2D229EB4C40098D050 /* RemindersViewController.swift in Sources */,
 				6F9453C522DB53ED00047C7F /* CustomerAPIProtocol.swift in Sources */,
 				6F06534B2464885700F857C1 /* CustomersServiceProvider.swift in Sources */,
@@ -2100,6 +2174,7 @@
 				6FD89561245EDAD40083D79A /* AgentDetailsHelpers.swift in Sources */,
 				6F37E24F2460ABFE003E9126 /* QuickResponseOperations.swift in Sources */,
 				6FB11B10229C23840098D050 /* Extensions.swift in Sources */,
+				6FF2E6A7248FA4E500502B99 /* Profile+ServicePorvider.swift in Sources */,
 				6F987A482456C8B900C6046E /* APIServiceProtocol.swift in Sources */,
 				6F58C33922D618C40091C785 /* AutoResponseAPIProtocol.swift in Sources */,
 				6F1BD2F322C4B4CB0053D0CC /* FollowUpDataProvider.swift in Sources */,
@@ -2108,6 +2183,7 @@
 				6F69BE8422D4742000F8903F /* ManageAgentsAPI.swift in Sources */,
 				6F1BD2ED22C4ADED0053D0CC /* FollowUpVCTableViewExtensions.swift in Sources */,
 				6FD8955D245ECDB40083D79A /* AgentDetailsView.swift in Sources */,
+				6FF2E6AF248FF72400502B99 /* HoldPinchImageView.swift in Sources */,
 				6F02B2DF2461C8B600FFB34E /* AutoResponse+CoreDataHelpers.swift in Sources */,
 				6FEE9A11247D4D0200709E2D /* Messages+InputBar.swift in Sources */,
 				6F83FC232460A39B00518201 /* QuickResponsesTableViewHelpers.swift in Sources */,
@@ -2138,6 +2214,7 @@
 				6FEE9A0B247D396F00709E2D /* Messages+DataSource.swift in Sources */,
 				6FB11B19229D06BB0098D050 /* CustomUtils.swift in Sources */,
 				6FC60230246446F000C1BF6D /* Agents+CoreDataHelpers.swift in Sources */,
+				6FF2E6A5248FA4CE00502B99 /* Profile+Image.swift in Sources */,
 				6F987A4C2456C99100C6046E /* APIService+Errors.swift in Sources */,
 				6F987A82245CCA9100C6046E /* APIOperations.swift in Sources */,
 				6F987A612457529600C6046E /* SelectCompanyTableViewHelpers.swift in Sources */,
@@ -2152,6 +2229,7 @@
 				6F987A6724587F9700C6046E /* AppInfoViewController.swift in Sources */,
 				6F69BE9422D4DCF600F8903F /* QuickResponsesAPI.swift in Sources */,
 				6F58C33522D6178B0091C785 /* AutoResponseViewController.swift in Sources */,
+				6FF2E6A9248FF19500502B99 /* FullImageView.swift in Sources */,
 				6F9453C722DBA45F00047C7F /* ScheduleNewMessageDataProvider.swift in Sources */,
 				6F69BE8C22D4A63900F8903F /* AgentDetailsViewController.swift in Sources */,
 				6FEE9A2F247F118F00709E2D /* Configuration.swift in Sources */,
@@ -2208,6 +2286,7 @@
 				6FB11B2B229EA7C20098D050 /* Codable.swift in Sources */,
 				6FC6023A2464485C00C1BF6D /* AgentCell.swift in Sources */,
 				6F29FD5722BBB1C300BCA2AB /* CustomerDetailsViewController.swift in Sources */,
+				6FF2E6AD248FF6A800502B99 /* ImageZoomView.swift in Sources */,
 				6F987A7C245C93D900C6046E /* ManageAgentsView.swift in Sources */,
 				6F04FFBC22C3A22C00FA467E /* ExternalChat.swift in Sources */,
 				6FC823052475ADE4002421F0 /* BlacklistViewController.swift in Sources */,
@@ -2586,6 +2665,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		6FF2E698248F848B00502B99 /* XCRemoteSwiftPackageReference "TOCropViewController" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/TimOliver/TOCropViewController.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -2593,6 +2680,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6F010CAC246F81B600C20DC6 /* XCRemoteSwiftPackageReference "MenuController" */;
 			productName = MenuController;
+		};
+		6FF2E699248F848B00502B99 /* CropViewController */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6FF2E698248F848B00502B99 /* XCRemoteSwiftPackageReference "TOCropViewController" */;
+			productName = CropViewController;
+		};
+		6FF2E69B248F848C00502B99 /* TOCropViewController */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6FF2E698248F848B00502B99 /* XCRemoteSwiftPackageReference "TOCropViewController" */;
+			productName = TOCropViewController;
 		};
 /* End XCSwiftPackageProductDependency section */
 

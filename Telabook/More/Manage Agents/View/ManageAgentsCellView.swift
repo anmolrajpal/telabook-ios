@@ -13,11 +13,11 @@ class ManageAgentsCellView: UIView {
     struct Parameters:Equatable {
         let name:String
         let initials:String
-        let role:AppUserRole
+//        let role:AppUserRole
         let profileImageURLString:String?
-        let lowPriorityCheck:Bool
-        let mediumPriorityCheck:Bool
-        let highPriorityCheck:Bool
+//        let lowPriorityCheck:Bool
+//        let mediumPriorityCheck:Bool
+//        let highPriorityCheck:Bool
     }
     var parameters: Parameters? {
         didSet {
@@ -52,10 +52,10 @@ class ManageAgentsCellView: UIView {
     }
     private func setupData(parameters:Parameters?, animated:Bool) {
         agentNameLabel.text = parameters?.name
-        agentDesignationLabel.text = parameters?.role.stringValue
-        if parameters?.lowPriorityCheck == true { stackView.addArrangedSubview(lowPriorityImageView) }
-        if parameters?.mediumPriorityCheck == true { stackView.addArrangedSubview(mediumPriorityImageView) }
-        if parameters?.highPriorityCheck == true { stackView.addArrangedSubview(highPriorityImageView) }
+//        agentDesignationLabel.text = parameters?.role.stringValue
+//        if parameters?.lowPriorityCheck == true { stackView.addArrangedSubview(lowPriorityImageView) }
+//        if parameters?.mediumPriorityCheck == true { stackView.addArrangedSubview(mediumPriorityImageView) }
+//        if parameters?.highPriorityCheck == true { stackView.addArrangedSubview(highPriorityImageView) }
         if let urlStr = parameters?.profileImageURLString {
             self.profileImageView.loadImageUsingCache(with: urlStr, placeHolder: UIImage.placeholderInitialsImage(text: parameters?.initials ?? "NN"))
         } else {
@@ -119,13 +119,15 @@ class ManageAgentsCellView: UIView {
         
         containerView.anchor(top: topAnchor, left: profileImageView.rightAnchor, bottom: bottomAnchor, right: rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 10)
         
+        agentNameLabel.anchor(top: nil, left: containerView.leftAnchor, bottom: nil, right: containerView.rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 10)
+        agentNameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).activate()
         
-        agentNameLabel.anchor(top: nil, left: containerView.leftAnchor, bottom: containerView.centerYAnchor, right: containerView.rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 8, rightConstant: 10)
-        
-        agentDesignationLabel.anchor(top: containerView.centerYAnchor, left: agentNameLabel.leftAnchor, bottom: nil, right: agentNameLabel.rightAnchor, topConstant: 8, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
-        
-        stackView.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0).activate()
-        stackView.centerYAnchor.constraint(equalTo: agentDesignationLabel.centerYAnchor).activate()
+//        agentNameLabel.anchor(top: nil, left: containerView.leftAnchor, bottom: containerView.centerYAnchor, right: containerView.rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 8, rightConstant: 10)
+//
+//        agentDesignationLabel.anchor(top: containerView.centerYAnchor, left: agentNameLabel.leftAnchor, bottom: nil, right: agentNameLabel.rightAnchor, topConstant: 8, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
+//
+//        stackView.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0).activate()
+//        stackView.centerYAnchor.constraint(equalTo: agentDesignationLabel.centerYAnchor).activate()
     }
     
     
@@ -155,7 +157,7 @@ class ManageAgentsCellView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 1
         label.textColor = UIColor.telaWhite
-        label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 13.0)
+        label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 16.0)
         return label
     }()
     lazy var agentDesignationLabel:UILabel = {
