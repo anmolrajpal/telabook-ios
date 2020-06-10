@@ -56,15 +56,17 @@ extension SettingsViewController {
         })
     }
     fileprivate func presentCamera() {
-        let picker = UIImagePickerController()
-        picker.delegate = self
-        if UIImagePickerController.isSourceTypeAvailable(.camera) {
-            picker.sourceType = .camera
-        } else {
-            picker.sourceType = .photoLibrary
+        DispatchQueue.main.async {
+            let picker = UIImagePickerController()
+            picker.delegate = self
+            if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                picker.sourceType = .camera
+            } else {
+                picker.sourceType = .photoLibrary
+            }
+            picker.modalPresentationStyle = .overFullScreen
+            self.present(picker, animated: true, completion: nil)
         }
-        picker.modalPresentationStyle = .overFullScreen
-        present(picker, animated: true, completion: nil)
     }
     fileprivate func alertCameraAccessNeeded() {
         let alert = UIAlertController.telaAlertController(title: "Need Camera Access", message: "Camera access is required to take photo")
@@ -95,10 +97,12 @@ extension SettingsViewController {
         }
     }
     fileprivate func presentPhotoLibrary() {
-        let picker = UIImagePickerController()
-        picker.delegate = self
-        picker.sourceType = .photoLibrary
-        present(picker, animated: true)
+        DispatchQueue.main.async {
+            let picker = UIImagePickerController()
+            picker.delegate = self
+            picker.sourceType = .photoLibrary
+            self.present(picker, animated: true)
+        }
     }
     fileprivate func alertPhotoLibraryAccessNeeded() {
         let alert = UIAlertController.telaAlertController(title: "Need Library Access", message: "Photo Library access is required to read and write images")

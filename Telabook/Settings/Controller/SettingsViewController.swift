@@ -9,6 +9,7 @@
 import UIKit
 import Firebase
 import CoreData
+import PINCache
 
 class SettingsViewController: UIViewController {
     static let shared = SettingsViewController()
@@ -40,12 +41,13 @@ class SettingsViewController: UIViewController {
     internal var profileImageUrl:String? {
         didSet {
             let initialsText = "\(firstName?.first?.uppercased() ?? "")\(lastName?.first?.uppercased() ?? "")"
-            if let urlStr = profileImageUrl,
-                let url = CustomUtils.shared.getSlashEncodedURL(from: urlStr) {
-                
-                self.profileImageView.loadImageUsingCache(with: url, placeHolder: UIImage.placeholderInitialsImage(text: initialsText))
+            let placeholderImage = UIImage.placeholderInitialsImage(text: initialsText)
+            if let urlStr = profileImageUrl {
+                self.profileImageView.pin_setImage(from: URL(string: urlStr), placeholderImage: placeholderImage)
+//                self.profileImageView.loadImageUsingCache(with: url, placeHolder: UIImage.placeholderInitialsImage(text: initialsText))
             } else {
-                self.profileImageView.loadImageUsingCache(with: nil, placeHolder: UIImage.placeholderInitialsImage(text: initialsText))
+                self.profileImageView.image = placeholderImage
+//                self.profileImageView.loadImageUsingCache(with: nil, placeHolder: placeholderImage)
             }
 //            validateFields()
         }

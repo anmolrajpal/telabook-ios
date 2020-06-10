@@ -116,7 +116,8 @@ struct Config {
                 
                 var reference:StorageReference {
                     switch self {
-                        case .profileImage: return root.child("companies/\(AppData.companyId)/profile-images")
+                        case .profileImage: return root.child("companies").child("\(AppData.companyId)").child("profile-images")
+//                        case .profileImage: return root.child("companies/\(AppData.companyId)/profile-images")
                     }
                 }
             }

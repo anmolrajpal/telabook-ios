@@ -8,7 +8,14 @@
 
 import Foundation
 import CoreData
-
+func mapToInt(value:AnyObject?) -> Int {
+    switch value {
+        case let value as Int: return value
+        case let value as NSNumber: return value.intValue
+        case let value as String: return Int(value) ?? 0
+        default: return 0
+    }
+}
 struct AutoResponseCodable : Codable {
     
     let createdAt : String?
@@ -31,7 +38,8 @@ struct AutoResponseCodable : Codable {
         id = try values.decodeIfPresent(Int.self, forKey: .id)
         smsReply = try values.decodeIfPresent(String.self, forKey: .smsReply)
         updatedAt = try values.decodeIfPresent(String.self, forKey: .updatedAt)
-        userId = try values.decodeIfPresent(Int.self, forKey: .userId)
+        let serverUserID = try values.decodeIfPresent(Int?.self, forKey: .userId) ?? values.decodeIfPresent(String?.self, forKey: .userId)
+        userId = mapToInt(value: serverUserID as AnyObject)
     }
 }
 
