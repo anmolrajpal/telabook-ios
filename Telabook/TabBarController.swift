@@ -73,18 +73,18 @@ class TabBarController: UITabBarController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        authenticate()
+//        authenticate()
     }
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
     private func setup() {
         self.delegate = self
-        self.view.addSubview(spinner)
-        spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).activate()
-        spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor).activate()
+//        self.view.addSubview(spinner)
+//        spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).activate()
+//        spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor).activate()
 //        setUpTabBarViewControllers()
-//        authenticate()
+        authenticate()
     }
     
     func showLoginController() {

@@ -374,3 +374,28 @@ extension Customer {
         self.isPinned = isPinned
     }
 }
+
+
+
+
+
+
+
+
+
+extension Customer {
+    
+    func mediaFolder() -> URL {
+        let url = AppDelegate.conversationMediaFolder.appendingPathComponent(node!, isDirectory: true)
+        // Create it if it doesn’t exist.
+        if !FileManager.default.fileExists(atPath: url.path) {
+            do {
+                try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                let errorMessage = "### \(#function): Failed to create conversation media folder URL: \(error)"
+                printAndLog(message: errorMessage, log: .ui, logType: .error)
+            }
+        }
+        return url
+    }
+}

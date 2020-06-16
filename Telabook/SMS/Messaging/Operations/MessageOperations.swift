@@ -15,33 +15,33 @@ struct MessageOperations {
     
     
     
-    static func getOperationsToPersistMessagesInStore(using context:NSManagedObjectContext, forConversationWithCustomer customer:Customer, fromFirebaseEntries entries:[FirebaseMessage]?) -> [Operation] {
-//        let fetchFromStore_Operation = FetchSavedCustomersEntries_Operation(context: context, agent: agent)
-//        let deleteRedundantEntriesFromStore_Operation = DeleteRedundantCustomerEntries_Operation(context: context, agent: agent, serverEntries: entries)
-        let addToStore_Operation = MergeMessageEntriesFromFirebaseToStore_Operation(context: context, conversation: customer, serverEntries: entries)
+    static func getOperationsToPersistMessagesInStore(using context:NSManagedObjectContext, forConversationWithCustomer customer:Customer, fromFirebaseEntries entries:[FirebaseMessage]?, fetchedEntries:[UserMessage]?) -> [Operation] {
+        //        let fetchFromStore_Operation = FetchSavedCustomersEntries_Operation(context: context, agent: agent)
+        //        let deleteRedundantEntriesFromStore_Operation = DeleteRedundantCustomerEntries_Operation(context: context, agent: agent, serverEntries: entries)
+        let addToStore_Operation = MergeMessageEntriesFromFirebaseToStore_Operation(context: context, conversation: customer, serverEntries: entries, fetchedEntries: fetchedEntries)
         return [addToStore_Operation]
         /*
-        let passFetchResultsToStore_Operation = BlockOperation { [unowned fetchFromStore_Operation, unowned deleteRedundantEntriesFromStore_Operation, unowned addToStore_Operation] in
-            guard case let .success(entries) = fetchFromStore_Operation.result else {
-                #if !RELEASE
-                print("Unresolved Error: Unable to get result(Customer) from fetchFromStore_Operation")
-                #endif
-                deleteRedundantEntriesFromStore_Operation.cancel()
-                return
-            }
-            deleteRedundantEntriesFromStore_Operation.fetchedEntries = entries
-            addToStore_Operation.fetchedEntries = entries
-        }
-        passFetchResultsToStore_Operation.addDependency(fetchFromStore_Operation)
-        deleteRedundantEntriesFromStore_Operation.addDependency(passFetchResultsToStore_Operation)
-        addToStore_Operation.addDependency(passFetchResultsToStore_Operation)
-        
-        return [
-            fetchFromStore_Operation,
-            passFetchResultsToStore_Operation,
-            deleteRedundantEntriesFromStore_Operation,
-            addToStore_Operation
-        ]
+         let passFetchResultsToStore_Operation = BlockOperation { [unowned fetchFromStore_Operation, unowned deleteRedundantEntriesFromStore_Operation, unowned addToStore_Operation] in
+         guard case let .success(entries) = fetchFromStore_Operation.result else {
+         #if !RELEASE
+         print("Unresolved Error: Unable to get result(Customer) from fetchFromStore_Operation")
+         #endif
+         deleteRedundantEntriesFromStore_Operation.cancel()
+         return
+         }
+         deleteRedundantEntriesFromStore_Operation.fetchedEntries = entries
+         addToStore_Operation.fetchedEntries = entries
+         }
+         passFetchResultsToStore_Operation.addDependency(fetchFromStore_Operation)
+         deleteRedundantEntriesFromStore_Operation.addDependency(passFetchResultsToStore_Operation)
+         addToStore_Operation.addDependency(passFetchResultsToStore_Operation)
+         
+         return [
+         fetchFromStore_Operation,
+         passFetchResultsToStore_Operation,
+         deleteRedundantEntriesFromStore_Operation,
+         addToStore_Operation
+         ]
          */
     }
     
@@ -231,6 +231,52 @@ struct MessageOperations {
 
 
 
+
+
+/*
+ /// Fetches saved UserMessage Entries from the Core Data store.
+ class FetchSavedUserMessageEntries_Operation: Operation {
+ enum OperationError: Error, LocalizedError {
+ case coreDataError(error:Error)
+ 
+ var localizedDescription: String {
+ switch self {
+ case let .coreDataError(error): return "Core Data Error: \(error.localizedDescription)"
+ }
+ }
+ }
+ private let context: NSManagedObjectContext
+ private let agent:Agent
+ var result: Result<[UserMessage], OperationError>?
+ 
+ init(context: NSManagedObjectContext, agent:Agent) {
+ self.context = context
+ self.agent = agent
+ }
+ 
+ override func main() {
+ let request: NSFetchRequest<Customer> = Customer.fetchRequest()
+ request.predicate = NSPredicate(format: "\(#keyPath(Customer.agent)) == %@", agent)
+ request.sortDescriptors = [NSSortDescriptor(key: #keyPath(QuickResponse.updatedAt), ascending: false)]
+ 
+ context.performAndWait {
+ do {
+ let fetchResults = try context.fetch(request)
+ self.result = .success(fetchResults)
+ } catch {
+ let message = "Error fetching from context: \(error)"
+ #if !RELEASE
+ print(message)
+ #endif
+ os_log("%@", log: .coredata, type: .error, message)
+ self.result = .failure(.coreDataError(error: error))
+ }
+ }
+ }
+ }
+ */
+
+
 /// Add Customers entries returned from the server to the Core Data store.
 class MergeMessageEntriesFromFirebaseToStore_Operation: Operation {
     enum OperationError: Error, LocalizedError {
@@ -243,44 +289,87 @@ class MergeMessageEntriesFromFirebaseToStore_Operation: Operation {
         }
     }
     var error:OperationError?
-
+    
     private let context: NSManagedObjectContext
     private let conversation:Customer
     let serverEntries:[FirebaseMessage]?
-    
-    init(context: NSManagedObjectContext, conversation:Customer, serverEntries:[FirebaseMessage]?) {
+    let fetchedEntries:[UserMessage]?
+    init(context: NSManagedObjectContext, conversation:Customer, serverEntries:[FirebaseMessage]?, fetchedEntries:[UserMessage]?) {
         self.context = context
         self.conversation = conversation
         self.serverEntries = serverEntries
+        self.fetchedEntries = fetchedEntries
         self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
     }
     
     override func main() {
         guard let serverEntries = serverEntries else {
-            #if !RELEASE
-            print("No Server Entry to add, returning")
-            #endif
+            printAndLog(message: "No firebase message entries to add", log: .firebase, logType: .info)
             return
         }
         context.performAndWait {
             do {
-//                _ = serverEntries.map { serverEntry -> Customer in
-//                    let isPinned = fetchedEntries?.first(where: { conversation -> Bool in
-//                        conversation.externalConversationID == serverEntry.conversationID
-//                    })?.isPinned ?? false
                 
-//                    return Customer(context: context, conversationEntryFromFirebase: serverEntry, agent: agent, isPinned: isPinned)
-                _ = serverEntries.map { UserMessage(context: context, messageEntryFromFirebase: $0, forConversationWithCustomer: conversation) }
+                _ = serverEntries.map { serverEntry -> UserMessage in
+                    let fetchedEntry = fetchedEntries?.first(where: { $0.firebaseKey == serverEntry.firebaseKey })
+                    let isSeen = fetchedEntry?.isSeen ?? true
+                    let cachedImageUUID = fetchedEntry?.imageUUID
+                    return UserMessage(context: context, messageEntryFromFirebase: serverEntry, forConversationWithCustomer: conversation, imageUUID: cachedImageUUID, isSeen: isSeen)
+                }
+                //_ = serverEntries.map { UserMessage(context: context, messageEntryFromFirebase: $0, forConversationWithCustomer: conversation, imageUUID: nil) }
                 try context.save()
             } catch {
                 print("Error adding entries to store: \(error))")
                 self.error = .coreDataError(error: error)
             }
         }
-        
     }
 }
 
+
+
+
+
+
+
+// MARK: - /**************************************** UPDATE USER MESSAGE- <SET SEEN = true> OPERATIONS <BEGIN> ****************************************/
+
+
+/// Set  message's isSeen flag to`1`  in the Core Data store.
+class MarkAllMessagesAsSeenInStore_Operation: Operation {
+    enum OperationError: Error, LocalizedError {
+        case coreDataError(error:Error)
+        
+        var localizedDescription: String {
+            switch self {
+                case let .coreDataError(error): return "Core Data Error: \(error.localizedDescription)"
+            }
+        }
+    }
+    var error:OperationError?
+    private let context: NSManagedObjectContext
+    private let conversation:Customer
+    init(context: NSManagedObjectContext, conversation:Customer) {
+        self.context = context
+        self.conversation = conversation
+    }
+    
+    override func main() {
+        let request = NSBatchUpdateRequest(entityName: NSStringFromClass(UserMessage.self))
+        request.predicate = NSPredicate(format: "\(#keyPath(UserMessage.conversation)) == %@", conversation)
+        request.propertiesToUpdate = ["isSeen" : true]
+        request.resultType = .updatedObjectIDsResultType
+        do {
+            let batchUpdateResult = try self.context.execute(request) as? NSBatchUpdateResult
+            if let updatedObjectIDs = batchUpdateResult?.result as? [NSManagedObjectID] {
+                let changes = [NSUpdatedObjectsKey: updatedObjectIDs]
+                NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [PersistentContainer.shared.viewContext])
+            }
+        } catch {
+            printAndLog(message: "Error batch updating user messages mark seen: \(error)", log: .coredata, logType: .error)
+        }
+    }
+}
 
 
 
@@ -419,7 +508,7 @@ class SendNewTextMessageOnServer_Operation: Operation {
     private let headers:[HTTPHeader] = [
         HTTPHeader(key: .contentType, value: "application/json")
     ]
-
+    
     init(customer:Customer) {
         self.customer = customer
     }
@@ -617,7 +706,7 @@ class ClearUnreadMessagesCountOnFirebase_Operation: Operation {
     }
     
     override func start() {
-    
+        
         willChangeValue(forKey: #keyPath(isExecuting))
         downloading = true
         didChangeValue(forKey: #keyPath(isExecuting))
@@ -735,7 +824,7 @@ class MarkMessageDeletedOnFirebase_Operation: Operation {
     }
     
     override func start() {
-    
+        
         willChangeValue(forKey: #keyPath(isExecuting))
         downloading = true
         didChangeValue(forKey: #keyPath(isExecuting))

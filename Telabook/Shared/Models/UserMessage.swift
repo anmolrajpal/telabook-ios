@@ -53,7 +53,7 @@ extension UserMessage {
         self.isSending = true
         self.lastRefreshedAt = Date()
     }
-    convenience init(context: NSManagedObjectContext, messageEntryFromFirebase entry:FirebaseMessage, forConversationWithCustomer conversation:Customer) {
+    convenience init(context: NSManagedObjectContext, messageEntryFromFirebase entry:FirebaseMessage, forConversationWithCustomer conversation:Customer, imageUUID: UUID?, isSeen:Bool) {
         self.init(context: context)
         self.accountSID = entry.accountSID
         self.conversationID = Int64(entry.conversationID)
@@ -77,10 +77,12 @@ extension UserMessage {
         self.tags = entry.tags
         self.textMessage = entry.messageText
         self.updatedAt = entry.updatedAt
-        
-        self.lastRefreshedAt = Date()
-        
         self.conversation = conversation
+        
+        // - Local stored properties
+        self.imageUUID = imageUUID
+        self.isSeen = isSeen
+        self.lastRefreshedAt = Date()
     }
     var messageType:MessageCategory {
         MessageCategory(stringValue: self.type!)
@@ -263,18 +265,61 @@ struct ImageItem: MediaItem {
     init(imageUrl: URL, size:CGSize = .init(width: 240, height: 240)) {
         self.url = imageUrl
         self.size = size
-        self.placeholderImage = size.width > size.height ? #imageLiteral(resourceName: "placeholder-image") : #imageLiteral(resourceName: "placeholder.png")
+        self.placeholderImage = UIImage()
+//        self.placeholderImage = size.width > size.height ? #imageLiteral(resourceName: "placeholder-image") : #imageLiteral(resourceName: "placeholder.png")
     }
     init(imageUrl: URL, imageText:String, size:CGSize = .init(width: 240, height: 240)) {
         self.url = imageUrl
         self.imageText = imageText
         self.size = size
-        self.placeholderImage = size.width > size.height ? #imageLiteral(resourceName: "placeholder-image") : #imageLiteral(resourceName: "placeholder.png")
+        self.placeholderImage = UIImage()
+//        self.placeholderImage = size.width > size.height ? #imageLiteral(resourceName: "placeholder-image") : #imageLiteral(resourceName: "placeholder.png")
     }
     init(imageUrl:URL, image:UIImage, size:CGSize = .init(width: 240, height: 240)) {
         self.url = imageUrl
         self.image = image
         self.size = size
-        self.placeholderImage = size.width > size.height ? #imageLiteral(resourceName: "placeholder-image") : #imageLiteral(resourceName: "placeholder.png")
+        self.placeholderImage = UIImage()
+//        self.placeholderImage = size.width > size.height ? #imageLiteral(resourceName: "placeholder-image") : #imageLiteral(resourceName: "placeholder.png")
+    }
+}
+
+
+
+
+extension UserMessage {
+    func imageLocalURL() -> URL? {
+        guard let uuid = imageUUID else { return nil }
+        let fileName = uuid.uuidString + ".jpg"
+        let url = conversation!.mediaFolder().appendingPathComponent(fileName)
+        return url
+    }
+    
+    
+    
+    
+    /**
+     Load the image from the cached file if it exists, otherwise from the attachment’s imageData.
+     
+     Attachments created by Core Data with CloudKit don’t have cached files.
+     Provide a new task context to load the image data, and release it after the image finishes loading.
+     */
+    func getImage() -> UIImage? {
+        // Load the image from the cached file if the file exists.
+        guard let url = imageLocalURL() else { return nil }
+        var image: UIImage?
+        
+        var nsError: NSError?
+        NSFileCoordinator().coordinate(
+            readingItemAt: url, options: .withoutChanges, error: &nsError,
+            byAccessor: { (newURL: URL) -> Void in
+                if let data = try? Data(contentsOf: newURL) {
+                    image = UIImage(data: data, scale: UIScreen.main.scale)
+                }
+        })
+        if let nsError = nsError {
+            print("###\(#function): \(nsError.localizedDescription)")
+        }
+        return image
     }
 }

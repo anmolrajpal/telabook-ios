@@ -87,6 +87,10 @@ class MessagesController: MessagesViewController {
     var shouldFetchMore = true {
         didSet {
             if shouldFetchMore == false {
+                DispatchQueue.main.async {
+                    guard self.messagesCollectionView.numberOfSections > 0 else { return }
+                    self.messagesCollectionView.reloadSections([0])
+                }
                 print("should not fetch more")
                 //                self.headerSpinnerView?.spinner.stopAnimating()
                 //                self.messagesCollectionView.reloadSections([0])
@@ -102,9 +106,32 @@ class MessagesController: MessagesViewController {
         }
     }
     
+    
+    var mediaMessages:[UserMessage] {
+        messages.filter({ $0.messageType == .multimedia && $0.imageLocalURL() != nil })
+    }
+    
+    
+//    var mediaMessages:[URL] {
+//        var contents = [URL]()
+//        do {
+//            contents = try FileManager.default.contentsOfDirectory(at: customer.mediaFolder(), includingPropertiesForKeys: nil)
+//        } catch {
+//            printAndLog(message: error.localizedDescription, log: .ui, logType: .error)
+//        }
+//        return contents
+//    }
+    
+    
+    
 //    var messages:[UserMessage] {
 //        fetchedResultsController.fetchedObjects?.reversed() ?? []
 //    }
+    
+    
+    
+    let serialQueue = DispatchQueue(label: "conversation-media-download-queue")
+    
     
     
     
@@ -143,16 +170,17 @@ class MessagesController: MessagesViewController {
         super.viewDidDisappear(animated)
         stopObservingReachability()
         removeFirebaseObservers()
+        markAllMessagesAsSeen()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+//        self.becomeFirstResponder()
         observeReachability()
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         addFirebaseObservers()
     }
-    
     
     private func addFirebaseObservers() {
         childAddedHandle = observeNewMessages()

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19E287" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19F101" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Address" representedClassName="Address" syncable="YES" codeGenerationType="class">
         <attribute name="city" optional="YES" attributeType="String"/>
         <attribute name="street" optional="YES" attributeType="String"/>
@@ -164,6 +164,16 @@
         <relationship name="externalConvo" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ExternalChat" inverseName="externalChats" inverseEntity="ExternalChat"/>
         <relationship name="internal" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="InternalConversation" inverseName="external" inverseEntity="InternalConversation"/>
     </entity>
+    <entity name="ImageMetaData" representedClassName="ImageMetaData" syncable="YES" codeGenerationType="class">
+        <attribute name="url" optional="YES" attributeType="URI"/>
+        <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="url"/>
+                <constraint value="uuid"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
     <entity name="InternalConversation" representedClassName=".InternalConversation" syncable="YES">
         <attribute name="didNumber" optional="YES" attributeType="String"/>
         <attribute name="externalPendingMessages" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
@@ -183,6 +193,9 @@
         <attribute name="username" optional="YES" attributeType="String"/>
         <attribute name="workerId" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="external" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ExternalConversation" inverseName="internal" inverseEntity="ExternalConversation"/>
+    </entity>
+    <entity name="MessageImageData" representedClassName="MessageImageData" syncable="YES" codeGenerationType="class">
+        <attribute name="data" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
     </entity>
     <entity name="Permission" representedClassName=".Permission" syncable="YES">
         <attribute name="create" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
@@ -225,6 +238,7 @@
         <attribute name="hasError" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="imageURL" optional="YES" attributeType="URI"/>
         <attribute name="imageUrlString" optional="YES" attributeType="String"/>
+        <attribute name="imageUUID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="isMessageDeleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isSeen" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isSending" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
@@ -275,7 +289,9 @@
         <element name="Permission" positionX="639.96484375" positionY="830.390625" width="128" height="148"/>
         <element name="Person" positionX="490.1484375" positionY="-384.12890625" width="128" height="105"/>
         <element name="QuickResponse" positionX="-939.1953125" positionY="409.9609375" width="128" height="178"/>
-        <element name="UserMessage" positionX="-32.5" positionY="212.10546875" width="128" height="416"/>
+        <element name="UserMessage" positionX="-32.5" positionY="212.10546875" width="128" height="431"/>
         <element name="UserObject" positionX="233.99609375" positionY="682.64453125" width="128" height="225"/>
+        <element name="MessageImageData" positionX="-738" positionY="-234" width="128" height="58"/>
+        <element name="ImageMetaData" positionX="-729" positionY="-225" width="128" height="73"/>
     </elements>
 </model>

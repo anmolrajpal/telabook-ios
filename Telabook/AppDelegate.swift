@@ -63,6 +63,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
 
+    
+    
+    
+        
     func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
         // Called when the user discards a scene session.
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
@@ -73,6 +77,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 //        PersistenceService.shared.saveContext()
 //    }
+    
+    static var conversationMediaFolder: URL = {
+        let cacheFolder = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        let appName:String = try! Configuration.value(for: .bundleDisplayName)
+        let url = cacheFolder.appendingPathComponent("\(appName)/conversation-media/companies/\(AppData.companyId)", isDirectory: true)
+        
+        // Create it if it doesn’t exist.
+        if !FileManager.default.fileExists(atPath: url.path) {
+            do {
+                try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+
+            } catch {
+                let errorMessage = "### \(#function): Failed to create conversation media folder URL: \(error)"
+                printAndLog(message: errorMessage, log: .ui, logType: .error)
+            }
+        }
+        return url
+    }()
+    
+    
+    
+    
     
     /*
     // MARK: - Core Data stack
@@ -236,4 +262,3 @@ extension AppDelegate : MessagingDelegate {
 //    }
     // [END ios_10_data_message]
 }
-

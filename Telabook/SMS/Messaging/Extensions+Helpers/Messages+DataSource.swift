@@ -120,14 +120,16 @@ extension MessagesController: MessagesDataSource {
     }
     
     
-//    func messageHeaderView(for indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageReusableView {
-//        let view = messagesCollectionView.dequeueReusableHeaderView(SpinnerReusableView.self, for: indexPath)
-//        headerSpinnerView = view
-//        return view
-//    }
+    
     func messageFooterView(for indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageReusableView {
         let view = messagesCollectionView.dequeueReusableFooterView(NewMessagesCountReusableView.self, for: indexPath)
         view.count = 4
+        return view
+    }
+    func messageHeaderView(for indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageReusableView {
+        let view = messagesCollectionView.dequeueReusableHeaderView(SpinnerReusableView.self, for: indexPath)
+//        view.spinner.startAnimating()
+//        headerSpinnerView = view
         return view
     }
 //    func collectionView(_ collectionView: UICollectionView, willDisplaySupplementaryView view: UICollectionReusableView, forElementKind elementKind: String, at indexPath: IndexPath) {
@@ -158,9 +160,13 @@ class SpinnerReusableView:MessageReusableView {
         addSubview(spinner)
         spinner.centerXAnchor.constraint(equalTo: centerXAnchor).activate()
         spinner.centerYAnchor.constraint(equalTo: centerYAnchor).activate()
+        spinner.startAnimating()
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    deinit {
+        spinner.stopAnimating()
     }
     override class var requiresConstraintBasedLayout: Bool { true }
 }

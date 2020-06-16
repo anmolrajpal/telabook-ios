@@ -43,8 +43,8 @@ extension MessagesController: MessagesLayoutDelegate {
     }
 
     func headerViewSize(for section: Int, in messagesCollectionView: MessagesCollectionView) -> CGSize {
-//        section == 0 && shouldShowLoader ? .init(width: messagesCollectionView.frame.width, height: SpinnerReusableView.viewHeight) : .zero
-        return .zero
+//        .zero
+        section == 0 && shouldFetchMore ? .init(width: messagesCollectionView.frame.width, height: SpinnerReusableView.viewHeight) : .zero
     }
     func footerViewSize(for section: Int, in messagesCollectionView: MessagesCollectionView) -> CGSize {
         shouldShowNewMessagesCountFooter(at: section) ? .init(width: messagesCollectionView.frame.width, height: NewMessagesCountReusableView.viewHeight) : .zero

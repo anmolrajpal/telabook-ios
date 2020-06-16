@@ -159,7 +159,24 @@ class MoreViewController: UIViewController {
         alert.preferredAction = clearAction
         self.present(alert, animated: true, completion: nil)
     }
-    
+    internal func clearCacheDirectory() {
+        let cacheURL =  FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        let fileManager = FileManager.default
+        do {
+            // Get the directory contents urls (including subfolders urls)
+            let directoryContents = try FileManager.default.contentsOfDirectory(at: cacheURL, includingPropertiesForKeys: nil, options: [])
+            directoryContents.forEach({
+                do {
+                    try fileManager.removeItem(at: $0)
+                }
+                catch let error as NSError {
+                    debugPrint("Ooops! Something went wrong: \(error)")
+                }
+            })
+        } catch let error as NSError {
+            print(error.localizedDescription)
+        }
+    }
 }
 extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

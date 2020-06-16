@@ -39,6 +39,7 @@ extension MoreViewController {
             } else {
                 PINCache.shared.removeAllObjects()
                 imageCache.removeAllObjects()
+                self.clearCacheDirectory()
             }
         }
         queue.addOperations([operation], waitUntilFinished: false)

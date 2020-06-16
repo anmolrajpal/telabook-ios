@@ -15,4 +15,5 @@ public enum Constants:String {
     case timoutInterval = "TIMEOUT_INTERVAL"
     case appName = "APP_NAME"
     case bundleID = "BUNDLE_ID"
+    case bundleDisplayName = "CFBundleDisplayName"
 }

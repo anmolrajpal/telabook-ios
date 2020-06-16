@@ -9,7 +9,7 @@
 import UIKit
 import MessageKit
 import PINRemoteImage
-
+import CoreData
 
 extension MessagesController: MessagesDisplayDelegate {
     
@@ -168,15 +168,136 @@ extension MessagesController: MessagesDisplayDelegate {
         accessoryView.layer.cornerRadius = accessoryView.frame.height / 2
         accessoryView.backgroundColor = UIColor.systemRed.withAlphaComponent(0.2)
     }
-    
+    func downloadMessageImage(for message:UserMessage, indexPath:IndexPath, viewContext:NSManagedObjectContext) {
+        guard let url = message.imageURL else { print("Message image remote url not available"); return }
+        print("Downloading image for remote url: \(url)")
+        serialQueue.async {
+            URLSession.shared.downloadTask(with: url) { [weak self] (tmpURL, response, error) in
+                guard let tmpURL = tmpURL else {
+                    print("Error downloading image; no tmp url")
+//                    completion(nil)
+                    return
+                }
+                if let error = error {
+                    print("MMS image downloading error; \(error.localizedDescription)")
+//                    completion(nil)
+                    return
+                }
+                
+//                guard let imageData = try? Data(contentsOf: tmpURL) else { print("Failed to get data from temp url"); return }
+                    
+                var destinationURL:URL?
+                viewContext.performAndWait {
+                    do {
+                        message.imageUUID = UUID()
+                        try viewContext.save()
+                        destinationURL = message.imageLocalURL()
+                    } catch {
+                        print("### \(#function): Core Data Error updating imageUUID: \(error)")
+//                        completion(nil)
+                    }
+                }
+                do {
+                    try FileManager.default.moveItem(at: tmpURL, to: destinationURL!)
+//                    let image = UIImage(contentsOfFile: destinationURL!.path)
+                    DispatchQueue.main.async {
+                        UIView.performWithoutAnimation {
+                            self?.messagesCollectionView.reloadSections([indexPath.section])
+                        }
+//                        if let cell = self?.messagesCollectionView.cellForItem(at: indexPath) as? MediaMessageCell {
+//                            cell.imageView.image = image
+//                            if let spinner = cell.imageView.subviews.first as? UIActivityIndicatorView {
+//                                spinner.stopAnimating()
+//                            }
+//                        }
+                    }
+//                    DispatchQueue.main.async {
+//                        completion(image)
+//                    }
+                } catch {
+                    print("### \(#function): Failed to move image file from tmp url: \(tmpURL) to image local url: \(destinationURL!); \nError Description: \(error)")
+//                    completion(nil)
+                }
+                
+//                var nsError: NSError?
+//                NSFileCoordinator().coordinate(writingItemAt: destinationURL!, options: .forReplacing, error: &nsError,
+//                                               byAccessor: { (newURL: URL) -> Void in
+//                    do {
+//                        try imageData.write(to: newURL, options: .atomic)
+//                    } catch {
+//                        print("###\(#function): Failed to save an image file: \(destinationURL!) with error description: \(error)")
+//                    }
+//                })
+//                if let nsError = nsError {
+//                    print("###\(#function): \(nsError.localizedDescription)")
+//                }
+//                DispatchQueue.main.async {
+//                    messagesCollectionView.reloadSections([indexPath.section])
+//                }
+            }.resume()
+        }
+    }
     func configureMediaMessageImageView(_ imageView: UIImageView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
 //        imageView.subviews.forEach { $0.removeFromSuperview() }
         let message = message as! UserMessage
-        guard let url = message.imageURL else { return }
+//        guard let url = message.imageURL else { print("Message image remote url not available"); return }
+        let loader = UIActivityIndicatorView(style: .medium)
+        loader.color = .white
+        loader.hidesWhenStopped = true
+        loader.startAnimating()
+        loader.translatesAutoresizingMaskIntoConstraints = false
+        
+        imageView.addSubview(loader)
+        loader.centerXAnchor.constraint(equalTo: imageView.centerXAnchor).activate()
+        loader.centerYAnchor.constraint(equalTo: imageView.centerYAnchor).activate()
+        
+        if message.imageUUID != nil,
+            let image = message.getImage() {
+            imageView.image = image
+            print("Loading image from local url: \(String(describing: message.imageLocalURL()))")
+            loader.stopAnimating()
+        } else {
+//            if !messagesCollectionView.isDragging && !messagesCollectionView.isDecelerating {
+                downloadMessageImage(for: message, indexPath: indexPath, viewContext: viewContext)
+//            }
+//            downloadMessageImage(for: message, viewContext: viewContext) { image in
+//                if let image = image {
+//                    imageView.image = image
+//                    loader.stopAnimating()
+//                } else {
+//                    imageView.image = UIImage()
+//                }
+//            }
+            /*
+            imageView.pin_updateWithProgress = true
+            imageView.pin_setImage(from: url) { result in
+                if let image = result.image,
+                    let imageData = image.jpegData(compressionQuality: 1) {
+                    DispatchQueue.global().async {
+                        var nsError: NSError?
+                        NSFileCoordinator().coordinate(writingItemAt: message.imageLocalURL(), options: .forReplacing, error: &nsError,
+                                                       byAccessor: { (newURL: URL) -> Void in
+                            do {
+                                try imageData.write(to: newURL, options: .atomic)
+                            } catch {
+                                print("###\(#function): Failed to save an image file: \(message.imageLocalURL())")
+                            }
+                        })
+                        if let nsError = nsError {
+                            print("###\(#function): \(nsError.localizedDescription)")
+                        }
+                    }
+                }
+            }
+            */
+        }
+        
+        
+        
         if let text = message.textMessage,
             !text.isBlank {
             #if !RELEASE
-            print("Image Text for image with URL: \(url) is => \(text)")
+//            print("Image Text for image with URL: \(url) is => \(text)")
             #endif
 //            let textView = mediaTextView
 //            textView.text = text
@@ -186,12 +307,9 @@ extension MessagesController: MessagesDisplayDelegate {
             
         }
 //        imageView.loadImageUsingCache(with: url.absoluteString)
-        imageView.pin_updateWithProgress = true
+//        imageView.pin_updateWithProgress = true
+//        imageView.pin_setImage(from: url) { result in
         
-        imageView.pin_setImage(from: url) { result in
-//             should save image to file directory
-//            messagesCollectionView.layoutIfNeeded()
-        }
         
     }
 

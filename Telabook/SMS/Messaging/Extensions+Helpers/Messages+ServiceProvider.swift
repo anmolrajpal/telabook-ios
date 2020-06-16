@@ -29,8 +29,34 @@ extension MessagesController {
         queue.addOperations(operations, waitUntilFinished: false)
     }
     
+    
+    
+    
     /* ------------------------------------------------------------------------------------------------------------ */
-    internal func persistFirebaseMessagesInStore(entries:[FirebaseMessage]) {
+    internal func persistFirebaseMessageInStore(entry:FirebaseMessage) {
+        let fetchedEntry = self.messages.first(where: { $0.firebaseKey == entry.firebaseKey })
+        let isSeen = fetchedEntry?.isSeen ?? false
+        let cachedImageUUID = fetchedEntry?.imageUUID
+        let context = PersistentContainer.shared.newBackgroundContext()
+        let objectID = customer.objectID
+        let referenceContext = context.object(with: objectID) as! Customer
+//        let context = viewContext
+        context.performAndWait {
+            do {
+                _ = UserMessage(context: context, messageEntryFromFirebase: entry, forConversationWithCustomer: referenceContext, imageUUID: cachedImageUUID, isSeen: isSeen)
+                try context.save()
+            } catch let error {
+                printAndLog(message: "Error persisting observed message: \(error)", log: .coredata, logType: .error)
+            }
+        }
+    }
+    /* ------------------------------------------------------------------------------------------------------------ */
+    
+    
+    
+    
+    /* ------------------------------------------------------------------------------------------------------------ */
+    internal func persistInitialFirebaseMessagesInStore(entries:[FirebaseMessage], fetchedEntries:[UserMessage]?) {
         let queue = OperationQueue()
         queue.qualityOfService = .userInitiated
         queue.maxConcurrentOperationCount = 1
@@ -38,10 +64,45 @@ extension MessagesController {
         let context = PersistentContainer.shared.newBackgroundContext()
         let objectID = customer.objectID
         let referenceContext = context.object(with: objectID) as! Customer
-        let operations = MessageOperations.getOperationsToPersistMessagesInStore(using: context, forConversationWithCustomer: referenceContext, fromFirebaseEntries: entries)
-        handleViewsStateForOperations(operations: operations, onOperationQueue: queue, completion: {_ in })
+        let operation = MergeMessageEntriesFromFirebaseToStore_Operation(context: context, conversation: referenceContext, serverEntries: entries, fetchedEntries: fetchedEntries)
+        operation.completionBlock = {
+                if let error = operation.error {
+                    print(error.localizedDescription)
+                    self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+                } else {
+                    if operation.serverEntries?.isEmpty == true { self.shouldFetchMore = false }
+                    self.messages.isEmpty ?
+                        self.loadInitialMessages(animated: true, fetchFromFirebase: false) :
+                        self.loadInitialMessages(animated: false, fetchFromFirebase: false)
+                    
+                }
+        }
+        queue.addOperations([operation], waitUntilFinished: false)
+    }
+    /* ------------------------------------------------------------------------------------------------------------ */
+    
+    
+    
+    /* ------------------------------------------------------------------------------------------------------------ */
+    internal func persistFirebaseMessagesInStore(entries:[FirebaseMessage], fetchedEntries:[UserMessage]?, offsetMessage:UserMessage) {
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
         
-        queue.addOperations(operations, waitUntilFinished: false)
+        let context = PersistentContainer.shared.newBackgroundContext()
+        let objectID = customer.objectID
+        let referenceContext = context.object(with: objectID) as! Customer
+        let operation = MergeMessageEntriesFromFirebaseToStore_Operation(context: context, conversation: referenceContext, serverEntries: entries, fetchedEntries: fetchedEntries)
+        operation.completionBlock = {
+                if let error = operation.error {
+                    print(error.localizedDescription)
+                    self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+                } else {
+                    if operation.serverEntries?.isEmpty == true { self.shouldFetchMore = false }
+                    self.loadMoreMessages(offsetMessage: offsetMessage, fetchFromFirebase: false)
+                }
+        }
+        queue.addOperations([operation], waitUntilFinished: false)
     }
     /* ------------------------------------------------------------------------------------------------------------ */
     
@@ -113,6 +174,29 @@ extension MessagesController {
     
     
     
+    /* ------------------------------------------------------------------------------------------------------------ */
+    internal func markAllMessagesAsSeen() {
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+        
+        let context = PersistentContainer.shared.newBackgroundContext()
+        let objectID = customer.objectID
+        let referenceCustomer = context.object(with: objectID) as! Customer
+        
+        let operation = MarkAllMessagesAsSeenInStore_Operation(context: context, conversation: referenceCustomer)
+        operation.completionBlock = {
+            if let error = operation.error {
+                printAndLog(message: error.localizedDescription, log: .coredata, logType: .error)
+            }
+        }
+        queue.addOperations([operation], waitUntilFinished: false)
+    }
+    /* ------------------------------------------------------------------------------------------------------------ */
+    
+    
+    
+    
     
     internal func updateNewMessageToFirebase(message:UserMessage) {
         self.reference.child(message.messageId).setValue(message.toFirebaseObject()) { (error, _) in
@@ -146,7 +230,7 @@ extension MessagesController {
                             print(error.localizedDescription)
                             self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
                         } else {
-                            if self.messages.isEmpty { self.loadInitialMessages(animated: true) }
+                            self.loadInitialMessages(animated: true, fetchFromFirebase: false)
                             if operation.serverEntries?.isEmpty == true {
                                 self.shouldFetchMore = false
                             }
@@ -249,13 +333,4 @@ extension MessagesController {
             })
         }
     }
-}
-
-
-
-public func printAndLog(message:String, log:OSLog, logType:OSLogType) {
-    #if !RELEASE
-    print(message)
-    #endif
-    os_log("%@", log: log, type: logType, message)
 }

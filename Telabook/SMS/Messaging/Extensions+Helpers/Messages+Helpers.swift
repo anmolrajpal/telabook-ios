@@ -18,8 +18,8 @@ extension MessagesController {
         setupViews()
         configureMessageCollectionView()
         configureMessageInputBar()
-        loadInitialMessages()
-        loadInitialMessagesFromFirebase()
+        loadInitialMessages(fetchFromFirebase: true)
+//        loadInitialMessagesFromFirebase()
         setupTargetActions()
         reloadQuickResponses()
         clearUnreadMessagesCount()
@@ -155,137 +155,123 @@ extension MessagesController {
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
     @objc internal func cameraButtonDidTap() {
         messageInputBar.inputTextView.resignFirstResponder()
         promptPhotosPickerMenu()
     }
+    
+    
+    
     internal func promptPhotosPickerMenu() {
-        let alert = UIAlertController(title: "Choose Image Source", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
-        let cameraAction = UIAlertAction(title: "Camera", style: UIAlertAction.Style.default, handler: { (action) in
-            self.handleSourceTypeCamera()
-        })
+        let alert = UIAlertController(title: "Choose Image Source", message: nil, preferredStyle: .actionSheet)
+        let cameraAction = UIAlertAction(title: "Camera", style: .default, handler: { (action) in self.handleSourceTypeCamera() })
+        let photoLibraryAction = UIAlertAction(title: "Photo Library", style: .default, handler: { (action) in self.handleSourceTypeGallery() })
+        let conversationGalleryAction = UIAlertAction(title: "Conversation Gallery", style: .default, handler: { (action) in self.handleSourceTypeConversationGallery() })
+        let agentsGalleryAction = UIAlertAction(title: "Agent's Gallery", style: .default, handler: { (action) in self.handleSourceTypeAgentGallery() })
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         
-        let galleryAction = UIAlertAction(title: "Gallery", style: UIAlertAction.Style.default, handler: { (action) in
-            self.handleSourceTypeGallery()
-        })
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil)
         alert.addAction(cameraAction)
-        alert.addAction(galleryAction)
+        alert.addAction(photoLibraryAction)
+        alert.addAction(conversationGalleryAction)
+        alert.addAction(agentsGalleryAction)
         alert.addAction(cancelAction)
-        alert.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = UIColor.telaGray6
+        //        alert.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = UIColor.telaGray6
+        //        alert.view.tintColor = UIColor.telaBlue
+        //        alert.view.subviews.first?.subviews.first?.backgroundColor = .clear
+        //        alert.view.subviews.first?.backgroundColor = .clear
+        present(alert, animated: true, completion: nil)
+    }
+    private func handleSourceTypeCamera() {
+        requestCamera()
+    }
+    private func handleSourceTypeGallery() {
+        requestPhotoLibrary()
+    }
+    private func handleSourceTypeConversationGallery() {
         
-        alert.view.tintColor = UIColor.telaBlue
-        alert.view.subviews.first?.subviews.first?.backgroundColor = .clear
-        alert.view.subviews.first?.backgroundColor = .clear
-        self.present(alert, animated: true, completion: nil)
+    }
+    private func handleSourceTypeAgentGallery() {
+        
     }
     
     
+    // MARK: - Request Camera
     
-    func checkPhotoLibraryPermissions() {
-        let photoAuthorizationStatus = PHPhotoLibrary.authorizationStatus()
-        switch photoAuthorizationStatus {
-            case .authorized:
-                print("Access is granted by user")
-            case .notDetermined:
-                PHPhotoLibrary.requestAuthorization({
-                    (newStatus) in
-                    print("status is \(newStatus)")
-                    if newStatus ==  PHAuthorizationStatus.authorized {
-                        /* do stuff here */
-                        print("success")
-                    }
-                })
-                print("It is not determined until now")
-            case .restricted:
-                // same same
-                print("User do not have access to photo album.")
-            case .denied:
-                // same same
-                print("User has denied the permission.")
+    fileprivate func requestCamera() {
+        let status = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
+        switch status {
+            case .authorized: presentCamera()
+            case .notDetermined: requestCameraPermission()
+            case .denied, .restricted: alertCameraAccessNeeded()
             @unknown default: fatalError()
         }
     }
-    fileprivate func checkCameraPermissions() {
-        let authStatus = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
-        switch authStatus {
-            case .authorized: break
-            case .denied: alertToEncourageCameraAccessInitially()
-            case .notDetermined: alertPromptToAllowCameraAccessViaSetting()
-            default: alertToEncourageCameraAccessInitially()
+    fileprivate func requestCameraPermission() {
+        AVCaptureDevice.requestAccess(for: .video, completionHandler: {accessGranted in
+            guard accessGranted == true else { return }
+            self.presentCamera()
+        })
+    }
+    fileprivate func presentCamera() {
+        DispatchQueue.main.async {
+            let picker = UIImagePickerController()
+            picker.delegate = self
+            if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                picker.sourceType = .camera
+            } else {
+                picker.sourceType = .photoLibrary
+            }
+            self.present(picker, animated: true, completion: nil)
         }
     }
-    func alertToEncourageCameraAccessInitially() {
-        let alert = UIAlertController(
-            title: "IMPORTANT",
-            message: "Camera access required for clicking photo",
-            preferredStyle: UIAlertController.Style.alert
-        )
-        
-        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
-        alert.addAction(UIAlertAction(title: "Allow Camera", style: .cancel, handler: { (alert) -> Void in
-            guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
-                return
-            }
-            if UIApplication.shared.canOpenURL(settingsUrl) {
-                UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
-                    print("Settings opened: \(success)") // Prints true
-                })
-            }
+    fileprivate func alertCameraAccessNeeded() {
+        let alert = UIAlertController.telaAlertController(title: "Need Camera Access", message: "Camera access is required to take photo")
+        alert.addAction(UIAlertAction(title: "Allow", style: .cancel, handler: { _ in
+            AppDelegate.shared.launchAppSettings()
         }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
     }
     
-    func alertPromptToAllowCameraAccessViaSetting() {
-        
-        let alert = UIAlertController(
-            title: "IMPORTANT",
-            message: "Please allow camera access for clicking photo",
-            preferredStyle: UIAlertController.Style.alert
-        )
-        alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel) { alert in
-            AVCaptureDevice.requestAccess(for: AVMediaType.video) { granted in
-                DispatchQueue.main.async() {
-                    self.checkCameraPermissions()
-                }
-            }
-        })
+    
+    
+    // MARK: - Request Photo Library
+    
+    fileprivate func requestPhotoLibrary() {
+        let status = PHPhotoLibrary.authorizationStatus()
+        switch status {
+            case .authorized: presentPhotoLibrary()
+            case .notDetermined: requestPhotoLibraryPermission()
+            case .denied, .restricted: alertPhotoLibraryAccessNeeded()
+            @unknown default: fatalError()
+        }
+    }
+    fileprivate func requestPhotoLibraryPermission() {
+        PHPhotoLibrary.requestAuthorization { status in
+            guard status == .authorized else { return }
+            self.presentPhotoLibrary()
+        }
+    }
+    fileprivate func presentPhotoLibrary() {
+        DispatchQueue.main.async {
+            let picker = UIImagePickerController()
+            picker.delegate = self
+            picker.sourceType = .photoLibrary
+            self.present(picker, animated: true)
+        }
+    }
+    fileprivate func alertPhotoLibraryAccessNeeded() {
+        let alert = UIAlertController.telaAlertController(title: "Need Library Access", message: "Photo Library access is required to read and write images")
+        alert.addAction(UIAlertAction(title: "Allow", style: .cancel, handler: { _ in
+            AppDelegate.shared.launchAppSettings()
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
     }
-    internal func handleSourceTypeCamera() {
-        checkCameraPermissions()
-        let picker = UIImagePickerController()
-        picker.allowsEditing = true
-        
-        picker.delegate = self
-        
-        if UIImagePickerController.isSourceTypeAvailable(.camera) {
-            picker.sourceType = .camera
-        } else {
-            picker.sourceType = .photoLibrary
-        }
-        picker.modalPresentationStyle = .overFullScreen
-        present(picker, animated: true, completion: nil)
-    }
-    internal func handleSourceTypeGallery() {
-        checkPhotoLibraryPermissions()
-        let picker = UIImagePickerController()
-        picker.allowsEditing = true
-        picker.delegate = self
-        picker.sourceType = .photoLibrary
-        picker.modalPresentationStyle = .overFullScreen
-        present(picker, animated: true, completion: nil)
-    }
+    
+    
+    
+    
     
     private func uploadImage(_ image: UIImage, completion: @escaping(URL?, Error?) -> Void) {
         var uploadTask:StorageUploadTask

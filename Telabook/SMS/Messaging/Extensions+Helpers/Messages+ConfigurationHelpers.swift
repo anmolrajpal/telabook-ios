@@ -136,10 +136,6 @@ extension MessagesController {
             var menuItems = [UIMenuElement]()
             
             
-            let copyAction = UIAction(title: "Copy", image: SFSymbol.copy.image) { _ in
-                UIPasteboard.general.string = message.textMessage
-            }
-            
             
             let detailsAction = UIAction(title: "Details", image: SFSymbol.info.image) { _ in
                 
@@ -150,39 +146,89 @@ extension MessagesController {
             let replyAction = UIAction(title: "Reply", image: SFSymbol.reply.image) { _ in
                 
             }
-            let speakAction = UIAction(title: "Speak", image: SFSymbol.speak.image) { _ in
-                if let text = message.textMessage {
-                    let utterance = AVSpeechUtterance(string: text)
-//                    utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
-                    self.synthesizer.stopSpeaking(at: .immediate)
-                    self.synthesizer.speak(utterance)
-                }
-            }
+            
+            
+            
+            
+            
             let setTagsAction = UIAction(title: "Add Tags", image: SFSymbol.tag.image) { _ in
                 
             }
-            let deleteAction = UIAction(title: "Delete", image: SFSymbol.delete.image, attributes: .destructive) { _ in
-                self.promptDeleteMessageAlert(forMessage: message)
-            }
             
             
-            message.textMessage != nil ? menuItems.append(copyAction) : ()
-            if case .photo(let item) = message.kind {
-                let imageItem = item as! ImageItem
-                if let image = imageItem.image {
+            
+            
+            
+            
+            
+            
+            // MARK: - Save Image Action
+            if message.messageType == .multimedia {
+                if let image = message.getImage() {
                     let saveToCameraRollAction = UIAction(title: "Save Image", image: SFSymbol.download.image) { _ in
                         UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.image(_:didFinishSavingWithError:contextInfo:)), nil)
                     }
                     menuItems.append(saveToCameraRollAction)
                 }
+                // MARK: - Copy Image message Text Action
+                if let text = message.textMessage, !text.isEmpty, !text.isBlank {
+                    let copyAction = UIAction(title: "Copy Text", image: SFSymbol.copy.image) { _ in
+                        UIPasteboard.general.string = text
+                    }
+                    menuItems.append(copyAction)
+                }
+            } else {
+                // MARK: - Copy Action
+                if let text = message.textMessage, !text.isEmpty, !text.isBlank {
+                    let copyAction = UIAction(title: "Copy", image: SFSymbol.copy.image) { _ in
+                        UIPasteboard.general.string = text
+                    }
+                    menuItems.append(copyAction)
+                }
             }
+            
+            
             menuItems.append(replyAction)
             menuItems.append(forwardAction)
             menuItems.append(setTagsAction)
             menuItems.append(detailsAction)
-            menuItems.append(speakAction)
+            
+            
+            
+            if let text = message.textMessage, !text.isEmpty, !text.isBlank {
+                let speakAction = UIAction(title: "Speak", image: SFSymbol.speak.image) { _ in
+                    let utterance = AVSpeechUtterance(string: text)
+                    utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+                    self.synthesizer.stopSpeaking(at: .immediate)
+                    self.synthesizer.speak(utterance)
+                }
+                menuItems.append(speakAction)
+            }
+            
+            
+            
+            //MARK: - Delete message Action
+            let deleteAction = UIAction(title: "Delete", image: SFSymbol.delete.image, attributes: .destructive) { _ in
+                self.promptDeleteMessageAlert(forMessage: message)
+            }
             menuItems.append(deleteAction)
+            
+            
+            
+            
+            
             return UIMenu(title: "", children: menuItems)
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
+        guard let identifier = configuration.identifier as? String else { return }
+        guard let section = messages.firstIndex(where: { $0.firebaseKey == identifier }) else { return }
+        let message = messages[section]
+        guard message.messageType == .multimedia else { return }
+        
+        animator.addCompletion {
+            self.openMediaMessage(message: message)
         }
     }
     
@@ -287,15 +333,13 @@ extension MessagesController {
         if total > 700 {
             self.downIndicatorShouldShow = reverseOffset > 400 /* minimum distance */
         }
-        print(offset)
-        if offset <= 150 && messages.count > 3 && shouldFetchMore {
-            let offsetTime = Calendar.current.date(byAdding: .second, value: 1, to: screenEntryTime)!
-            if !isLoading && Date() > offsetTime {
-                print("isLoading: \(isLoading)")
-                //                firstMessage = fetchedResults?.first
-                self.loadMoreMessages(offsetMessage: messages[0])
-            }
-        }
+//        print(offset)
+//        if offset < 100 && messages.count > 3 && shouldFetchMore {
+//            let offsetTime = Calendar.current.date(byAdding: .second, value: 1, to: screenEntryTime)!
+//            if !isLoading && Date() > offsetTime {
+//                self.loadMoreMessages(offsetMessage: messages[0], fetchFromFirebase: true)
+//            }
+//        }
 //        print("Total: \(total) & offset: \(offset) :Difference=> \(total - offset)")
 //        let now = Date()
 //        let offsetTime = Calendar.current.date(byAdding: .second, value: 2, to: screenEntryTime)!
@@ -313,7 +357,28 @@ extension MessagesController {
 //        if offset < total * 0.2 {
 //            print("Now")
 //        }
-
+//        let offset = self.messagesCollectionView.contentOffset.y - messagesCollectionView.adjustedContentInset.bottom
+//        if offset < 100 && messages.count > 3 && shouldFetchMore {
+//            let offsetTime = Calendar.current.date(byAdding: .second, value: 1, to: screenEntryTime)!
+//            if !isLoading && Date() > offsetTime {
+//                self.loadMoreMessages(offsetMessage: messages[0], fetchFromFirebase: true)
+//            }
+//        }
+    }
+    
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        
+//        print("Scroll view offset after decelerting: \(scrollView.contentOffset)")
+//        let offset = self.messagesCollectionView.contentOffset.y - messagesCollectionView.adjustedContentInset.bottom
+//        print("Messages collection view offset after decelerating: \(offset)")
+//        print("isLoading: \(isLoading) &&&&& should fetch more: \(shouldFetchMore)")
+        if scrollView.contentOffset.y < 20 && messages.count > 0 && shouldFetchMore {
+//            let offsetTime = Calendar.current.date(byAdding: .second, value: 1, to: screenEntryTime)!
+            if !isLoading {
+                self.loadMoreMessages(offsetMessage: messages[0], fetchFromFirebase: true)
+            }
+        }
     }
 }
 

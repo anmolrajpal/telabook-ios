@@ -20,3 +20,15 @@ extension OSLog {
 extension OSLog.Category {
     fileprivate enum LogCategory:String { case UI, Firebase, Network, CoreData }
 }
+
+/// A method that logs the provided message in debug console and in mentioned os log. This method will log message in debug console only when it's under NON-RELEASE environement. Check the !RELEASE macro flag.
+/// - Parameters:
+///   - message: The String message to log
+///   - log: The log file. `eg: CoreData, Firebase, UI, etc`
+///   - logType: The category of log. `eg: debug, info, error, etc`
+public func printAndLog(message:String, log:OSLog, logType:OSLogType) {
+    #if !RELEASE
+    print(message)
+    #endif
+    os_log("%@", log: log, type: logType, message)
+}

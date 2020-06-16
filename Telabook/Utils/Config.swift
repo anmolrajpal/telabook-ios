@@ -10,6 +10,10 @@ import Foundation
 import Firebase
 import FirebaseStorage
 struct Config {
+    
+    
+    
+    
     internal enum Environment { case Development, Staging, Production }
     
     static let environment:Environment = .Development
