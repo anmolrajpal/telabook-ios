@@ -111,6 +111,20 @@
 		6F69BE9622D4DE4900F8903F /* QuickResponsesDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE9522D4DE4900F8903F /* QuickResponsesDataProvider.swift */; };
 		6F83FC2124608C6A00518201 /* QuickResponsesHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F83FC2024608C6A00518201 /* QuickResponsesHelpers.swift */; };
 		6F83FC232460A39B00518201 /* QuickResponsesTableViewHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F83FC222460A39B00518201 /* QuickResponsesTableViewHelpers.swift */; };
+		6F8A82FD249A1E05002ACDFE /* Messages+Multimedia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A82FC249A1E02002ACDFE /* Messages+Multimedia.swift */; };
+		6F8A82FF249A91B8002ACDFE /* FirebaseConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A82FE249A91B7002ACDFE /* FirebaseConfiguration.swift */; };
+		6F8A8301249B7C1B002ACDFE /* MMSCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A8300249B7C1A002ACDFE /* MMSCell.swift */; };
+		6F8A8303249B7C2F002ACDFE /* MMSCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A8302249B7C2F002ACDFE /* MMSCellView.swift */; };
+		6F8A8306249BDB79002ACDFE /* CircularProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A8305249BDB78002ACDFE /* CircularProgressBar.swift */; };
+		6F8A8308249BDB88002ACDFE /* CircularSpinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A8307249BDB88002ACDFE /* CircularSpinner.swift */; };
+		6F8A830E249DE05A002ACDFE /* AppSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A830D249DE05A002ACDFE /* AppSettingsViewController.swift */; };
+		6F8A8310249DE13F002ACDFE /* AppSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A830F249DE13F002ACDFE /* AppSettingsView.swift */; };
+		6F8A8312249DE6DA002ACDFE /* AppSettings+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A8311249DE6DA002ACDFE /* AppSettings+Helpers.swift */; };
+		6F8A8314249DE6E7002ACDFE /* AppSettings+TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A8313249DE6E7002ACDFE /* AppSettings+TableView.swift */; };
+		6F8A8317249DECBC002ACDFE /* KeyValueCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A8316249DECBC002ACDFE /* KeyValueCell.swift */; };
+		6F8A831A249E12D7002ACDFE /* ListPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A8319249E12D6002ACDFE /* ListPickerController.swift */; };
+		6F8A831C249E13B6002ACDFE /* ListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A831B249E13B6002ACDFE /* ListItem.swift */; };
+		6F8A831E249E1CC8002ACDFE /* SubtitleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A831D249E1CC8002ACDFE /* SubtitleTableViewCell.swift */; };
 		6F9011D422AC3B130046F5E3 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9011D322AC3B130046F5E3 /* ChatViewController.swift */; };
 		6F9011D622ACCA900046F5E3 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9011D522ACCA900046F5E3 /* Message.swift */; };
 		6F9011D822B12BC40046F5E3 /* SMSDetailVCCoreDataHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9011D722B12BC40046F5E3 /* SMSDetailVCCoreDataHelpers.swift */; };
@@ -371,6 +385,20 @@
 		6F6F9F89247FB76900C9114D /* Config-PreRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Config-PreRelease.xcconfig"; sourceTree = "<group>"; };
 		6F83FC2024608C6A00518201 /* QuickResponsesHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponsesHelpers.swift; sourceTree = "<group>"; };
 		6F83FC222460A39B00518201 /* QuickResponsesTableViewHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponsesTableViewHelpers.swift; sourceTree = "<group>"; };
+		6F8A82FC249A1E02002ACDFE /* Messages+Multimedia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Messages+Multimedia.swift"; sourceTree = "<group>"; };
+		6F8A82FE249A91B7002ACDFE /* FirebaseConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseConfiguration.swift; sourceTree = "<group>"; };
+		6F8A8300249B7C1A002ACDFE /* MMSCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MMSCell.swift; sourceTree = "<group>"; };
+		6F8A8302249B7C2F002ACDFE /* MMSCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MMSCellView.swift; sourceTree = "<group>"; };
+		6F8A8305249BDB78002ACDFE /* CircularProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressBar.swift; sourceTree = "<group>"; };
+		6F8A8307249BDB88002ACDFE /* CircularSpinner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularSpinner.swift; sourceTree = "<group>"; };
+		6F8A830D249DE05A002ACDFE /* AppSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsViewController.swift; sourceTree = "<group>"; };
+		6F8A830F249DE13F002ACDFE /* AppSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsView.swift; sourceTree = "<group>"; };
+		6F8A8311249DE6DA002ACDFE /* AppSettings+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppSettings+Helpers.swift"; sourceTree = "<group>"; };
+		6F8A8313249DE6E7002ACDFE /* AppSettings+TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppSettings+TableView.swift"; sourceTree = "<group>"; };
+		6F8A8316249DECBC002ACDFE /* KeyValueCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValueCell.swift; sourceTree = "<group>"; };
+		6F8A8319249E12D6002ACDFE /* ListPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListPickerController.swift; sourceTree = "<group>"; };
+		6F8A831B249E13B6002ACDFE /* ListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListItem.swift; sourceTree = "<group>"; };
+		6F8A831D249E1CC8002ACDFE /* SubtitleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleTableViewCell.swift; sourceTree = "<group>"; };
 		6F9011D322AC3B130046F5E3 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		6F9011D522ACCA900046F5E3 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		6F9011D722B12BC40046F5E3 /* SMSDetailVCCoreDataHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSDetailVCCoreDataHelpers.swift; sourceTree = "<group>"; };
@@ -763,6 +791,7 @@
 				6FEE9A0E247D416000709E2D /* Messages+Layout.swift */,
 				6FEE9A16247E696000709E2D /* Messages+Cell.swift */,
 				6FEE9A10247D4D0200709E2D /* Messages+InputBar.swift */,
+				6F8A82FC249A1E02002ACDFE /* Messages+Multimedia.swift */,
 				6F9E6EBC248E442E0001950E /* Messages+DataProvider.swift */,
 				6FEE9A14247D5BE000709E2D /* Messages+ServiceProvider.swift */,
 				6FF842192482EFF00069A789 /* QuickResponsePicker+TableViewHelpers.swift */,
@@ -786,6 +815,8 @@
 				6F21378324743535002AB150 /* MessagesView.swift */,
 				6FEE9A18247ED6A300709E2D /* BotMessageCell.swift */,
 				6FF842172482EADD0069A789 /* QuickResponsePickerView.swift */,
+				6F8A8300249B7C1A002ACDFE /* MMSCell.swift */,
+				6F8A8302249B7C2F002ACDFE /* MMSCellView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1253,6 +1284,67 @@
 			path = PreRelease;
 			sourceTree = "<group>";
 		};
+		6F8A8304249BDB61002ACDFE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				6F8A8305249BDB78002ACDFE /* CircularProgressBar.swift */,
+				6F8A8307249BDB88002ACDFE /* CircularSpinner.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		6F8A8309249DE02A002ACDFE /* App Settings */ = {
+			isa = PBXGroup;
+			children = (
+				6F8A830C249DE043002ACDFE /* Views */,
+				6F8A830B249DE03E002ACDFE /* Controllers */,
+				6F8A830A249DE031002ACDFE /* Extensions+Helpers */,
+			);
+			path = "App Settings";
+			sourceTree = "<group>";
+		};
+		6F8A830A249DE031002ACDFE /* Extensions+Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				6F8A8311249DE6DA002ACDFE /* AppSettings+Helpers.swift */,
+				6F8A8313249DE6E7002ACDFE /* AppSettings+TableView.swift */,
+			);
+			path = "Extensions+Helpers";
+			sourceTree = "<group>";
+		};
+		6F8A830B249DE03E002ACDFE /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				6F8A830D249DE05A002ACDFE /* AppSettingsViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		6F8A830C249DE043002ACDFE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				6F8A830F249DE13F002ACDFE /* AppSettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		6F8A8315249DEC92002ACDFE /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				6F8A8316249DECBC002ACDFE /* KeyValueCell.swift */,
+				6F8A831D249E1CC8002ACDFE /* SubtitleTableViewCell.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
+		6F8A8318249E12B6002ACDFE /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				6F8A8319249E12D6002ACDFE /* ListPickerController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
 		6F9011D222AC3A9B0046F5E3 /* Extensions+Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -1404,6 +1496,9 @@
 		6F987A6C245B051200C6046E /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				6F8A8318249E12B6002ACDFE /* Controllers */,
+				6F8A8315249DEC92002ACDFE /* Cells */,
+				6F8A8304249BDB61002ACDFE /* Views */,
 				6F987A6D245B051D00C6046E /* Models */,
 			);
 			path = Shared;
@@ -1419,6 +1514,7 @@
 				6FC822FC24758EF6002421F0 /* BlacklistJSON.swift */,
 				6FEE99FE247BB8E900709E2D /* UserMessage.swift */,
 				6FEE9A00247BF69C00709E2D /* FirebaseMessage.swift */,
+				6F8A831B249E13B6002ACDFE /* ListItem.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1551,6 +1647,7 @@
 			children = (
 				6FB11B0C229BFA430098D050 /* MoreViewController.swift */,
 				6F395C94248033880023255F /* MoreServiceProvider.swift */,
+				6F8A8309249DE02A002ACDFE /* App Settings */,
 				6FF2E69D248FA43000502B99 /* Profile Settings */,
 				6F987A6224587F6700C6046E /* App Info */,
 				6F987A5024570E8D00C6046E /* Select Company */,
@@ -1578,6 +1675,7 @@
 				6F02E9AB22DF45BF005708B0 /* AssertionModalController.swift */,
 				6FB11B24229E59F00098D050 /* Config.swift */,
 				6FEE9A2E247F118F00709E2D /* Configuration.swift */,
+				6F8A82FE249A91B7002ACDFE /* FirebaseConfiguration.swift */,
 				6F395C8F248015E90023255F /* Constants.swift */,
 				6F987A70245B159400C6046E /* LaunchCounter.swift */,
 				6F987A71245B159400C6046E /* TapticEngine.swift */,
@@ -2056,6 +2154,7 @@
 				6FB11AFB229BF0590098D050 /* TabBarController.swift in Sources */,
 				6FEE9A13247D4FFF00709E2D /* MessageOperations.swift in Sources */,
 				6F9011D422AC3B130046F5E3 /* ChatViewController.swift in Sources */,
+				6F8A831E249E1CC8002ACDFE /* SubtitleTableViewCell.swift in Sources */,
 				6FF842182482EADD0069A789 /* QuickResponsePickerView.swift in Sources */,
 				6FB11B29229E75710098D050 /* FirebaseAuthService.swift in Sources */,
 				6FC823092475AE23002421F0 /* Blacklist+CoreDataHelpers.swift in Sources */,
@@ -2071,6 +2170,7 @@
 				6F0653452464880100F857C1 /* CustomersView.swift in Sources */,
 				6FB8EA3F22AA34B600294EAC /* ChatColorHelpers.swift in Sources */,
 				6F0653492464882000F857C1 /* CustomerCellView.swift in Sources */,
+				6F8A8303249B7C2F002ACDFE /* MMSCellView.swift in Sources */,
 				6F37E2482460A8D7003E9126 /* QuickResponsesViewController.swift in Sources */,
 				6FAD46EE245098CE0050F7F2 /* APIService.swift in Sources */,
 				6FD8955F245EDAAB0083D79A /* ManageAgentsHelpers.swift in Sources */,
@@ -2089,6 +2189,7 @@
 				6F21377A24742DD2002AB150 /* NewConversationCodable.swift in Sources */,
 				6FEF96A222A6677900F2FF83 /* ExternalConversation.swift in Sources */,
 				6F087DD122E0EFFD00CAD840 /* OnlineUsersAPI.swift in Sources */,
+				6F8A831C249E13B6002ACDFE /* ListItem.swift in Sources */,
 				6F087DD722E1E34900CAD840 /* ImageAssertionViewController.swift in Sources */,
 				6F41013F22DDF8FB0038AA76 /* CallGroupsDataProvider.swift in Sources */,
 				6F23BD1122DA0D7A0001A888 /* ScheduleNewMessageViewController.swift in Sources */,
@@ -2099,6 +2200,7 @@
 				6F06535524648C3E00F857C1 /* CustomerOperations.swift in Sources */,
 				6FB11B0B229BFA3C0098D050 /* SettingsViewController.swift in Sources */,
 				6F9453BF22DB2E2F00047C7F /* AgentPickerDataProvider.swift in Sources */,
+				6F8A8301249B7C1B002ACDFE /* MMSCell.swift in Sources */,
 				6F987A7E245C9B9000C6046E /* ManageAgentsCellView.swift in Sources */,
 				6F9453CD22DC3CCA00047C7F /* ChangePasswordAPI.swift in Sources */,
 				6FA3DFF12475C2D60083AB13 /* BlacklistOperations.swift in Sources */,
@@ -2121,6 +2223,7 @@
 				6FA9537824606963006DAF53 /* QuickResponseCodable.swift in Sources */,
 				6F23BD0722D9F0570001A888 /* ScheduleMessageViewController.swift in Sources */,
 				6F23BD0F22D9F9610001A888 /* ScheduleMessageDataProvider.swift in Sources */,
+				6F8A8314249DE6E7002ACDFE /* AppSettings+TableView.swift in Sources */,
 				6FF2E6AB248FF1A500502B99 /* FullImageViewController.swift in Sources */,
 				6FB11B27229E5F6F0098D050 /* AuthenticationService.swift in Sources */,
 				6FB11B31229EB5020098D050 /* CallGroupsViewController.swift in Sources */,
@@ -2131,6 +2234,7 @@
 				6FEE9A03247C841B00709E2D /* ExponentOperator.swift in Sources */,
 				6F395C9324802E100023255F /* AuthenticationOperations.swift in Sources */,
 				6F395C90248015E90023255F /* Constants.swift in Sources */,
+				6F8A8306249BDB79002ACDFE /* CircularProgressBar.swift in Sources */,
 				6F0653472464881100F857C1 /* CustomerCell.swift in Sources */,
 				6F098BBB22BE9A4100AF19AA /* BlockedUsersVCTableViewExtensions.swift in Sources */,
 				6FBDEC7C22B3F1DA00A8511E /* SMSDetailVC+CollectionView.swift in Sources */,
@@ -2160,6 +2264,7 @@
 				6FB11B4422A2A2E10098D050 /* Telabook.xcdatamodeld in Sources */,
 				6FB11B16229D05E00098D050 /* UserDefaults.swift in Sources */,
 				6F05627F22E0882A00424BF5 /* ChatVCMessageKitExtensions.swift in Sources */,
+				6F8A830E249DE05A002ACDFE /* AppSettingsViewController.swift in Sources */,
 				6F0653532464892800F857C1 /* Customers+CoreDataHelpers.swift in Sources */,
 				6F9453C922DC3CA300047C7F /* ChangePasswordViewController.swift in Sources */,
 				6F9453BB22DB2C8200047C7F /* AgentPickerViewController.swift in Sources */,
@@ -2172,6 +2277,7 @@
 				6F37E24A2460A8E7003E9126 /* QuickResponsesView.swift in Sources */,
 				6F987A462454AB5D00C6046E /* LoginServiceProvider.swift in Sources */,
 				6FD89561245EDAD40083D79A /* AgentDetailsHelpers.swift in Sources */,
+				6F8A8310249DE13F002ACDFE /* AppSettingsView.swift in Sources */,
 				6F37E24F2460ABFE003E9126 /* QuickResponseOperations.swift in Sources */,
 				6FB11B10229C23840098D050 /* Extensions.swift in Sources */,
 				6FF2E6A7248FA4E500502B99 /* Profile+ServicePorvider.swift in Sources */,
@@ -2198,7 +2304,9 @@
 				6FAD46ED245098CE0050F7F2 /* ImageService.swift in Sources */,
 				6FB11B3B229EF4500098D050 /* BlockedUsersViewController.swift in Sources */,
 				6F02B2D92461C03F00FFB34E /* AutoResponseCodable.swift in Sources */,
+				6F8A8312249DE6DA002ACDFE /* AppSettings+Helpers.swift in Sources */,
 				6F69BE8E22D4C66800F8903F /* QuickResponsesCodable.swift in Sources */,
+				6F8A831A249E12D7002ACDFE /* ListPickerController.swift in Sources */,
 				6F9011D822B12BC40046F5E3 /* SMSDetailVCCoreDataHelpers.swift in Sources */,
 				6F29FD4F22B7E28700BCA2AB /* OverlaySpinner.swift in Sources */,
 				6FC602342464471A00C1BF6D /* Agents+TableViewHelpers.swift in Sources */,
@@ -2274,6 +2382,8 @@
 				6F69BE8622D4742E00F8903F /* ManageAgentsAPIProtocol.swift in Sources */,
 				6FC823112475AF41002421F0 /* BlacklistCell.swift in Sources */,
 				6F41013D22DDF8E40038AA76 /* CallGroupsCell.swift in Sources */,
+				6F8A8317249DECBC002ACDFE /* KeyValueCell.swift in Sources */,
+				6F8A8308249BDB88002ACDFE /* CircularSpinner.swift in Sources */,
 				6FC822FD24758EF6002421F0 /* BlacklistJSON.swift in Sources */,
 				6F69BE7E22D46EF600F8903F /* BlacklistCodable.swift in Sources */,
 				6F06534F246488BD00F857C1 /* Customers+Helpers.swift in Sources */,
@@ -2281,6 +2391,7 @@
 				6FB11B1B229D07050098D050 /* LoginViewController.swift in Sources */,
 				6F41013B22DDF8B50038AA76 /* CallGroupsCodable.swift in Sources */,
 				6F9453C122DB4C1A00047C7F /* CustomerPickerDataProvider.swift in Sources */,
+				6F8A82FD249A1E05002ACDFE /* Messages+Multimedia.swift in Sources */,
 				6F234EE822D606DB001FDAD6 /* ScheduleMessagesCodable.swift in Sources */,
 				6F41014122DDF9120038AA76 /* CallGroupsTableViewExtensions.swift in Sources */,
 				6FB11B2B229EA7C20098D050 /* Codable.swift in Sources */,
@@ -2297,6 +2408,7 @@
 				6FAD46E1245041390050F7F2 /* SMSViewController.swift in Sources */,
 				6F987A6F245B053C00C6046E /* AgentCodable.swift in Sources */,
 				6FB11B05229BFA120098D050 /* HomeViewController.swift in Sources */,
+				6F8A82FF249A91B8002ACDFE /* FirebaseConfiguration.swift in Sources */,
 				6FAD46E6245054020050F7F2 /* AppData.swift in Sources */,
 				6FA3DFEF2475BFDE0083AB13 /* Blacklist+SearchHelpers.swift in Sources */,
 			);

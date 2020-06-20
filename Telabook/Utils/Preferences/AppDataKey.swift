@@ -23,5 +23,7 @@ public enum AppDataKey:String, CaseIterable {
     appLaunchCount,
     selectedTab,
     isHapticsEnabled,
-    encryptionKey
+    encryptionKey,
+    autoDownloadImageMessagesState,
+    autoDownloadVideoMessagesState
 }

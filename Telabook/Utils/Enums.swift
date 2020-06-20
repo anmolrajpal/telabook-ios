@@ -9,6 +9,33 @@
 import UIKit
 
 
+public enum MediaAutoDownloadState:CaseIterable, RawRepresentable {
+    case never, wifi, wifiPlusCellular
+    
+    public init(rawValue: Int) {
+        switch rawValue {
+            case 0: self = .never
+            case 1: self = .wifi
+            case 2: self = .wifiPlusCellular
+            default: fatalError("Invalid Case for Media Auto Download State Init")
+        }
+    }
+    public var rawValue:Int {
+        switch self {
+            case .never: return 0
+            case .wifi: return 1
+            case .wifiPlusCellular: return 2
+        }
+    }
+    var stringValue: String {
+        switch self {
+            case .never: return "Never"
+            case .wifi: return "Wi-Fi Only"
+            case .wifiPlusCellular: return "Wi-Fi and Cellular"
+        }
+    }
+}
+
 public enum AppUserRole {
     case Developer, Owner, Operator, Agent
     

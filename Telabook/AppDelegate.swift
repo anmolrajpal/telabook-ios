@@ -13,6 +13,7 @@ import CoreData
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     static let shared = AppDelegate()
+    var backgroundSessionCompletionHandler: (() -> Void)?
     let gcmMessageIDKey = "gcm.message_id"
     var window = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
 
@@ -51,6 +52,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         PersistenceService.shared.applicationDocumentsDirectory()
         return true
     }
+    
+    func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Void) {
+        backgroundSessionCompletionHandler = completionHandler
+    }
+    
+    
+    
     func launchAppSettings() {
         let url = URL(string: UIApplication.openSettingsURLString)!
         UIApplication.shared.open(url, options: [:], completionHandler: nil)

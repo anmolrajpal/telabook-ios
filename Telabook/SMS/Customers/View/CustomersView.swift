@@ -161,7 +161,7 @@ class CustomersView: UIView {
     
     
     
-    // MARK: init
+    // MARK: - Lifecycle
     
     override init(frame: CGRect) {
         super.init(frame: frame)

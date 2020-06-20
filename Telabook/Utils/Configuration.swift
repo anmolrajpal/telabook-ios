@@ -11,7 +11,16 @@ enum Configuration {
     enum Error: Swift.Error {
         case missingKey, invalidValue
     }
-
+    enum Constants:String {
+        case baseURL = "BASE_URL"
+        case apiHost = "API_HOST"
+        case urlScheme = "URL_SCHEME"
+        case subdomain = "SUBDOMAIN"
+        case timoutInterval = "TIMEOUT_INTERVAL"
+        case appName = "APP_NAME"
+        case bundleID = "BUNDLE_ID"
+        case bundleDisplayName = "CFBundleDisplayName"
+    }
     static func value<T>(for key: String) throws -> T where T: LosslessStringConvertible {
         guard let object = Bundle.main.object(forInfoDictionaryKey:key) else {
             throw Error.missingKey

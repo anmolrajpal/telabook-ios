@@ -194,72 +194,49 @@ extension MessagesController: MessagesDisplayDelegate {
                         destinationURL = message.imageLocalURL()
                     } catch {
                         print("### \(#function): Core Data Error updating imageUUID: \(error)")
-//                        completion(nil)
                     }
                 }
                 do {
                     try FileManager.default.moveItem(at: tmpURL, to: destinationURL!)
-//                    let image = UIImage(contentsOfFile: destinationURL!.path)
                     DispatchQueue.main.async {
                         UIView.performWithoutAnimation {
                             self?.messagesCollectionView.reloadSections([indexPath.section])
                         }
-//                        if let cell = self?.messagesCollectionView.cellForItem(at: indexPath) as? MediaMessageCell {
-//                            cell.imageView.image = image
-//                            if let spinner = cell.imageView.subviews.first as? UIActivityIndicatorView {
-//                                spinner.stopAnimating()
-//                            }
-//                        }
                     }
-//                    DispatchQueue.main.async {
-//                        completion(image)
-//                    }
                 } catch {
                     print("### \(#function): Failed to move image file from tmp url: \(tmpURL) to image local url: \(destinationURL!); \nError Description: \(error)")
-//                    completion(nil)
                 }
-                
-//                var nsError: NSError?
-//                NSFileCoordinator().coordinate(writingItemAt: destinationURL!, options: .forReplacing, error: &nsError,
-//                                               byAccessor: { (newURL: URL) -> Void in
-//                    do {
-//                        try imageData.write(to: newURL, options: .atomic)
-//                    } catch {
-//                        print("###\(#function): Failed to save an image file: \(destinationURL!) with error description: \(error)")
-//                    }
-//                })
-//                if let nsError = nsError {
-//                    print("###\(#function): \(nsError.localizedDescription)")
-//                }
-//                DispatchQueue.main.async {
-//                    messagesCollectionView.reloadSections([indexPath.section])
-//                }
             }.resume()
         }
+    }
+    func reloadCell(at indexPath:IndexPath) {
+        messagesCollectionView.reloadSections([indexPath.section])
     }
     func configureMediaMessageImageView(_ imageView: UIImageView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
 //        imageView.subviews.forEach { $0.removeFromSuperview() }
         let message = message as! UserMessage
 //        guard let url = message.imageURL else { print("Message image remote url not available"); return }
-        let loader = UIActivityIndicatorView(style: .medium)
-        loader.color = .white
-        loader.hidesWhenStopped = true
-        loader.startAnimating()
-        loader.translatesAutoresizingMaskIntoConstraints = false
-        
-        imageView.addSubview(loader)
-        loader.centerXAnchor.constraint(equalTo: imageView.centerXAnchor).activate()
-        loader.centerYAnchor.constraint(equalTo: imageView.centerYAnchor).activate()
+//        let loader = UIActivityIndicatorView(style: .medium)
+//        loader.color = .white
+//        loader.hidesWhenStopped = true
+//        loader.startAnimating()
+//        loader.translatesAutoresizingMaskIntoConstraints = false
+//
+//        imageView.addSubview(loader)
+//        loader.centerXAnchor.constraint(equalTo: imageView.centerXAnchor).activate()
+//        loader.centerYAnchor.constraint(equalTo: imageView.centerYAnchor).activate()
         
         if message.imageUUID != nil,
             let image = message.getImage() {
             imageView.image = image
             print("Loading image from local url: \(String(describing: message.imageLocalURL()))")
-            loader.stopAnimating()
+//            loader.stopAnimating()
         } else {
 //            if !messagesCollectionView.isDragging && !messagesCollectionView.isDecelerating {
-                downloadMessageImage(for: message, indexPath: indexPath, viewContext: viewContext)
-//            }
+//                downloadMessageImage(for: message, indexPath: indexPath, viewContext: viewContext)
+            downloadService.startDownload(message)
+            
+//            reloadCell(at: indexPath)
 //            downloadMessageImage(for: message, viewContext: viewContext) { image in
 //                if let image = image {
 //                    imageView.image = image

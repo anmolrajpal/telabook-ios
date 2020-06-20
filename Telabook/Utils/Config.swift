@@ -117,11 +117,23 @@ struct Config {
             private static let root = Storage.storage().reference()
             enum Node {
                 case profileImage
+                case conversationMedia(conversationNode:String, imageFileName:String)
                 
                 var reference:StorageReference {
                     switch self {
-                        case .profileImage: return root.child("companies").child("\(AppData.companyId)").child("profile-images")
-//                        case .profileImage: return root.child("companies/\(AppData.companyId)/profile-images")
+                        case .profileImage:
+                            return root
+                                .child("companies")
+                                .child(String(AppData.companyId))
+                                .child("profile-images")
+                        
+                        case let .conversationMedia(conversationNode, imageFileName):
+                            return root
+                                .child("companies")
+                                .child(String(AppData.companyId))
+                                .child("conversation-gallery")
+                                .child(conversationNode)
+                                .child(imageFileName)
                     }
                 }
             }

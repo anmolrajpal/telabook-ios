@@ -23,7 +23,6 @@ struct NewMessage:MessageType {
         self.sentDate = sentDate
         self.kind = kind
     }
-    
 }
 
 extension UserMessage {
@@ -253,6 +252,7 @@ struct ImageItem: MediaItem {
     
     var url: URL?
     var image: UIImage?
+    var imageUUID:UUID?
     var imageText:String?
     var placeholderImage: UIImage
     var size: CGSize
@@ -282,6 +282,15 @@ struct ImageItem: MediaItem {
         self.placeholderImage = UIImage()
 //        self.placeholderImage = size.width > size.height ? #imageLiteral(resourceName: "placeholder-image") : #imageLiteral(resourceName: "placeholder.png")
     }
+    
+    
+    init(image:UIImage, imageUUID:UUID, imageText:String?, size:CGSize = .init(width: 240, height: 240)) {
+        self.image = image
+        self.imageText = imageText
+        self.imageUUID = imageUUID
+        self.size = size
+        self.placeholderImage = UIImage()
+    }
 }
 
 
@@ -290,12 +299,20 @@ struct ImageItem: MediaItem {
 extension UserMessage {
     func imageLocalURL() -> URL? {
         guard let uuid = imageUUID else { return nil }
-        let fileName = uuid.uuidString + ".jpg"
+        let fileName = uuid.uuidString + ".jpeg"
         let url = conversation!.mediaFolder().appendingPathComponent(fileName)
         return url
     }
     
     
+    
+    
+    var uploadRequest: URLRequest? {
+        guard let url = imageURL else { return nil }
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.POST.rawValue
+        return request
+    }
     
     
     /**

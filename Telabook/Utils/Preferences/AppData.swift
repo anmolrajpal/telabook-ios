@@ -58,6 +58,45 @@ struct AppData {
     @UserDefaultsWrapper(key: .appLaunchCount, defaultValue: 0)
     static var appLaunchCount:Int
     
+    @UserDefaultsWrapper(key: .autoDownloadImageMessagesState, defaultValue: 2)
+    private static var autoDownloadImageMessagesStateValue:Int
+    
+    
+    @UserDefaultsWrapper(key: .autoDownloadVideoMessagesState, defaultValue: 0)
+    private static var autoDownloadVideoMessagesStateValue:Int
+    
+    
+    static var autoDownloadImageMessagesState:MediaAutoDownloadState {
+        get {
+            .init(rawValue: autoDownloadImageMessagesStateValue)
+        }
+        set {
+            autoDownloadImageMessagesStateValue = newValue.rawValue
+        }
+    }
+    
+    
+    
+    static var autoDownloadVideoMessagesState:MediaAutoDownloadState {
+        get {
+            .init(rawValue: autoDownloadVideoMessagesStateValue)
+        }
+        set {
+            autoDownloadVideoMessagesStateValue = newValue.rawValue
+        }
+    }
+    
+    
+    
+    static func restoreAutoDownloadMediaMessagesSettingsDefaults() {
+        autoDownloadImageMessagesState = .wifiPlusCellular
+        autoDownloadVideoMessagesState = .never
+    }
+    static var isMediaAutoDownloadSettingsStateAtDefault:Bool {
+        autoDownloadImageMessagesState == .wifiPlusCellular &&
+            autoDownloadVideoMessagesState == .never
+    }
+    
     
     
     /// Returns the App User Role from the saved `roleID` in App UserDefaults

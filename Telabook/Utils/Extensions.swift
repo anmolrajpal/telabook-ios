@@ -139,16 +139,6 @@ extension UITableView {
         let topRowIndexPath = IndexPath(row: 0, section: 0)
         self.scrollToRow(at: topRowIndexPath, at: .top, animated: animated)
     }
-    
-    func resetCheckmarks() {
-        for i in 0 ..< self.numberOfSections {
-            for j in 0 ..< self.numberOfRows(inSection: i) {
-                if let cell = self.cellForRow(at: IndexPath(row: j, section: i)) {
-                    cell.accessoryType = .none
-                }
-            }
-        }
-    }
     func reloadDataWithLayout() {
         self.reloadData()
         self.setNeedsLayout()
@@ -167,6 +157,32 @@ extension UITableView {
     func scrollToBottom(animated: Bool) {
         //        let y = contentSize.height - frame.size.height + contentInset.bottom
         setContentOffset(CGPoint(x: 0, y: CGFloat.greatestFiniteMagnitude), animated: animated)
+    }
+    
+    
+    
+    
+    /// Registers a particular cell using its reuse-identifier
+    public func register<T: UITableViewCell>(_ cellClass: T.Type) {
+        register(cellClass, forCellReuseIdentifier: NSStringFromClass(T.self))
+    }
+    /// Generically dequeues a cell of the correct type allowing you to avoid scattering your code with guard-let-else-fatal
+    public func dequeueReusableCell<T: UITableViewCell>(_ cellClass: T.Type, for indexPath: IndexPath) -> T {
+        guard let cell = dequeueReusableCell(withIdentifier: NSStringFromClass(T.self), for: indexPath) as? T else {
+            fatalError("Unable to dequeue \(NSStringFromClass(cellClass)) with reuseId of \(String(describing: T.self))")
+        }
+        return cell
+    }
+    
+    /// Reset all checkmarks in a tableview
+    public func resetCheckmarks() {
+        for section in 0 ..< numberOfSections {
+            for row in 0 ..< numberOfRows(inSection: section) {
+                if let cell = cellForRow(at: IndexPath(row: row, section: section)) {
+                    cell.accessoryType = .none
+                }
+            }
+        }
     }
 }
 extension NSLayoutConstraint {

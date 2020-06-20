@@ -162,117 +162,10 @@ extension MessagesController {
     
     
     
-    internal func promptPhotosPickerMenu() {
-        let alert = UIAlertController(title: "Choose Image Source", message: nil, preferredStyle: .actionSheet)
-        let cameraAction = UIAlertAction(title: "Camera", style: .default, handler: { (action) in self.handleSourceTypeCamera() })
-        let photoLibraryAction = UIAlertAction(title: "Photo Library", style: .default, handler: { (action) in self.handleSourceTypeGallery() })
-        let conversationGalleryAction = UIAlertAction(title: "Conversation Gallery", style: .default, handler: { (action) in self.handleSourceTypeConversationGallery() })
-        let agentsGalleryAction = UIAlertAction(title: "Agent's Gallery", style: .default, handler: { (action) in self.handleSourceTypeAgentGallery() })
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        
-        alert.addAction(cameraAction)
-        alert.addAction(photoLibraryAction)
-        alert.addAction(conversationGalleryAction)
-        alert.addAction(agentsGalleryAction)
-        alert.addAction(cancelAction)
-        //        alert.view.subviews.first?.subviews.first?.subviews.first?.backgroundColor = UIColor.telaGray6
-        //        alert.view.tintColor = UIColor.telaBlue
-        //        alert.view.subviews.first?.subviews.first?.backgroundColor = .clear
-        //        alert.view.subviews.first?.backgroundColor = .clear
-        present(alert, animated: true, completion: nil)
-    }
-    private func handleSourceTypeCamera() {
-        requestCamera()
-    }
-    private func handleSourceTypeGallery() {
-        requestPhotoLibrary()
-    }
-    private func handleSourceTypeConversationGallery() {
-        
-    }
-    private func handleSourceTypeAgentGallery() {
-        
-    }
-    
-    
-    // MARK: - Request Camera
-    
-    fileprivate func requestCamera() {
-        let status = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
-        switch status {
-            case .authorized: presentCamera()
-            case .notDetermined: requestCameraPermission()
-            case .denied, .restricted: alertCameraAccessNeeded()
-            @unknown default: fatalError()
-        }
-    }
-    fileprivate func requestCameraPermission() {
-        AVCaptureDevice.requestAccess(for: .video, completionHandler: {accessGranted in
-            guard accessGranted == true else { return }
-            self.presentCamera()
-        })
-    }
-    fileprivate func presentCamera() {
-        DispatchQueue.main.async {
-            let picker = UIImagePickerController()
-            picker.delegate = self
-            if UIImagePickerController.isSourceTypeAvailable(.camera) {
-                picker.sourceType = .camera
-            } else {
-                picker.sourceType = .photoLibrary
-            }
-            self.present(picker, animated: true, completion: nil)
-        }
-    }
-    fileprivate func alertCameraAccessNeeded() {
-        let alert = UIAlertController.telaAlertController(title: "Need Camera Access", message: "Camera access is required to take photo")
-        alert.addAction(UIAlertAction(title: "Allow", style: .cancel, handler: { _ in
-            AppDelegate.shared.launchAppSettings()
-        }))
-        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
-        present(alert, animated: true, completion: nil)
-    }
     
     
     
-    // MARK: - Request Photo Library
-    
-    fileprivate func requestPhotoLibrary() {
-        let status = PHPhotoLibrary.authorizationStatus()
-        switch status {
-            case .authorized: presentPhotoLibrary()
-            case .notDetermined: requestPhotoLibraryPermission()
-            case .denied, .restricted: alertPhotoLibraryAccessNeeded()
-            @unknown default: fatalError()
-        }
-    }
-    fileprivate func requestPhotoLibraryPermission() {
-        PHPhotoLibrary.requestAuthorization { status in
-            guard status == .authorized else { return }
-            self.presentPhotoLibrary()
-        }
-    }
-    fileprivate func presentPhotoLibrary() {
-        DispatchQueue.main.async {
-            let picker = UIImagePickerController()
-            picker.delegate = self
-            picker.sourceType = .photoLibrary
-            self.present(picker, animated: true)
-        }
-    }
-    fileprivate func alertPhotoLibraryAccessNeeded() {
-        let alert = UIAlertController.telaAlertController(title: "Need Library Access", message: "Photo Library access is required to read and write images")
-        alert.addAction(UIAlertAction(title: "Allow", style: .cancel, handler: { _ in
-            AppDelegate.shared.launchAppSettings()
-        }))
-        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
-        present(alert, animated: true, completion: nil)
-    }
-    
-    
-    
-    
-    
+    /*
     private func uploadImage(_ image: UIImage, completion: @escaping(URL?, Error?) -> Void) {
         var uploadTask:StorageUploadTask
         guard let scaledImage = image.scaledToSafeUploadSize, let data = scaledImage.jpegData(compressionQuality: 0.4) else {
@@ -399,6 +292,7 @@ extension MessagesController {
         })
         
     }
+ */
     /*
     internal func sendPhoto(_ image: UIImage) {
         isSendingPhoto = true
@@ -417,6 +311,9 @@ extension MessagesController {
     }
     */
 }
+
+
+/*
 extension MessagesController: ImageAssertionDelegate {
     func sendMediaMessage(image: UIImage, withReply message: String) {
         self.uploadImage(image) { (url, error) in
@@ -435,9 +332,9 @@ extension MessagesController: ImageAssertionDelegate {
         }
     }
 }
+*/
 
-
-
+/*
 
 extension MessagesController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
@@ -474,10 +371,10 @@ extension MessagesController: UIImagePickerControllerDelegate, UINavigationContr
     }
     
 }
+*/
 
 
-
-
+/*
 extension MessagesController {
     // MARK: - Inset Computation
     
@@ -510,3 +407,4 @@ extension MessagesController {
         return messagesCollectionView.adjustedContentInset.bottom - messagesCollectionView.contentInset.bottom
     }
 }
+*/

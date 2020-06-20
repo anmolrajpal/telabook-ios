@@ -14,6 +14,7 @@ import os
 extension MessagesController {
     internal func configureMessageCollectionView() {
         messagesCollectionView.register(BotMessageCell.self)
+        messagesCollectionView.register(MMSCell.self)
         messagesCollectionView.register(SpinnerReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader)
         messagesCollectionView.register(NewMessagesCountReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter)
         
@@ -115,6 +116,7 @@ extension MessagesController {
             UIAlertController.showTelaAlert(title: "Error", message: error.localizedDescription)
         }
     }
+    
     
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
 

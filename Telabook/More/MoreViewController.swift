@@ -115,10 +115,10 @@ class MoreViewController: UIViewController {
     var options:[String] = {
         let role = AppData.getUserRole()
         switch role {
-            case .Developer: return ["Profile Settings", "Companies", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "Clear Cache", "Application Information", "Log Out"]
-            case .Owner: return ["Profile Settings", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "Clear Cache", "Application Information", "Log Out"]
-            case .Operator: return ["Profile Settings", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "Clear Cache", "Application Information", "Log Out"]
-            case .Agent: return ["Profile Settings", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "Clear Cache", "Application Information", "Log Out"]
+            case .Developer: return ["Profile Settings", "Companies", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "App Settings", "Clear Cache", "Application Information", "Log Out"]
+            case .Owner: return ["Profile Settings", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "App Settings", "Clear Cache", "Application Information", "Log Out"]
+            case .Operator: return ["Profile Settings", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "App Settings", "Clear Cache", "Application Information", "Log Out"]
+            case .Agent: return ["Profile Settings", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "App Settings", "Clear Cache", "Application Information", "Log Out"]
         }
 //        if role != .Agent {
 //            return ["Manage Agents", "Gallery", "Blocked Users", "Schedule Message", "Archived SMSes", "Clear Cache"]
@@ -227,11 +227,17 @@ extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
                         let vc = ScheduleMessageViewController()
                         self.show(vc, sender: self)
                     case 7:
-                        alertClearCache()
+                        let vc = AppSettingsViewController()
+                        self.show(vc, sender: self)
                     case 8:
+                        alertClearCache()
+                    case 9:
                         let vc = AppInfoViewController()
                         self.show(vc, sender: self)
-                    default: alertLogout()
+                    case 10:
+                        alertLogout()
+                    default: fatalError()
+                    
             }
             case .Owner, .Operator, .Agent:
                 switch indexPath.row {
@@ -254,95 +260,18 @@ extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
                         let vc = ScheduleMessageViewController()
                         self.show(vc, sender: self)
                     case 6:
-                        alertClearCache()
+                        let vc = AppSettingsViewController()
+                        self.show(vc, sender: self)
                     case 7:
+                        alertClearCache()
+                    case 8:
                         let vc = AppInfoViewController()
                         self.show(vc, sender: self)
-                    default: alertLogout()
-            }
-            /*
-            case .Operator:
-                switch indexPath.row {
-                        case 0:
-                            let vc = ManageAgentsViewController()
-                            self.show(vc, sender: self)
-                        case 1:
-                            let vc = GalleryViewController()
-                            self.show(vc, sender: self)
-                        case 2:
-                            let vc = BlockedUsersViewController()
-                            self.show(vc, sender: self)
-                        case 3:
-                            let vc = ScheduleMessageViewController()
-                            self.show(vc, sender: self)
-                        case 4:
-                            let vc = ArchivedSMSViewController()
-                            self.show(vc, sender: self)
-                        case 5: handleClearCache()
-                        default: alertLogout()
-                }
-            case .Agent:
-                switch indexPath.row {
-                        case 0:
-                            let vc = SettingsViewController()
-                            self.show(vc, sender: self)
-                        case 1:
-                            let vc = GalleryViewController()
-                            self.show(vc, sender: self)
-                        case 2:
-                            let vc = BlockedUsersViewController()
-                            self.show(vc, sender: self)
-                        case 3:
-                            let vc = ScheduleMessageViewController()
-                            self.show(vc, sender: self)
-                        case 4: handleClearCache()
-                        default: alertLogout()
-                }
-            */
-        }
-        
-        /*
-        
-        if role == .Agent {
-            switch indexPath.row {
-                case 0:
-                    let profileSettingsVC = SettingsViewController()
-                    self.show(profileSettingsVC, sender: self)
-                case 1:
-                    let blockedUsersVC = BlockedUsersViewController()
-                    self.show(blockedUsersVC, sender: self)
-                case 2:
-                    let scheduleMessageVC = ScheduleMessageViewController()
-                    self.show(scheduleMessageVC, sender: self)
-                case 3:
-                    let galleryVC = GalleryViewController()
-                    self.show(galleryVC, sender: self)
-                case 4: handleClearCache()
-            default: break
-            }
-        } else {
-            switch indexPath.row {
-                case 0:
-                    let manageAgentsVC = ManageAgentsViewController()
-                    self.show(manageAgentsVC, sender: self)
-                case 1:
-                    let galleryVC = GalleryViewController()
-                    self.show(galleryVC, sender: self)
-                case 2:
-                    let blockedUsersVC = BlockedUsersViewController()
-                    self.show(blockedUsersVC, sender: self)
-                case 3:
-                    let scheduleMessageVC = ScheduleMessageViewController()
-                    self.show(scheduleMessageVC, sender: self)
-                case 4:
-                    let archivedSMSVC = ArchivedSMSViewController()
-                    self.show(archivedSMSVC, sender: self)
-                case 5: handleClearCache()
-                default: break
+                    case 9:
+                        alertLogout()
+                    default: fatalError()
             }
         }
-        
-        */
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 50.0

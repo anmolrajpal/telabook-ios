@@ -132,7 +132,19 @@ class MessagesController: MessagesViewController {
     
     let serialQueue = DispatchQueue(label: "conversation-media-download-queue")
     
+    let uploadService = UploadService()
+    let downloadService = DownloadService()
     
+    lazy var downloadSession: URLSession = {
+      let configuration = URLSessionConfiguration.background(withIdentifier:
+        "com.telabook.web.downloadSession")
+      return URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+    }()
+    lazy var uploadSession: URLSession = {
+      let configuration = URLSessionConfiguration.background(withIdentifier:
+        "com.telabook.web.uploadSession")
+      return URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+    }()
     
     
     /*
@@ -165,6 +177,8 @@ class MessagesController: MessagesViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         commonInit()
+        uploadService.uploadsSession = uploadSession
+        downloadService.downloadsSession = downloadSession
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
@@ -192,7 +206,25 @@ class MessagesController: MessagesViewController {
     }
     
     
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let messagesDataSource = messagesCollectionView.messagesDataSource else {
+            fatalError("Ouch. nil data source for messages")
+        }
 
+        // Very important to check this when overriding `cellForItemAt`
+        // Super method will handle returning the typing indicator cell
+        guard !isSectionReservedForTypingIndicator(indexPath.section) else {
+            return super.collectionView(collectionView, cellForItemAt: indexPath)
+        }
+
+        let message = messagesDataSource.messageForItem(at: indexPath, in: messagesCollectionView) as! UserMessage
+        if case .photo = message.kind {
+            let cell = messagesCollectionView.dequeueReusableCell(MMSCell.self, for: indexPath)
+            cell.configure(with: message, at: indexPath, and: messagesCollectionView, upload: uploadService.activeUploads[message.imageURL!], download: downloadService.activeDownloads[message.imageURL!])
+            return cell
+        }
+        return super.collectionView(collectionView, cellForItemAt: indexPath)
+    }
 
 
     
