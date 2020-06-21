@@ -67,6 +67,13 @@ extension MessagesController: InputBarAccessoryViewDelegate {
         self.present(presenter, animated: true, completion: nil)
     }
 }
+
+extension MessagesController: AgentGalleryImagePickerDelegate {
+    func agentGalleryController(didPickImage image: UIImage, forGalleryItem item: AgentGalleryItem, at indexPath: IndexPath) {
+        print("Should upload image")
+    }
+}
+
 extension MessagesController: QuickResponsePickerDelegate {
     func quickResponseDidPick(at indexPath: IndexPath, response: QuickResponse) {
         guard let text = response.answer else { return }

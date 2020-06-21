@@ -424,3 +424,69 @@ class UpdatePendingMessagesCount_Operation: Operation {
 //        context.reset()
     }
 }
+
+
+
+
+
+
+
+/// Upsert Agent's gallery media item entries returned from the firebase to the Core Data store.
+class MergeGalleryItemEntriesFromFirebaseToStore_Operation: Operation {
+    enum OperationError: Error, LocalizedError {
+        case coreDataError(error:Error)
+        
+        var localizedDescription: String {
+            switch self {
+                case let .coreDataError(error): return "Core Data Error: \(error.localizedDescription)"
+            }
+        }
+    }
+    var error:OperationError?
+    
+    private let context: NSManagedObjectContext
+    private let agent:Agent
+    let firebaseEntries:[FirebaseAgentGalleryItem]?
+    let fetchedEntries:[AgentGalleryItem]
+    init(context: NSManagedObjectContext, agent:Agent, firebaseEntries:[FirebaseAgentGalleryItem]?, fetchedEntries:[AgentGalleryItem]) {
+        self.context = context
+        self.agent = agent
+        self.firebaseEntries = firebaseEntries
+        self.fetchedEntries = fetchedEntries
+    }
+    
+    override func main() {
+        guard let firebaseEntries = firebaseEntries else {
+            printAndLog(message: "No firebase agent gallery items entries to add", log: .firebase, logType: .info)
+            return
+        }
+        let fetchRequest:NSFetchRequest = AgentGalleryItem.fetchRequest()
+        let serverIDs = firebaseEntries.map { $0.key }.compactMap { $0 }
+        let agentPredicate = NSPredicate(format: "\(#keyPath(AgentGalleryItem.agent)) == %@", agent)
+        let filterPredicate = NSPredicate(format: "NOT (\(#keyPath(AgentGalleryItem.firebaseKey)) IN %@)", serverIDs)
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [agentPredicate, filterPredicate])
+        
+        context.performAndWait {
+            do {
+                // Delete redundant entries
+                let entriesToDelete = try context.fetch(fetchRequest)
+                _ = entriesToDelete.map { agent.removeFromGalleryItems($0) }
+                
+                // Upsert entries from firebase
+                _ = firebaseEntries.map { firebaseEntry -> AgentGalleryItem in
+                    let fetchedEntry = fetchedEntries.first(where: { $0.firebaseKey == firebaseEntry.key })
+                    let cachedImageUUID = fetchedEntry?.uuid
+                    let state:AgentGalleryItem.MediaState = fetchedEntry?.state ?? .new
+                    return AgentGalleryItem(context: context, agentGalleryItemEntryFromFirebase: firebaseEntry, agent: agent, uuid: cachedImageUUID, state: state)
+                }
+                
+                
+                try context.save()
+            } catch {
+                let errorMessage = "Error adding entries to store: \(error))"
+                printAndLog(message: errorMessage, log: .coredata, logType: .error)
+                self.error = .coreDataError(error: error)
+            }
+        }
+    }
+}

@@ -50,10 +50,25 @@
         <attribute name="workerID" optional="YES" attributeType="Integer 32" minValueString="1" usesScalarValueType="YES"/>
         <relationship name="autoResponse" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="AutoResponse" inverseName="autoResponseSender" inverseEntity="AutoResponse"/>
         <relationship name="customers" toMany="YES" deletionRule="Cascade" destinationEntity="Customer" inverseName="agent" inverseEntity="Customer"/>
+        <relationship name="galleryItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AgentGalleryItem" inverseName="agent" inverseEntity="AgentGalleryItem"/>
         <relationship name="quickResponses" toMany="YES" deletionRule="Cascade" destinationEntity="QuickResponse" inverseName="sender" inverseEntity="QuickResponse"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="userID"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="AgentGalleryItem" representedClassName="AgentGalleryItem" syncable="YES" codeGenerationType="class">
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="firebaseKey" attributeType="String"/>
+        <attribute name="mediaItemURL" optional="YES" attributeType="URI"/>
+        <attribute name="mediaItemUrlString" optional="YES" attributeType="String"/>
+        <attribute name="mediaState" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="agent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Agent" inverseName="galleryItems" inverseEntity="Agent"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="firebaseKey"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
@@ -282,19 +297,20 @@
     <elements>
         <element name="Address" positionX="-324.984375" positionY="-372.328125" width="128" height="90"/>
         <element name="AddressBook" positionX="-173.23828125" positionY="228.984375" width="128" height="268"/>
-        <element name="Agent" positionX="-718.6484375" positionY="-34.9140625" width="128" height="388"/>
-        <element name="AutoResponse" positionX="-543.58984375" positionY="-61.21484375" width="128" height="163"/>
-        <element name="BlockedUser" positionX="-651.66015625" positionY="387.48828125" width="128" height="208"/>
-        <element name="Customer" positionX="-354.14453125" positionY="-1.0625" width="128" height="568"/>
+        <element name="Agent" positionX="-718.6484375" positionY="-34.9140625" width="128" height="403"/>
+        <element name="AgentGalleryItem" positionX="-603.50390625" positionY="440.91796875" width="128" height="148"/>
+        <element name="AutoResponse" positionX="-530.40234375" positionY="100.66015625" width="128" height="163"/>
+        <element name="BlockedUser" positionX="-744.03125" positionY="515.375" width="128" height="208"/>
+        <element name="Customer" positionX="-330.20703125" positionY="143.10546875" width="128" height="568"/>
         <element name="ExternalChat" positionX="354.94140625" positionY="-169.65234375" width="128" height="165"/>
         <element name="ExternalConversation" positionX="140.44140625" positionY="-192.74609375" width="128" height="345"/>
+        <element name="ImageMetaData" positionX="-729" positionY="-225" width="128" height="73"/>
         <element name="InternalConversation" positionX="367.36328125" positionY="181.109375" width="128" height="313"/>
+        <element name="MessageImageData" positionX="-738" positionY="-234" width="128" height="58"/>
         <element name="Permission" positionX="639.96484375" positionY="830.390625" width="128" height="148"/>
         <element name="Person" positionX="490.1484375" positionY="-384.12890625" width="128" height="105"/>
         <element name="QuickResponse" positionX="-939.1953125" positionY="409.9609375" width="128" height="178"/>
         <element name="UserMessage" positionX="-32.5" positionY="212.10546875" width="128" height="476"/>
         <element name="UserObject" positionX="233.99609375" positionY="682.64453125" width="128" height="225"/>
-        <element name="MessageImageData" positionX="-738" positionY="-234" width="128" height="58"/>
-        <element name="ImageMetaData" positionX="-729" positionY="-225" width="128" height="73"/>
     </elements>
 </model>

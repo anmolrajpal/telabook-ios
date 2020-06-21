@@ -42,7 +42,10 @@ extension MessagesController {
         
     }
     private func handleSourceTypeAgentGallery() {
-        
+        let vc = AgentGalleryController(agent: customer.agent!)
+        vc.delegate = self
+        let controller = UINavigationController(rootViewController: vc)
+        present(controller, animated: true)
     }
     
     

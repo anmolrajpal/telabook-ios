@@ -185,6 +185,30 @@ extension UITableView {
         }
     }
 }
+
+
+
+
+
+extension UICollectionView {
+    /// Registers a particular cell using its reuse-identifier
+    public func registerCell<T: UICollectionViewCell>(_ cellClass: T.Type) {
+        register(cellClass, forCellWithReuseIdentifier: NSStringFromClass(T.self))
+    }
+    /// Generically dequeues a cell of the correct type allowing you to avoid scattering your code with guard-let-else-fatal
+    public func dequeueReusableCell<T: UICollectionViewCell>(_ cellClass: T.Type, forItemAt indexPath: IndexPath) -> T {
+        guard let cell = dequeueReusableCell(withReuseIdentifier: NSStringFromClass(T.self), for: indexPath) as? T else {
+            fatalError("Unable to dequeue \(NSStringFromClass(cellClass)) with reuseId of \(NSStringFromClass(T.self))")
+        }
+        return cell
+    }
+}
+
+
+
+
+
+
 extension NSLayoutConstraint {
     func withPriority(_ constant:Float) -> NSLayoutConstraint {
         self.priority = UILayoutPriority(constant)
@@ -309,6 +333,25 @@ extension UIViewController {
     
     @objc func dismissKeyboard() {
         view.endEditing(true)
+    }
+    
+    func configureNavigationBarAppearance() {
+        if let navigationBar = navigationController?.navigationBar {
+            let transparentAppearance = UINavigationBarAppearance()
+            transparentAppearance.configureWithTransparentBackground()
+            navigationBar.scrollEdgeAppearance = transparentAppearance
+            
+            let defaultAppearance = UINavigationBarAppearance()
+            defaultAppearance.configureWithDefaultBackground()
+            
+            navigationBar.standardAppearance = defaultAppearance
+            navigationBar.compactAppearance = defaultAppearance
+            
+            navigationBar.titleTextAttributes = [
+                .foregroundColor: UIColor.telaBlue,
+                .font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 15)!
+            ]
+        }
     }
 }
 extension UINavigationController {

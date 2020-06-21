@@ -23,13 +23,13 @@ class CircularSpinner : UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         layer.fillColor = nil
-        layer.strokeColor = UIColor.black.cgColor
+        layer.strokeColor = UIColor.telaBlue.cgColor
         layer.lineWidth = 3
         setPath()
     }
 
     override func didMoveToWindow() {
-        animate()
+//        animate()
     }
 
     private func setPath() {
@@ -61,8 +61,11 @@ class CircularSpinner : UIView {
             ]
         }
     }
-
-    func animate() {
+    func stopAnimation() {
+        layer.removeAllAnimations()
+        layer.lineWidth = 0
+    }
+    func animate(animatingColors:Bool = false) {
         var time: CFTimeInterval = 0
         var times = [CFTimeInterval]()
         var start: CGFloat = 0
@@ -86,8 +89,10 @@ class CircularSpinner : UIView {
 
         animateKeyPath(keyPath: "strokeEnd", duration: totalSeconds, times: times, values: strokeEnds)
         animateKeyPath(keyPath: "transform.rotation", duration: totalSeconds, times: times, values: rotations)
-
-        animateStrokeHueWithDuration(duration: totalSeconds * 5)
+        
+        if animatingColors {
+            animateStrokeHueWithDuration(duration: totalSeconds * 5)
+        }
     }
 
     func animateKeyPath(keyPath: String, duration: CFTimeInterval, times: [CFTimeInterval], values: [CGFloat]) {

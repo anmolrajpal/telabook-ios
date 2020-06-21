@@ -46,7 +46,7 @@ extension MessagesController: MessageCellDelegate {
                 return
         }
         
-        indexPathForMessageBottomLabelToShow = indexPathForMessageBottomLabelToShow == indexPath ? nil : indexPath
+//        indexPathForMessageBottomLabelToShow = indexPathForMessageBottomLabelToShow == indexPath ? nil : indexPath
 //        messagesCollectionView.reloadItems(at: [indexPath])
         openMediaMessage(message: message)
     }

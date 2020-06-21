@@ -125,6 +125,14 @@
 		6F8A831A249E12D7002ACDFE /* ListPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A8319249E12D6002ACDFE /* ListPickerController.swift */; };
 		6F8A831C249E13B6002ACDFE /* ListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A831B249E13B6002ACDFE /* ListItem.swift */; };
 		6F8A831E249E1CC8002ACDFE /* SubtitleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A831D249E1CC8002ACDFE /* SubtitleTableViewCell.swift */; };
+		6F8A8320249F3EF9002ACDFE /* AgentGalleryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A831F249F3EF8002ACDFE /* AgentGalleryController.swift */; };
+		6F8A8325249F402B002ACDFE /* AgentGalleryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A8324249F402B002ACDFE /* AgentGalleryCell.swift */; };
+		6F8A8328249F560B002ACDFE /* FirebaseAgentGalleryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A8327249F560B002ACDFE /* FirebaseAgentGalleryItem.swift */; };
+		6F8A832A249F5896002ACDFE /* AgentGalleryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A8329249F5896002ACDFE /* AgentGalleryItem.swift */; };
+		6F8A832D249F8673002ACDFE /* AgentGallery+ImageHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A832C249F8673002ACDFE /* AgentGallery+ImageHelpers.swift */; };
+		6F8A832F249F8771002ACDFE /* AgentGallery+DataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A832E249F8771002ACDFE /* AgentGallery+DataProvider.swift */; };
+		6F8A8331249F8796002ACDFE /* AgentGallery+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A8330249F8796002ACDFE /* AgentGallery+Helpers.swift */; };
+		6F8A8333249F87AB002ACDFE /* AgentGallery+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8A8332249F87AB002ACDFE /* AgentGallery+CollectionView.swift */; };
 		6F9011D422AC3B130046F5E3 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9011D322AC3B130046F5E3 /* ChatViewController.swift */; };
 		6F9011D622ACCA900046F5E3 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9011D522ACCA900046F5E3 /* Message.swift */; };
 		6F9011D822B12BC40046F5E3 /* SMSDetailVCCoreDataHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9011D722B12BC40046F5E3 /* SMSDetailVCCoreDataHelpers.swift */; };
@@ -399,6 +407,14 @@
 		6F8A8319249E12D6002ACDFE /* ListPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListPickerController.swift; sourceTree = "<group>"; };
 		6F8A831B249E13B6002ACDFE /* ListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListItem.swift; sourceTree = "<group>"; };
 		6F8A831D249E1CC8002ACDFE /* SubtitleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleTableViewCell.swift; sourceTree = "<group>"; };
+		6F8A831F249F3EF8002ACDFE /* AgentGalleryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentGalleryController.swift; sourceTree = "<group>"; };
+		6F8A8324249F402B002ACDFE /* AgentGalleryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentGalleryCell.swift; sourceTree = "<group>"; };
+		6F8A8327249F560B002ACDFE /* FirebaseAgentGalleryItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAgentGalleryItem.swift; sourceTree = "<group>"; };
+		6F8A8329249F5896002ACDFE /* AgentGalleryItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentGalleryItem.swift; sourceTree = "<group>"; };
+		6F8A832C249F8673002ACDFE /* AgentGallery+ImageHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AgentGallery+ImageHelpers.swift"; sourceTree = "<group>"; };
+		6F8A832E249F8771002ACDFE /* AgentGallery+DataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AgentGallery+DataProvider.swift"; sourceTree = "<group>"; };
+		6F8A8330249F8796002ACDFE /* AgentGallery+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AgentGallery+Helpers.swift"; sourceTree = "<group>"; };
+		6F8A8332249F87AB002ACDFE /* AgentGallery+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AgentGallery+CollectionView.swift"; sourceTree = "<group>"; };
 		6F9011D322AC3B130046F5E3 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		6F9011D522ACCA900046F5E3 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		6F9011D722B12BC40046F5E3 /* SMSDetailVCCoreDataHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSDetailVCCoreDataHelpers.swift; sourceTree = "<group>"; };
@@ -1345,6 +1361,49 @@
 			path = Controllers;
 			sourceTree = "<group>";
 		};
+		6F8A8321249F3FFE002ACDFE /* Extensions+Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				6F8A832C249F8673002ACDFE /* AgentGallery+ImageHelpers.swift */,
+				6F8A832E249F8771002ACDFE /* AgentGallery+DataProvider.swift */,
+				6F8A8330249F8796002ACDFE /* AgentGallery+Helpers.swift */,
+				6F8A8332249F87AB002ACDFE /* AgentGallery+CollectionView.swift */,
+			);
+			path = "Extensions+Helpers";
+			sourceTree = "<group>";
+		};
+		6F8A8322249F4007002ACDFE /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				6FB11B38229EF4430098D050 /* GalleryViewController.swift */,
+				6F8A831F249F3EF8002ACDFE /* AgentGalleryController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		6F8A8323249F400C002ACDFE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				6F8A8324249F402B002ACDFE /* AgentGalleryCell.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		6F8A8326249F5511002ACDFE /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				6F8A8327249F560B002ACDFE /* FirebaseAgentGalleryItem.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		6F8A832B249F6B4A002ACDFE /* Operations */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Operations;
+			sourceTree = "<group>";
+		};
 		6F9011D222AC3A9B0046F5E3 /* Extensions+Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -1496,10 +1555,10 @@
 		6F987A6C245B051200C6046E /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				6F8A8318249E12B6002ACDFE /* Controllers */,
+				6F987A6D245B051D00C6046E /* Models */,
 				6F8A8315249DEC92002ACDFE /* Cells */,
 				6F8A8304249BDB61002ACDFE /* Views */,
-				6F987A6D245B051D00C6046E /* Models */,
+				6F8A8318249E12B6002ACDFE /* Controllers */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -1515,6 +1574,7 @@
 				6FEE99FE247BB8E900709E2D /* UserMessage.swift */,
 				6FEE9A00247BF69C00709E2D /* FirebaseMessage.swift */,
 				6F8A831B249E13B6002ACDFE /* ListItem.swift */,
+				6F8A8329249F5896002ACDFE /* AgentGalleryItem.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1822,7 +1882,11 @@
 		6FC822FE2475ADA0002421F0 /* Gallery */ = {
 			isa = PBXGroup;
 			children = (
-				6FB11B38229EF4430098D050 /* GalleryViewController.swift */,
+				6F8A832B249F6B4A002ACDFE /* Operations */,
+				6F8A8326249F5511002ACDFE /* Models */,
+				6F8A8323249F400C002ACDFE /* Views */,
+				6F8A8322249F4007002ACDFE /* Controllers */,
+				6F8A8321249F3FFE002ACDFE /* Extensions+Helpers */,
 			);
 			path = Gallery;
 			sourceTree = "<group>";
@@ -2173,6 +2237,7 @@
 				6F8A8303249B7C2F002ACDFE /* MMSCellView.swift in Sources */,
 				6F37E2482460A8D7003E9126 /* QuickResponsesViewController.swift in Sources */,
 				6FAD46EE245098CE0050F7F2 /* APIService.swift in Sources */,
+				6F8A8325249F402B002ACDFE /* AgentGalleryCell.swift in Sources */,
 				6FD8955F245EDAAB0083D79A /* ManageAgentsHelpers.swift in Sources */,
 				6F83FC2124608C6A00518201 /* QuickResponsesHelpers.swift in Sources */,
 				6F29FD5522B909A600BCA2AB /* TextInputCell.swift in Sources */,
@@ -2185,6 +2250,7 @@
 				6F987A80245CC1B500C6046E /* FirebaseOperations.swift in Sources */,
 				6F0653512464891500F857C1 /* Customers+SearchHelpers.swift in Sources */,
 				6FEE9A07247D360100709E2D /* Messages+Helpers.swift in Sources */,
+				6F8A832A249F5896002ACDFE /* AgentGalleryItem.swift in Sources */,
 				6FB11B37229EF4300098D050 /* ManageAgentsViewController.swift in Sources */,
 				6F21377A24742DD2002AB150 /* NewConversationCodable.swift in Sources */,
 				6FEF96A222A6677900F2FF83 /* ExternalConversation.swift in Sources */,
@@ -2264,6 +2330,7 @@
 				6FB11B4422A2A2E10098D050 /* Telabook.xcdatamodeld in Sources */,
 				6FB11B16229D05E00098D050 /* UserDefaults.swift in Sources */,
 				6F05627F22E0882A00424BF5 /* ChatVCMessageKitExtensions.swift in Sources */,
+				6F8A832D249F8673002ACDFE /* AgentGallery+ImageHelpers.swift in Sources */,
 				6F8A830E249DE05A002ACDFE /* AppSettingsViewController.swift in Sources */,
 				6F0653532464892800F857C1 /* Customers+CoreDataHelpers.swift in Sources */,
 				6F9453C922DC3CA300047C7F /* ChangePasswordViewController.swift in Sources */,
@@ -2298,6 +2365,7 @@
 				6F41013922DDF8A30038AA76 /* CallGroupsAPI.swift in Sources */,
 				6F9453D122DDDC2100047C7F /* ScheduledMessageCell.swift in Sources */,
 				6F987A73245B159500C6046E /* TapticEngine.swift in Sources */,
+				6F8A8328249F560B002ACDFE /* FirebaseAgentGalleryItem.swift in Sources */,
 				6F087DD322E0F1D600CAD840 /* OnlineUserCell.swift in Sources */,
 				6FEF96AA22A7BDCA00F2FF83 /* ExternalConversationsAPIProtocol.swift in Sources */,
 				6FB11AE4229BDDBD0098D050 /* AppDelegate.swift in Sources */,
@@ -2348,6 +2416,7 @@
 				6FEF96A822A682E700F2FF83 /* SMSDetailCell.swift in Sources */,
 				6F987A5F245751AB00C6046E /* UserCompaniesCodable.swift in Sources */,
 				6FB11B1D229D19E10098D050 /* NetworkManager.swift in Sources */,
+				6F8A8333249F87AB002ACDFE /* AgentGallery+CollectionView.swift in Sources */,
 				6F69BE9222D4DCE600F8903F /* QuickResponsesAPIProtocol.swift in Sources */,
 				6F29FD5122B8B36400BCA2AB /* FollowUpCell.swift in Sources */,
 				6F02B2DB2461C47300FFB34E /* AutoResponseView.swift in Sources */,
@@ -2369,6 +2438,7 @@
 				6F1BD2EA22C4AD250053D0CC /* FollowUpsIndexCodable.swift in Sources */,
 				6FC822F724744984002421F0 /* NewConversationView.swift in Sources */,
 				6FBDEC7A22B3D3C200A8511E /* SMSDetailVCChatExtensions.swift in Sources */,
+				6F8A8331249F8796002ACDFE /* AgentGallery+Helpers.swift in Sources */,
 				6F69BE7C22D46E9000F8903F /* BlockedUsersDataProvider.swift in Sources */,
 				6F987A5924570EED00C6046E /* SelectCompanyView.swift in Sources */,
 				6FB11B2F229EB4F20098D050 /* FollowUpViewController.swift in Sources */,
@@ -2383,6 +2453,7 @@
 				6FC823112475AF41002421F0 /* BlacklistCell.swift in Sources */,
 				6F41013D22DDF8E40038AA76 /* CallGroupsCell.swift in Sources */,
 				6F8A8317249DECBC002ACDFE /* KeyValueCell.swift in Sources */,
+				6F8A8320249F3EF9002ACDFE /* AgentGalleryController.swift in Sources */,
 				6F8A8308249BDB88002ACDFE /* CircularSpinner.swift in Sources */,
 				6FC822FD24758EF6002421F0 /* BlacklistJSON.swift in Sources */,
 				6F69BE7E22D46EF600F8903F /* BlacklistCodable.swift in Sources */,
@@ -2393,6 +2464,7 @@
 				6F9453C122DB4C1A00047C7F /* CustomerPickerDataProvider.swift in Sources */,
 				6F8A82FD249A1E05002ACDFE /* Messages+Multimedia.swift in Sources */,
 				6F234EE822D606DB001FDAD6 /* ScheduleMessagesCodable.swift in Sources */,
+				6F8A832F249F8771002ACDFE /* AgentGallery+DataProvider.swift in Sources */,
 				6F41014122DDF9120038AA76 /* CallGroupsTableViewExtensions.swift in Sources */,
 				6FB11B2B229EA7C20098D050 /* Codable.swift in Sources */,
 				6FC6023A2464485C00C1BF6D /* AgentCell.swift in Sources */,

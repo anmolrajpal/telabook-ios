@@ -90,6 +90,9 @@ struct Config {
             /// `wasnotseen` node to get reference for all conversations which are under this tree.
             case wasNotSeen
             
+            /// All images associated with this agent
+            case agentGallery(workerID:Int)
+            
             
             var reference:DatabaseReference {
                 switch self {
@@ -97,6 +100,7 @@ struct Config {
                     case let .messages(companyID, node): return databaseRoot.child("companies/\(companyID)/conversations/\(node)")
                     case let .unreadMessages(conversationID): return databaseRoot.child("companies/\(AppData.companyId)/wasnotseen/\(conversationID)")
                     case .wasNotSeen: return databaseRoot.child("companies/\(AppData.companyId)/wasnotseen")
+                    case let .agentGallery(workerID): return databaseRoot.child("companies/\(AppData.companyId)/gallery/\(workerID)")
                 }
             }
         }
@@ -118,6 +122,7 @@ struct Config {
             enum Node {
                 case profileImage
                 case conversationMedia(conversationNode:String, imageFileName:String)
+                case agentGallery(workerID:Int)
                 
                 var reference:StorageReference {
                     switch self {
@@ -134,6 +139,12 @@ struct Config {
                                 .child("conversation-gallery")
                                 .child(conversationNode)
                                 .child(imageFileName)
+                        case let .agentGallery(workerID):
+                            return root
+                                .child("companies")
+                                .child(String(AppData.companyId))
+                                .child("gallery")
+                                .child(String(workerID))
                     }
                 }
             }

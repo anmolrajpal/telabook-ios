@@ -30,7 +30,6 @@ extension AgentDetailsViewController {
     @objc private func smsButtonTapped() {
         if let userID = self.agent.userID != 0 ? Int(agent.userID) : nil {
             let vc = AutoResponseViewController(userID: userID, agent: agent)
-            //            vc.modalPresentationStyle = .overFullScreen
             vc.view.backgroundColor = .telaGray1
             present(vc, animated: true, completion: nil)
         } else {

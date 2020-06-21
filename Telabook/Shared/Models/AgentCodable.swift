@@ -103,3 +103,19 @@ extension Agent {
 }
 
 
+extension Agent {
+    
+    func mediaFolder() -> URL {
+        let url = AppDelegate.agentGalleryMediaFolder.appendingPathComponent(String(workerID), isDirectory: true)
+        // Create it if it doesn’t exist.
+        if !FileManager.default.fileExists(atPath: url.path) {
+            do {
+                try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                let errorMessage = "### \(#function): Failed to create agent gallery media folder URL: \(error)"
+                printAndLog(message: errorMessage, log: .ui, logType: .error)
+            }
+        }
+        return url
+    }
+}

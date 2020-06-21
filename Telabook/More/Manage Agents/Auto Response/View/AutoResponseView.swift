@@ -13,6 +13,7 @@ class AutoResponseView: UIView {
     
     // MARK: Setup Views
     fileprivate func setupViews() {
+        backgroundColor = .telaGray1
         addSubview(cancelButton)
         addSubview(saveButton)
         addSubview(headingLabel)

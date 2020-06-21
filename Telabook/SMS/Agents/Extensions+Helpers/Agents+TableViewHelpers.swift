@@ -49,4 +49,52 @@ extension AgentsViewController: UITableViewDelegate {
             navigationController?.pushViewController(vc, animated: true)
         }
     }
+    
+    
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        let index = indexPath.row
+        let agent = agents[index]
+        let identifier = String(index) as NSString
+        
+        return UIContextMenuConfiguration(identifier: identifier, previewProvider: nil) { _ in
+            var menuItems = [UIMenuElement]()
+            
+            let firstTimeSMSAction = UIAction(title: "First Time SMS", image: #imageLiteral(resourceName: "automsg_icon")) { _ in
+                self.showFirstTimeSMS(for: agent)
+            }
+            let quickResponsesAction = UIAction(title: "Quick Responses", image: #imageLiteral(resourceName: "autoresponse_icon")) { _ in
+                self.showQuickResponses(for: agent)
+            }
+            let galleryAction = UIAction(title: "Gallery", image: #imageLiteral(resourceName: "camera_icon")) { _ in
+                self.showGallery(for: agent)
+            }
+            
+            menuItems.append(firstTimeSMSAction)
+            menuItems.append(quickResponsesAction)
+            menuItems.append(galleryAction)
+            return UIMenu(title: "", children: menuItems)
+        }
+    }
+    private func showFirstTimeSMS(for agent:Agent) {
+        if let userID = agent.userID != 0 ? Int(agent.userID) : nil {
+            let vc = AutoResponseViewController(userID: userID, agent: agent)
+            present(vc, animated: true, completion: nil)
+        } else {
+            fatalError("User ID not found")
+        }
+    }
+    
+    private func showQuickResponses(for agent:Agent) {
+        if let userID = agent.userID != 0 ? Int(agent.userID) : nil {
+            let vc = QuickResponsesViewController(userID: userID, agent: agent)
+            present(vc, animated: true, completion: nil)
+        } else {
+            fatalError("User ID not found")
+        }
+    }
+    private func showGallery(for agent:Agent) {
+        let vc = AgentGalleryController(agent: agent)
+        let navController = UINavigationController(rootViewController: vc)
+        present(navController, animated: true)
+    }
 }

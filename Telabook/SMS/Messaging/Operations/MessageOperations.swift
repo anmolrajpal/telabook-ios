@@ -277,7 +277,7 @@ struct MessageOperations {
  */
 
 
-/// Add Customers entries returned from the server to the Core Data store.
+/// Add Message entries returned from the server to the Core Data store.
 class MergeMessageEntriesFromFirebaseToStore_Operation: Operation {
     enum OperationError: Error, LocalizedError {
         case coreDataError(error:Error)

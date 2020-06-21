@@ -104,7 +104,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return url
     }()
     
-    
+    static var agentGalleryMediaFolder: URL = {
+        let cacheFolder = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        let appName:String = try! Configuration.value(for: .bundleDisplayName)
+        let url = cacheFolder.appendingPathComponent("\(appName)/agent-gallery/companies/\(AppData.companyId)", isDirectory: true)
+        
+        // Create it if it doesn’t exist.
+        if !FileManager.default.fileExists(atPath: url.path) {
+            do {
+                try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+
+            } catch {
+                let errorMessage = "### \(#function): Failed to create agent gallery media folder URL: \(error)"
+                printAndLog(message: errorMessage, log: .ui, logType: .error)
+            }
+        }
+        return url
+    }()
     
     
     
