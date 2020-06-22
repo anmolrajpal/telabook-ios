@@ -31,7 +31,11 @@ public enum SFSymbol { case
     messageDeleted,
     downIndicator,
     errorSendingBadge,
-    download
+    download,
+    circle,
+    checkmark·circle·fill,
+    plus,
+    plus·circle·fill
     
     private var imageName:String {
         switch self {
@@ -57,6 +61,10 @@ public enum SFSymbol { case
             case .downIndicator: return "chevron.down.circle"
             case .errorSendingBadge: return "exclamationmark.circle.fill"
             case .download: return "square.and.arrow.down"
+            case .circle: return "circle"
+            case .checkmark·circle·fill: return "checkmark.circle.fill"
+            case .plus: return "plus"
+            case .plus·circle·fill: return "plus.circle.fill"
         }
     }
     

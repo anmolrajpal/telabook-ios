@@ -63,6 +63,8 @@ class AgentGalleryController:UIViewController {
     lazy var collectionView:UICollectionView = {
         let view = UICollectionView(frame: self.view.bounds, collectionViewLayout: createLayout())
         view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        view.allowsSelection = true
+        view.allowsMultipleSelection = false
         return view
     }()
     
@@ -129,8 +131,22 @@ class AgentGalleryController:UIViewController {
         super.viewDidLoad()
         commonInit()
     }
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        guard isEditing != editing else {
+            // Nothing to do. The caller didn't change the editing flag value.
+            return
+        }
+        
+        super.setEditing(editing, animated: animated)
+        collectionView.allowsMultipleSelection = editing
+        clearSelectedItems(animated: true)
+        updateNavigationBarLeftButton()
+        updateNavigationBarAddButton()
+        updateToolBar()
+    }
     
-    
+  
+
     
     
     

@@ -14,6 +14,10 @@ class AgentGalleryCell: UICollectionViewCell {
     
     var delegate:AgentGalleryCellDelegate?
     
+    var showSelectionIcons = false
+    
+    
+    
     //MARK: - Constructors
     
     /// The loader animation over the cell
@@ -32,6 +36,39 @@ class AgentGalleryCell: UICollectionViewCell {
     }()
     
     
+    /// The image view shows the checkmark determining selected state when set editing = true
+    lazy var selectedImageView:UIImageView = {
+        let view = UIImageView()
+        view.image = SFSymbol.checkmark·circle·fill.image(withSymbolConfiguration: .init(textStyle: .title2))
+        view.backgroundColor = .white
+        view.contentMode = .center
+        view.clipsToBounds = true
+        return view
+    }()
+    
+    
+    /// The image view shows the cicle determining unselected state when set editing = true
+    lazy var unselectedImageView:UIImageView = {
+        let view = UIImageView()
+        view.image = SFSymbol.circle.image(withSymbolConfiguration: .init(textStyle: .title2))
+        view.backgroundColor = .white
+        view.contentMode = .center
+        view.clipsToBounds = true
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    
+    /// The overlay view shown on cell with selected state
+    lazy var overlayView:UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.gray.withAlphaComponent(0.5)
+        view.layer.opacity = 0.5
+        view.contentMode = .scaleToFill
+        return view
+    }()
+    
+    
     
     
     
@@ -42,12 +79,23 @@ class AgentGalleryCell: UICollectionViewCell {
         layer.borderWidth = 1
         contentView.addSubview(imageView)
         contentView.addSubview(spinner)
+        contentView.addSubview(overlayView)
+        contentView.addSubview(unselectedImageView)
+        contentView.addSubview(selectedImageView)
         layoutConstraints()
     }
     private func layoutConstraints() {
         imageView.fillSuperview()
         spinner.centerInSuperview()
         spinner.constraint(equalTo: CGSize(width: 40, height: 40))
+        overlayView.fillSuperview()
+        unselectedImageView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -6).activate()
+        unselectedImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -6).activate()
+        selectedImageView.anchor(top: unselectedImageView.topAnchor, left: unselectedImageView.leftAnchor, bottom: unselectedImageView.bottomAnchor, right: unselectedImageView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
+        selectedImageView.layoutIfNeeded()
+        selectedImageView.layer.cornerRadius = selectedImageView.bounds.height / 2
+        unselectedImageView.layoutIfNeeded()
+        unselectedImageView.layer.cornerRadius = unselectedImageView.bounds.height / 2
     }
     
     private func startSpinner() {
@@ -58,7 +106,8 @@ class AgentGalleryCell: UICollectionViewCell {
         spinner.layer.removeAllAnimations()
         spinner.isHidden = true
     }
-    func configure(withGalleryItem item:AgentGalleryItem, at indexPath:IndexPath) {
+    func configure(withGalleryItem item:AgentGalleryItem, at indexPath:IndexPath, showSelectionIcons:Bool) {
+        self.showSelectionIcons = showSelectionIcons
         let image = item.getImage()
         imageView.image = image
         switch item.state {
@@ -72,15 +121,15 @@ class AgentGalleryCell: UICollectionViewCell {
                 startSpinner()
                 delegate?.startDownloadingMedia(forGalleryItem: item, at: indexPath)
         }
+        showSelectionOverlay()
     }
-    func handleTapGesture(_ gesture: UIGestureRecognizer) {
-        let touchLocation = gesture.location(in: imageView)
-
-        guard imageView.frame.contains(touchLocation) else {
-            return
-        }
-        
+    private func showSelectionOverlay() {
+        let alpha: CGFloat = (isSelected && showSelectionIcons) ? 1.0 : 0.0
+        overlayView.alpha = alpha
+        selectedImageView.alpha = alpha
+        unselectedImageView.alpha = showSelectionIcons ? 1.0 : 0.0
     }
+    
     
     
     //MARK: - Lifecycle
@@ -94,16 +143,18 @@ class AgentGalleryCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         imageView.image = nil
-//        spinner.stopAnimation()
-//        spinner.layer.removeAllAnimations()
+        isSelected = false
+        showSelectionIcons = false
+        showSelectionOverlay()
+    }
+    override var isSelected: Bool {
+        didSet {
+            showSelectionOverlay()
+            setNeedsLayout()
+        }
     }
     override func layoutSubviews() {
         super.layoutSubviews()
-//        if imageView.image == nil {
-//            spinner.animate()
-//        } else {
-//            spinner.layer.removeAllAnimations()
-//            spinner.layer.lineWidth = 0
-//        }
+        
     }
 }

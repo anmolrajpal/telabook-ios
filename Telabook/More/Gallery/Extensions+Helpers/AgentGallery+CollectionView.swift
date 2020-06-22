@@ -15,9 +15,7 @@ extension AgentGalleryController {
     typealias SectionType = Section
     typealias ItemType = AgentGalleryItem
     
-    class DataSource: UICollectionViewDiffableDataSource<SectionType, ItemType> {
-        
-    }
+    class DataSource: UICollectionViewDiffableDataSource<SectionType, ItemType> {}
     internal func configureCollectionView() {
         collectionView.delegate = self
         collectionView.registerCell(AgentGalleryCell.self)
@@ -25,10 +23,10 @@ extension AgentGalleryController {
     }
     private func configureDataSource() {
         self.dataSource = DataSource(collectionView: collectionView, cellProvider: { (collectionView, indexPath, item) -> UICollectionViewCell? in
-            let cell = collectionView.dequeueReusableCell(AgentGalleryCell.self, forItemAt: indexPath)
-            cell.delegate = self
-            cell.configure(withGalleryItem: item, at: indexPath)
-            return cell
+        let cell = collectionView.dequeueReusableCell(AgentGalleryCell.self, forItemAt: indexPath)
+        cell.delegate = self
+        cell.configure(withGalleryItem: item, at: indexPath, showSelectionIcons: collectionView.allowsMultipleSelection)
+        return cell
         })
         updateUI(animating: false)
     }
@@ -41,6 +39,9 @@ extension AgentGalleryController {
             if !self.galleryItems.isEmpty {
                 self.stopSpinner()
                 self.placeholderLabel.isHidden = true
+            } else {
+                self.placeholderLabel.isHidden = false
+                self.placeholderLabel.text = "No Media"
             }
         })
     }
@@ -70,6 +71,10 @@ extension AgentGalleryController {
 }
 extension AgentGalleryController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard !isEditing else {
+            updateToolBarButtonsState()
+            return
+        }
         collectionView.deselectItem(at: indexPath, animated: true)
         guard let item = dataSource.itemIdentifier(for: indexPath) else { return }
         if delegate == nil {
@@ -79,6 +84,26 @@ extension AgentGalleryController: UICollectionViewDelegate {
             self.dismiss(animated: true) {
                 self.delegate?.agentGalleryController(didPickImage: image, forGalleryItem: item, at: indexPath)
             }
+        }
+        /*
+        if indexPath.row == 0 {
+            promptPhotosPickerMenu()
+        } else {
+            guard let item = dataSource.itemIdentifier(for: indexPath) else { return }
+            if delegate == nil {
+                openGalleryItem(item: item)
+            } else {
+                guard let image = item.getImage() else { return }
+                self.dismiss(animated: true) {
+                    self.delegate?.agentGalleryController(didPickImage: image, forGalleryItem: item, at: indexPath)
+                }
+            }
+        }
+         */
+    }
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        if isEditing {
+            updateToolBarButtonsState()
         }
     }
     internal func openGalleryItem(item:AgentGalleryItem) {
@@ -93,6 +118,29 @@ extension AgentGalleryController: UICollectionViewDelegate {
         controller.delegate = self
         controller.currentPreviewItemIndex = index
         present(controller, animated: true)
+    }
+    
+    
+    
+    // MARK: - Multiple selection methods.
+
+    /// - Tag: collection-view-multi-select
+    func collectionView(_ collectionView: UICollectionView, shouldBeginMultipleSelectionInteractionAt indexPath: IndexPath) -> Bool {
+        // Returning `true` automatically sets `collectionView.allowsMultipleSelection`
+        // to `true`. The app sets it to `false` after the user taps the Done button.
+        print("\(#function)")
+        return true
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didBeginMultipleSelectionInteractionAt indexPath: IndexPath) {
+        // Replace the Select button with Done, and put the
+        // collection view into editing mode.
+        print("\(#function)")
+        setEditing(true, animated: true)
+    }
+    
+    func collectionViewDidEndMultipleSelectionInteraction(_ collectionView: UICollectionView) {
+        print("\(#function)")
     }
 }
 extension AgentGalleryController:AgentGalleryCellDelegate {

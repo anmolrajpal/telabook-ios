@@ -11,6 +11,7 @@ import CoreData
 
 extension AgentGalleryController {
     internal func commonInit() {
+        setEditing(false, animated: false)
         configureNavigationBarAppearance()
         configureNavigationBarItems()
         configureHierarchy()
@@ -20,14 +21,99 @@ extension AgentGalleryController {
     }
     private func configureNavigationBarItems() {
         title = "Gallery"
-        let image = #imageLiteral(resourceName: "add").withRenderingMode(.alwaysOriginal)
-        let button = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(addButtonDidTap))
-        navigationItem.rightBarButtonItems = [button]
+        
+        let selectButton = UIBarButtonItem(title: "Select", style: .plain, target: self, action: #selector(selectButtonDidTap))
+        selectButton.tintColor = .telaBlue
+        navigationItem.leftBarButtonItems = [selectButton]
+        
+        
+        let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(doneButtonDidTap))
+        doneButton.tintColor = .telaBlue
+//        let image = #imageLiteral(resourceName: "add").withRenderingMode(.alwaysOriginal)
+        let image = SFSymbol.plus·circle·fill.image(withSymbolConfiguration: .init(textStyle: .largeTitle))
+        let addButton = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(addButtonDidTap))
+        addButton.tintColor = UIColor.telaBlue
+        navigationItem.rightBarButtonItems = [doneButton, addButton]
+        
+        let shareButton = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareButtonDidTap))
+        let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
+        let deleteButton = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(deleteButtonDidTap))
+        toolbarItems = [shareButton, spacer, deleteButton]
+    }
+    @objc
+    private func shareButtonDidTap() {
+        promptActivityController()
+    }
+    @objc
+    private func deleteButtonDidTap() {
+        promptDeleteItemsAlert()
     }
     @objc
     private func addButtonDidTap() {
         promptPhotosPickerMenu()
     }
+    @objc
+    private func doneButtonDidTap() {
+        self.dismiss(animated: true, completion: nil)
+    }
+    @objc
+    private func selectButtonDidTap() {
+        setEditing(!isEditing, animated: true)
+    }
+    
+    
+    
+    private func promptActivityController() {
+        guard let indexPaths = collectionView.indexPathsForSelectedItems else { return }
+        let itemsToShare = indexPaths.compactMap({ dataSource.itemIdentifier(for: $0)?.getImage() })
+        let count = itemsToShare.count
+        guard count > 0 else { return }
+        let controller = UIActivityViewController(activityItems: itemsToShare, applicationActivities: nil)
+        present(controller, animated: true) {
+            self.setEditing(false, animated: true)
+        }
+    }
+    private func promptDeleteItemsAlert() {
+        guard let indexPaths = collectionView.indexPathsForSelectedItems else { return }
+        let itemsToDelete = indexPaths.compactMap({ dataSource.itemIdentifier(for: $0) })
+        let count = itemsToDelete.count
+        guard count > 0 else { return }
+        let alert = UIAlertController(title: "Confirm Delete", message: nil, preferredStyle: .actionSheet)
+        let title = count > 1 ? "Delete \(count) items" : "Delete \(count) item"
+        let deleteAction = UIAlertAction(title: title, style: .destructive) { _ in
+            self.setEditing(false, animated: true)
+            self.deleteGalleryItems(items: itemsToDelete)
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        cancelAction.setTitleColor(color: .telaBlue)
+        alert.addAction(deleteAction)
+        alert.addAction(cancelAction)
+        present(alert, animated: true)
+    }
+    func updateNavigationBarLeftButton() {
+        guard let button = navigationItem.leftBarButtonItem else { return }
+        button.title = isEditing ? "Cancel" : "Select"
+    }
+    func updateNavigationBarAddButton() {
+        guard let button = navigationItem.rightBarButtonItems?.last else { return }
+        button.isEnabled = !isEditing
+    }
+    func updateToolBar() {
+        navigationController?.setToolbarHidden(!isEditing, animated: true)
+        updateToolBarButtonsState()
+    }
+    func updateToolBarButtonsState() {
+        let isEnabled = collectionView.indexPathsForSelectedItems?.count ?? 0 > 0
+        toolbarItems?.first?.isEnabled = isEnabled
+        toolbarItems?.last?.isEnabled = isEnabled
+    }
+    func clearSelectedItems(animated: Bool) {
+        collectionView.indexPathsForSelectedItems?.forEach({ (indexPath) in
+            collectionView.deselectItem(at: indexPath, animated: animated)
+        })
+        updateUI(animating: false)
+    }
+    
     private func configureHierarchy() {
         view.backgroundColor = .telaGray1
         view.addSubview(collectionView)

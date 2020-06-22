@@ -93,6 +93,89 @@ extension AgentGalleryController {
     
     
     
+    private func coordinateDeleting(fileURL: URL) {
+        // fileExists is light so use it to avoid coordinate if the file doesn’t exist.
+        let fileManager = FileManager.default
+        guard fileManager.fileExists(atPath: fileURL.path) else { return }
+
+        var nsError: NSError?
+        NSFileCoordinator().coordinate(
+            writingItemAt: fileURL, options: .forDeleting, error: &nsError, byAccessor: { (newURL: URL) -> Void in
+                do {
+                    try fileManager.removeItem(atPath: newURL.path)
+                } catch {
+                    print("###\(#function): Failed to delete file at: \(fileURL)\n\(error)")
+                }
+        })
+        if let nsError = nsError {
+            print("###\(#function): \(nsError.localizedDescription)")
+        }
+    }
+    func deleteGalleryItemOnFirebase(galleryItem:AgentGalleryItem, completion: @escaping (Result<Bool, FirebaseAuthService.FirebaseError>) -> ()) {
+        let reference = Config.FirebaseConfig.Node.agentGallery(workerID: Int(agent.workerID)).reference
+        guard let key = galleryItem.firebaseKey else { return }
+                
+        reference.child(key).removeValue { (error, _) in
+            if let error = error {
+                printAndLog(message: error.localizedDescription, log: .firebase, logType: .error)
+                completion(.failure(.databaseRemoveValueError(error)))
+            } else {
+                completion(.success(true))
+            }
+        }
+    }
+    func deleteGalleryItemFromFirebaseStorage(galleryItem:AgentGalleryItem, completion: @escaping (Result<Bool, FirebaseAuthService.FirebaseError>) -> ()) {
+        let reference = Config.FirebaseConfig.StorageConfig.Node.agentGallery(workerID: Int(agent.workerID)).reference
+        guard let key = galleryItem.firebaseKey else { return }
+
+        reference.child(key).delete { error in
+            if let error = error {
+                printAndLog(message: error.localizedDescription, log: .firebase, logType: .error)
+                completion(.failure(.storageDeleteObjectError(error)))
+            } else {
+                completion(.success(true))
+            }
+        }
+    }
+    
+    
+    func deleteGalleryItems(items:[AgentGalleryItem]) {
+        
+        _ = items.map({ item in
+            guard let context = item.managedObjectContext else {
+                fatalError("###\(#function): Failed to retrieve the context from: \(item)")
+            }
+            if let cachedURL = item.imageLocalURL() {
+                self.coordinateDeleting(fileURL: cachedURL)
+                context.performAndWait {
+                    do {
+                        item.agent?.removeFromGalleryItems(item)
+                        context.delete(item)
+                        try context.save()
+                    } catch {
+                        printAndLog(message: error.localizedDescription, log: .coredata, logType: .error)
+                    }
+                }
+                
+            }
+            self.deleteGalleryItemOnFirebase(galleryItem: item) { result in
+                switch result {
+                    case let .failure(error): printAndLog(message: error.localizedDescription, log: .firebase, logType: .error)
+                    case .success: break
+                }
+            }
+//            self.deleteGalleryItemFromFirebaseStorage(galleryItem: item) { result in
+//                switch result {
+//                    case let .failure(error): printAndLog(message: error.localizedDescription, log: .firebase, logType: .error)
+//                    case .success: break
+//                }
+//            }
+        })
+        self.updateUI()
+        
+    }
+    
+    
     
     
     // MARK: - operation management

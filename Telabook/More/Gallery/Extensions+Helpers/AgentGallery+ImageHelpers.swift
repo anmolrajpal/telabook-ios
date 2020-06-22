@@ -155,7 +155,7 @@ extension AgentGalleryController {
                         let errorMessage = "Error retrieving download url after uploading agent gallery picture: \(err.localizedDescription)"
                         printAndLog(message: errorMessage, log: .firebase, logType: .error)
                         self.progressAlert.dismiss(animated: true) {
-                            UIAlertController.showTelaAlert(title: "Error", message: err.localizedDescription)
+                            self.showAlert(message: errorMessage)
                         }
                     }
                     return
@@ -173,7 +173,7 @@ extension AgentGalleryController {
                     switch result {
                         case let .failure(error):
                             self.progressAlert.dismiss(animated: true) {
-                                UIAlertController.showTelaAlert(title: "Error", message: error.localizedDescription)
+                                self.showAlert(message: error.localizedDescription)
                             }
                         case .success:
                             self.progressAlert.dismiss(animated: true) {
@@ -186,11 +186,14 @@ extension AgentGalleryController {
         
         uploadTask.observe(.failure) { snapshot in
             if let error = snapshot.error as NSError? {
-                printAndLog(message: error.localizedDescription, log: .firebase, logType: .error)
-                self.progressAlert.dismiss(animated: true) {
-                    self.progressBar.setProgress(0.0, animated: false)
-                    self.progressTitleLabel.text = "0 %"
-                    UIAlertController.showTelaAlert(title: "Error", message: error.localizedDescription)
+                let errorMessage = error.localizedDescription
+                printAndLog(message: errorMessage, log: .firebase, logType: .error)
+                DispatchQueue.main.async {
+                    self.progressAlert.dismiss(animated: true) {
+                        self.progressBar.setProgress(0.0, animated: false)
+                        self.progressTitleLabel.text = "0 %"
+                        self.showAlert(message: errorMessage)
+                    }
                 }
                 switch (StorageErrorCode(rawValue: error.code)!) {
                 case .objectNotFound:
@@ -213,7 +216,11 @@ extension AgentGalleryController {
         }
     }
     
-    
+    func showAlert(title:String = "Error", message:String) {
+        let alert = UIAlertController.telaAlertController(title: title, message: message)
+        alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+        present(alert, animated: true)
+    }
     
     func configureProgressAlert() {
         let cancelAction = UIAlertAction(title: "Cancel", style: .destructive) { (action) in
