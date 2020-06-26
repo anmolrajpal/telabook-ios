@@ -18,7 +18,7 @@ enum Configuration {
         case subdomain = "SUBDOMAIN"
         case timoutInterval = "TIMEOUT_INTERVAL"
         case appName = "APP_NAME"
-        case bundleID = "BUNDLE_ID"
+        case bundleID = "CFBundleIdentifier"
         case bundleDisplayName = "CFBundleDisplayName"
     }
     static func value<T>(for key: String) throws -> T where T: LosslessStringConvertible {

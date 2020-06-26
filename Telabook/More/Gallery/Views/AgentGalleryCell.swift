@@ -116,7 +116,9 @@ class AgentGalleryCell: UICollectionViewCell {
             case .downloaded:
                 if image != nil {
                     stopSpinner()
-                }
+                } else {
+                    startSpinner()
+            }
             case .new:
                 startSpinner()
                 delegate?.startDownloadingMedia(forGalleryItem: item, at: indexPath)

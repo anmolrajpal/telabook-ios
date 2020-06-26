@@ -116,15 +116,14 @@ class CustomersViewController: UIViewController {
         
         handle = reference.observe(.value, with: { snapshot in
             guard snapshot.exists() else {
-                print("Snapshot Does not exists: returning")
+//                print("Snapshot Does not exists: returning")
                 return
             }
             var conversations:[FirebaseCustomer] = []
             for child in snapshot.children {
                 if let snapshot = child as? DataSnapshot {
-                    print(snapshot)
                     guard let conversation = FirebaseCustomer(snapshot: snapshot, workerID: workerIDstring) else {
-                        print("Unresolved Error: Unable to create conversation from Firebase Customer")
+//                        print("Unresolved Error: Unable to create conversation from Firebase Customer")
                         continue
                     }
 //                    print(conversation)

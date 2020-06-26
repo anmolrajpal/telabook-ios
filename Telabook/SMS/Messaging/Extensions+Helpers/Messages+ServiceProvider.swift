@@ -37,13 +37,15 @@ extension MessagesController {
         let fetchedEntry = self.messages.first(where: { $0.firebaseKey == entry.firebaseKey })
         let isSeen = fetchedEntry?.isSeen ?? false
         let cachedImageUUID = fetchedEntry?.imageUUID
+        let downloadState = fetchedEntry?.downloadState ?? .new
+        let uploadState = fetchedEntry?.uploadState ?? .none
         let context = PersistentContainer.shared.newBackgroundContext()
         let objectID = customer.objectID
         let referenceContext = context.object(with: objectID) as! Customer
 //        let context = viewContext
         context.performAndWait {
             do {
-                _ = UserMessage(context: context, messageEntryFromFirebase: entry, forConversationWithCustomer: referenceContext, imageUUID: cachedImageUUID, isSeen: isSeen)
+                _ = UserMessage(context: context, messageEntryFromFirebase: entry, forConversationWithCustomer: referenceContext, imageUUID: cachedImageUUID, isSeen: isSeen, downloadState: downloadState, uploadState: uploadState)
                 try context.save()
             } catch let error {
                 printAndLog(message: "Error persisting observed message: \(error)", log: .coredata, logType: .error)
@@ -127,6 +129,23 @@ extension MessagesController {
     
     
     
+    
+    /* ------------------------------------------------------------------------------------------------------------ */
+    internal func sendNewMultimediaMessage(newMessage:UserMessage) {
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+        
+        let context = PersistentContainer.shared.newBackgroundContext()
+        let objectID = customer.objectID
+        let referenceCustomer = context.object(with: objectID) as! Customer
+        let referenceMessage = context.object(with: newMessage.objectID) as! UserMessage
+        let operations = MessageOperations.getOperationsToSend(newMultimediaMessage: referenceMessage, using: context, forConversationWithCustomer: referenceCustomer)
+        handleViewsStateForOperations(operations: operations, onOperationQueue: queue, completion: {_ in })
+        
+        queue.addOperations(operations, waitUntilFinished: false)
+    }
+    /* ------------------------------------------------------------------------------------------------------------ */
     
     
     

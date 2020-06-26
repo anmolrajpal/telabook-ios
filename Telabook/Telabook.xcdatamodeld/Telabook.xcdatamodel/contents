@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19F101" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="ActiveDownload" representedClassName="ActiveDownload" syncable="YES" codeGenerationType="class">
+        <attribute name="downloadURL" optional="YES" attributeType="URI"/>
+        <relationship name="conversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Customer" inverseName="activeDownloads" inverseEntity="Customer"/>
+    </entity>
     <entity name="Address" representedClassName="Address" syncable="YES" codeGenerationType="class">
         <attribute name="city" optional="YES" attributeType="String"/>
         <attribute name="street" optional="YES" attributeType="String"/>
@@ -138,6 +142,7 @@
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="workerPersonName" optional="YES" attributeType="String"/>
         <attribute name="workerPhoneNumber" optional="YES" attributeType="String"/>
+        <relationship name="activeDownloads" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ActiveDownload" inverseName="conversation" inverseEntity="ActiveDownload"/>
         <relationship name="addressBook" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="AddressBook" inverseName="customer" inverseEntity="AddressBook"/>
         <relationship name="agent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Agent" inverseName="customers" inverseEntity="Agent"/>
         <relationship name="messages" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="UserMessage" inverseName="conversation" inverseEntity="UserMessage"/>
@@ -254,13 +259,18 @@
         <attribute name="imageURL" optional="YES" attributeType="URI"/>
         <attribute name="imageUrlString" optional="YES" attributeType="String"/>
         <attribute name="imageUUID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isDownloading" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isMediaDownloaded" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isMediaUploaded" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isMessageDeleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isSeen" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isSending" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isSentByWorker" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isUploading" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="lastRefreshedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="mediaDownloadState" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="mediaSize" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="mediaUploadState" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="messageSID" optional="YES" attributeType="String"/>
         <attribute name="sentByApiAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="sentByAppAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -270,10 +280,8 @@
         <attribute name="textMessage" optional="YES" attributeType="String"/>
         <attribute name="type" attributeType="String"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="uploadURL" optional="YES" attributeType="URI"/>
         <relationship name="conversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Customer" inverseName="messages" inverseEntity="Customer"/>
-        <fetchedProperty name="lastSeenMessage" optional="YES">
-            <fetchRequest name="fetchedPropertyFetchRequest" entity="UserMessage" predicateString="lastRefreshedAt == max($FETCHED_SOURCE.lastRefreshedAt) AND isSeen == YES"/>
-        </fetchedProperty>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="firebaseKey"/>
@@ -295,13 +303,14 @@
         <relationship name="permissions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Permission" inverseName="user" inverseEntity="Permission"/>
     </entity>
     <elements>
+        <element name="ActiveDownload" positionX="-135.49609375" positionY="620.70703125" width="128" height="73"/>
         <element name="Address" positionX="-324.984375" positionY="-372.328125" width="128" height="90"/>
         <element name="AddressBook" positionX="-173.23828125" positionY="228.984375" width="128" height="268"/>
         <element name="Agent" positionX="-718.6484375" positionY="-34.9140625" width="128" height="403"/>
         <element name="AgentGalleryItem" positionX="-603.50390625" positionY="440.91796875" width="128" height="148"/>
         <element name="AutoResponse" positionX="-530.40234375" positionY="100.66015625" width="128" height="163"/>
         <element name="BlockedUser" positionX="-744.03125" positionY="515.375" width="128" height="208"/>
-        <element name="Customer" positionX="-330.20703125" positionY="143.10546875" width="128" height="568"/>
+        <element name="Customer" positionX="-330.20703125" positionY="143.10546875" width="128" height="583"/>
         <element name="ExternalChat" positionX="354.94140625" positionY="-169.65234375" width="128" height="165"/>
         <element name="ExternalConversation" positionX="140.44140625" positionY="-192.74609375" width="128" height="345"/>
         <element name="ImageMetaData" positionX="-729" positionY="-225" width="128" height="73"/>
@@ -310,7 +319,7 @@
         <element name="Permission" positionX="639.96484375" positionY="830.390625" width="128" height="148"/>
         <element name="Person" positionX="490.1484375" positionY="-384.12890625" width="128" height="105"/>
         <element name="QuickResponse" positionX="-939.1953125" positionY="409.9609375" width="128" height="178"/>
-        <element name="UserMessage" positionX="-32.5" positionY="212.10546875" width="128" height="476"/>
+        <element name="UserMessage" positionX="51.6953125" positionY="264.48046875" width="128" height="538"/>
         <element name="UserObject" positionX="233.99609375" positionY="682.64453125" width="128" height="225"/>
     </elements>
 </model>

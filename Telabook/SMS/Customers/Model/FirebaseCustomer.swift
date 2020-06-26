@@ -50,7 +50,7 @@ struct FirebaseCustomer {
         guard let key = Int(snapshot.key),
             key > 0,
             let value = snapshot.value as? [String: AnyObject] else {
-            print("Error: Failed to unwrap snapshot value")
+//            print("Error: Failed to unwrap snapshot value")
             return nil
         }
         
@@ -140,7 +140,7 @@ struct FirebaseCustomer {
         guard let key = Int(snapshot.key),
             key > 0,
             let value = snapshot.value as? [String: AnyObject] else {
-            print("Error: Failed to unwrap snapshot value")
+//            print("Error: Failed to unwrap snapshot value")
             return nil
         }
         
@@ -235,7 +235,7 @@ extension FirebaseCustomer {
         var dictionary:UpdatedConversation = [
             "unread_messages":0,
             "last_message_key":message.messageId,
-            "message_type":message.type!,
+            "message_type":message.messageType.rawValue,
             "updated_at":Date().milliSecondsSince1970,
             "sent_by_app":message.sentDate.milliSecondsSince1970,
             "last_message_datetime":message.sentDate.milliSecondsSince1970,

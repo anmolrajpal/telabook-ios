@@ -96,6 +96,11 @@ extension CustomersViewController: UITableViewDelegate {
             let detailsAction = UIAction(title: "Details", image: SFSymbol.person.image.withTintColor(.telaBlue, renderingMode: .alwaysOriginal)) { _ in
                 
             }
+            let galleryAction = UIAction(title: "Gallery", image: #imageLiteral(resourceName: "camera_icon")) { _ in
+                let vc = ConversationGalleryController(conversation: customer)
+                let controller = UINavigationController(rootViewController: vc)
+                self.present(controller, animated: true)
+            }
             let archiveAction = UIAction(title: "Archive", image: #imageLiteral(resourceName: "archive")) { _ in
                 self.updateConversation(for: customer, archiving: true, completion: {_ in})
             }
@@ -115,6 +120,7 @@ extension CustomersViewController: UITableViewDelegate {
                 pinningAction,
                 setColorMenu,
                 detailsAction,
+                galleryAction,
                 self.selectedSegment == .Inbox ? archiveAction : unarchiveAction,
                 blockAction,
                 confirmDeleteMenu

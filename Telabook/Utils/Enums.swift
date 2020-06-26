@@ -458,6 +458,7 @@ public enum Header {
         case json = "application/json"
         case xml = "application/xml"
         case urlEncoded = "application/x-www-form-urlencoded"
+        case image·jpeg = "image/jpeg"
     }
     enum accept:String {
         case json = "application/json"

@@ -254,15 +254,21 @@ extension MessagesController: NSFetchedResultsControllerDelegate {
                 operation = BlockOperation { [weak self] in
                     guard let self = self else { return }
                     if let index = self.messages.firstIndex(where: { $0.firebaseKey == message.firebaseKey }) {
-                        print("Core Data<Insert Case>: Updating existing message at section : \(index) where message:\n\(message) when messages count = \(self.messages.count)")
+//                        print("Core Data<Insert Case>: Updating existing message at section : \(index) where message:\n\(message) when messages count = \(self.messages.count)")
                         self.messages[index] = message
                         let indexPath = IndexPath(item: 0, section: index)
                         let messagesCollectionView = self.messagesCollectionView
-                          if let cell = messagesCollectionView.cellForItem(at: indexPath) as? MessageContentCell {
-                            cell.configure(with: message, at: indexPath, and: messagesCollectionView)
+                        if case .photo = message.kind {
+                            if let cell = messagesCollectionView.cellForItem(at: indexPath) as? MMSCell {
+                                cell.configure(with: message, at: indexPath, and: messagesCollectionView, upload: self.uploadService.activeUploads[message.imageURL!], download: self.downloadService.activeDownloads[message.imageURL!], shouldAutoDownload: self.shouldAutoDownloadImageMessages)
+                            }
+                        } else {
+                            if let cell = messagesCollectionView.cellForItem(at: indexPath) as? MessageContentCell {
+                                cell.configure(with: message, at: indexPath, and: messagesCollectionView)
+                            }
                         }
                     } else {
-                        print("Core Data<Insert Case>: Inserting new message at core data indexPath: \(newIndexPath) & message: \(message) when messages count = \(self.messages.count)")
+//                        print("Core Data<Insert Case>: Inserting new message at core data indexPath: \(newIndexPath) & message: \(message) when messages count = \(self.messages.count)")
                         self.messages.append(message)
                         self.messagesCollectionView.insertSections([self.messages.count - 1])
                         if self.messages.count >= 2 {
@@ -293,12 +299,18 @@ extension MessagesController: NSFetchedResultsControllerDelegate {
                 operation = BlockOperation { [weak self] in
                     guard let self = self else { return }
                     if let index = self.messages.firstIndex(where: { $0.firebaseKey == message.firebaseKey }) {
-                        print("Core Data<Update Case>: Updating message at section: \(index) | message:\n \(message) when messages count = \(self.messages.count)")
+//                        print("Core Data<Update Case>: Updating message at section: \(index) | message:\n \(message) when messages count = \(self.messages.count)")
                         self.messages[index] = message
                         let indexPath = IndexPath(item: 0, section: index)
                         let messagesCollectionView = self.messagesCollectionView
-                           if let cell = messagesCollectionView.cellForItem(at: indexPath) as? MessageContentCell {
-                            cell.configure(with: message, at: indexPath, and: messagesCollectionView)
+                        if case .photo = message.kind {
+                            if let cell = messagesCollectionView.cellForItem(at: indexPath) as? MMSCell {
+                                cell.configure(with: message, at: indexPath, and: messagesCollectionView, upload: self.uploadService.activeUploads[message.imageURL!], download: self.downloadService.activeDownloads[message.imageURL!], shouldAutoDownload: self.shouldAutoDownloadImageMessages)
+                            }
+                        } else {
+                            if let cell = messagesCollectionView.cellForItem(at: indexPath) as? MessageContentCell {
+                                cell.configure(with: message, at: indexPath, and: messagesCollectionView)
+                            }
                         }
                     }
     //                self?.messagesCollectionView.reloadSections([section])

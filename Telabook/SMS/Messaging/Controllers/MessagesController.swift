@@ -12,12 +12,43 @@ import Firebase
 import MessageKit
 import AVFoundation
 import os
+import Network
+
+extension ActiveDownload {
+    convenience init(context:NSManagedObjectContext, downloadURL:URL, conversation:Customer) {
+        self.init(context:context)
+        self.downloadURL = downloadURL
+        self.conversation = conversation
+    }
+}
+public enum BackgroundIdentifier {
+    case messageDownload, messageUpload
+    
+    var rawValue:String {
+        let bundleID:String = try! Configuration.value(for: .bundleID)
+        switch self {
+            case .messageDownload: return "\(bundleID).messagesDownloadSession"
+            case .messageUpload: return "\(bundleID).messagesUploadSession"
+        }
+    }
+}
+extension URLSessionConfiguration {
+    static func background(withIdentifier identifier: BackgroundIdentifier) -> URLSessionConfiguration {
+        return URLSessionConfiguration.background(withIdentifier: identifier.rawValue)
+    }
+}
+
 
 class MessagesController: MessagesViewController {
     
     
-    // MARK: - init
     
+    
+    
+    // MARK: - init
+    let mediaManager = MessageMediaManager.shared
+    let downloadService:DownloadService
+    let uploadService:UploadService
     let screenEntryTime = Date()
     var handle:UInt!
     var childUpdatedHandle:UInt!
@@ -39,8 +70,10 @@ class MessagesController: MessagesViewController {
         self.reference = node.reference
         self.conversationID = Int(customer.externalConversationID)
         self.thisSender = .init(senderId: String(customer.agent?.workerID ?? 0), displayName: customer.agent?.personName ?? "")
+        self.downloadService = self.mediaManager.downloadService
+        self.uploadService = self.mediaManager.uploadService
         super.init(nibName: nil, bundle: nil)
-        
+        self.mediaManager.delegate = self
         setupFetchedResultsController()
     }
     required init?(coder aDecoder: NSCoder) {
@@ -53,24 +86,42 @@ class MessagesController: MessagesViewController {
     
     
     
+    
+    
     // MARK: - Properties
     
+    let monitor = NWPathMonitor()
+    
+    let monitorQueue = DispatchQueue(label: "network-monitor")
+    
     let synthesizer = AVSpeechSynthesizer()
+    
+    let serialQueue = DispatchQueue(label: "conversation-media-download-queue")
+    
+    let autoDownloadImageMessagesState = AppData.autoDownloadImageMessagesState
+    
+    var shouldAutoDownloadImageMessages = false
+    
     internal var storageUploadTask:StorageUploadTask!
+    
     internal var fetchedResultsController: NSFetchedResultsController<UserMessage>!
+    
     internal var indexPathForMessageBottomLabelToShow:IndexPath?
+    
     var isLoading = false
+    
     var limit: Int = 20
+    
     var offset:Int = 0
+    
     var didSentNewMessage = false
     
     var collectionViewOperations: [BlockOperation] = []
     
-    var isFirstLayout: Bool = true
-    internal var isMessagesControllerBeingDismissed: Bool = false
-    
     var newMessagesCountLabelHeightConstraint:NSLayoutConstraint!
+    
     var downIndicatorBottomConstraint:NSLayoutConstraint!
+    
     var downIndicatorShouldShow:Bool = false {
         didSet {
             if downIndicatorShouldShow != oldValue {
@@ -84,6 +135,8 @@ class MessagesController: MessagesViewController {
             //            print("Should Show Loader = \(shouldShowLoader)")
         }
     }
+    
+    
     var shouldFetchMore = true {
         didSet {
             if shouldFetchMore == false {
@@ -98,6 +151,7 @@ class MessagesController: MessagesViewController {
         }
     }
     
+    
     var messages:[UserMessage] = [] {
         didSet {
             if !messages.isEmpty {
@@ -108,7 +162,7 @@ class MessagesController: MessagesViewController {
     
     
     var mediaMessages:[UserMessage] {
-        messages.filter({ $0.messageType == .multimedia && $0.imageLocalURL() != nil })
+        messages.filter({ $0.messageType == .multimedia && $0.getImage() != nil })
     }
     
     
@@ -130,46 +184,8 @@ class MessagesController: MessagesViewController {
     
     
     
-    let serialQueue = DispatchQueue(label: "conversation-media-download-queue")
-    
-    let uploadService = UploadService()
-    let downloadService = DownloadService()
-    
-    lazy var downloadSession: URLSession = {
-      let configuration = URLSessionConfiguration.background(withIdentifier:
-        "com.telabook.web.downloadSession")
-      return URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
-    }()
-    lazy var uploadSession: URLSession = {
-      let configuration = URLSessionConfiguration.background(withIdentifier:
-        "com.telabook.web.uploadSession")
-      return URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
-    }()
-    
-    
-    /*
-    lazy var fetchedResultsController: NSFetchedResultsController<UserMessage> = {
-        let fetchRequest:NSFetchRequest = UserMessage.fetchRequest()
-        let conversationPredicate = NSPredicate(format: "\(#keyPath(UserMessage.conversation)) == %@", customer)
-        
-        fetchRequest.predicate = conversationPredicate
-        
-        fetchRequest.sortDescriptors = [
-            NSSortDescriptor(key: #keyPath(UserMessage.date), ascending: false)
-        ]
-        
-//        fetchRequest.fetchOffset = self.offset
-//        fetchRequest.fetchLimit = self.limit
-        fetchRequest.fetchBatchSize = 15
-        let controller = NSFetchedResultsController(fetchRequest: fetchRequest,
-                                                    managedObjectContext: viewContext,
-                                                    sectionNameKeyPath: nil,
-                                                    cacheName: nil)
-        controller.delegate = self
-        return controller
-    }()
-    */
-    
+   // MARK: - Constructors
+
 
     
     //MARK: - Lifecycle
@@ -177,11 +193,21 @@ class MessagesController: MessagesViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         commonInit()
-        uploadService.uploadsSession = uploadSession
-        downloadService.downloadsSession = downloadSession
+//        uploadService.uploadsSession = uploadSession
+//        MessageDownloadManager.delegate = self
+//        let downloadManager = MessageDownloadManager.shared
+//        let downloadSession = downloadManager.session
+//        activeDownloadMessages.forEach({
+//            guard let url = $0.imageURL else { return }
+//            let download = Download(message: $0)
+//            downloadService.activeDownloads[url] = download
+//        })
+        
+//        downloadService.downloadsSession = downloadSession
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+        stopMonitoringNetwork()
         stopObservingReachability()
         removeFirebaseObservers()
         markAllMessagesAsSeen()
@@ -189,12 +215,19 @@ class MessagesController: MessagesViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 //        self.becomeFirstResponder()
+        monitorNetwork()
         observeReachability()
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         addFirebaseObservers()
     }
+    
+    
+    
+    
+    
+    // MARK: - Methods
     
     private func addFirebaseObservers() {
         childAddedHandle = observeNewMessages()
@@ -204,7 +237,27 @@ class MessagesController: MessagesViewController {
         if childAddedHandle != nil { reference.removeObserver(withHandle: childAddedHandle) }
         if childUpdatedHandle != nil { reference.removeObserver(withHandle: childUpdatedHandle) }
     }
+    private func monitorNetwork() {
+        monitor.pathUpdateHandler = { path in
+            switch self.autoDownloadImageMessagesState {
+                case .never:
+                    self.shouldAutoDownloadImageMessages = false
+                case .wifi:
+                    self.shouldAutoDownloadImageMessages = path.usesInterfaceType(.wifi)
+                case .wifiPlusCellular:
+                    self.shouldAutoDownloadImageMessages = path.status == .satisfied
+            }
+        }
+        monitor.start(queue: monitorQueue)
+    }
+    private func stopMonitoringNetwork() {
+        monitor.cancel()
+    }
     
+    
+    
+    
+    // MARK: - Overriden methods
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let messagesDataSource = messagesCollectionView.messagesDataSource else {
@@ -220,7 +273,8 @@ class MessagesController: MessagesViewController {
         let message = messagesDataSource.messageForItem(at: indexPath, in: messagesCollectionView) as! UserMessage
         if case .photo = message.kind {
             let cell = messagesCollectionView.dequeueReusableCell(MMSCell.self, for: indexPath)
-            cell.configure(with: message, at: indexPath, and: messagesCollectionView, upload: uploadService.activeUploads[message.imageURL!], download: downloadService.activeDownloads[message.imageURL!])
+            cell.cellDelegate = self
+            cell.configure(with: message, at: indexPath, and: messagesCollectionView, upload: uploadService.activeUploads[message.imageURL!], download: downloadService.activeDownloads[message.imageURL!], shouldAutoDownload: shouldAutoDownloadImageMessages)
             return cell
         }
         return super.collectionView(collectionView, cellForItemAt: indexPath)
@@ -283,6 +337,7 @@ class MessagesController: MessagesViewController {
     
     
     // MARK: - Views
+    
     var headerSpinnerView:SpinnerReusableView?
     
     lazy var spinner: UIActivityIndicatorView = {

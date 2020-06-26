@@ -18,12 +18,12 @@ extension MessagesController {
     func observeNewMessages() -> UInt {
         return reference.queryOrdered(byChild: "date").queryStarting(atValue: screenEntryTime.milliSecondsSince1970).observe(.childAdded, with: { snapshot in
             if snapshot.exists() {
-                print("New Message Child Added: \(snapshot)")
+//                print("New Message Child Added: \(snapshot)")
                 guard let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) else {
                     #if !RELEASE
-                    print("###\(#function) Invalid Data for Snapshot key: \(snapshot.key). Error: Failed to create message from Firebase Message")
+//                    print("###\(#function) Invalid Data for Snapshot key: \(snapshot.key). Error: Failed to create message from Firebase Message")
                     #endif
-                    os_log("Invalid Data for Snapshot key: %@. Unable to create Message from Firebase Message due to invalid data. Hence not saving it in local db and the message will not be visible to user.", log: .firebase, type: .debug, snapshot.key)
+//                    os_log("Invalid Data for Snapshot key: %@. Unable to create Message from Firebase Message due to invalid data. Hence not saving it in local db and the message will not be visible to user.", log: .firebase, type: .debug, snapshot.key)
                     return
                 }
 //                self.persistFirebaseMessagesInStore(entries: [message], fetchedEntries: self.messages)
@@ -31,21 +31,21 @@ extension MessagesController {
             }
         }) { error in
             #if !RELEASE
-            print("###\(#function) Child Added Observer Event Error: \(error)")
+//            print("###\(#function) Child Added Observer Event Error: \(error)")
             #endif
-            os_log("Firebase Child Added Observer Event Error while observing new Messages: %@", log: .firebase, type: .error, error.localizedDescription)
+//            os_log("Firebase Child Added Observer Event Error while observing new Messages: %@", log: .firebase, type: .error, error.localizedDescription)
         }
     }
     
     func observeExistingMessages() -> UInt {
         return reference.queryOrdered(byChild: "date").queryStarting(atValue: screenEntryTime.milliSecondsSince1970).observe(.childChanged, with: { snapshot in
             if snapshot.exists() {
-                print("Existing Message Child Updated: \(snapshot)")
+//                print("Existing Message Child Updated: \(snapshot)")
                 guard let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) else {
                     #if !RELEASE
-                    print("###\(#function) Invalid Data for Snapshot key: \(snapshot.key). Error: Failed to create updated message from Firebase Message.")
+//                    print("###\(#function) Invalid Data for Snapshot key: \(snapshot.key). Error: Failed to create updated message from Firebase Message.")
                     #endif
-                    os_log("Invalid Data for Snapshot key: %@. Unable to create updated Message from Firebase Message due to invalid data. Hence not updating it in core data and the updated message will not be visible to user.", log: .firebase, type: .debug, snapshot.key)
+//                    os_log("Invalid Data for Snapshot key: %@. Unable to create updated Message from Firebase Message due to invalid data. Hence not updating it in core data and the updated message will not be visible to user.", log: .firebase, type: .debug, snapshot.key)
                     return
                 }
 //                self.persistFirebaseMessagesInStore(entries: [message], fetchedEntries: self.messages)
@@ -53,9 +53,9 @@ extension MessagesController {
             }
         }) { error in
             #if !RELEASE
-            print("###\(#function) Child Changed Observer Event Error: \(error)")
+//            print("###\(#function) Child Changed Observer Event Error: \(error)")
             #endif
-            os_log("Firebase Child Changed Observer Event Error while observing existing Messages: %@", log: .firebase, type: .error, error.localizedDescription)
+//            os_log("Firebase Child Changed Observer Event Error while observing existing Messages: %@", log: .firebase, type: .error, error.localizedDescription)
         }
     }
     
@@ -70,7 +70,7 @@ extension MessagesController {
         if messages.isEmpty { self.startSpinner() }
         reference.queryLimited(toLast: UInt(limit)).observeSingleEvent(of: .value, with: { snapshot in
             guard snapshot.exists() else {
-                printAndLog(message: "### \(#function) Snapshot does not exists. Return()", log: .firebase, logType: .info)
+//                printAndLog(message: "### \(#function) Snapshot does not exists. Return()", log: .firebase, logType: .info)
                 return
             }
             var messages:[FirebaseMessage] = []
@@ -78,8 +78,7 @@ extension MessagesController {
                 if let snapshot = child as? DataSnapshot {
                     //                                        print(snapshot)
                     guard let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) else {
-                        let errorMessage = "Invalid Data Error: Failed to create message from Firebase Message"
-                        printAndLog(message: errorMessage, log: .firebase, logType: .debug)
+//                        printAndLog(message: "Invalid Data Error: Failed to create message from Firebase Message", log: .firebase, logType: .debug)
                         continue
                     }
                     //                    print(conversation)
@@ -104,16 +103,14 @@ extension MessagesController {
 //        print("### \(#function) Initial Message: \(initialMessage) where fetched Messages count = \(fetchedMessages.count) and fetched messages to update: \(fetchedMessages)")
         reference.queryOrderedByKey().queryEnding(atValue: initialMessageKey).queryLimited(toLast: UInt(limit)).observeSingleEvent(of: .value, with: { snapshot in
             guard snapshot.exists() else {
-                printAndLog(message: "### \(#function) Snapshot does not exists. Return()", log: .firebase, logType: .info)
+//                printAndLog(message: "### \(#function) Snapshot does not exists. Return()", log: .firebase, logType: .info)
                 return
             }
             var messages:[FirebaseMessage] = []
             for child in snapshot.children {
                 if let snapshot = child as? DataSnapshot {
-                                                            print(snapshot)
                     guard let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) else {
-                        let errorMessage = "Invalid Data Error: Failed to create message from Firebase Message"
-                        printAndLog(message: errorMessage, log: .firebase, logType: .debug)
+//                        printAndLog(message: "Invalid Data Error: Failed to create message from Firebase Message", log: .firebase, logType: .debug)
                         continue
                     }
                     //                    print(conversation)
@@ -140,17 +137,15 @@ extension MessagesController {
         
         reference.queryOrderedByKey().queryEnding(atValue: key).queryLimited(toLast: UInt(limit + 1)).observeSingleEvent(of: .value, with: { snapshot in
             guard snapshot.exists() else {
-               printAndLog(message: "### \(#function) Snapshot does not exists. Return()", log: .firebase, logType: .info)
+//               printAndLog(message: "### \(#function) Snapshot does not exists. Return()", log: .firebase, logType: .info)
                 return
             }
             var messages:[FirebaseMessage] = []
             //            print("Snapshot Children Count: \(snapshot.children.allObjects.count)")
             for child in snapshot.children {
                 if let snapshot = child as? DataSnapshot {
-                    //                    print(snapshot)
                     guard let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) else {
-                        let errorMessage = "Invalid Data, Unable to create Message from Firebase Message due to invalid data. Hence not saving it in local db and the message will not be visible to user."
-                        printAndLog(message: errorMessage, log: .firebase, logType: .debug)
+//                        printAndLog(message: "Invalid Data, Unable to create Message from Firebase Message due to invalid data. Hence not saving it in local db and the message will not be visible to user.", log: .firebase, logType: .debug)
                         continue
                     }
                     //                    print(conversation)

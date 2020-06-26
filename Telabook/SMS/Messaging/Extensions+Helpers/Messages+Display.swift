@@ -226,15 +226,15 @@ extension MessagesController: MessagesDisplayDelegate {
 //        loader.centerXAnchor.constraint(equalTo: imageView.centerXAnchor).activate()
 //        loader.centerYAnchor.constraint(equalTo: imageView.centerYAnchor).activate()
         
-        if message.imageUUID != nil,
-            let image = message.getImage() {
-            imageView.image = image
-            print("Loading image from local url: \(String(describing: message.imageLocalURL()))")
-//            loader.stopAnimating()
-        } else {
+//        if message.imageUUID != nil,
+//            let image = message.getImage() {
+//            imageView.image = image
+//            print("Loading image from local url: \(String(describing: message.imageLocalURL()))")
+////            loader.stopAnimating()
+//        } else {
 //            if !messagesCollectionView.isDragging && !messagesCollectionView.isDecelerating {
 //                downloadMessageImage(for: message, indexPath: indexPath, viewContext: viewContext)
-            downloadService.startDownload(message)
+//            downloadService.startDownload(message)
             
 //            reloadCell(at: indexPath)
 //            downloadMessageImage(for: message, viewContext: viewContext) { image in
@@ -267,7 +267,7 @@ extension MessagesController: MessagesDisplayDelegate {
                 }
             }
             */
-        }
+//        }
         
         
         

@@ -70,7 +70,12 @@ extension MessagesController: InputBarAccessoryViewDelegate {
 
 extension MessagesController: AgentGalleryImagePickerDelegate {
     func agentGalleryController(didPickImage image: UIImage, forGalleryItem item: AgentGalleryItem, at indexPath: IndexPath) {
-        print("Should upload image")
+        uploadImage(image)
+    }
+}
+extension MessagesController: ConversationGalleryImagePickerDelegate {
+    func conversationGalleryController(didPickImage image: UIImage, forMessage message: UserMessage, at indexPath: IndexPath) {
+        uploadImage(image)
     }
 }
 

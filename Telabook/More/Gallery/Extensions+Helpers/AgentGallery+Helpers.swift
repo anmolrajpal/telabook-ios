@@ -182,14 +182,17 @@ extension AgentGalleryController {
             }
             
             if isCancelled { return }
-            
+            guard let fileURL = destinationURL else {
+                printAndLog(message: "Falied to unwrap destination url", log: .coredata, logType: .error)
+                return
+            }
             if !imageData.isEmpty {
                 var nsError: NSError?
-                NSFileCoordinator().coordinate(writingItemAt: destinationURL!, options: .forReplacing, error: &nsError, byAccessor: { (newURL: URL) -> Void in
+                NSFileCoordinator().coordinate(writingItemAt: fileURL, options: .forReplacing, error: &nsError, byAccessor: { (newURL: URL) -> Void in
                     do {
                         try imageData.write(to: newURL, options: .atomic)
                     } catch {
-                        let errorMessage = "###\(#function) - Failed to save an image file: \(destinationURL!)"
+                        let errorMessage = "###\(#function) - Failed to save an image file: \(fileURL)"
                         printAndLog(message: errorMessage, log: .ui, logType: .error)
                     }
                 })

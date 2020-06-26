@@ -42,9 +42,8 @@ class CircularProgressBar: UIView {
             setForegroundLayerColorForSafePercent()
         }
     }
-    
+    var previousProgress:Double = 0
     public func setProgress(to progressConstant: Double, withAnimation: Bool) {
-        
         var progress: Double {
             get {
                 if progressConstant > 1 { return 1 }
@@ -57,26 +56,28 @@ class CircularProgressBar: UIView {
         
         if withAnimation {
             let animation = CABasicAnimation(keyPath: "strokeEnd")
-            animation.fromValue = 0
+            animation.fromValue = previousProgress
             animation.toValue = progress
-            animation.duration = 2
+            animation.duration = 0.4
             foregroundLayer.add(animation, forKey: "foregroundAnimation")
-            
+            previousProgress = progress
         }
+        self.label.text = "\(Int(progress * 100)) %"
+        self.configLabel()
         
-        var currentTime:Double = 0
-        let timer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { (timer) in
-            if currentTime >= 2{
-                timer.invalidate()
-            } else {
-                currentTime += 0.05
-                let percent = currentTime/2 * 100
-                self.label.text = "\(Int(progress * percent)) %"
-//                self.setForegroundLayerColorForSafePercent()
-                self.configLabel()
-            }
-        }
-        timer.fire()
+//        var currentTime:Double = 0
+//        let timer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { (timer) in
+//            if currentTime >= 2{
+//                timer.invalidate()
+//            } else {
+//                currentTime += 0.05
+//                let percent = currentTime/2 * 100
+//                self.label.text = "\(Int(progress * percent)) %"
+////                self.setForegroundLayerColorForSafePercent()
+//                self.configLabel()
+//            }
+//        }
+//        timer.fire()
         
     }
     

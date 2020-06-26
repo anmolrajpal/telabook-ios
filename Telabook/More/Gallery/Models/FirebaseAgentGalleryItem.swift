@@ -30,7 +30,7 @@ struct FirebaseAgentGalleryItem {
         let key = snapshot.key
         guard !key.isBlank,
             let value = snapshot.value as? [String: AnyObject] else {
-            print("Error: Failed to unwrap snapshot value")
+//            print("Error: Failed to unwrap snapshot value")
             return nil
         }
         

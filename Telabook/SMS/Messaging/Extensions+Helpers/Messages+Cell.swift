@@ -25,13 +25,13 @@ extension MessagesController: MessageCellDelegate {
         indexPathForMessageBottomLabelToShow = indexPathForMessageBottomLabelToShow == indexPath ? nil : indexPath
         messagesCollectionView.reloadItems(at: [indexPath])
     }
+    
     internal func openMediaMessage(message:UserMessage) {
-        guard let cachedImageURL = message.imageLocalURL() else { return }
+        guard let cachedImageURL = message.imageLocalURL(), message.getImage() != nil else { return }
         guard let index = mediaMessages.firstIndex(where: {
-            guard $0.imageLocalURL() != nil else { return false }
+            guard $0.getImage() != nil else { return false }
             return $0.imageLocalURL() == cachedImageURL
         }) else { return }
-        
         let controller = QLPreviewController()
         controller.dataSource = self
         controller.delegate = self
@@ -116,7 +116,6 @@ extension MessagesController: QLPreviewControllerDataSource {
     
     func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
         mediaMessages.count
-//        mediaMessages.count
     }
     
     func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
@@ -130,15 +129,12 @@ extension MessagesController: QLPreviewControllerDelegate {
     
     
     func previewController(_ controller: QLPreviewController, transitionViewFor item: QLPreviewItem) -> UIView? {
-        if let url = item.previewItemURL {
-            if let index = messages.firstIndex(where: { $0.imageLocalURL() == url }) {
-                if let cell = messagesCollectionView.cellForItem(at: IndexPath(item: 0, section: index)) as? MediaMessageCell {
-//                    print("Preview item url: \(url)")
-                    return cell.imageView
-                }
-            }
+        guard let url = item.previewItemURL,
+            let index = messages.firstIndex(where: { $0.imageLocalURL() == url }),
+            let cell = messagesCollectionView.cellForItem(at: IndexPath(item: 0, section: index)) as? MMSCell else {
+                return nil
         }
-        return nil
+        return cell.imageView
     }
 
     func previewControllerDidDismiss(_ controller: QLPreviewController) {

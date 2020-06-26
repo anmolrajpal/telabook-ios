@@ -115,10 +115,10 @@ class MoreViewController: UIViewController {
     var options:[String] = {
         let role = AppData.getUserRole()
         switch role {
-            case .Developer: return ["Profile Settings", "Companies", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "App Settings", "Clear Cache", "Application Information", "Log Out"]
-            case .Owner: return ["Profile Settings", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "App Settings", "Clear Cache", "Application Information", "Log Out"]
-            case .Operator: return ["Profile Settings", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "App Settings", "Clear Cache", "Application Information", "Log Out"]
-            case .Agent: return ["Profile Settings", "Manage Agents", "Gallery", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "App Settings", "Clear Cache", "Application Information", "Log Out"]
+            case .Developer: return ["Profile Settings", "Companies", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "App Settings", "Application Information", "Log Out"]
+            case .Owner: return ["Profile Settings", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "App Settings", "Application Information", "Log Out"]
+            case .Operator: return ["Profile Settings", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "App Settings", "Application Information", "Log Out"]
+            case .Agent: return ["Profile Settings", "Blacklisted Numbers", "Scheduled Messages", "Disabled Accounts", "App Settings", "Application Information", "Log Out"]
         }
 //        if role != .Agent {
 //            return ["Manage Agents", "Gallery", "Blocked Users", "Schedule Message", "Archived SMSes", "Clear Cache"]
@@ -211,30 +211,30 @@ extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
                     case 1:
                         let vc = SelectCompanyViewController()
                         self.present(vc, animated: true, completion: nil)
+//                    case 2:
+//                        let vc = ManageAgentsViewController()
+//                        self.show(vc, sender: self)
+//                    case 3:
+//                        let vc = GalleryViewController()
+//                        self.show(vc, sender: self)
                     case 2:
-                        let vc = ManageAgentsViewController()
-                        self.show(vc, sender: self)
-                    case 3:
-                        let vc = GalleryViewController()
-                        self.show(vc, sender: self)
-                    case 4:
                         let vc = BlacklistViewController()
                         self.show(vc, sender: self)
+                    case 3:
+                        let vc = ScheduleMessageViewController()
+                        self.show(vc, sender: self)
+                    case 4:
+                        let vc = ScheduleMessageViewController()
+                        self.show(vc, sender: self)
                     case 5:
-                        let vc = ScheduleMessageViewController()
-                        self.show(vc, sender: self)
-                    case 6:
-                        let vc = ScheduleMessageViewController()
-                        self.show(vc, sender: self)
-                    case 7:
                         let vc = AppSettingsViewController()
                         self.show(vc, sender: self)
-                    case 8:
-                        alertClearCache()
-                    case 9:
+//                    case 6:
+//                        alertClearCache()
+                    case 6:
                         let vc = AppInfoViewController()
                         self.show(vc, sender: self)
-                    case 10:
+                    case 7:
                         alertLogout()
                     default: fatalError()
                     
@@ -244,30 +244,30 @@ extension MoreViewController : UITableViewDelegate, UITableViewDataSource {
                     case 0:
                         let vc = SettingsViewController()
                         self.show(vc, sender: self)
+//                    case 1:
+//                        let vc = ManageAgentsViewController()
+//                        self.show(vc, sender: self)
+//                    case 2:
+//                        let vc = GalleryViewController()
+//                        self.show(vc, sender: self)
                     case 1:
-                        let vc = ManageAgentsViewController()
-                        self.show(vc, sender: self)
-                    case 2:
-                        let vc = GalleryViewController()
-                        self.show(vc, sender: self)
-                    case 3:
                         let vc = BlacklistViewController()
                         self.show(vc, sender: self)
+                    case 2:
+                        let vc = ScheduleMessageViewController()
+                        self.show(vc, sender: self)
+                    case 3:
+                        let vc = ScheduleMessageViewController()
+                        self.show(vc, sender: self)
                     case 4:
-                        let vc = ScheduleMessageViewController()
-                        self.show(vc, sender: self)
-                    case 5:
-                        let vc = ScheduleMessageViewController()
-                        self.show(vc, sender: self)
-                    case 6:
                         let vc = AppSettingsViewController()
                         self.show(vc, sender: self)
-                    case 7:
-                        alertClearCache()
-                    case 8:
+//                    case 5:
+//                        alertClearCache()
+                    case 5:
                         let vc = AppInfoViewController()
                         self.show(vc, sender: self)
-                    case 9:
+                    case 6:
                         alertLogout()
                     default: fatalError()
             }

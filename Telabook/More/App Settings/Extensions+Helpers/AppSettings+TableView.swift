@@ -30,20 +30,22 @@ extension AppSettingsViewController {
                     .photosOption, .videosOption, .restoreDefaultsOption
                 ]
                 case .cacheControl: return [
-                    .clearCache
+                    .clearAllCache, .clearAgentGalleryCache, .clearConversationGalleryCache
                 ]
             }
         }
     }
     enum SettingRow:CaseIterable {
-        case photosOption, videosOption, restoreDefaultsOption, clearCache
+        case photosOption, videosOption, restoreDefaultsOption, clearAllCache, clearAgentGalleryCache, clearConversationGalleryCache
         
         var section:Section {
             switch self {
                 case .photosOption: return .mediaAutoDownload
                 case .videosOption: return .mediaAutoDownload
                 case .restoreDefaultsOption: return .mediaAutoDownload
-                case .clearCache: return .cacheControl
+                case .clearAllCache: return .cacheControl
+                case .clearAgentGalleryCache: return .cacheControl
+                case .clearConversationGalleryCache: return .cacheControl
             }
         }
         var setting:Setting {
@@ -51,7 +53,9 @@ extension AppSettingsViewController {
                 case .photosOption: return Setting(name: "Photos", value: AppData.autoDownloadImageMessagesState.stringValue)
                 case .videosOption: return Setting(name: "Videos", value: AppData.autoDownloadVideoMessagesState.stringValue)
                 case .restoreDefaultsOption: return Setting(name: "Restore Defaults", value: nil)
-                case .clearCache: return Setting(name: "Clear Cache", value: nil)
+                case .clearAllCache: return Setting(name: "Clear All Cache", value: nil)
+                case .clearAgentGalleryCache: return Setting(name: "Clear Agent's Gallery Cache", value: nil)
+                case .clearConversationGalleryCache: return Setting(name: "Clear Conversation Gallery Cache", value: nil)
             }
         }
     }
@@ -110,7 +114,15 @@ extension AppSettingsViewController {
                 }
                 case .cacheControl:
                     switch item {
-                        case .clearCache:
+                        case .clearAllCache:
+                            cell = tableView.dequeueReusableCell(withIdentifier: UITableViewCell.identifier, for: indexPath)
+                            cell.textLabel?.text = item.setting.name
+                            cell.textLabel?.textColor = .telaBlue
+                        case .clearAgentGalleryCache:
+                            cell = tableView.dequeueReusableCell(withIdentifier: UITableViewCell.identifier, for: indexPath)
+                            cell.textLabel?.text = item.setting.name
+                            cell.textLabel?.textColor = .telaBlue
+                        case .clearConversationGalleryCache:
                             cell = tableView.dequeueReusableCell(withIdentifier: UITableViewCell.identifier, for: indexPath)
                             cell.textLabel?.text = item.setting.name
                             cell.textLabel?.textColor = .telaBlue
@@ -151,6 +163,7 @@ extension AppSettingsViewController: UITableViewDelegate {
     func handleSetting(forSelectedOption item:SettingRow, at indexPath: IndexPath, in tableView:UITableView) {
         switch item {
             
+            /// - Tag: Media Auto-Download Section
             
             //MARK: - Photos Option
             case .photosOption:
@@ -204,10 +217,29 @@ extension AppSettingsViewController: UITableViewDelegate {
             
             
             
-            //MARK: - Clear Cache
-            case .clearCache:
+            
+            /// - Tag: Cache Control Section
+            
+            //MARK: - Clear All Cache
+            case .clearAllCache:
                 tableView.deselectRow(at: indexPath, animated: true)
                 alertClearCache()
+            
+            
+            
+            //MARK: - Clear Agent's Gallery Cache
+            case .clearAgentGalleryCache:
+                tableView.deselectRow(at: indexPath, animated: true)
+                alertClearAgentGalleryCache()
+            
+            
+            
+            //MARK: - Clear Conversation Gallery Cache
+            case .clearConversationGalleryCache:
+                tableView.deselectRow(at: indexPath, animated: true)
+                alertClearConversationGalleryCache()
+            
+            
             
         }
     }

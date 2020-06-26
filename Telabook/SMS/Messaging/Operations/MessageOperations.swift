@@ -97,25 +97,36 @@ struct MessageOperations {
     
     
     
-    static func getOperationsToSend(newMultimediaMessage message:NewMessage, using context:NSManagedObjectContext, forConversationWithCustomer conversation:Customer) -> [Operation] {
-        let addToStore_Operation = AddNewMessageEntryToStore_Operation(context: context, conversation: conversation, message: message)
+    static func getOperationsToSend(newMultimediaMessage message:UserMessage, using context:NSManagedObjectContext, forConversationWithCustomer conversation:Customer) -> [Operation] {
+        guard let conversationNode = message.conversation?.node,
+            let worker = message.conversation?.agent else {
+                printAndLog(message: "Serious Unhandled error. Failed to unwrap conversation node or conversation worker for message: \(message) while sending new multimedia message", log: .ui, logType: .error)
+                return []
+        }
+        let messageReference = Config.FirebaseConfig.Node.messages(companyID: AppData.companyId, node: conversationNode).reference
+        let conversationReference = Config.FirebaseConfig.Node.conversations(companyID: AppData.companyId, workerID: Int(worker.workerID)).reference
+        
+        let updateEntryToFirebase_Operation = UpdateNewMultimediaMessageEntryOnFirebase_Operation(context:context, message:message, messageReference: messageReference, conversationReference: conversationReference)
         let sendOnServer_Operation = SendNewTextMessageOnServer_Operation(customer: conversation)
         
-        let passNewlyCreatedEntryFromStore_Operation = BlockOperation { [unowned addToStore_Operation, unowned sendOnServer_Operation] in
-            guard let messageFromStore = addToStore_Operation.newMessageFromStore else {
-                #if !RELEASE
-                print("Unresolved Error: Unable to get newly created result(UserMessage) from addToStore_Operation")
-                #endif
+//        updateEntryToFirebase_Operation.newMessageFromStore = message
+        sendOnServer_Operation.newlyCreatedMessage = message
+        
+        let guardFirebaseEntry_Operation = BlockOperation { [unowned updateEntryToFirebase_Operation, unowned sendOnServer_Operation] in
+            guard case let .success(success) = updateEntryToFirebase_Operation.result, success else {
+                if case let .failure(error) = updateEntryToFirebase_Operation.result {
+                    printAndLog(message: "Unresolved Error: Unable to update message on Firebase: \(error)", log: .firebase, logType: .error)
+                }
                 sendOnServer_Operation.cancel()
                 return
             }
-            sendOnServer_Operation.newlyCreatedMessage = messageFromStore
         }
-        passNewlyCreatedEntryFromStore_Operation.addDependency(addToStore_Operation)
-        sendOnServer_Operation.addDependency(passNewlyCreatedEntryFromStore_Operation)
+        guardFirebaseEntry_Operation.addDependency(updateEntryToFirebase_Operation)
+        sendOnServer_Operation.addDependency(guardFirebaseEntry_Operation)
+        
         return [
-            addToStore_Operation,
-            passNewlyCreatedEntryFromStore_Operation,
+            updateEntryToFirebase_Operation,
+            guardFirebaseEntry_Operation,
             sendOnServer_Operation
         ]
     }
@@ -159,16 +170,12 @@ struct MessageOperations {
     fileprivate static func updateNewMessageToFirebase(message:UserMessage, messageReference:DatabaseReference, conversationReference:DatabaseReference, completion: @escaping (Result<Bool, FirebaseAuthService.FirebaseError>) -> ()) {
         messageReference.child(message.messageId).setValue(message.toFirebaseObject()) { (error, _) in
             if let error = error {
-                #if !RELEASE
-                print(error.localizedDescription)
-                #endif
+                printAndLog(message: error.localizedDescription, log: .firebase, logType: .error)
                 completion(.failure(.databaseSetValueError(error)))
             } else {
                 conversationReference.child(String(message.conversationID)).updateChildValues(FirebaseCustomer.getUpdatedConversationObject(fromLastMessage: message)) { (error, _) in
                     if let error = error {
-                        #if !RELEASE
-                        print(error.localizedDescription)
-                        #endif
+                        printAndLog(message: error.localizedDescription, log: .firebase, logType: .error)
                         completion(.failure(.databaseUpdateValueError(error)))
                     } else {
                         completion(.success(true))
@@ -314,7 +321,9 @@ class MergeMessageEntriesFromFirebaseToStore_Operation: Operation {
                     let fetchedEntry = fetchedEntries?.first(where: { $0.firebaseKey == serverEntry.firebaseKey })
                     let isSeen = fetchedEntry?.isSeen ?? true
                     let cachedImageUUID = fetchedEntry?.imageUUID
-                    return UserMessage(context: context, messageEntryFromFirebase: serverEntry, forConversationWithCustomer: conversation, imageUUID: cachedImageUUID, isSeen: isSeen)
+                    let downloadState = fetchedEntry?.downloadState ?? .new
+                    let uploadState = fetchedEntry?.uploadState ?? .none
+                    return UserMessage(context: context, messageEntryFromFirebase: serverEntry, forConversationWithCustomer: conversation, imageUUID: cachedImageUUID, isSeen: isSeen, downloadState: downloadState, uploadState: uploadState)
                 }
                 //_ = serverEntries.map { UserMessage(context: context, messageEntryFromFirebase: $0, forConversationWithCustomer: conversation, imageUUID: nil) }
                 try context.save()
@@ -444,6 +453,14 @@ class UpdateNewMessageEntryToFirebase_Operation: Operation {
         self.messageReference = messageReference
         self.conversationReference = conversationReference
     }
+    convenience init(messageReference:DatabaseReference, conversationReference:DatabaseReference, message:UserMessage) {
+        self.init(messageReference:messageReference, conversationReference:conversationReference)
+        self.newMessageFromStore = message
+        print("Pre check")
+        print(message)
+        print("passed")
+    }
+    
     override var isAsynchronous: Bool {
         return true
     }
@@ -481,6 +498,7 @@ class UpdateNewMessageEntryToFirebase_Operation: Operation {
             #endif
             return
         }
+
         willChangeValue(forKey: #keyPath(isExecuting))
         downloading = true
         didChangeValue(forKey: #keyPath(isExecuting))
@@ -493,7 +511,79 @@ class UpdateNewMessageEntryToFirebase_Operation: Operation {
     }
 }
 
-
+/// Update Newly created multimedia message entry from core date store to Firebase..
+class UpdateNewMultimediaMessageEntryOnFirebase_Operation: Operation {
+    enum OperationError: Error, LocalizedError {
+        case messageReference(error:Error)
+        case conversationReference(error:Error)
+        var localizedDescription: String {
+            switch self {
+                case let .messageReference(error): return "Firebase Message Reference Error: \(error.localizedDescription)"
+                case let .conversationReference(error): return "Firebase Conversation Reference Error: \(error.localizedDescription)"
+            }
+        }
+    }
+    var result:Result<Bool, FirebaseAuthService.FirebaseError>?
+    private var downloading = false
+    
+    let newMessageFromStore:UserMessage
+    let messageReference:DatabaseReference
+    let conversationReference:DatabaseReference
+    let context:NSManagedObjectContext
+    init(context:NSManagedObjectContext, message:UserMessage, messageReference:DatabaseReference, conversationReference:DatabaseReference) {
+        self.context = context
+        self.newMessageFromStore = message
+        self.messageReference = messageReference
+        self.conversationReference = conversationReference
+    }
+    
+    override var isAsynchronous: Bool {
+        return true
+    }
+    
+    override var isExecuting: Bool {
+        return downloading
+    }
+    
+    override var isFinished: Bool {
+        return result != nil
+    }
+    
+    override func cancel() {
+        super.cancel()
+        finish(result: .failure(.cancelled))
+    }
+    
+    func finish(result: Result<Bool, FirebaseAuthService.FirebaseError>) {
+        guard downloading else { return }
+        
+        willChangeValue(forKey: #keyPath(isExecuting))
+        willChangeValue(forKey: #keyPath(isFinished))
+        
+        downloading = false
+        self.result = result
+        
+        didChangeValue(forKey: #keyPath(isFinished))
+        didChangeValue(forKey: #keyPath(isExecuting))
+    }
+    
+    override func start() {
+        guard let message = context.object(with: newMessageFromStore.objectID) as? UserMessage else {
+            printAndLog(message: "Serious unresolved error: Failed to create reference object for message: \(newMessageFromStore)", log: .coredata, logType: .error)
+            return
+        }
+        
+        willChangeValue(forKey: #keyPath(isExecuting))
+        downloading = true
+        didChangeValue(forKey: #keyPath(isExecuting))
+        
+        guard !isCancelled else {
+            finish(result: .failure(.cancelled))
+            return
+        }
+        MessageOperations.updateNewMessageToFirebase(message: message, messageReference: messageReference, conversationReference: conversationReference, completion: finish)
+    }
+}
 
 
 
@@ -572,13 +662,15 @@ class SendNewTextMessageOnServer_Operation: Operation {
             return
         }
         let companyID = String(AppData.companyId)
-        let params = [
+        var params = [
             "company_id":companyID,
             "id":String(customer.externalConversationID),
             "fb_key":message.messageId,
             "message": message.textMessage ?? ""
         ]
-        print(params)
+        if message.messageType == .multimedia, let url = message.imageUrlString {
+            params["imageURL"] = url
+        }
         willChangeValue(forKey: #keyPath(isExecuting))
         downloading = true
         didChangeValue(forKey: #keyPath(isExecuting))

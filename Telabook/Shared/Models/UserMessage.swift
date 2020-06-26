@@ -37,7 +37,7 @@ extension UserMessage {
         self.sentByAppAt = message.sentDate
         self.isSentByWorker = true
         switch message.kind {
-            case .text(let text):
+            case .text(let text), .emoji(let text):
                 self.textMessage = text
                 self.type = MessageCategory.text.serverValue
             case .photo(let image):
@@ -46,13 +46,14 @@ extension UserMessage {
                     self.textMessage = text
                 }
                 self.imageURL = image.url
+                self.imageUUID = image.imageUUID
                 self.type = MessageCategory.multimedia.serverValue
             default: break
         }
         self.isSending = true
         self.lastRefreshedAt = Date()
     }
-    convenience init(context: NSManagedObjectContext, messageEntryFromFirebase entry:FirebaseMessage, forConversationWithCustomer conversation:Customer, imageUUID: UUID?, isSeen:Bool) {
+    convenience init(context: NSManagedObjectContext, messageEntryFromFirebase entry:FirebaseMessage, forConversationWithCustomer conversation:Customer, imageUUID: UUID?, isSeen:Bool, downloadState:MediaDownloadState, uploadState:MediaUploadState) {
         self.init(context: context)
         self.accountSID = entry.accountSID
         self.conversationID = Int64(entry.conversationID)
@@ -69,7 +70,8 @@ extension UserMessage {
         self.isMessageDeleted = entry.deleted
         self.isSentByWorker = entry.senderIsWorker
         self.messageSID = entry.messageSID
-        self.type = entry.messageType.rawValue
+//        self.type = entry.messageType.rawValue
+        self.messageType = entry.messageType
         self.sentByApiAt = entry.sentByApiTimestamp
         self.sentByAppAt = entry.sentByAppTimestamp
         self.sentByProviderAt = entry.sentByProviderTimestamp
@@ -80,11 +82,18 @@ extension UserMessage {
         
         // - Local stored properties
         self.imageUUID = imageUUID
+        self.downloadState = downloadState
+        self.uploadState = uploadState
         self.isSeen = isSeen
         self.lastRefreshedAt = Date()
     }
     var messageType:MessageCategory {
-        MessageCategory(stringValue: self.type!)
+        get {
+            MessageCategory(stringValue: type ?? "text")
+        }
+        set {
+            type = newValue.rawValue
+        }
     }
 }
 extension UserMessage {
@@ -92,7 +101,7 @@ extension UserMessage {
         let time = self.sentByAppAt!.milliSecondsSince1970
         var dictionary:[String:Any] = [
             "conversationId":NSNumber(value: self.conversationID),
-            "type":self.type!,
+            "type":self.messageType.rawValue,
             "sent_by_app":time,
             "updated_at":time,
             "date":time,
@@ -103,6 +112,8 @@ extension UserMessage {
         }
         if let imageUrlString = self.imageUrlString {
             dictionary["img"] = imageUrlString
+            let size = NSNumber(value: self.mediaSize)
+            dictionary["size"] = size
         }
         return dictionary
     }
@@ -284,10 +295,11 @@ struct ImageItem: MediaItem {
     }
     
     
-    init(image:UIImage, imageUUID:UUID, imageText:String?, size:CGSize = .init(width: 240, height: 240)) {
+    init(image:UIImage, imageUUID:UUID, uploadURL:URL?, imageText:String?, size:CGSize = .init(width: 240, height: 240)) {
         self.image = image
         self.imageText = imageText
         self.imageUUID = imageUUID
+        self.url = uploadURL
         self.size = size
         self.placeholderImage = UIImage()
     }
@@ -297,10 +309,63 @@ struct ImageItem: MediaItem {
 
 
 extension UserMessage {
+    
+    enum MediaDownloadState:Int {
+        case new = 0, downloaded, failed
+        
+        init(_ rawValue:Int) {
+            switch rawValue {
+                case 0: self = .new
+                case 1: self = .downloaded
+                case 2: self = .failed
+                default: fatalError("Invalid case")
+            }
+        }
+    }
+    var downloadState:MediaDownloadState {
+        get {
+            MediaDownloadState(Int(mediaDownloadState))
+        }
+        set {
+            mediaDownloadState = Int64(newValue.rawValue)
+        }
+    }
+    
+    
+    enum MediaUploadState:Int {
+        case none = 0, pending, uploaded, failed
+        
+        init(_ rawValue:Int) {
+            switch rawValue {
+                case 0: self = .none
+                case 1: self = .pending
+                case 2: self = .uploaded
+                case 3: self = .failed
+                default: fatalError("Invalid case")
+            }
+        }
+    }
+    var uploadState:MediaUploadState {
+        get {
+            MediaUploadState(Int(mediaUploadState))
+        }
+        set {
+            mediaUploadState = Int64(newValue.rawValue)
+        }
+    }
+    
+    
+    
     func imageLocalURL() -> URL? {
         guard let uuid = imageUUID else { return nil }
         let fileName = uuid.uuidString + ".jpeg"
-        let url = conversation!.mediaFolder().appendingPathComponent(fileName)
+        guard let con = conversation else {
+            print("Failed to unwrap conversation")
+            return nil
+        }
+        let mediaFolder = con.mediaFolder()
+//        print("Media folder url: \(mediaFolder)")
+        let url = mediaFolder.appendingPathComponent(fileName)
         return url
     }
     
@@ -310,6 +375,7 @@ extension UserMessage {
     var uploadRequest: URLRequest? {
         guard let url = imageURL else { return nil }
         var request = URLRequest(url: url)
+        request.setValue(Header.contentType.image·jpeg.rawValue, forHTTPHeaderField: Header.headerName.contentType.rawValue)
         request.httpMethod = HTTPMethod.POST.rawValue
         return request
     }

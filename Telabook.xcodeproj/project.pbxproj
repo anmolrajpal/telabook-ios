@@ -8,6 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		07EE2475CAADE7AD32CD00F9 /* Pods_Telabook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A24D2E2A3583492FDB7723EF /* Pods_Telabook.framework */; };
+		6F00F2D624A50D69001E33D9 /* MessageMediaManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F00F2D524A50D68001E33D9 /* MessageMediaManager.swift */; };
+		6F00F2D824A50DDA001E33D9 /* MessageDownloadItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F00F2D724A50DDA001E33D9 /* MessageDownloadItem.swift */; };
+		6F00F2DA24A50DED001E33D9 /* MessageUploadItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F00F2D924A50DED001E33D9 /* MessageUploadItem.swift */; };
+		6F00F2DC24A50E37001E33D9 /* MessageUploadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F00F2DB24A50E37001E33D9 /* MessageUploadService.swift */; };
+		6F00F2DE24A50E46001E33D9 /* MessageDownloadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F00F2DD24A50E46001E33D9 /* MessageDownloadService.swift */; };
+		6F00F2E024A5356F001E33D9 /* FirebaseMediaMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F00F2DF24A5356F001E33D9 /* FirebaseMediaMetadata.swift */; };
 		6F010CAE246F81B600C20DC6 /* MenuController in Frameworks */ = {isa = PBXBuildFile; productRef = 6F010CAD246F81B600C20DC6 /* MenuController */; };
 		6F02B2D92461C03F00FFB34E /* AutoResponseCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F02B2D82461C03F00FFB34E /* AutoResponseCodable.swift */; };
 		6F02B2DB2461C47300FFB34E /* AutoResponseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F02B2DA2461C47300FFB34E /* AutoResponseView.swift */; };
@@ -90,6 +96,10 @@
 		6F46A8BB22D062750042A667 /* FollowUpAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F46A8BA22D062750042A667 /* FollowUpAPI.swift */; };
 		6F46A8BD22D39E790042A667 /* Checkbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F46A8BC22D39E790042A667 /* Checkbox.swift */; };
 		6F5064AD24A09147003CAC2E /* AddMediaCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F5064AC24A09147003CAC2E /* AddMediaCell.swift */; };
+		6F5064AF24A0D012003CAC2E /* ConversationGalleryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F5064AE24A0D012003CAC2E /* ConversationGalleryController.swift */; };
+		6F5064B124A0D088003CAC2E /* ConversationGallery+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F5064B024A0D088003CAC2E /* ConversationGallery+Helpers.swift */; };
+		6F5064B324A0D09A003CAC2E /* ConversationGallery+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F5064B224A0D099003CAC2E /* ConversationGallery+CollectionView.swift */; };
+		6F5064B524A0D12D003CAC2E /* ConversationGalleryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F5064B424A0D12D003CAC2E /* ConversationGalleryCell.swift */; };
 		6F58C33322D614A10091C785 /* AgentDetailsCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F58C33222D614A10091C785 /* AgentDetailsCodable.swift */; };
 		6F58C33522D6178B0091C785 /* AutoResponseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F58C33422D6178B0091C785 /* AutoResponseViewController.swift */; };
 		6F58C33722D618B30091C785 /* AutoResponseAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F58C33622D618B30091C785 /* AutoResponseAPI.swift */; };
@@ -291,6 +301,12 @@
 /* Begin PBXFileReference section */
 		18D4D0AF3685AEAA6D585A79 /* Pods-Telabook.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.release.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.release.xcconfig"; sourceTree = "<group>"; };
 		594AEB846DD88B412E481F44 /* Pods-Telabook.prerelease.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.prerelease.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.prerelease.xcconfig"; sourceTree = "<group>"; };
+		6F00F2D524A50D68001E33D9 /* MessageMediaManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageMediaManager.swift; sourceTree = "<group>"; };
+		6F00F2D724A50DDA001E33D9 /* MessageDownloadItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDownloadItem.swift; sourceTree = "<group>"; };
+		6F00F2D924A50DED001E33D9 /* MessageUploadItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageUploadItem.swift; sourceTree = "<group>"; };
+		6F00F2DB24A50E37001E33D9 /* MessageUploadService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageUploadService.swift; sourceTree = "<group>"; };
+		6F00F2DD24A50E46001E33D9 /* MessageDownloadService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDownloadService.swift; sourceTree = "<group>"; };
+		6F00F2DF24A5356F001E33D9 /* FirebaseMediaMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseMediaMetadata.swift; sourceTree = "<group>"; };
 		6F02B2D82461C03F00FFB34E /* AutoResponseCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoResponseCodable.swift; sourceTree = "<group>"; };
 		6F02B2DA2461C47300FFB34E /* AutoResponseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoResponseView.swift; sourceTree = "<group>"; };
 		6F02B2DC2461C6A000FFB34E /* AutoResponseHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoResponseHelpers.swift; sourceTree = "<group>"; };
@@ -372,6 +388,10 @@
 		6F46A8BA22D062750042A667 /* FollowUpAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FollowUpAPI.swift; path = "Telabook/SMS/Internal Conversations/Model/FollowUpAPI.swift"; sourceTree = SOURCE_ROOT; };
 		6F46A8BC22D39E790042A667 /* Checkbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Checkbox.swift; sourceTree = "<group>"; };
 		6F5064AC24A09147003CAC2E /* AddMediaCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddMediaCell.swift; sourceTree = "<group>"; };
+		6F5064AE24A0D012003CAC2E /* ConversationGalleryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationGalleryController.swift; sourceTree = "<group>"; };
+		6F5064B024A0D088003CAC2E /* ConversationGallery+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationGallery+Helpers.swift"; sourceTree = "<group>"; };
+		6F5064B224A0D099003CAC2E /* ConversationGallery+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationGallery+CollectionView.swift"; sourceTree = "<group>"; };
+		6F5064B424A0D12D003CAC2E /* ConversationGalleryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationGalleryCell.swift; sourceTree = "<group>"; };
 		6F58C33222D614A10091C785 /* AgentDetailsCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDetailsCodable.swift; sourceTree = "<group>"; };
 		6F58C33422D6178B0091C785 /* AutoResponseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoResponseViewController.swift; sourceTree = "<group>"; };
 		6F58C33622D618B30091C785 /* AutoResponseAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoResponseAPI.swift; sourceTree = "<group>"; };
@@ -812,6 +832,9 @@
 				6F8A82FC249A1E02002ACDFE /* Messages+Multimedia.swift */,
 				6F9E6EBC248E442E0001950E /* Messages+DataProvider.swift */,
 				6FEE9A14247D5BE000709E2D /* Messages+ServiceProvider.swift */,
+				6F00F2D524A50D68001E33D9 /* MessageMediaManager.swift */,
+				6F00F2DD24A50E46001E33D9 /* MessageDownloadService.swift */,
+				6F00F2DB24A50E37001E33D9 /* MessageUploadService.swift */,
 				6FF842192482EFF00069A789 /* QuickResponsePicker+TableViewHelpers.swift */,
 				6FF8421B2482F0030069A789 /* QuickResponsePicker+Helpers.swift */,
 			);
@@ -842,6 +865,8 @@
 		6F21377F247434F9002AB150 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				6F00F2D724A50DDA001E33D9 /* MessageDownloadItem.swift */,
+				6F00F2D924A50DED001E33D9 /* MessageUploadItem.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1370,6 +1395,8 @@
 				6F8A832E249F8771002ACDFE /* AgentGallery+DataProvider.swift */,
 				6F8A8330249F8796002ACDFE /* AgentGallery+Helpers.swift */,
 				6F8A8332249F87AB002ACDFE /* AgentGallery+CollectionView.swift */,
+				6F5064B024A0D088003CAC2E /* ConversationGallery+Helpers.swift */,
+				6F5064B224A0D099003CAC2E /* ConversationGallery+CollectionView.swift */,
 			);
 			path = "Extensions+Helpers";
 			sourceTree = "<group>";
@@ -1379,6 +1406,7 @@
 			children = (
 				6FB11B38229EF4430098D050 /* GalleryViewController.swift */,
 				6F8A831F249F3EF8002ACDFE /* AgentGalleryController.swift */,
+				6F5064AE24A0D012003CAC2E /* ConversationGalleryController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -1388,6 +1416,7 @@
 			children = (
 				6F8A8324249F402B002ACDFE /* AgentGalleryCell.swift */,
 				6F5064AC24A09147003CAC2E /* AddMediaCell.swift */,
+				6F5064B424A0D12D003CAC2E /* ConversationGalleryCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1576,6 +1605,7 @@
 				6FC822FC24758EF6002421F0 /* BlacklistJSON.swift */,
 				6FEE99FE247BB8E900709E2D /* UserMessage.swift */,
 				6FEE9A00247BF69C00709E2D /* FirebaseMessage.swift */,
+				6F00F2DF24A5356F001E33D9 /* FirebaseMediaMetadata.swift */,
 				6F8A831B249E13B6002ACDFE /* ListItem.swift */,
 				6F8A8329249F5896002ACDFE /* AgentGalleryItem.swift */,
 			);
@@ -2237,14 +2267,17 @@
 				6F0653452464880100F857C1 /* CustomersView.swift in Sources */,
 				6FB8EA3F22AA34B600294EAC /* ChatColorHelpers.swift in Sources */,
 				6F0653492464882000F857C1 /* CustomerCellView.swift in Sources */,
+				6F5064AF24A0D012003CAC2E /* ConversationGalleryController.swift in Sources */,
 				6F8A8303249B7C2F002ACDFE /* MMSCellView.swift in Sources */,
 				6F37E2482460A8D7003E9126 /* QuickResponsesViewController.swift in Sources */,
 				6FAD46EE245098CE0050F7F2 /* APIService.swift in Sources */,
 				6F8A8325249F402B002ACDFE /* AgentGalleryCell.swift in Sources */,
 				6FD8955F245EDAAB0083D79A /* ManageAgentsHelpers.swift in Sources */,
+				6F00F2DA24A50DED001E33D9 /* MessageUploadItem.swift in Sources */,
 				6F83FC2124608C6A00518201 /* QuickResponsesHelpers.swift in Sources */,
 				6F29FD5522B909A600BCA2AB /* TextInputCell.swift in Sources */,
 				6F987A72245B159500C6046E /* LaunchCounter.swift in Sources */,
+				6F5064B324A0D09A003CAC2E /* ConversationGallery+CollectionView.swift in Sources */,
 				6F6457DB24633D8600CECF03 /* QuickResponsesServiceProvider.swift in Sources */,
 				6FF8421C2482F0030069A789 /* QuickResponsePicker+Helpers.swift in Sources */,
 				6F23BD0522D8BB9B0001A888 /* UserProfileAPI.swift in Sources */,
@@ -2265,6 +2298,7 @@
 				6FB8EA4122AA371900294EAC /* SMSDetailVCExtensions.swift in Sources */,
 				6FC822F52474496E002421F0 /* NewConversationController.swift in Sources */,
 				6F23BD0322D8BB8B0001A888 /* UserProfileAPIProtocol.swift in Sources */,
+				6F5064B124A0D088003CAC2E /* ConversationGallery+Helpers.swift in Sources */,
 				6FEF96A622A67F2900F2FF83 /* SMSDetailViewController.swift in Sources */,
 				6F06535524648C3E00F857C1 /* CustomerOperations.swift in Sources */,
 				6FB11B0B229BFA3C0098D050 /* SettingsViewController.swift in Sources */,
@@ -2321,6 +2355,7 @@
 				6F9453BD22DB2C9300047C7F /* CustomerPickerViewController.swift in Sources */,
 				6FB11B25229E59F00098D050 /* Config.swift in Sources */,
 				6FB11B21229D894A0098D050 /* SectionItemCell.swift in Sources */,
+				6F5064B524A0D12D003CAC2E /* ConversationGalleryCell.swift in Sources */,
 				6F37E2512460AE29003E9126 /* QuickResponses+FetchedResultsHelpers.swift in Sources */,
 				6FEE9A05247D305D00709E2D /* Messages+CoreDataHelpers.swift in Sources */,
 				6FF2E6A3248FA4B300502B99 /* Profile+Helpers.swift in Sources */,
@@ -2352,6 +2387,7 @@
 				6FB11B10229C23840098D050 /* Extensions.swift in Sources */,
 				6FF2E6A7248FA4E500502B99 /* Profile+ServicePorvider.swift in Sources */,
 				6F987A482456C8B900C6046E /* APIServiceProtocol.swift in Sources */,
+				6F00F2DE24A50E46001E33D9 /* MessageDownloadService.swift in Sources */,
 				6F58C33922D618C40091C785 /* AutoResponseAPIProtocol.swift in Sources */,
 				6F1BD2F322C4B4CB0053D0CC /* FollowUpDataProvider.swift in Sources */,
 				6FC8230F2475AE68002421F0 /* Blacklist+ServiceProvider.swift in Sources */,
@@ -2380,6 +2416,7 @@
 				6F8A831A249E12D7002ACDFE /* ListPickerController.swift in Sources */,
 				6F9011D822B12BC40046F5E3 /* SMSDetailVCCoreDataHelpers.swift in Sources */,
 				6F29FD4F22B7E28700BCA2AB /* OverlaySpinner.swift in Sources */,
+				6F00F2DC24A50E37001E33D9 /* MessageUploadService.swift in Sources */,
 				6FC602342464471A00C1BF6D /* Agents+TableViewHelpers.swift in Sources */,
 				6F987A6924587FA300C6046E /* AppInfoView.swift in Sources */,
 				6F265171246C3610003D582F /* SFSymbol.swift in Sources */,
@@ -2428,6 +2465,7 @@
 				6F69BE8222D46F9100F8903F /* BlacklistAPI.swift in Sources */,
 				6FB11B41229F7A290098D050 /* ManageAgentsCell.swift in Sources */,
 				6F69BE9622D4DE4900F8903F /* QuickResponsesDataProvider.swift in Sources */,
+				6F00F2D624A50D69001E33D9 /* MessageMediaManager.swift in Sources */,
 				6FB11B12229C31DF0098D050 /* Enums.swift in Sources */,
 				6F9E6EBD248E442E0001950E /* Messages+DataProvider.swift in Sources */,
 				6F987A5D2457313C00C6046E /* SelectCompanyServiceProvider.swift in Sources */,
@@ -2465,7 +2503,9 @@
 				6FB8EA4522AA6BCE00294EAC /* SMSVCExtensions.swift in Sources */,
 				6FB11B1B229D07050098D050 /* LoginViewController.swift in Sources */,
 				6F41013B22DDF8B50038AA76 /* CallGroupsCodable.swift in Sources */,
+				6F00F2D824A50DDA001E33D9 /* MessageDownloadItem.swift in Sources */,
 				6F9453C122DB4C1A00047C7F /* CustomerPickerDataProvider.swift in Sources */,
+				6F00F2E024A5356F001E33D9 /* FirebaseMediaMetadata.swift in Sources */,
 				6F8A82FD249A1E05002ACDFE /* Messages+Multimedia.swift in Sources */,
 				6F234EE822D606DB001FDAD6 /* ScheduleMessagesCodable.swift in Sources */,
 				6F8A832F249F8771002ACDFE /* AgentGallery+DataProvider.swift in Sources */,
