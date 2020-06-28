@@ -7,23 +7,23 @@
 //
 
 import UIKit
-extension ScheduleMessageViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.scheduledMessages?.count ?? 0
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(ScheduledMessageCell.self), for: indexPath) as! ScheduledMessageCell
-        cell.selectionStyle = .none
-        cell.backgroundColor = .clear
-        cell.scheduledMessage = self.scheduledMessages?[indexPath.row]
-        return cell
-    }
-    
-    
-}
-extension ScheduleMessageViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableView.automaticDimension
-    }
-}
+//extension ScheduleMessageViewController: UITableViewDataSource {
+//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//        return self.scheduledMessages?.count ?? 0
+//    }
+//
+//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(ScheduledMessageCell.self), for: indexPath) as! ScheduledMessageCell
+//        cell.selectionStyle = .none
+//        cell.backgroundColor = .clear
+//        cell.scheduledMessage = self.scheduledMessages?[indexPath.row]
+//        return cell
+//    }
+//
+//
+//}
+//extension ScheduleMessageViewController: UITableViewDelegate {
+//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        return UITableView.automaticDimension
+//    }
+//}

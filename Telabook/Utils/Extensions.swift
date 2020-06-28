@@ -1179,9 +1179,68 @@ extension Date {
             return Date(timeIntervalSince1970: TimeInterval(value * (10 ~^ (10 - value.digitsCount))))
         } else if value == 0 { return nil} else { return nil }
     }
+    
+    
+    /// This initializer returns the Date object depending on the parameter which maybe is seconds or milliseconds.
+    /// - Note: This  function is only valid for next `267` years till `Saturday, 20 November 2286 17:46:39.999`
+    /// - Parameter value: Parameter value must be either `seconds` or `milliseconds` | `10 digits`  or `13 digits` respectively.
+    /// - Returns: `Date` object calculted from timeInterval passed since 1970 or milliSeconds passed since 1970
+    init?(fromSecondsOrMilliSeconds value:Int) {
+        if 11...13 ~= value.digitsCount {
+            self = Date(milliSecondsSince1970: Int64(value * (10 ~^ (13 - value.digitsCount))))
+        } else if 6...10 ~= value.digitsCount {
+            self = Date(timeIntervalSince1970: TimeInterval(value * (10 ~^ (10 - value.digitsCount))))
+        } else {
+            return nil
+        }
+    }
 }
-
-
+extension DateFormatter {
+    static let standardT: DateFormatter = {
+        var dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        return dateFormatter
+    }()
+    
+    static let standard: DateFormatter = {
+        var dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return dateFormatter
+    }()
+}
+extension DateFormatter {
+    static let iso8601withFractionalSeconds: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }()
+    static let iso8601: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        return formatter
+    }()
+}
+extension JSONDecoder.DateDecodingStrategy {
+    static let multiple = custom {
+        let container = try $0.singleValueContainer()
+        
+        if let string = try? container.decode(String.self) {
+            if let date = DateFormatter.iso8601withFractionalSeconds.date(from: string) ??
+                DateFormatter.iso8601.date(from: string) ??
+                DateFormatter.standard.date(from: string) {
+                return date
+            }
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid date: \(string)")
+        } else if let secondsOrMilliseconds = try? container.decode(Int.self) {
+            if let date = Date(fromSecondsOrMilliSeconds: secondsOrMilliseconds) {
+                return date
+            }
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid timestamp in seconds/milliseconds: \(secondsOrMilliseconds)")
+        } else {
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid date datatype")
+        }
+    }
+}
 
 
 extension String {

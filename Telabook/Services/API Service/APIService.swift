@@ -112,6 +112,9 @@ public struct APIService: APIServiceProtocol {
         /// Endpoint to send new  message
         case SendMessage
         
+        /// Endpoint to fetch scheduled messages
+        case FetchScheduledMessages
+        
         /**
         Returns the path of a specified Endpoint.
         ## Example Usage ##
@@ -145,6 +148,7 @@ public struct APIService: APIServiceProtocol {
                 case let .DeleteConversation(conversationID): return "/external_conversations/\(conversationID)"
                 case .ForgotPassword: return "/password/email"
                 case .SendMessage: return "/send"
+                case .FetchScheduledMessages: return "/schedule_message"
             }
         }
     }

@@ -12,18 +12,18 @@ import os
 protocol Server: class {
     init(apiVersion:APIService.APIVersion)
 //    var apiVersion:APIService.APIVersion { get }
-    func hitEndpoint<T:Codable>(endpoint:APIService.Endpoint, requiresBearerToken:Bool, httpMethod:HTTPMethod, params: [String: String]?, httpBody: Data?, headers: [HTTPHeader]?, guardResponse: ResponseStatus?, expectData:Bool, completion: @escaping APIService.APICompletion<T>)
+    func hitEndpoint<T:Decodable>(endpoint:APIService.Endpoint, requiresBearerToken:Bool, httpMethod:HTTPMethod, params: [String: String]?, httpBody: Data?, headers: [HTTPHeader]?, guardResponse: ResponseStatus?, expectData:Bool, completion: @escaping APIService.APICompletion<T>, decoder:JSONDecoder)
 }
 
-class APIServer<T:Codable> : Server {
+class APIServer<T:Decodable> : Server {
     let apiVersion:APIService.APIVersion
     required init(apiVersion: APIService.APIVersion) {
         self.apiVersion = apiVersion
     }
-    func hitEndpoint<T>(endpoint:APIService.Endpoint, requiresBearerToken:Bool = true, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, completion: @escaping APIService.APICompletion<T>) where T : Decodable, T : Encodable {
+    func hitEndpoint<T>(endpoint:APIService.Endpoint, requiresBearerToken:Bool = true, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, completion: @escaping APIService.APICompletion<T>, decoder:JSONDecoder = defaultDecoder) where T : Decodable {
         switch apiVersion {
-            case .v1: APIOperations.triggerAPIEndpointOperations(endpoint: endpoint, httpMethod: httpMethod, params: params, httpBody: httpBody, headers: headers, guardResponse: guardResponse, expectData: expectData, completion: completion)
-            case .v2: APIOperations.triggerAPIEndpointOperations(endpoint: endpoint, requiresBearerToken: requiresBearerToken, httpMethod: httpMethod, params: params, httpBody: httpBody, headers: headers, guardResponse: guardResponse, expectData: expectData, configuration: .init(apiCommonPath: "\(Config.APIConfig.urlPrefix)/\(apiVersion.stringValue)"), completion: completion)
+            case .v1: APIOperations.triggerAPIEndpointOperations(endpoint: endpoint, httpMethod: httpMethod, params: params, httpBody: httpBody, headers: headers, guardResponse: guardResponse, expectData: expectData, completion: completion, decoder: decoder)
+            case .v2: APIOperations.triggerAPIEndpointOperations(endpoint: endpoint, requiresBearerToken: requiresBearerToken, httpMethod: httpMethod, params: params, httpBody: httpBody, headers: headers, guardResponse: guardResponse, expectData: expectData, configuration: .init(apiCommonPath: "\(Config.APIConfig.urlPrefix)/\(apiVersion.stringValue)"), completion: completion, decoder: decoder)
             case .mock: print("Mock")
         }
     }
@@ -33,7 +33,7 @@ class APIServer<T:Codable> : Server {
 struct APIOperations {
     
     /// Returns an array of operations for creating and hitting API Endpoint
-    static func triggerAPIEndpointOperations<T:Codable>(endpoint:APIService.Endpoint, requiresBearerToken:Bool = true, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, configuration:APIService.Configuration = .defaultConfiguration, completion: @escaping APIService.APICompletion<T>) {
+    static func triggerAPIEndpointOperations<T:Decodable>(endpoint:APIService.Endpoint, requiresBearerToken:Bool = true, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, configuration:APIService.Configuration = .defaultConfiguration, completion: @escaping APIService.APICompletion<T>, decoder:JSONDecoder) {
         var operations = [Operation]()
         let queue = OperationQueue()
         queue.name = "Endpoint Queue"
@@ -41,7 +41,7 @@ struct APIOperations {
         
         
         
-        let hitEndpointOperation = HitEndpointOperation<T>(endpoint: endpoint, requiresBearerToken: requiresBearerToken, httpMethod: httpMethod, params: params, httpBody: httpBody, headers: headers, guardResponse: guardResponse, expectData: expectData, configuration: configuration)
+        let hitEndpointOperation = HitEndpointOperation<T>(endpoint: endpoint, requiresBearerToken: requiresBearerToken, httpMethod: httpMethod, params: params, httpBody: httpBody, headers: headers, guardResponse: guardResponse, expectData: expectData, configuration: configuration, decoder: decoder)
         
         if requiresBearerToken {
             let fetchFirebaseTokenOperation = FetchTokenOperation()
@@ -82,9 +82,9 @@ struct APIOperations {
 
 
 /// Downloads Agents entries from the server.
-class HitEndpointOperation<T:Codable>: Operation {
+class HitEndpointOperation<T:Decodable>: Operation {
     var result: (Result<T, APIService.APIError>)?
-    private let decoder = JSONDecoder()
+    private let decoder:JSONDecoder
     private var downloading = false
     private var session = URLSession.shared
     private var dataTask: URLSessionDataTask!
@@ -100,7 +100,7 @@ class HitEndpointOperation<T:Codable>: Operation {
     private let expectData:Bool
     var bearerToken:String?
     
-    init(endpoint:APIService.Endpoint, requiresBearerToken:Bool = true, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, configuration:APIService.Configuration = .defaultConfiguration) {
+    init(endpoint:APIService.Endpoint, requiresBearerToken:Bool = true, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, configuration:APIService.Configuration = .defaultConfiguration, decoder:JSONDecoder) {
         self.endpoint = endpoint
         self.requiresBearerToken = requiresBearerToken
         self.httpMethod = httpMethod
@@ -110,6 +110,7 @@ class HitEndpointOperation<T:Codable>: Operation {
         self.guardResponse = guardResponse
         self.expectData = expectData
         self.configuration = configuration
+        self.decoder = decoder
     }
     
 

@@ -1,29 +1,59 @@
 //
-//  ScheduledMessageCell.swift
+//  ScheduledMessageCellView.swift
 //  Telabook
 //
-//  Created by Anmol Rajpal on 16/07/19.
-//  Copyright © 2019 Anmol Rajpal. All rights reserved.
+//  Created by Anmol Rajpal on 29/06/20.
+//  Copyright © 2020 Anmol Rajpal. All rights reserved.
 //
 
 import UIKit
 
-class ScheduledMessageCell: UITableViewCell {
-
-    func configureCell(with message:ScheduledMessage, animated:Bool = true) {
-        configureAgentLabel(message.workerName)
-        configureCustomerLabel(message.customerName)
-        messageLabel.text = message.textMessage
-        configureTimeLabel(message.deliveryTime)
-        
-        switch message.deliveryStatus {
-            case .pending:
-                statusLabel.text = "Pending"
-                statusImageView.tintColor = UIColor.systemOrange
-            case .delivered:
-                statusLabel.text = "Delivered"
-                statusImageView.tintColor = UIColor.systemGreen
+class ScheduledMessageCellView: UIView {
+    
+    // MARK: - Setup Views Data
+    
+    struct Parameters:Equatable {
+        let customer:String?
+        let worker:String?
+        let textMessage:String?
+        let deliveryTime:Date?
+    }
+    var parameters: Parameters? {
+        didSet {
+            if oldValue != parameters {
+                updateContents(resetExisting: true)
+            }
         }
+    }
+    
+    private func updateContents(resetExisting: Bool = false) {
+        queue.cancelAllOperations()
+        
+        if resetExisting || parameters == nil {
+            setupData(parameters: nil, animated: false)
+        }
+        
+        guard let parameters = parameters else { return }
+        let operation = BlockOperation()
+        
+        operation.addExecutionBlock() { [weak self, weak operation] in
+            guard let self = self, let operation = operation, !operation.isCancelled else {
+                return
+            }
+            DispatchQueue.main.async() {
+                guard !operation.isCancelled else { return }
+                
+                self.setupData(parameters: parameters, animated: true)
+            }
+        }
+        
+        queue.addOperation(operation)
+    }
+    private func setupData(parameters:Parameters?, animated:Bool) {
+        configureAgentLabel(parameters?.worker)
+        configureCustomerLabel(parameters?.customer)
+        messageLabel.text = parameters?.textMessage
+        configureTimeLabel(parameters?.deliveryTime)
         
         guard !animated else {
             self.transform = CGAffineTransform(scaleX: 0.9, y: 1.0)
@@ -39,33 +69,6 @@ class ScheduledMessageCell: UITableViewCell {
     
     
     
-    private func commonInit() {
-        configureHierarchy()
-    }
-   
-    
-    
-    // MARK: - Lifecycle
-    
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        commonInit()
-    }
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        layoutConstraints()
-    }
-    override class var requiresConstraintBasedLayout: Bool {
-        return true
-    }
-    
-    
-    
-    
-    
     
     // MARK: - Helpers
     
@@ -77,10 +80,10 @@ class ScheduledMessageCell: UITableViewCell {
         }
         let agentTitleAttributedString = NSAttributedString(string: "Agent: ", attributes: [
             .foregroundColor : UIColor.telaGray5
-        ])
+            ])
         let agentNameAttributedString = NSAttributedString(string: text, attributes: [
             .foregroundColor : UIColor.telaGray7
-        ])
+            ])
         let agentAttributedString = NSMutableAttributedString()
         agentAttributedString.append(agentTitleAttributedString)
         agentAttributedString.append(agentNameAttributedString)
@@ -94,10 +97,10 @@ class ScheduledMessageCell: UITableViewCell {
         }
         let customerTitleAttributedString = NSAttributedString(string: "Customer: ", attributes: [
             .foregroundColor : UIColor.telaGray5
-        ])
+            ])
         let customerNameAttributedString = NSAttributedString(string: text, attributes: [
             .foregroundColor : UIColor.telaGray7
-        ])
+            ])
         let customerAttributedString = NSMutableAttributedString()
         customerAttributedString.append(customerTitleAttributedString)
         customerAttributedString.append(customerNameAttributedString)
@@ -124,16 +127,16 @@ class ScheduledMessageCell: UITableViewCell {
         
         let scheduledForTitleAttributedString = NSAttributedString(string: "Scheduled for ", attributes: [
             .foregroundColor : UIColor.telaGray7
-        ])
+            ])
         let dateAttributedString = NSAttributedString(string: dateStr, attributes: [
-            .foregroundColor : UIColor.telaBlue
-        ])
+            .foregroundColor : UIColor.telaWhite
+            ])
         let atTitleAttributedString = NSAttributedString(string: " at ", attributes: [
             .foregroundColor : UIColor.telaGray7
-        ])
+            ])
         let timeAttributedString = NSAttributedString(string: timeStr, attributes: [
-            .foregroundColor : UIColor.telaBlue
-        ])
+            .foregroundColor : UIColor.telaWhite
+            ])
         let timeLabelAttributedString = NSMutableAttributedString()
         timeLabelAttributedString.append(scheduledForTitleAttributedString)
         timeLabelAttributedString.append(dateAttributedString)
@@ -147,37 +150,63 @@ class ScheduledMessageCell: UITableViewCell {
     
     
     
+    // MARK: - Lifecycle
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        configureHierarchy()
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configureHierarchy()
+    }
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        layoutConstraints()
+        updateContents()
+    }
+    
+
+    
+    
+    
     // MARK: - Hierarchy
     
     private func configureHierarchy() {
-        contentView.addSubview(agentLabel)
-        contentView.addSubview(statusImageView)
-        contentView.addSubview(statusLabel)
-        contentView.addSubview(customerLabel)
-        contentView.addSubview(messageLabel)
-        contentView.addSubview(timeLabel)
+        addSubview(agentLabel)
+        addSubview(customerLabel)
+        addSubview(messageLabel)
+        addSubview(timeLabel)
         layoutConstraints()
     }
     private func layoutConstraints() {
         
-        agentLabel.anchor(top: contentView.topAnchor, left: contentView.leftAnchor, bottom: nil, right: contentView.rightAnchor, topConstant: 20, leftConstant: 16, bottomConstant: 0, rightConstant: 100)
+        agentLabel.anchor(top: topAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 10, leftConstant: 22, bottomConstant: 0, rightConstant: 22)
         
-        statusImageView.topAnchor.constraint(equalTo: agentLabel.topAnchor, constant: -3).activate()
-        statusImageView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16).activate()
+        customerLabel.anchor(top: agentLabel.bottomAnchor, left: agentLabel.leftAnchor, bottom: nil, right: agentLabel.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
         
-        statusLabel.centerYAnchor.constraint(equalTo: statusImageView.centerYAnchor).activate()
-        statusLabel.rightAnchor.constraint(equalTo: statusImageView.leftAnchor, constant: -6).activate()
+        messageLabel.anchor(top: customerLabel.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 15, leftConstant: 22, bottomConstant: 0, rightConstant: 22)
         
+//        bottomAnchor.constraint(equalTo: timeLabel.bottomAnchor, constant: -10).activate()
         
-        customerLabel.anchor(top: agentLabel.bottomAnchor, left: agentLabel.leftAnchor, bottom: nil, right: statusImageView.rightAnchor, topConstant: 10, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
-        
-        messageLabel.anchor(top: customerLabel.bottomAnchor, left: agentLabel.leftAnchor, bottom: nil, right: statusImageView.rightAnchor, topConstant: 15, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
-        
-        
-        timeLabel.anchor(top: messageLabel.bottomAnchor, left: agentLabel.leftAnchor, bottom: contentView.bottomAnchor, right: statusImageView.rightAnchor, topConstant: 15, leftConstant: 0, bottomConstant: 20, rightConstant: 0)
-//        timeLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10).withPriority(1000).activate()
+        timeLabel.anchor(top: messageLabel.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, topConstant: 15, leftConstant: 22, bottomConstant: 10, rightConstant: 22)
+        timeLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10).withPriority(1000).activate()
     }
     
+    
+    
+    
+    
+    
+    //MARK: - Constructors
+    
+    private let queue: OperationQueue = {
+        let queue = OperationQueue()
+        queue.maxConcurrentOperationCount = 1
+        queue.qualityOfService = .userInteractive
+        return queue
+    }()
     
     
     
@@ -205,11 +234,10 @@ class ScheduledMessageCell: UITableViewCell {
     }()
     lazy var messageLabel:UILabel = {
         let label = InsetLabel(10, 10, 7, 7)
-        label.backgroundColor = UIColor.telaGray4
+        label.backgroundColor = UIColor.telaGray5
         label.textAlignment = .left
         label.numberOfLines = 0
-//        label.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 15)
-        label.font = UIFont.preferredFont(forTextStyle: .body)
+        label.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 15)
         label.textColor = UIColor.telaWhite
         label.layer.cornerRadius = 7
         label.clipsToBounds = true
@@ -221,22 +249,6 @@ class ScheduledMessageCell: UITableViewCell {
         label.textAlignment = .left
         label.numberOfLines = 0
         label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 11)
-        label.adjustsFontForContentSizeCategory = true
-        return label
-    }()
-    lazy var statusImageView:UIImageView = {
-        let view = UIImageView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.image = SFSymbol.circleSwitch.image
-        return view
-    }()
-    lazy var statusLabel:UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textAlignment = .right
-        label.numberOfLines = 1
-        let font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 12)!
-        label.font = UIFontMetrics(forTextStyle: .footnote).scaledFont(for: font)
         label.adjustsFontForContentSizeCategory = true
         return label
     }()

@@ -207,7 +207,7 @@ class DownloadQuickResponsesEntriesFromServer_Operation: Operation {
             finish(result: .failure(.cancelled))
             return
         }
-        APIOperations.triggerAPIEndpointOperations(endpoint: .FetchQuickResponses, httpMethod: .GET, params: params, headers: headers, completion: finish)
+        APIOperations.triggerAPIEndpointOperations(endpoint: .FetchQuickResponses, httpMethod: .GET, params: params, headers: headers, completion: finish, decoder: defaultDecoder)
     }
 }
 
@@ -390,7 +390,7 @@ class CreateNewQuickResponseEntryOnServer_Operation: Operation {
             finish(result: .failure(.cancelled))
             return
         }
-        APIOperations.triggerAPIEndpointOperations(endpoint: .CreateQuickResponse, httpMethod: .POST, params: params, httpBody: httpBody, headers: headers, guardResponse: .Created, expectData: false, completion: finish)
+        APIOperations.triggerAPIEndpointOperations(endpoint: .CreateQuickResponse, httpMethod: .POST, params: params, httpBody: httpBody, headers: headers, guardResponse: .Created, expectData: false, completion: finish, decoder: defaultDecoder)
     }
 }
 
@@ -508,7 +508,7 @@ class UpdateExistingQuickResponseEntryOnServer_Operation: Operation {
             finish(result: .failure(.cancelled))
             return
         }
-        APIOperations.triggerAPIEndpointOperations(endpoint: .UpdateQuickResponse(responseID: responseID), httpMethod: .PUT, params: params, httpBody: httpBody, headers: headers, guardResponse: .Created, expectData: false, completion: finish)
+        APIOperations.triggerAPIEndpointOperations(endpoint: .UpdateQuickResponse(responseID: responseID), httpMethod: .PUT, params: params, httpBody: httpBody, headers: headers, guardResponse: .Created, expectData: false, completion: finish, decoder: defaultDecoder)
     }
 }
 
@@ -615,7 +615,7 @@ class DeleteExistingQuickResponseEntryOnServer_Operation: Operation {
             finish(result: .failure(.cancelled))
             return
         }
-        APIOperations.triggerAPIEndpointOperations(endpoint: .DeleteQuickResponse(responseID: responseID), httpMethod: .DELETE, params: params, guardResponse: .Created, expectData: false, completion: finish)
+        APIOperations.triggerAPIEndpointOperations(endpoint: .DeleteQuickResponse(responseID: responseID), httpMethod: .DELETE, params: params, guardResponse: .Created, expectData: false, completion: finish, decoder: defaultDecoder)
     }
 }
 

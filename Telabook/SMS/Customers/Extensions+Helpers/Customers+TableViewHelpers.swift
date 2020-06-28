@@ -261,7 +261,8 @@ extension CustomersViewController: UITableViewDelegate {
     
     internal func openChat(forSelectedCustomer customer:Customer, at indexPath:IndexPath) {
         let id = customer.customerID
-        print(customer.node as Any)
+//        print("Conversation Node: \(customer.node as Any)")
+//        print(customer)
         guard
             id != 0,
             customer.node != nil else { return }

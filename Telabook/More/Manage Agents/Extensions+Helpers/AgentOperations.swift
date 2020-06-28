@@ -151,7 +151,7 @@ class DownloadAgentsEntriesFromServerOperation: Operation {
             finish(result: .failure(.cancelled))
             return
         }
-        APIOperations.triggerAPIEndpointOperations(endpoint: .FetchAgents, httpMethod: .GET, params: params, completion: finish)
+        APIOperations.triggerAPIEndpointOperations(endpoint: .FetchAgents, httpMethod: .GET, params: params, completion: finish, decoder: defaultDecoder)
     }
 }
 

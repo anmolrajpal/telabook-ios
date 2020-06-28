@@ -354,8 +354,6 @@ extension UserMessage {
         }
     }
     
-    
-    
     func imageLocalURL() -> URL? {
         guard let uuid = imageUUID else { return nil }
         let fileName = uuid.uuidString + ".jpeg"

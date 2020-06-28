@@ -39,7 +39,8 @@ class DeleteAllEntities_Operation: Operation {
         
         let entityNames = [
             NSStringFromClass(Agent.self),
-            NSStringFromClass(BlockedUser.self)
+            NSStringFromClass(BlockedUser.self),
+            NSStringFromClass(ScheduledMessage.self)
         ]
         context.performAndWait {
             for entityName in entityNames {

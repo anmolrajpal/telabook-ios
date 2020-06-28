@@ -195,7 +195,7 @@ class DownloadAgentAutoResponseEntryFromServer_Operation: Operation {
             finish(result: .failure(.cancelled))
             return
         }
-        APIOperations.triggerAPIEndpointOperations(endpoint: .AutoResponse, httpMethod: .GET, params: params, completion: finish)
+        APIOperations.triggerAPIEndpointOperations(endpoint: .AutoResponse, httpMethod: .GET, params: params, completion: finish, decoder: defaultDecoder)
     }
 }
 
@@ -366,7 +366,7 @@ class UpdateAgentAutoResponseEntryOnServer_Operation: Operation {
             finish(result: .failure(.cancelled))
             return
         }
-        APIOperations.triggerAPIEndpointOperations(endpoint: .AutoResponse, httpMethod: .POST, params: params, httpBody: httpBody, headers: headers, completion: finish)
+        APIOperations.triggerAPIEndpointOperations(endpoint: .AutoResponse, httpMethod: .POST, params: params, httpBody: httpBody, headers: headers, completion: finish, decoder: defaultDecoder)
     }
 }
 
