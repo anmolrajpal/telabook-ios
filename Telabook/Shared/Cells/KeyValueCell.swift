@@ -7,11 +7,7 @@
 //
 
 import UIKit
-extension UITableViewCell {
-    static var identifier:String {
-        NSStringFromClass(self)
-    }
-}
+
 class KeyValueCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .value1, reuseIdentifier: reuseIdentifier)

@@ -56,8 +56,10 @@ extension AgentGalleryController {
                     print(error.localizedDescription)
                 } else {
                     if self.galleryItems.isEmpty {
-                        self.stopSpinner()
-                        self.placeholderLabel.text = "No Media"
+                        DispatchQueue.main.async {
+                            self.stopSpinner()
+                            self.placeholderLabel.text = "No Media"
+                        }
                     }
                 }
         }

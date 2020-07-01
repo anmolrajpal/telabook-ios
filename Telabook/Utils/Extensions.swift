@@ -343,14 +343,12 @@ extension UIViewController {
             
             let defaultAppearance = UINavigationBarAppearance()
             defaultAppearance.configureWithDefaultBackground()
-            
-            navigationBar.standardAppearance = defaultAppearance
-            navigationBar.compactAppearance = defaultAppearance
-            
-            navigationBar.titleTextAttributes = [
+            defaultAppearance.titleTextAttributes = [
                 .foregroundColor: UIColor.telaBlue,
                 .font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 15)!
             ]
+            navigationBar.standardAppearance = defaultAppearance
+            navigationBar.compactAppearance = defaultAppearance
         }
     }
 }
@@ -691,6 +689,37 @@ extension String {
 
 
 let imageCache = NSCache<NSString, UIImage>()
+
+extension UIImage {
+    convenience init?(initials:String, frame:CGRect = CGRect(x: 0, y: 0, width: 50, height: 50), textColor:UIColor = .white, backgroundColor:UIColor = .telaGray5, font:UIFont = UIFont.preferredFont(forTextStyle: UIFont.TextStyle.title2)) {
+        let initialsLabel = UILabel(frame: frame)
+        initialsLabel.font = font
+        initialsLabel.textColor = textColor
+        initialsLabel.numberOfLines = 1
+        initialsLabel.textAlignment = .center
+        initialsLabel.backgroundColor = backgroundColor
+        initialsLabel.text = initials
+        
+        let scale = UIScreen.main.scale
+        UIGraphicsBeginImageContextWithOptions(frame.size, false, scale)
+        
+        guard let currentContext = UIGraphicsGetCurrentContext() else {
+            return nil
+        }
+        
+        initialsLabel.layer.render(in: currentContext)
+        
+        guard let newImage = UIGraphicsGetImageFromCurrentImageContext() else {
+            return nil
+        }
+        UIGraphicsEndImageContext()
+        guard let cgImage = newImage.cgImage else {
+            return nil
+        }
+        self.init(cgImage: cgImage)
+    }
+}
+
 extension UIImage {
     func rotate(radians: Float) -> UIImage? {
         var newSize = CGRect(origin: CGPoint.zero, size: self.size).applying(CGAffineTransform(rotationAngle: CGFloat(radians))).size

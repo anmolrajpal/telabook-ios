@@ -181,3 +181,108 @@ class MergeScheduledMessagesFromServerToStore_Operation: Operation {
         }
     }
 }
+
+
+
+
+
+
+
+/// Schedule new message on the server.
+class ScheduleNewMessageOnServer_Operation: Operation {
+    var result: Result<Bool, APIService.APIError>?
+    
+    struct Body:Encodable {
+        let company_id:String
+        let customer_id:Int
+        let worker_id:Int
+        let date:String
+        let text:String
+    }
+    private let encoder = JSONEncoder()
+    private var downloading = false
+    
+    
+    
+    private let params:[String:String]
+    private let headers:[HTTPHeader] = [
+        HTTPHeader(key: .contentType, value: "application/json"),
+        HTTPHeader(key: .xRequestedWith, value: "XMLHttpRequest")
+    ]
+    private let httpBody:Data
+    init(customerID:Int, workerID:Int, deliveryTime:String, textMessage:String) {
+        let companyID = String(AppData.companyId)
+        params = [
+            "company_id":companyID
+        ]
+        let body = Body(company_id: companyID, customer_id: customerID, worker_id: workerID, date: deliveryTime, text: textMessage)
+        print(body)
+        httpBody = try! encoder.encode(body)
+    }
+    
+    override var isAsynchronous: Bool {
+        return true
+    }
+    
+    override var isExecuting: Bool {
+        return downloading
+    }
+    
+    override var isFinished: Bool {
+        return result != nil
+    }
+    
+    override func cancel() {
+        super.cancel()
+        finish(result: .failure(.cancelled))
+    }
+    
+    func finish(result: Result<APIService.RecurrentResult, APIService.APIError>) {
+        guard downloading else { return }
+        
+        willChangeValue(forKey: #keyPath(isExecuting))
+        willChangeValue(forKey: #keyPath(isFinished))
+        
+        downloading = false
+        
+        let errorMessage = "Error: No results from server"
+        
+        guard case let .success(resultData) = result else {
+            if case let .failure(error) = result {
+                self.result = .failure(error)
+                didChangeValue(forKey: #keyPath(isFinished))
+                didChangeValue(forKey: #keyPath(isExecuting))
+            }
+            return
+        }
+        guard let serverResultValue = resultData.result else {
+            self.result = .failure(.resultError(message: errorMessage))
+            didChangeValue(forKey: #keyPath(isFinished))
+            didChangeValue(forKey: #keyPath(isExecuting))
+            return
+        }
+        let serverResult = ServerResult(rawValue: serverResultValue)
+        guard serverResult == .success else {
+            self.result = .failure(.resultError(message: resultData.message ?? errorMessage))
+            didChangeValue(forKey: #keyPath(isFinished))
+            didChangeValue(forKey: #keyPath(isExecuting))
+            return
+        }
+        self.result = .success(true)
+        
+        didChangeValue(forKey: #keyPath(isFinished))
+        didChangeValue(forKey: #keyPath(isExecuting))
+    }
+    
+    override func start() {
+        willChangeValue(forKey: #keyPath(isExecuting))
+        downloading = true
+        didChangeValue(forKey: #keyPath(isExecuting))
+        
+        guard !isCancelled else {
+            finish(result: .failure(.cancelled))
+            return
+        }
+        APIServer<APIService.RecurrentResult>(apiVersion: .v2).hitEndpoint(endpoint: .ScheduleNewMessage, httpMethod: .POST, params: params, httpBody: httpBody, headers: headers, completion: finish)
+    }
+}

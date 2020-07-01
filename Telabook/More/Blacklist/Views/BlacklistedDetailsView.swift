@@ -143,7 +143,7 @@ class BlacklistedDetailsView: UIView {
     // MARK: Helpers
     
     private func valueLabel() -> UILabel {
-        let label = InsetLabel(15, 15, 12, 12)
+        let label = InsetLabel(textInsets: UIEdgeInsets(top: 15, left: 12, bottom: 15, right: 12))
         label.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 16)
         label.textColor = UIColor.telaGray7
         label.backgroundColor = UIColor.telaGray5

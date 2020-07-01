@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 public enum RefreshMode {
-    case spinner, refreshControl
+    case spinner, refreshControl, none
 }
 class ManageAgentsViewController: UIViewController {
     // MARK: Constructors

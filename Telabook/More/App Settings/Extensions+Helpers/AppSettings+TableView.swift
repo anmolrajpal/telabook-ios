@@ -89,8 +89,8 @@ extension AppSettingsViewController {
     }
     func configureTableView() {
         self.subview.tableView.delegate = self
-        self.subview.tableView.register(KeyValueCell.self, forCellReuseIdentifier: KeyValueCell.identifier)
-        self.subview.tableView.register(UITableViewCell.self, forCellReuseIdentifier: UITableViewCell.identifier)
+        self.subview.tableView.register(KeyValueCell.self)
+        self.subview.tableView.register(UITableViewCell.self)
         configureDataSource()
     }
     
@@ -101,13 +101,13 @@ extension AppSettingsViewController {
                 case .mediaAutoDownload:
                     switch item {
                         case .restoreDefaultsOption:
-                            cell = tableView.dequeueReusableCell(withIdentifier: UITableViewCell.identifier, for: indexPath)
+                            cell = tableView.dequeueReusableCell(UITableViewCell.self, for: indexPath)
                             cell.textLabel?.text = item.setting.name
                             let isEnabled = !AppData.isMediaAutoDownloadSettingsStateAtDefault
                             cell.textLabel?.textColor = isEnabled ? .telaBlue : .tertiaryLabel
                             cell.selectionStyle = isEnabled ? .default : .none
                         default:
-                            cell = tableView.dequeueReusableCell(withIdentifier: KeyValueCell.identifier, for: indexPath) as! KeyValueCell
+                            cell = tableView.dequeueReusableCell(KeyValueCell.self, for: indexPath)
                             cell.textLabel?.text = item.setting.name
                             cell.detailTextLabel?.text = item.setting.value
                             cell.accessoryType = .disclosureIndicator
@@ -115,15 +115,15 @@ extension AppSettingsViewController {
                 case .cacheControl:
                     switch item {
                         case .clearAllCache:
-                            cell = tableView.dequeueReusableCell(withIdentifier: UITableViewCell.identifier, for: indexPath)
+                            cell = tableView.dequeueReusableCell(UITableViewCell.self, for: indexPath)
                             cell.textLabel?.text = item.setting.name
                             cell.textLabel?.textColor = .telaBlue
                         case .clearAgentGalleryCache:
-                            cell = tableView.dequeueReusableCell(withIdentifier: UITableViewCell.identifier, for: indexPath)
+                            cell = tableView.dequeueReusableCell(UITableViewCell.self, for: indexPath)
                             cell.textLabel?.text = item.setting.name
                             cell.textLabel?.textColor = .telaBlue
                         case .clearConversationGalleryCache:
-                            cell = tableView.dequeueReusableCell(withIdentifier: UITableViewCell.identifier, for: indexPath)
+                            cell = tableView.dequeueReusableCell(UITableViewCell.self, for: indexPath)
                             cell.textLabel?.text = item.setting.name
                             cell.textLabel?.textColor = .telaBlue
                         default: fatalError()

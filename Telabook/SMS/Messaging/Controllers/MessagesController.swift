@@ -357,7 +357,7 @@ class MessagesController: MessagesViewController {
         return button
     }()
     lazy var newMessagesCountLabel:UILabel = {
-        let label = InsetLabel(3.5, 3.5, 7, 7)
+        let label = UILabel()
         label.text = "5"
         label.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 12)
         label.textColor = UIColor.black

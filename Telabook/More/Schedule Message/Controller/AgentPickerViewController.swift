@@ -7,11 +7,11 @@
 //
 
 import UIKit
-protocol AgentPickerDelegate {
+protocol WorkersPickerDelegate {
     func didSelectAgent(at indexPath:IndexPath, selectedAgent agent:InternalConversationsCodable)
 }
 class AgentPickerViewController: UIViewController {
-    var delegate:AgentPickerDelegate?
+    var delegate:WorkersPickerDelegate?
     var selectedAgent:InternalConversationsCodable?
     var selectedAgentIndexPath:IndexPath?
     internal var agents:[InternalConversationsCodable]? {

@@ -10,13 +10,14 @@ import UIKit
 
 extension ScheduleMessageViewController {
     internal func commonInit() {
-        title = "Scheduled Messages"
+        title = "SCHEDULED MESSAGES"
         setUpNavBar()
         setupNavBarItems()
-        configureFetchedResultsController()
+//        configureFetchedResultsController()
         configureHierarchy()
         configureTableView()
-        fetchScheduledMessages()
+        configureFetchedResultsController()
+        performFetch()
     }
     private func setupNavBarItems() {
         let addButton = UIBarButtonItem(image: #imageLiteral(resourceName: "add").withRenderingMode(.alwaysOriginal), style: UIBarButtonItem.Style.done, target: self, action: #selector(addButtonDidTapped))
@@ -25,7 +26,9 @@ extension ScheduleMessageViewController {
     @objc
     private func addButtonDidTapped() {
         let vc = ScheduleNewMessageViewController()
-        self.show(vc, sender: self)
+        vc.delegate = self
+        let controller = UINavigationController(rootViewController: vc)
+        present(controller, animated: true)
     }
     private func configureHierarchy() {
         view.addSubview(tableView)
@@ -46,6 +49,14 @@ extension ScheduleMessageViewController {
     func stopSpinner() {
         DispatchQueue.main.async {
             self.spinner.stopAnimating()
+        }
+    }
+}
+
+extension ScheduleMessageViewController: ScheduleNewMessageDelegate {
+    func controllerDidScheduleNewMessage(controller: UIViewController) {
+        controller.dismiss(animated: true) {
+            self.fetchScheduledMessages()
         }
     }
 }

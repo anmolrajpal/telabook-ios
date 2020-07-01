@@ -8,63 +8,145 @@
 
 import UIKit
 import MenuController
+import CoreData
 
-
+fileprivate protocol CustomerDataSourceDelegate {
+    func dataSourceDidUpdate()
+}
 extension CustomersViewController {
+    enum Section { case main }
+    
+    
     class CustomerDataSource: UITableViewDiffableDataSource<Section, Customer> {
+        fileprivate var delegate:CustomerDataSourceDelegate?
         override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool { return true }
     }
-    func setupTableView() {
+    func configureTableView() {
         self.subview.tableView.delegate = self
+        self.subview.tableView.register(SubtitleTableViewCell.self)
+        self.subview.tableView.register(UITableViewCell.self)
         self.subview.tableView.register(CustomerCell.self, forCellReuseIdentifier: NSStringFromClass(CustomerCell.self))
     }
-    func updateUI(animating:Bool = true) {
+    
+    func updateUI(animating:Bool = true, reloadingData:Bool = true) {
         guard let snapshot = currentSnapshot() else { return }
         dataSource.apply(snapshot, animatingDifferences: animating, completion: { [weak self] in
             guard let self = self else { return }
-            self.subview.tableView.reloadData()
+            if reloadingData { self.subview.tableView.reloadData() }
             self.handleState()
         })
     }
+    
     func configureDataSource() {
-        self.dataSource = CustomerDataSource(tableView: self.subview.tableView, cellProvider: { (tableView, indexPath, customer) -> UITableViewCell? in
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(CustomerCell.self), for: indexPath) as? CustomerCell else { fatalError("Could not create new cell") }
-            cell.customerDetails = customer
-            cell.backgroundColor = .telaGray1
-            cell.isUserInteractionEnabled = true
-            cell.accessoryType = .disclosureIndicator
-            let backgroundView = UIView()
-            backgroundView.backgroundColor = UIColor.telaGray7.withAlphaComponent(0.2)
-            cell.selectedBackgroundView  = backgroundView
-            return cell
+        dataSource = CustomerDataSource(tableView: self.subview.tableView, cellProvider: { (tableView, indexPath, customer) -> UITableViewCell? in
+//            let customer = self.fetchedResultsController.object(at: indexPath)
+            let reusableCell:UITableViewCell
+            if self.pickerDelegate != nil {
+                let phoneNumber = customer.phoneNumber ?? ""
+                let number:String
+                if let formattedPhoneNumber = phoneNumber.getE164FormattedNumber() {
+                    number = formattedPhoneNumber
+                } else {
+                    number = phoneNumber
+                }
+                let name = customer.addressBookName
+                
+                let conversationColor = CustomerConversationColor.colorCase(from: Int(customer.colorCode)).color
+                
+                
+                let cell:UITableViewCell
+                if name == nil || name?.isBlank == true {
+                    cell = tableView.dequeueReusableCell(UITableViewCell.self, for: indexPath)
+                    cell.textLabel?.text = phoneNumber
+                } else {
+                    cell = tableView.dequeueReusableCell(SubtitleTableViewCell.self, for: indexPath)
+                    cell.textLabel?.text = name
+                    cell.detailTextLabel?.text = number
+                }
+
+                cell.tintColor = .telaBlue
+                cell.backgroundColor = .clear
+                cell.textLabel?.textColor = conversationColor
+                cell.textLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 16)
+                cell.detailTextLabel?.textColor = UIColor.telaGray7
+                cell.detailTextLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 12)
+                
+                if customer.customerID == self.selectedCustomer?.customerID,
+                    self.selectedCustomer != nil {
+                    cell.accessoryType = .checkmark
+                } else {
+                    cell.accessoryType = .none
+                }
+                reusableCell = cell
+            } else {
+                let cell = tableView.dequeueReusableCell(CustomerCell.self, for: indexPath)
+                cell.configureCell(with: customer)
+                cell.backgroundColor = .clear
+                cell.accessoryType = .disclosureIndicator
+                reusableCell = cell
+            }
+            return reusableCell
         })
-        updateUI(animating: false)
+//        dataSource.delegate = self
     }
+    
     
     func currentSnapshot() -> NSDiffableDataSourceSnapshot<Section, Customer>? {
         guard fetchedResultsController != nil else { return nil }
         var snapshot = NSDiffableDataSourceSnapshot<Section, Customer>()
         snapshot.appendSections([.main])
-        let objects = fetchedResultsController.fetchedObjects ?? []
-        snapshot.appendItems(objects)
+        snapshot.appendItems(customers)
         return snapshot
     }
     
 }
-
+/*
+extension CustomersViewController.CustomerDataSource: NSFetchedResultsControllerDelegate {
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
+        let newSnapshot = snapshot as NSDiffableDataSourceSnapshot<String, NSManagedObjectID>
+        let numberOfItems = self.snapshot().numberOfItems
+        switch numberOfItems {
+            case 0:
+                self.apply(newSnapshot, animatingDifferences: false) {
+                    self.delegate?.dataSourceDidUpdate()
+                }
+            case newSnapshot.numberOfItems:
+                self.apply(newSnapshot, animatingDifferences: false) {
+                    self.delegate?.dataSourceDidUpdate()
+                }
+            
+            default:
+                self.apply(newSnapshot, animatingDifferences: true) {
+                    self.delegate?.dataSourceDidUpdate()
+                }
+        }
+    }
+}
+*/
+extension CustomersViewController: CustomerDataSourceDelegate {
+    func dataSourceDidUpdate() {
+        handleState()
+    }
+}
 extension CustomersViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return CustomerCell.cellHeight
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let customer = self.dataSource.itemIdentifier(for: indexPath) else { return }
-        self.openChat(forSelectedCustomer: customer, at: indexPath)
+        guard let cell = tableView.cellForRow(at: indexPath) else { return }
+        guard let customer = dataSource.itemIdentifier(for: indexPath) else { return }
+        if pickerDelegate == nil {
+            self.openChat(forSelectedCustomer: customer, at: indexPath)
+        } else {
+            tableView.resetCheckmarks()
+            cell.accessoryType = .checkmark
+            pickerDelegate?.customersController(didPick: customer, at: indexPath, controller: self)
+        }
     }
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        // 1
+        guard pickerDelegate == nil else { return nil }
         let index = indexPath.row
-        guard let customers = fetchedResultsController.fetchedObjects else { return nil }
         let customer = customers[index]
         guard let conversation = firebaseCustomers.first(where: { $0.conversationID == customer.externalConversationID }) else { return nil }
         
@@ -131,8 +213,8 @@ extension CustomersViewController: UITableViewDelegate {
     
     
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        guard pickerDelegate == nil else { return nil }
         let index = indexPath.row
-        guard let customers = fetchedResultsController.fetchedObjects, !customers.isEmpty else { return nil }
         let customer = customers[index]
         
         
@@ -169,8 +251,8 @@ extension CustomersViewController: UITableViewDelegate {
     
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        guard pickerDelegate == nil else { return nil }
         let index = indexPath.row
-        guard let customers = fetchedResultsController.fetchedObjects else { return nil }
         let customer = customers[index]
 //        guard let conversation = firebaseCustomers.first(where: { $0.conversationID == customer.externalConversationID }) else { return nil }
         
@@ -229,28 +311,16 @@ extension CustomersViewController: UITableViewDelegate {
         moreAction.backgroundColor = .telaIndigo
         
         let detailsAction =  UIContextualAction(style: .normal, title: "Details", handler: { (action,view,completionHandler ) in
-            if let conversation = self.dataSource.itemIdentifier(for: indexPath) {
-                let customerId = Int(conversation.externalConversationID)
-//                let workerId = Int(self.workerI)
-//                guard customerId != 0, workerId != 0 else {
-//                    print("Customer ID & Worker ID => 0")
-//                    return
-//                }
-                let customerDetailsVC = CustomerDetailsViewController()
-//                customerDetailsVC.delegate = self
-                customerDetailsVC.customerId = customerId
-//                customerDetailsVC.workerId = workerId
-                customerDetailsVC.view.backgroundColor = UIColor.telaGray1
-                customerDetailsVC.modalPresentationStyle = .overFullScreen
-                DispatchQueue.main.async {
-                    self.present(customerDetailsVC, animated: true, completion: nil)
-                }
-                completionHandler(true)
-            } else {
-                DispatchQueue.main.async {
-                    UIAlertController.showTelaAlert(title: "Error", message: "Invalid Conversation of Conversation not Found", controller: self)
-                }
+            let conversation = self.fetchedResultsController.object(at: indexPath)
+            let customerId = Int(conversation.externalConversationID)
+            let customerDetailsVC = CustomerDetailsViewController()
+            customerDetailsVC.customerId = customerId
+            customerDetailsVC.view.backgroundColor = UIColor.telaGray1
+            customerDetailsVC.modalPresentationStyle = .overFullScreen
+            DispatchQueue.main.async {
+                self.present(customerDetailsVC, animated: true, completion: nil)
             }
+            completionHandler(true)
         })
         detailsAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "edit").withTintColor(.white), text: "Details").withRenderingMode(.alwaysOriginal)
         detailsAction.backgroundColor = .systemPink
@@ -261,8 +331,6 @@ extension CustomersViewController: UITableViewDelegate {
     
     internal func openChat(forSelectedCustomer customer:Customer, at indexPath:IndexPath) {
         let id = customer.customerID
-//        print("Conversation Node: \(customer.node as Any)")
-//        print(customer)
         guard
             id != 0,
             customer.node != nil else { return }

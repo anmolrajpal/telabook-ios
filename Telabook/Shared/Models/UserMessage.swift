@@ -175,7 +175,7 @@ extension UserMessage: MessageType {
                     if text.containsOnlyEmoji {
                         return .emoji(text)
                     } else {
-                        return .attributedText(NSAttributedString(string: self.textMessage ?? "", attributes: [
+                        return .attributedText(NSAttributedString(string: text, attributes: [
                             .font: UIFont.preferredFont(forTextStyle: .body),
                             .foregroundColor: UIColor.telaWhite
                         ]))
@@ -193,22 +193,22 @@ extension UserMessage: MessageType {
             }
             case .scheduled:
                 let messageAttributedString = NSAttributedString(string: self.textMessage ?? "", attributes: [
-                    .font : UIFont(name: CustomFonts.gothamBook.rawValue, size: 15)!,
+                    .font : UIFont.preferredFont(forTextStyle: .body),
                     .foregroundColor: UIColor.telaWhite
                 ])
-                let typeAttributedString = NSAttributedString(string: "Scheduled Message: ", attributes: [
-                    .font : UIFont(name: CustomFonts.gothamMedium.rawValue, size: 11)!,
-                    .foregroundColor: UIColor.telaGray6
-                ])
+//                let typeAttributedString = NSAttributedString(string: "Scheduled Message: ", attributes: [
+//                    .font : UIFont.preferredFont(forTextStyle: .caption1),
+//                    .foregroundColor: UIColor.telaGray6
+//                ])
                 let dateAttributedString = NSAttributedString(string: "\nTelabook 🤖 @ \(Date.getStringFromDate(date: self.date!, dateFormat: .ddMMyyyy·hmma))", attributes: [
-                    .font : UIFont(name: CustomFonts.gothamBook.rawValue, size: 12)!,
+                    .font : UIFont.preferredFont(forTextStyle: .footnote),
                     .foregroundColor: UIColor.telaGray5
                 ])
                 let paragraphStyle = NSMutableParagraphStyle()
                 paragraphStyle.lineSpacing = 4
 //                paragraphStyle.alignment = .center
                 let attributedText = NSMutableAttributedString()
-                attributedText.append(typeAttributedString)
+//                attributedText.append(typeAttributedString)
                 attributedText.append(messageAttributedString)
                 attributedText.append(dateAttributedString)
                 attributedText.addAttribute(.paragraphStyle, value:paragraphStyle, range:NSMakeRange(0, attributedText.length))
@@ -216,11 +216,11 @@ extension UserMessage: MessageType {
             
             case .system:
                 let messageAttributedString = NSAttributedString(string: self.textMessage?.replacingOccurrences(of: "_", with: " ").capitalized ?? "", attributes: [
-                    .font : UIFont(name: CustomFonts.gothamMedium.rawValue, size: 14)!,
+                    .font : UIFont.preferredFont(forTextStyle: .footnote),
                     .foregroundColor: UIColor.telaYellow
                 ])
                 let dateAttributedString = NSAttributedString(string: "\nTelabook 🤖 @ \(Date.getStringFromDate(date: self.date!, dateFormat: .ddMMyyyy·hmma))", attributes: [
-                    .font : UIFont(name: CustomFonts.gothamBook.rawValue, size: 12)!,
+                    .font : UIFont.preferredFont(forTextStyle: .caption1),
                     .foregroundColor: UIColor.telaYellow
                 ])
                 let paragraphStyle = NSMutableParagraphStyle()

@@ -298,7 +298,6 @@ class SettingsViewController: UIViewController {
     @objc func handleRefreshAction() {
         self.placeholderLabel.isHidden = true
         self.refreshButton.isHidden = true
-//        self.initiateFetchUserProfileSequence(userId: userId)
         self.fetchUserProfile()
     }
     
@@ -332,112 +331,7 @@ class SettingsViewController: UIViewController {
         spinner.centerYAnchor.constraint(equalTo: updateButton.centerYAnchor).activate()
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    /*
-    
-    private func uploadImage(_ image: UIImage) {
-        
-        guard let scaledImage = image.scaledToSafeUploadSize, let data = scaledImage.jpegData(compressionQuality: 0.4) else {
-            print("Unable to get scaled compressed image")
-            return
-        }
-        
-        let metadata = StorageMetadata()
-        metadata.contentType = "image/jpeg"
-        
-        
-        
-        let imageName = [UUID().uuidString, String(Int(Date().timeIntervalSince1970)*1000)].joined(separator: "-") + ".jpg"
-        let ref = Config.StorageConfig.profileImageRef().child(imageName)
-        
-        uploadTask = ref.putData(data, metadata: metadata)
-        
-        uploadTask.observe(.resume) { snapshot in
-            print("Upload resumed, also fires when the upload starts")
-        }
-        
-        uploadTask.observe(.pause) { snapshot in
-            print("Upload paused")
-        }
-        let alertVC = UIAlertController.telaAlertController(title: "Uploading...")
-        let margin:CGFloat = 8.0
-        let alertVCWidth:CGFloat = 270.0
-        print("Alert VC width => \(alertVCWidth)")
-        let frame = CGRect(x: margin, y: 72.0, width: alertVCWidth - margin * 2.0 , height: 2.0)
-        let progressBar = UIProgressView(progressViewStyle: .default)
-        progressBar.frame = frame
-        progressBar.progressTintColor = UIColor.telaBlue
-        let cancelAction = UIAlertAction(title: "Cancel", style: .destructive) { (action) in
-            self.uploadTask.cancel()
-            
-        }
-        alertVC.addAction(cancelAction)
-        alertVC.view.addSubview(progressBar)
-        DispatchQueue.main.async {
-            UIAlertController.presentAlert(alertVC)
-        }
-        progressBar.setProgress(0.0, animated: true)
-        
-        uploadTask.observe(.progress) { snapshot in
-            let completedUnitCount = snapshot.progress!.completedUnitCount
-            let totalUnitCount = snapshot.progress!.totalUnitCount
-            let progress = Float(completedUnitCount) / Float(totalUnitCount)
-            progressBar.setProgress(progress, animated: true)
-        }
-        
-        uploadTask.observe(.success) { snapshot in
-            print("Upload completed successfully")
-            alertVC.dismiss(animated: true, completion: nil)
-            ref.downloadURL(completion: { (url, err) in
-                guard let downloadUrl = url else {
-                    if let err = err {
-                        print("Error: Unable to get download url => \(err.localizedDescription)")
-                    }
-                    return
-                }
-                self.profileImageUrl = downloadUrl.absoluteString
-                self.updateUserProfile()
-            })
-        }
-        
-        uploadTask.observe(.failure) { snapshot in
-            if let error = snapshot.error as NSError? {
-                switch (StorageErrorCode(rawValue: error.code)!) {
-                case .objectNotFound:
-                    print("File doesn't exist")
-                    break
-                case .unauthorized:
-                    print("User doesn't have permission to access file")
-                    break
-                case .cancelled:
-                    print("User canceled the upload")
-                    alertVC.dismiss(animated: true, completion: nil)
-                    break
-                case .unknown:
-                    print("Unknown error occurred, inspect the server response")
-                    break
-                default:
-                    print("A separate error occurred. This is a good place to retry the upload.")
-                    break
-                }
-            }
-        }
-    }
-    
-    */
+
     
     lazy var progressAlert:UIAlertController = {
         let alert = UIAlertController.telaAlertController(title: "Uploading...")

@@ -50,6 +50,12 @@ extension MessagesController: MessagesDisplayDelegate {
             } else {
                 return [.foregroundColor: UIColor.lightGray]
             }
+            case .url:
+                return [
+                    .foregroundColor: UIColor.link,
+                    .underlineStyle: NSUnderlineStyle.single.rawValue,
+                    .underlineColor: UIColor.link
+            ]
             case .date:
                 return isFromCurrentSender(message: message) ? [
                     .foregroundColor: UIColor.telaGray7,

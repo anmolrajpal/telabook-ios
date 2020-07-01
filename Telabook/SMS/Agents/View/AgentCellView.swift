@@ -142,7 +142,8 @@ class AgentCellView: UIView {
     
     
     
-    // MARK: Constructors
+    // MARK: - View Constructors
+    
     private let queue: OperationQueue = {
         let queue = OperationQueue()
         queue.maxConcurrentOperationCount = 1
@@ -213,7 +214,7 @@ class AgentCellView: UIView {
         return view
     }()
     lazy var badgeCountLabel:UILabel = {
-        let label = InsetLabel(3.5, 3.5, 7, 7)
+        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .telaWhite
         label.layer.cornerRadius = label.frame.height / 2

@@ -10,6 +10,18 @@ import UIKit
 
 extension AgentsViewController {
     
+    // MARK: Common setup
+    internal func commonInit() {
+        title = "SMS"
+        setUpNavBar()
+        configureTableView()
+        configureDataSource()
+        configureFetchedResultsController()
+        setupTargetActions()
+        setupSearchController()
+    }
+    
+    
     internal func addFirebaseObservers() {
         handle = observePendingMessagesCount()
     }
@@ -45,31 +57,33 @@ extension AgentsViewController {
     }
     
     
-    internal func synchronizeWithTimeLogic() {
-        if isFetchedResultsAvailable {
-            if let firstObject = fetchedResultsController.sections?.first?.objects?.first as? Agent,
+    internal func synchronizeAgents() {
+        if !agents.isEmpty {
+            if let firstObject = agents.randomElement(),
                 let lastRefreshedAt = firstObject.lastRefreshedAt {
-                let thresholdRefreshTime = lastRefreshedAt.addingTimeInterval(5)
-                let currentTime = Date()
-                currentTime > thresholdRefreshTime ? initiateFetchAgentsSequence(withRefreshMode: .refreshControl) : ()
-                #if !RELEASE
-                print("\n\n\tLast Refreshed At: \(Date.getStringFromDate(date: lastRefreshedAt, dateFormat: "yyyy-MM-dd HH:mm:ss")) | Threshold Refresh Time: \(Date.getStringFromDate(date: thresholdRefreshTime, dateFormat: "yyyy-MM-dd HH:mm:ss")) | Current time: \(Date.getStringFromDate(date: currentTime, dateFormat: "yyyy-MM-dd HH:mm:ss")))\n\n")
-                #endif
+                let thresholdRefreshTime = lastRefreshedAt.addingTimeInterval(60)
+                Date() > thresholdRefreshTime ?
+                    initiateFetchAgentsSequence(withRefreshMode: .refreshControl) :
+                    initiateFetchAgentsSequence(withRefreshMode: .none)
             }
         } else {
             initiateFetchAgentsSequence(withRefreshMode: .spinner)
         }
     }
+    
     internal func initiateFetchAgentsSequence(withRefreshMode refreshMode: RefreshMode) {
-        if refreshMode == .spinner {
-            DispatchQueue.main.async {
-                self.subview.spinner.startAnimating()
+        switch refreshMode {
+            case .spinner:
+                    DispatchQueue.main.async {
+                        self.subview.spinner.startAnimating()
+                        self.fetchAgents()
+                    }
+            case .refreshControl:
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                        self.subview.tableView.refreshControl?.beginExplicitRefreshing()
+                    }
+            case .none:
                 self.fetchAgents()
-            }
-        } else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-                self.subview.tableView.refreshControl?.beginExplicitRefreshing()
-            }
         }
     }
 }

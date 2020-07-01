@@ -9,11 +9,7 @@
 import UIKit
 import MessageKit
 
-extension UICollectionViewCell {
-    static var identifier:String {
-        NSStringFromClass(self)
-    }
-}
+
 protocol MMSCellDelegate {
     func didTapDownloadButton(in cell:MMSCell)
     func startDownloadingMedia(forMultimediaMessage message:UserMessage, at indexPath:IndexPath)

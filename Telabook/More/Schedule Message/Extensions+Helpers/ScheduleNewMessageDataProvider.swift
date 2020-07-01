@@ -8,6 +8,47 @@
 
 import UIKit
 extension ScheduleNewMessageViewController {
+    /* ------------------------------------------------------------------------------------------------------------ */
+    internal func scheduleNewMessage(textMessage:String, deliveryTime:String, customerID:Int, workerID:Int) {
+        startSpinner()
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+        
+        let operation = ScheduleNewMessageOnServer_Operation(customerID: customerID, workerID: workerID, deliveryTime: deliveryTime, textMessage: textMessage)
+        operation.completionBlock = {
+            switch operation.result {
+                case let .failure(error): self.handleFaliure(error: error)
+                case .success: self.handleSuccess()
+                default: break
+            }
+        }
+        queue.addOperations([operation], waitUntilFinished: false)
+    }
+    /* ------------------------------------------------------------------------------------------------------------ */
+    
+   
+    private func handleSuccess() {
+        DispatchQueue.main.async {
+            self.stopSpinner()
+            TapticEngine.generateFeedback(ofType: .Success)
+            self.delegate?.controllerDidScheduleNewMessage(controller: self)
+        }
+    }
+    private func handleFaliure(error: APIService.APIError) {
+        DispatchQueue.main.async {
+            TapticEngine.generateFeedback(ofType: .Error)
+            UIAlertController.showTelaAlert(title: "Error", message: error.localizedDescription, action: UIAlertAction(title: "OK", style: .cancel, handler: { action in
+                self.stopSpinner()
+            }), controller: self)
+        }
+    }
+    
+    
+    
+    
+    
+    
     internal func initiateScheduleNewMessageSequence(workerId:String, customerId:String, date:String, text:String) {
         DispatchQueue.main.async {
             UIAlertController.showModalSpinner(with: "Scheduling...", controller: self)

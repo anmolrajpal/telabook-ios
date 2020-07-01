@@ -278,7 +278,8 @@ extension MessagesController: NSFetchedResultsControllerDelegate {
                 }
             case .delete:
                 guard let indexPath = indexPath else { return }
-                fatalError("Core Data: Delete case triggered at core data indexPath: \(indexPath) when messages count = \(self.messages.count)")
+                print("Core Data: Delete case triggered at core data indexPath: \(indexPath) when messages count = \(self.messages.count)")
+                return
 //                let section = self.messages.count - 1 - indexPath.row
 //                print("Deleting Section: \(section) where core data indexPath: \(indexPath) when messages count = \(self.messages.count)")
 //                operation = BlockOperation { [weak self] in self?.messagesCollectionView.deleteSections([section]) }

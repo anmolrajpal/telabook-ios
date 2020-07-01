@@ -7,18 +7,18 @@
 //
 
 import UIKit
-protocol CustomerPickerDelegate {
+protocol CustomersPickerDelegate {
     func didSelectCustomer(at indexPath:IndexPath, selectedCustomer customer:ExternalConversationsCodable)
 }
 class CustomerPickerViewController: UIViewController {
-    var delegate:CustomerPickerDelegate?
+    var delegate:CustomersPickerDelegate?
     var selectedCustomer:ExternalConversationsCodable?
     var selectedCustomerIndexPath:IndexPath?
     let workerId:String
-    let agent:InternalConversationsCodable
-    init(workerId:String, agent:InternalConversationsCodable) {
+//    let agent:InternalConversationsCodable
+    init(workerId:String) {
         self.workerId = workerId
-        self.agent = agent
+//        self.agent = agent
         super.init(nibName: nil, bundle: nil)
         self.initiateFetchAgentsSequence(workerId: workerId)
     }

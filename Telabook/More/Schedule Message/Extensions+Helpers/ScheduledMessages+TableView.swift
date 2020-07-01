@@ -7,50 +7,61 @@
 //
 
 import UIKit
+import CoreData
+
+fileprivate protocol DataSourceDelegate {
+    func dataSourceDidUpdate()
+}
 
 extension ScheduleMessageViewController {
     enum Section { case  main }
     
     typealias SectionType = Section
     typealias ItemType = ScheduledMessage
+    typealias Snapshot = NSDiffableDataSourceSnapshot<SectionType, ItemType>
     
-    class DataSource: UITableViewDiffableDataSource<SectionType, ItemType> {}
+    class DataSource: UITableViewDiffableDataSource<String, NSManagedObjectID> {
+        fileprivate var delegate:DataSourceDelegate?
+    }
     internal func configureTableView() {
         tableView.delegate = self
         tableView.register(ScheduledMessageCell.self)
         configureDataSource()
     }
     private func configureDataSource() {
-        self.dataSource = DataSource(tableView: tableView, cellProvider: { (tableView, indexPath, scheduledMessage) -> UITableViewCell? in
+        dataSource = DataSource(tableView: tableView, cellProvider: { (tableView, indexPath, objectID) -> UITableViewCell? in
             let cell = tableView.dequeueReusableCell(ScheduledMessageCell.self, for: indexPath)
-            cell.configureCell(with: scheduledMessage)
+//            let scheduledMessage = self.viewContext.object(with: objectID) as! ScheduledMessage
+            let scheduledMessage = self.fetchedResultsController.object(at: indexPath)
+            cell.configureCell(with: scheduledMessage, animated: false)
             cell.selectionStyle = .none
-//            cell.scheduledMessage = scheduledMessage
             return cell
         })
-        updateUI(animating: false)
+        dataSource.delegate = self
+//        performFetch()
+//        updateUI(animating: false)
     }
-    internal func updateUI(animating:Bool = true, reloadingData:Bool = false) {
-        guard let snapshot = currentSnapshot() else { return }
-        guard dataSource != nil else { return }
-        dataSource.apply(snapshot, animatingDifferences: animating, completion: { [weak self] in
-            guard let self = self else { return }
-            if reloadingData { self.tableView.reloadData() }
-            if !self.scheduledMessages.isEmpty {
-                self.stopSpinner()
-                self.placeholderLabel.isHidden = true
-            } else {
-                self.placeholderLabel.isHidden = false
-                self.placeholderLabel.text = "No Data"
-            }
-        })
-    }
-    private func currentSnapshot() -> NSDiffableDataSourceSnapshot<SectionType, ItemType>? {
-        var snapshot = NSDiffableDataSourceSnapshot<SectionType, ItemType>()
-        snapshot.appendSections([.main])
-        snapshot.appendItems(scheduledMessages)
-        return snapshot
-    }
+//    internal func updateUI(animating:Bool = true, reloadingData:Bool = false) {
+//        guard let snapshot = currentSnapshot() else { return }
+//        guard dataSource != nil else { return }
+//        dataSource.apply(snapshot, animatingDifferences: animating, completion: { [weak self] in
+//            guard let self = self else { return }
+//            if reloadingData { self.tableView.reloadData() }
+//            if !self.scheduledMessages.isEmpty {
+//                self.stopSpinner()
+//                self.placeholderLabel.isHidden = true
+//            } else {
+//                self.placeholderLabel.isHidden = false
+//                self.placeholderLabel.text = "No Data"
+//            }
+//        })
+//    }
+//    private func currentSnapshot() -> Snapshot? {
+//        var snapshot = Snapshot()
+//        snapshot.appendSections([.main])
+//        snapshot.appendItems(scheduledMessages)
+//        return snapshot
+//    }
 }
 
 extension ScheduleMessageViewController: UITableViewDelegate {
@@ -61,3 +72,38 @@ extension ScheduleMessageViewController: UITableViewDelegate {
         return 174
     }
 }
+
+extension ScheduleMessageViewController.DataSource: NSFetchedResultsControllerDelegate {
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
+        let newSnapshot = snapshot as NSDiffableDataSourceSnapshot<String, NSManagedObjectID>
+        if self.snapshot().numberOfItems == 0 {
+            self.apply(newSnapshot, animatingDifferences: false) {
+                self.delegate?.dataSourceDidUpdate()
+            }
+        }
+        if self.snapshot().numberOfItems == newSnapshot.numberOfItems {
+            self.apply(newSnapshot, animatingDifferences: false) {
+                self.delegate?.dataSourceDidUpdate()
+            }
+        }
+        self.apply(newSnapshot, animatingDifferences: true) {
+            self.delegate?.dataSourceDidUpdate()
+        }
+    }
+}
+extension ScheduleMessageViewController: DataSourceDelegate {
+    func dataSourceDidUpdate() {
+        if !self.scheduledMessages.isEmpty {
+            self.stopSpinner()
+            self.placeholderLabel.isHidden = true
+        } else {
+            self.placeholderLabel.isHidden = false
+            self.placeholderLabel.text = "No Data"
+        }
+    }
+}
+//extension ScheduleMessageViewController:NSFetchedResultsControllerDelegate {
+//    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
+//        updateUI(animating: false)
+//    }
+//}

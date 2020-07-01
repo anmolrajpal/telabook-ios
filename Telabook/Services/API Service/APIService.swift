@@ -12,6 +12,7 @@ import Foundation
 public struct APIService: APIServiceProtocol {
     typealias APICompletion<T> = (Result<T, APIError>) -> Void
     static let shared = APIService()
+    var isLoggingEnabled = false
     let decoder = JSONDecoder()
     
     enum APIVersion { case v1, v2, mock; var stringValue:String { String(describing: self) }}
@@ -115,6 +116,9 @@ public struct APIService: APIServiceProtocol {
         /// Endpoint to fetch scheduled messages
         case FetchScheduledMessages
         
+        /// Endpoint to schedule new text message
+        case ScheduleNewMessage
+        
         /**
         Returns the path of a specified Endpoint.
         ## Example Usage ##
@@ -148,7 +152,7 @@ public struct APIService: APIServiceProtocol {
                 case let .DeleteConversation(conversationID): return "/external_conversations/\(conversationID)"
                 case .ForgotPassword: return "/password/email"
                 case .SendMessage: return "/send"
-                case .FetchScheduledMessages: return "/schedule_message"
+                case .FetchScheduledMessages, .ScheduleNewMessage: return "/schedule_message"
             }
         }
     }

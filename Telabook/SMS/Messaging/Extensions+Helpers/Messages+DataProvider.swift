@@ -20,9 +20,7 @@ extension MessagesController {
             if snapshot.exists() {
 //                print("New Message Child Added: \(snapshot)")
                 guard let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) else {
-                    #if !RELEASE
 //                    print("###\(#function) Invalid Data for Snapshot key: \(snapshot.key). Error: Failed to create message from Firebase Message")
-                    #endif
 //                    os_log("Invalid Data for Snapshot key: %@. Unable to create Message from Firebase Message due to invalid data. Hence not saving it in local db and the message will not be visible to user.", log: .firebase, type: .debug, snapshot.key)
                     return
                 }
@@ -30,9 +28,7 @@ extension MessagesController {
                 self.persistFirebaseMessageInStore(entry: message)
             }
         }) { error in
-            #if !RELEASE
 //            print("###\(#function) Child Added Observer Event Error: \(error)")
-            #endif
 //            os_log("Firebase Child Added Observer Event Error while observing new Messages: %@", log: .firebase, type: .error, error.localizedDescription)
         }
     }

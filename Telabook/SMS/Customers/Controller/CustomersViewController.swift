@@ -11,31 +11,49 @@ import CoreData
 import Firebase
 import FirebaseStorage
 
+protocol CustomerPickerDelegate {
+    func customersController(didPick customer:Customer, at indexPath:IndexPath, controller:UIViewController)
+}
+
 class CustomersViewController: UIViewController {
-    let fetchRequest: NSFetchRequest<Customer>
+    
+    // MARK: - Properties
+    var dataSource: CustomerDataSource!
+    internal var fetchedResultsController: NSFetchedResultsController<Customer>!
+    let searchController = UISearchController(searchResultsController: nil)
+    internal var currentSearchText = ""
+    var pickerDelegate:CustomerPickerDelegate?
+    var selectedIndexPath:IndexPath?
+    var selectedCustomer:Customer?
     let node:Config.FirebaseConfig.Node
-    let context:NSManagedObjectContext
+    let context:NSManagedObjectContext = PersistentContainer.shared.viewContext
     let agent:Agent
     let reference:DatabaseReference
     var handle:UInt!
     var firebaseCustomers:[FirebaseCustomer] = []
-    init(fetchRequest: NSFetchRequest<Customer>, viewContext:NSManagedObjectContext, agent:Agent) {
-        self.fetchRequest = fetchRequest
+    var selectedSegment:Segment = .Inbox {
+        didSet { configureFetchedResultsController() }
+    }
+    
+    
+
+    // MARK: - Init
+    
+    init(agent:Agent) {
         self.agent = agent
-        self.context = viewContext
         self.node = .conversations(companyID: AppData.companyId, workerID: Int(agent.workerID))
         self.reference = node.reference
         super.init(nibName: nil, bundle: nil)
-        
-//        self.selectedSegment = .Inbox
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    //MARK: Enums
+    
+    
+    
     enum Segment:Int, CaseIterable { case Inbox, Archived ; var stringValue:String { String(describing: self).uppercased() } }
-    enum Section { case main }
+    
     
     
     
@@ -44,67 +62,61 @@ class CustomersViewController: UIViewController {
         return CustomersView(frame: UIScreen.main.bounds)
     }()
     
-    var selectedSegment:Segment = .Inbox {
-        didSet { self.setupFetchedResultsController() }
-    }
     
     
-    internal var fetchedResultsController: NSFetchedResultsController<Customer>!
     
     
-    var dataSource: CustomerDataSource!
-    
-    internal var currentSearchText = ""
+    // MARK: - Computed Properties
     
     internal var isFetchedResultsAvailable:Bool {
         return fetchedResultsController.sections?.first?.numberOfObjects == 0 ? false : true
     }
-    let searchController = UISearchController(searchResultsController: nil)
     var isSearchBarEmpty: Bool {
         return searchController.searchBar.text?.isEmpty ?? true
     }
     var isFiltering: Bool {
         return searchController.isActive && !isSearchBarEmpty
     }
+    var customers:[Customer] {
+        return fetchedResultsController.fetchedObjects ?? []
+    }
     
-    //MARK: init
+    
+    
+    
+    
+    //MARK: - Lifecycle
+    
     override func loadView() {
         view = subview
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        setup()
+        commonInit()
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        reference.removeObserver(withHandle: handle)
+        if handle != nil {
+            reference.removeObserver(withHandle: handle)
+        }
         stopObservingReachability()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationItem.title = agent.personName?.uppercased() ?? agent.phoneNumber ?? "Customers"
         observeReachability()
-        fetchCustomers()
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        fetchCustomers()
         if let selectionIndexPath = self.subview.tableView.indexPathForSelectedRow {
             self.subview.tableView.deselectRow(at: selectionIndexPath, animated: animated)
         }
     }
 
     
-    // MARK: Common setup
-    private func setup() {
-        setUpNavBar()
-        setupTableView()
-        configureDataSource()
-        setupFetchedResultsController()
-        setupNavBarItems()
-        setupTargetActions()
-//        setupSearchController()
-    }
     
+    // MARK: - Methods
     
     internal func fetchCustomers() {
         if !isFetchedResultsAvailable {

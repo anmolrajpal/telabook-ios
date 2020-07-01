@@ -34,6 +34,9 @@ struct APIOperations {
     
     /// Returns an array of operations for creating and hitting API Endpoint
     static func triggerAPIEndpointOperations<T:Decodable>(endpoint:APIService.Endpoint, requiresBearerToken:Bool = true, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, configuration:APIService.Configuration = .defaultConfiguration, completion: @escaping APIService.APICompletion<T>, decoder:JSONDecoder) {
+        
+        let isLoggingEnabled = APIService.shared.isLoggingEnabled
+        
         var operations = [Operation]()
         let queue = OperationQueue()
         queue.name = "Endpoint Queue"
@@ -55,10 +58,10 @@ struct APIOperations {
                 }
                 hitEndpointOperation.bearerToken = bearerToken
                 
-                os_log("Firebase Bearer Token: %{PRIVATE}@", log: .firebase, type: .info, bearerToken)
-                #if !RELEASE
-                print("\n\n------------------------------------------------ Firebase Token: BEGIN ------------------------------------------------\n\nFirebase Bearer Token: \(bearerToken)\n\n--------------------------------------------------- Firebase Token: END ------------------------------------------------\n\n")
-                #endif
+                if isLoggingEnabled {
+                    let message = "\n\n------------------------------------------------ Firebase Token: BEGIN ------------------------------------------------\n\nFirebase Bearer Token: \(bearerToken)\n\n--------------------------------------------------- Firebase Token: END ------------------------------------------------\n\n"
+                    printAndLog(message: message, log: .firebase, logType: .info, isPrivate: true)
+                }
             }
             passFirebaseTokenToAPIEndpointOperation.addDependency(fetchFirebaseTokenOperation)
             hitEndpointOperation.addDependency(passFirebaseTokenToAPIEndpointOperation)
@@ -83,6 +86,8 @@ struct APIOperations {
 
 /// Downloads Agents entries from the server.
 class HitEndpointOperation<T:Decodable>: Operation {
+    let isLoggingEnabled = APIService.shared.isLoggingEnabled
+    
     var result: (Result<T, APIService.APIError>)?
     private let decoder:JSONDecoder
     private var downloading = false
@@ -165,10 +170,9 @@ class HitEndpointOperation<T:Decodable>: Operation {
             finish(result: .failure(.cancelled))
             return
         }
-        #if !RELEASE
-        print("Endpoint URL => \(url)")
-        #endif
-        os_log("Endpoint URL => %@", log: .network, type: .info, url.absoluteString)
+        if isLoggingEnabled {
+            printAndLog(message: "Endpoint URL => \(url)", log: .network, logType: .info, isPrivate: true)
+        }
         var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: configuration.timeOutInterval)
         guard !isCancelled else {
             finish(result: .failure(.cancelled))
@@ -212,11 +216,10 @@ class HitEndpointOperation<T:Decodable>: Operation {
             let responseCode = (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)
             let responseStatus = ResponseStatus.getResponseStatusBy(statusCode: responseCode)
             
-            #if !RELEASE
-            print("\n\n------------------------------------------------ Response: BEGIN ------------------------------------------------\n\nResponse Status => \(responseStatus)\nResponse Code => \(responseCode)\n\n--------------------------------------------------- Response: END ------------------------------------------------\n\n")
-            #endif
-            let message = "Response Status: \(responseStatus.rawValue) | Code: \(responseCode) | for URL: \(url.absoluteString)"
-            os_log("%@", log: .network, type: .info, message)
+            if self.isLoggingEnabled {
+                let responseMessage = "\n\n------------------------------------------------ Response: BEGIN ------------------------------------------------\n\nResponse Status => \(responseStatus)\nResponse Code => \(responseCode)\nFor URL: \(url)\n\n--------------------------------------------------- Response: END ------------------------------------------------\n\n"
+                printAndLog(message: responseMessage, log: .network, logType: .info, isPrivate: true)
+            }
             
             if let expectedResponse = self.guardResponse {
                 guard responseStatus == expectedResponse else {
@@ -235,18 +238,20 @@ class HitEndpointOperation<T:Decodable>: Operation {
                     self.finish(result: .failure(.noData(response: ResponseStatus.getResponseStatusBy(statusCode: (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)))))
                     return
                 }
-                #if !RELEASE
-                let jsonString = String(data: data, encoding: .utf8)!
-                print("\n\n------------------------------------------------ Raw JSON Object: BEGIN ------------------------------------------------\n\n"+jsonString+"\n\n--------------------------------------------------- Raw JSON Object: END ------------------------------------------------\n\n")
-                #endif
+                
+                if self.isLoggingEnabled {
+                    let jsonString = String(data: data, encoding: .utf8)!
+                    let jsonMessage = "\n\n------------------------------------------------ Raw JSON Object: BEGIN ------------------------------------------------\n\n"+jsonString+"\n\n--------------------------------------------------- Raw JSON Object: END ------------------------------------------------\n\n"
+                    printAndLog(message: jsonMessage, log: .network, logType: .info, isPrivate: true)
+                }
                 do {
                     let object = try self.decoder.decode(T.self, from: data)
                     self.finish(result: .success(object))
                 } catch let error {
-                    #if !RELEASE
-                    print("JSON Decoding Error: \(error)")
-                    #endif
-                    os_log("JSON Decoding Error: %@", log: .network, type: .error, error.localizedDescription)
+                    if self.isLoggingEnabled {
+                        let message = "JSON Decoding Error: \(error)"
+                        printAndLog(message: message, log: .network, logType: .error)
+                    }
                     self.finish(result: .failure(.jsonDecodingError(error: error)))
                 }
             } else {

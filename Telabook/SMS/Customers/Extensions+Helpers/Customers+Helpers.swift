@@ -24,20 +24,30 @@ extension CustomersViewController: StartNewConversationDelegate {
 }
 
 extension CustomersViewController {
-    internal func setupNavBarItems() {
+    
+    // MARK: - Common init
+    internal func commonInit() {
+        setUpNavBar()
+        configureTableView()
+        configureDataSource()
+        configureFetchedResultsController()
+        if pickerDelegate == nil {
+            configureNavigationBarItems()
+        }
+        configureTargetActions()
+        //        setupSearchController()
+    }
+    
+    internal func configureNavigationBarItems() {
         let addButton = UIBarButtonItem(image: #imageLiteral(resourceName: "add").withRenderingMode(.alwaysOriginal), style: UIBarButtonItem.Style.done, target: self, action: #selector(addButtonTapped))
         navigationItem.rightBarButtonItems = [addButton]
     }
     @objc func addButtonTapped() {
-//        let newContactVC = NewContactViewController()
-//        newContactVC.modalPresentationStyle = .overFullScreen
-//        newContactVC.view.backgroundColor = .telaGray1
-//        newContactVC.delegate = self
         let vc = NewConversationController(senderID: Int(agent.workerID))
         vc.delegate = self
         self.present(vc, animated: true, completion: nil)
     }
-    internal func setupTargetActions() {
+    internal func configureTargetActions() {
         subview.segmentedControl.addTarget(self, action: #selector(didChangeSegment(_:)), for: .valueChanged)
 //        subview.refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
     }
@@ -51,7 +61,7 @@ extension CustomersViewController {
     }
     internal func handleEvents(for segment:Segment) {
 //        self.stopRefreshers()
-        setupFetchedResultsController()
+        configureFetchedResultsController()
 //        switch segment {
 //        case .Inbox:
 //            print("Segment: Inbox")

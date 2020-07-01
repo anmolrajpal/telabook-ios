@@ -9,44 +9,56 @@
 import UIKit
 import CoreData
 import Firebase
+
+protocol AgentPickerDelegate {
+    func agentsController(didPick agent:Agent, at indexPath:IndexPath, controller:UIViewController)
+}
+
 class AgentsViewController: UIViewController {
+    
+    // MARK: - Properties
+    
+    var pickerDelegate:AgentPickerDelegate?
+    var selectedIndexPath:IndexPath?
+    var selectedAgent:Agent?
+    
     var handle:UInt!
     let reference = Config.FirebaseConfig.Node.wasNotSeen.reference
-    let fetchRequest: NSFetchRequest<Agent>
-    let context:NSManagedObjectContext
-    init(fetchRequest: NSFetchRequest<Agent>, viewContext: NSManagedObjectContext) {
-        self.fetchRequest = fetchRequest
-        self.context = viewContext
-        super.init(nibName: nil, bundle: nil)
-        setupFetchedResultsController()
-    }
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+
+    let context:NSManagedObjectContext = PersistentContainer.shared.viewContext
+    var fetchedResultsController: NSFetchedResultsController<Agent>! = nil
+   
+    var dataSource:DataSource! = nil
+    let searchController = UISearchController(searchResultsController: nil)
     
     
-    // MARK: Constructors
+    // MARK: - Constructors
+    
     lazy private(set) var subview: AgentsView = {
         return AgentsView(frame: UIScreen.main.bounds)
     }()
     
     
     
-    internal var fetchedResultsController: NSFetchedResultsController<Agent>!
     
-    enum Section { case main }
-    var diffableDataSource: UITableViewDiffableDataSource<Section, Agent>?
-    var snapshot: NSDiffableDataSourceSnapshot<Section, Agent>!
+    
+    
+//    var diffableDataSource: UITableViewDiffableDataSource<Section, Agent>?
+//    var snapshot: NSDiffableDataSourceSnapshot<Section, Agent>!
     
     internal var currentSearchText = ""
     
-    internal var isFetchedResultsAvailable:Bool {
-        return fetchedResultsController.sections?.first?.numberOfObjects == 0 ? false : true
-    }
+    
+    
+    
+    
+    
+    
+    // MARK: - Computed Properties
+    
     internal var agents:[Agent] {
         return fetchedResultsController.fetchedObjects ?? []
     }
-    let searchController = UISearchController(searchResultsController: nil)
     var isSearchBarEmpty: Bool {
         return searchController.searchBar.text?.isEmpty ?? true
     }
@@ -54,7 +66,11 @@ class AgentsViewController: UIViewController {
         return searchController.isActive && !isSearchBarEmpty
     }
     
-    //MARK: init
+    
+    
+    
+    //MARK: - Lifecycle
+    
     override func loadView() {
         view = subview
     }
@@ -65,18 +81,16 @@ class AgentsViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationItem.title = "SMS"
         observeReachability()
         addFirebaseObservers()
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        stopObservingReachability()
+
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        synchronizeWithTimeLogic()
-//        observeReachability()
+        synchronizeAgents()
         
         if let selectionIndexPath = self.subview.tableView.indexPathForSelectedRow {
             self.subview.tableView.deselectRow(at: selectionIndexPath, animated: animated)
@@ -85,17 +99,9 @@ class AgentsViewController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         removeFirebaseObservers()
-//        stopObservingReachability()
+        stopObservingReachability()
     }
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
+ 
     
-    // MARK: Common setup
-    private func commonInit() {
-        setUpNavBar()
-        setupTableView()
-        setupTargetActions()
-        setupSearchController()
-    }
+    
 }

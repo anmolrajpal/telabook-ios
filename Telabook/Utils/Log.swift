@@ -26,9 +26,13 @@ extension OSLog.Category {
 ///   - message: The String message to log
 ///   - log: The log file. `eg: CoreData, Firebase, UI, etc`
 ///   - logType: The category of log. `eg: debug, info, error, etc`
-public func printAndLog(message:String, log:OSLog, logType:OSLogType) {
+public func printAndLog(message:String, log:OSLog, logType:OSLogType, isPrivate:Bool = false) {
     #if !RELEASE
     print(message)
     #endif
-    os_log("%@", log: log, type: logType, message)
+    if !isPrivate {
+        os_log("%@", log: log, type: logType, message)
+    } else {
+        os_log("%{PRIVATE}@", log: log, type: logType, message)
+    }
 }

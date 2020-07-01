@@ -72,27 +72,30 @@ extension ListPickerController {
     
     func configureDataSource() {
         self.dataSource = DataSource(tableView: tableView, cellProvider: { (tableView, indexPath, item) -> UITableViewCell? in
-            let cell:UITableViewCell
+            let reusableCell:UITableViewCell
             if item.subtitle == nil {
-                cell = tableView.dequeueReusableCell(UITableViewCell.self, for: indexPath)
+                let cell = tableView.dequeueReusableCell(UITableViewCell.self, for: indexPath)
                 cell.textLabel?.text = item.title
+                reusableCell = cell
             } else {
-                cell = tableView.dequeueReusableCell(SubtitleTableViewCell.self, for: indexPath)
+                let cell = tableView.dequeueReusableCell(SubtitleTableViewCell.self, for: indexPath)
+                cell.spacingBetweenLabels = 0
                 cell.textLabel?.text = item.title
                 cell.detailTextLabel?.text = item.subtitle
+                reusableCell = cell
             }
-            cell.backgroundColor = UIColor.telaGray4
-            cell.accessoryType = item.isSelected ? .checkmark : .none
+            reusableCell.backgroundColor = UIColor.telaGray4
+            reusableCell.accessoryType = item.isSelected ? .checkmark : .none
             
             if item.isDisabled {
-                cell.selectionStyle = .none
-                cell.textLabel?.textColor = UIColor.tertiaryLabel
+                reusableCell.selectionStyle = .none
+                reusableCell.textLabel?.textColor = UIColor.tertiaryLabel
             } else {
-                cell.selectionStyle = .default
-                cell.textLabel?.textColor = UIColor.label
+                reusableCell.selectionStyle = .default
+                reusableCell.textLabel?.textColor = UIColor.label
             }
-            cell.tintColor = UIColor.telaBlue
-            return cell
+            reusableCell.tintColor = UIColor.telaBlue
+            return reusableCell
         })
         updateUI()
     }

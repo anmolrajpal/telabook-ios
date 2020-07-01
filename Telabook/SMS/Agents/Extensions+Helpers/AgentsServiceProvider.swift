@@ -70,7 +70,7 @@ extension AgentsViewController {
         let queue = OperationQueue()
         queue.qualityOfService = .userInitiated
         queue.maxConcurrentOperationCount = 1
-        print(pendingMessages)
+
         let operation = UpdatePendingMessagesCount_Operation(context: context, pendingMessages: pendingMessages)
         handleViewsStateForOperations(operations: [operation], onOperationQueue: queue)
         queue.addOperation(operation)
@@ -98,9 +98,7 @@ extension AgentsViewController {
                         print(error.localizedDescription)
                         self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
                     } else {
-                        DispatchQueue.main.async {
-                            self.updateSnapshot()
-                        }
+                        
                     }
                 }
             } else if let operation = operation as? DownloadAgentsEntriesFromServerOperation {
@@ -131,7 +129,6 @@ extension AgentsViewController {
                     } else {
                         DispatchQueue.main.async {
                             self.stopRefreshers()
-                            self.updateSnapshot()
                         }
                     }
                 }

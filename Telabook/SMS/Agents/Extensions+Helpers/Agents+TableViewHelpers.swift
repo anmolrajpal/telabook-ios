@@ -7,26 +7,61 @@
 //
 
 import UIKit
-import os
-
+import CoreData
 extension AgentsViewController {
-    internal func setupTableView() {
+    enum Section { case main }
+    class DataSource: UITableViewDiffableDataSource<String, NSManagedObjectID> {}
+    
+    internal func configureTableView() {
         subview.tableView.refreshControl = subview.refreshControl
-        subview.tableView.register(AgentCell.self, forCellReuseIdentifier: NSStringFromClass(AgentCell.self))
+        subview.tableView.register(AgentCell.self)
         subview.tableView.delegate = self
         
+        
+        /*
         self.diffableDataSource = UITableViewDiffableDataSource<Section, Agent>(tableView: self.subview.tableView, cellProvider: { (tableView, indexPath, agent) -> UITableViewCell? in
             let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(AgentCell.self), for: indexPath) as! AgentCell
             cell.agentDetails = agent
             cell.backgroundColor = .clear
-            cell.accessoryType = .disclosureIndicator
-            let backgroundView = UIView()
-            backgroundView.backgroundColor = UIColor.telaGray7.withAlphaComponent(0.2)
-            cell.selectedBackgroundView  = backgroundView
+            if self.pickerDelegate == nil {
+                cell.accessoryType = .disclosureIndicator
+            } else {
+                cell.cellView.badgeCountLabel.isHidden = true
+                cell.tintColor = .telaBlue
+                if agent.workerID == self.selectedAgent?.workerID,
+                    self.selectedAgent != nil {
+                    cell.accessoryType = .checkmark
+                }
+            }
             return cell
         })
         updateSnapshot()
+        */
     }
+    
+    internal func configureDataSource() {
+        self.dataSource = DataSource(tableView: subview.tableView, cellProvider: { (tableView, indexPath, objectID) -> UITableViewCell? in
+            let cell = tableView.dequeueReusableCell(AgentCell.self, for: indexPath)
+            let agent = self.fetchedResultsController.object(at: indexPath)
+            cell.backgroundColor = .clear
+            if self.pickerDelegate == nil {
+                cell.accessoryType = .disclosureIndicator
+            } else {
+                cell.tintColor = .telaBlue
+                cell.shouldShowBadgeCount = false
+                if agent.workerID == self.selectedAgent?.workerID,
+                    self.selectedAgent != nil {
+                    cell.accessoryType = .checkmark
+                } else {
+                    cell.accessoryType = .none
+                }
+            }
+            cell.configureCell(with: agent)
+            return cell
+        })
+    }
+    
+    /*
     /// Create a `NSDiffableDataSourceSnapshot` with the table view data
     internal func updateSnapshot(animated: Bool = false) {
         snapshot = NSDiffableDataSourceSnapshot<Section, Agent>()
@@ -36,22 +71,41 @@ extension AgentsViewController {
             self.handleState()
         })
     }
+    */
 }
-
+extension AgentsViewController.DataSource: NSFetchedResultsControllerDelegate {
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
+        let newSnapshot = snapshot as NSDiffableDataSourceSnapshot<String, NSManagedObjectID>
+        let numberOfItems = self.snapshot().numberOfItems
+        switch numberOfItems {
+            case 0: self.apply(newSnapshot, animatingDifferences: false)
+            case newSnapshot.numberOfItems: self.apply(newSnapshot, animatingDifferences: false)
+            default: self.apply(newSnapshot, animatingDifferences: true)
+        }
+    }
+}
 extension AgentsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return AgentCell.cellHeight
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let selectedAgent = self.diffableDataSource?.itemIdentifier(for: indexPath) {
-            let vc = CustomersViewController(fetchRequest: Customer.fetchRequest(), viewContext: context, agent: selectedAgent)
+        guard let cell = tableView.cellForRow(at: indexPath) as? AgentCell else { return }
+        let selectedAgent = fetchedResultsController.object(at: indexPath)
+        if pickerDelegate == nil {
+            let vc = CustomersViewController(agent: selectedAgent)
             vc.view.backgroundColor = .telaGray1
             navigationController?.pushViewController(vc, animated: true)
+        } else {
+            tableView.resetCheckmarks()
+            cell.accessoryType = .checkmark
+            pickerDelegate?.agentsController(didPick: selectedAgent, at: indexPath, controller: self)
         }
+        
     }
     
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        guard pickerDelegate == nil else { return nil }
         let index = indexPath.row
         let agent = agents[index]
         let identifier = String(index) as NSString

@@ -165,7 +165,8 @@ class CustomerCellView: UIView {
     }
     
     
-    //MARK: Constructors
+    // MARK: - View Constructors
+    
     private let queue: OperationQueue = {
         let queue = OperationQueue()
         queue.maxConcurrentOperationCount = 1
@@ -207,14 +208,13 @@ class CustomerCellView: UIView {
         return label
     }()
     lazy var badgeCountLabel:UILabel = {
-        let label = InsetLabel(3.5, 3.5, 7, 7)
+        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "10"
-        label.textColor = .telaWhite
-        label.layer.cornerRadius = label.frame.height / 2
-        label.backgroundColor = .telaRed
-        label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 13)
+        label.textColor = .white
+        label.backgroundColor = .systemRed
+        label.font = UIFont.preferredFont(forTextStyle: UIFont.TextStyle.footnote)
         label.numberOfLines = 1
+        label.textAlignment = .center
         label.clipsToBounds = true
         return label
     }()

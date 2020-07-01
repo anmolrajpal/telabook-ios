@@ -233,7 +233,7 @@ class ScheduledMessageCellView: UIView {
         return label
     }()
     lazy var messageLabel:UILabel = {
-        let label = InsetLabel(10, 10, 7, 7)
+        let label = InsetLabel(textInsets: UIEdgeInsets(top: 10, left: 7, bottom: 10, right: 7))
         label.backgroundColor = UIColor.telaGray5
         label.textAlignment = .left
         label.numberOfLines = 0

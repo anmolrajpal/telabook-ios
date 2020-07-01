@@ -10,32 +10,6 @@ import UIKit
 import CoreData
 
 class ScheduleMessageViewController: UIViewController {
-//    internal var scheduledMessages:[ScheduleMessagesCodable.ScheduleMessage]? {
-//        didSet {
-//            DispatchQueue.main.async {
-//                self.tableView.reloadData()
-//            }
-//            print("Damn")
-//            if let messages = scheduledMessages {
-//                print("Hola")
-//                if messages.isEmpty {
-//                    print("Cola")
-//                    self.placeholderLabel.isHidden = false
-//                    self.placeholderLabel.text = "No Scheduled Messages"
-//                    self.tableView.isHidden = true
-//                } else {
-//                    self.placeholderLabel.isHidden = true
-//                    self.tableView.isHidden = false
-//                }
-//            } else {
-//                self.placeholderLabel.isHidden = false
-//                self.placeholderLabel.text = "No Scheduled Messages"
-//                self.tableView.isHidden = true
-//            }
-//        }
-//    }
-  
-    
     
     // MARK: - Properties
     
@@ -59,7 +33,10 @@ class ScheduleMessageViewController: UIViewController {
     
     
     // MARK: - Lifecycle
-    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        fetchScheduledMessages()
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         commonInit()
@@ -85,9 +62,9 @@ class ScheduleMessageViewController: UIViewController {
                                                                   managedObjectContext: viewContext,
                                                                   sectionNameKeyPath: nil,
                                                                   cacheName: String(describing: self))
-            fetchedResultsController.delegate = self
+            fetchedResultsController.delegate = dataSource
         }
-        performFetch()
+//        performFetch()
     }
     internal func performFetch() {
         do {
@@ -132,6 +109,7 @@ class ScheduleMessageViewController: UIViewController {
         tv.alwaysBounceVertical = true
         tv.rowHeight = UITableView.automaticDimension
         tv.estimatedRowHeight = 174
+        tv.separatorColor = .telaGray6
         tv.tableFooterView = UIView(frame: .zero)
         return tv
     }()
@@ -139,8 +117,4 @@ class ScheduleMessageViewController: UIViewController {
 
 
 
-extension ScheduleMessageViewController:NSFetchedResultsControllerDelegate {
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
-        updateUI()
-    }
-}
+
