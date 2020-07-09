@@ -8,42 +8,41 @@
 
 import UIKit
 import CoreData
-import os
+
 
 import MessageKit
 
 
 
-
+/*
 extension MessagesController {
     
     internal func performFetch() {
         do {
-            NSFetchedResultsController<UserMessage>.deleteCache(withName: fetchedResultsController.cacheName)
             try fetchedResultsController.performFetch()
         } catch {
-            #if !RELEASE
-            print("Error fetching results: \(error)")
-            #endif
-            os_log("Core Data Error: %@", log: .coredata, type: .error, error.localizedDescription)
+            printAndLog(message: "Error performing fetch on fetchedResultsController: \(String(describing: fetchedResultsController)) | Error: \(error)", log: .coredata, logType: .error)
         }
     }
     
     internal func setupFetchedResultsController() {
+        print("---------------------\n\nScreen Entry Time: \(screenEntryTime)\n\n----------------------")
+        let date = screenEntryTime as NSDate
+        print("---------------------\n\nScreen Entry Time NSDate: \(date)\n\n----------------------")
         let fetchRequest:NSFetchRequest = UserMessage.fetchRequest()
-        let conversationPredicate = NSPredicate(format: "\(#keyPath(UserMessage.conversation)) == %@", customer)
-        let datePredicate = NSPredicate(format: "\(#keyPath(UserMessage.updatedAt)) >= %@", screenEntryTime as NSDate)
+        let conversationPredicate = NSPredicate(format: "\(#keyPath(UserMessage.conversation)) == %@", argumentArray: [customer])
+        let datePredicate = NSPredicate(format: "updatedAt > %@", argumentArray: [NSDate()])
         let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [conversationPredicate, datePredicate])
         fetchRequest.predicate = predicate
         
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \UserMessage.date, ascending: true)]
+        fetchRequest.includesPendingChanges = false
 //        fetchRequest.fetchLimit = self.limit
-        
+        print("----------------\n\nFetch Request: \(fetchRequest)\n\n---------------")
         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
                                                               managedObjectContext: viewContext,
                                                               sectionNameKeyPath: nil,
                                                               cacheName: nil)
-        
         fetchedResultsController.delegate = self
         performFetch()
     }
@@ -242,6 +241,7 @@ extension MessagesController: NSFetchedResultsControllerDelegate {
            collectionViewOperations.removeAll(keepingCapacity: false)
        }
         func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+            print("\n\n************************### \(#function) Fetch Request: \(controller.fetchRequest)\n\n************************")
             let operation: BlockOperation
 //            let count = controller.fetchedObjects?.count ?? 0
             switch type {
@@ -254,7 +254,7 @@ extension MessagesController: NSFetchedResultsControllerDelegate {
                 operation = BlockOperation { [weak self] in
                     guard let self = self else { return }
                     if let index = self.messages.firstIndex(where: { $0.firebaseKey == message.firebaseKey }) {
-//                        print("Core Data<Insert Case>: Updating existing message at section : \(index) where message:\n\(message) when messages count = \(self.messages.count)")
+                        print("Core Data<Insert Case>: Updating existing message at section : \(index) where message:\n\(message) when messages count = \(self.messages.count)")
                         self.messages[index] = message
                         let indexPath = IndexPath(item: 0, section: index)
                         let messagesCollectionView = self.messagesCollectionView
@@ -268,7 +268,7 @@ extension MessagesController: NSFetchedResultsControllerDelegate {
                             }
                         }
                     } else {
-//                        print("Core Data<Insert Case>: Inserting new message at core data indexPath: \(newIndexPath) & message: \(message) when messages count = \(self.messages.count)")
+                        print("Core Data<Insert Case>: Inserting new message at core data indexPath: \(newIndexPath) & message: \(message) when messages count = \(self.messages.count)")
                         self.messages.append(message)
                         self.messagesCollectionView.insertSections([self.messages.count - 1])
                         if self.messages.count >= 2 {
@@ -300,7 +300,7 @@ extension MessagesController: NSFetchedResultsControllerDelegate {
                 operation = BlockOperation { [weak self] in
                     guard let self = self else { return }
                     if let index = self.messages.firstIndex(where: { $0.firebaseKey == message.firebaseKey }) {
-//                        print("Core Data<Update Case>: Updating message at section: \(index) | message:\n \(message) when messages count = \(self.messages.count)")
+                        print("Core Data<Update Case>: Updating message at section: \(index) | message:\n \(message) when messages count = \(self.messages.count)")
                         self.messages[index] = message
                         let indexPath = IndexPath(item: 0, section: index)
                         let messagesCollectionView = self.messagesCollectionView
@@ -347,7 +347,7 @@ extension MessagesController: NSFetchedResultsControllerDelegate {
 
 
 
-
+*/
 
 
 

@@ -269,7 +269,7 @@
         <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deliveredByProviderAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="errorSending" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-        <attribute name="firebaseKey" optional="YES" attributeType="String"/>
+        <attribute name="firebaseKey" attributeType="String"/>
         <attribute name="hasError" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="imageURL" optional="YES" attributeType="URI"/>
         <attribute name="imageUrlString" optional="YES" attributeType="String"/>

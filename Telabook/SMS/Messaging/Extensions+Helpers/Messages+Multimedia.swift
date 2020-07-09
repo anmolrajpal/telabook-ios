@@ -183,18 +183,20 @@ extension MessagesController {
         let message = NewMessage(kind: .photo(ImageItem(image: scaledImage, imageUUID: imageUUID, uploadURL: uploadURL, imageText: nil)), messageId: key, sender: thisSender, sentDate: Date())
         
         viewContext.performAndWait {
+            let newMessage = UserMessage(context: viewContext, newMessageEntryFromCurrentUser: message, forConversationWithCustomer: customer)
+            newMessage.uploadState = .pending
+            newMessage.isUploading = true
             do {
-                let newMessage = UserMessage(context: viewContext, newMessageEntryFromCurrentUser: message, forConversationWithCustomer: customer)
-                newMessage.uploadState = .pending
-                newMessage.isUploading = true
-                try viewContext.save()
-                uploadService.startUpload(newMessage)
+                if viewContext.hasChanges { try viewContext.save() }
             } catch {
                 printAndLog(message: "### \(#function) - Core Data Error saving new media message entry in store: \(message) | Error: \(error)", log: .coredata, logType: .error)
                 return
             }
+            DispatchQueue.main.async {
+                self.upsertMessage(message: newMessage)
+            }
+            uploadService.startUpload(newMessage)
         }
-        
     }
 }
 

@@ -101,7 +101,7 @@ extension UserMessage {
         let time = self.sentByAppAt!.milliSecondsSince1970
         var dictionary:[String:Any] = [
             "conversationId":NSNumber(value: self.conversationID),
-            "type":self.messageType.rawValue,
+            "type":self.messageType.serverValue,
             "sent_by_app":time,
             "updated_at":time,
             "date":time,
@@ -158,13 +158,13 @@ extension UserMessage: MessageType {
                 if self.isMessageDeleted {
                     let message:String = isSentByWorker ? " You deleted this message." : " This Message was deleted."
                     let attachment = NSTextAttachment()
-                    let image = SFSymbol.messageDeleted.image(withSymbolConfiguration: .init(textStyle: .footnote)).withTintColor(UIColor.telaGray5)
-                    attachment.image = image
+                    let image = SFSymbol.messageDeleted.image(withSymbolConfiguration: .init(textStyle: .footnote))
+                    attachment.image = isSentByWorker ? image.withTintColor(.telaGray5) : image.withTintColor(.telaGray6)
                     attachment.bounds = CGRect(x: 0, y: -2.0, width: attachment.image!.size.width, height: attachment.image!.size.height)
                     let icon = NSAttributedString(attachment: attachment)
                     let messageString = NSMutableAttributedString(string: message, attributes: [
                         .font: UIFont.italicSystemFont(ofSize: 13),
-                        .foregroundColor: UIColor.telaGray5
+                        .foregroundColor: isSentByWorker ? UIColor.telaGray5 : UIColor.telaGray6
                     ])
                     let attributedText = NSMutableAttributedString()
                     attributedText.append(icon)

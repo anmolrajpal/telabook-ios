@@ -10,18 +10,22 @@ import UIKit
 
 extension AppSettingsViewController {
     enum Section:Int {
-        case mediaAutoDownload = 0, cacheControl
+        case mediaAutoDownload = 0, cacheControl, notifications, general
         
         var header:String {
             switch self {
-            case .mediaAutoDownload: return "Media Auto-Download"
-            case .cacheControl: return "Cache Control"
+                case .mediaAutoDownload: return "Media Auto-Download"
+                case .cacheControl: return "Cache Control"
+                case .notifications: return "Notifications & Alerts"
+                case .general: return "General"
             }
         }
         var footer:String? {
             switch self {
-            case .mediaAutoDownload: return "Controls media messages automatic download settings."
-            case .cacheControl: return "Clears cache directory, all cached media and cleans up database."
+                case .mediaAutoDownload: return "Controls media messages automatic download settings."
+                case .cacheControl: return "Clears cache directory, all cached media and cleans up database."
+                case .notifications: return "Manage notification and alert preferences."
+                case .general: return "Manage app general settings"
             }
         }
         var rows:[SettingRow] {
@@ -32,11 +36,17 @@ extension AppSettingsViewController {
                 case .cacheControl: return [
                     .clearAllCache, .clearAgentGalleryCache, .clearConversationGalleryCache
                 ]
+                case .notifications: return [
+                    .alertOnImageSave
+                ]
+                case .general: return [
+                    .appHaptics
+                ]
             }
         }
     }
     enum SettingRow:CaseIterable {
-        case photosOption, videosOption, restoreDefaultsOption, clearAllCache, clearAgentGalleryCache, clearConversationGalleryCache
+        case photosOption, videosOption, restoreDefaultsOption, clearAllCache, clearAgentGalleryCache, clearConversationGalleryCache, alertOnImageSave, appHaptics
         
         var section:Section {
             switch self {
@@ -46,6 +56,8 @@ extension AppSettingsViewController {
                 case .clearAllCache: return .cacheControl
                 case .clearAgentGalleryCache: return .cacheControl
                 case .clearConversationGalleryCache: return .cacheControl
+                case .alertOnImageSave: return .notifications
+                case .appHaptics: return .general
             }
         }
         var setting:Setting {
@@ -56,12 +68,14 @@ extension AppSettingsViewController {
                 case .clearAllCache: return Setting(name: "Clear All Cache", value: nil)
                 case .clearAgentGalleryCache: return Setting(name: "Clear Agent's Gallery Cache", value: nil)
                 case .clearConversationGalleryCache: return Setting(name: "Clear Conversation Gallery Cache", value: nil)
+                case .alertOnImageSave: return Setting(name: "Save Image Alerts", value: AppData.alertOnSavingMediaToLibrary)
+                case .appHaptics: return Setting(name: "App Haptics", value: AppData.isHapticsEnabled)
             }
         }
     }
     struct Setting: Hashable {
         let name: String
-        let value: String?
+        let value: Any?
         let identifier = UUID()
         func hash(into hasher: inout Hasher) {
             hasher.combine(identifier)
@@ -95,7 +109,7 @@ extension AppSettingsViewController {
     }
     
     func configureDataSource() {
-        self.dataSource = DataSource(tableView: self.subview.tableView, cellProvider: { (tableView, indexPath, item) -> UITableViewCell? in
+        self.dataSource = DataSource(tableView: subview.tableView, cellProvider: { (tableView, indexPath, item) -> UITableViewCell? in
             let cell:UITableViewCell
             switch item.section {
                 case .mediaAutoDownload:
@@ -109,7 +123,7 @@ extension AppSettingsViewController {
                         default:
                             cell = tableView.dequeueReusableCell(KeyValueCell.self, for: indexPath)
                             cell.textLabel?.text = item.setting.name
-                            cell.detailTextLabel?.text = item.setting.value
+                            cell.detailTextLabel?.text = item.setting.value as? String
                             cell.accessoryType = .disclosureIndicator
                 }
                 case .cacheControl:
@@ -128,11 +142,42 @@ extension AppSettingsViewController {
                             cell.textLabel?.textColor = .telaBlue
                         default: fatalError()
                 }
+                case .notifications:
+                    switch item {
+                        case .alertOnImageSave:
+                            cell = tableView.dequeueReusableCell(UITableViewCell.self, for: indexPath)
+                            cell.textLabel?.text = item.setting.name
+                            cell.selectionStyle = .none
+                            let isOn = item.setting.value as! Bool
+                            let switchButton = UISwitch()
+                            switchButton.tintColor = UIColor.telaGray5
+                            switchButton.thumbTintColor = UIColor.white
+                            switchButton.onTintColor = UIColor.telaBlue
+                            switchButton.isOn = isOn
+                            switchButton.addTarget(self, action: #selector(self.saveMediaNotificationAlertStateDidChange(_:)), for: .valueChanged)
+                            cell.accessoryView = switchButton
+                        default: fatalError()
+                }
+                case .general:
+                    switch item {
+                        case .appHaptics:
+                            cell = tableView.dequeueReusableCell(UITableViewCell.self, for: indexPath)
+                            cell.textLabel?.text = item.setting.name
+                            cell.selectionStyle = .none
+                            let isOn = item.setting.value as! Bool
+                            let switchButton = UISwitch.createTelaSwitch()
+                            switchButton.isOn = isOn
+                            switchButton.addTarget(self, action: #selector(self.appHapticFeebackSettingStateDidChange(_:)), for: .valueChanged)
+                            cell.accessoryView = switchButton
+                        default: fatalError()
+                }
             }
             return cell
         })
         updateUI(animating: false)
     }
+    
+    
     func updateUI(animating:Bool = true, reloadingData:Bool = true) {
         guard let snapshot = currentSnapshot() else { return }
         dataSource.apply(snapshot, animatingDifferences: animating, completion: { [weak self] in
@@ -142,10 +187,11 @@ extension AppSettingsViewController {
     }
     func currentSnapshot() -> NSDiffableDataSourceSnapshot<SectionType, ItemType>? {
         var snapshot = NSDiffableDataSourceSnapshot<SectionType, ItemType>()
-        snapshot.appendSections([.mediaAutoDownload])
-        snapshot.appendItems(Section.mediaAutoDownload.rows)
-        snapshot.appendSections([.cacheControl])
-        snapshot.appendItems(Section.cacheControl.rows)
+        snapshot.appendSections([.mediaAutoDownload, .cacheControl, .notifications, .general])
+        snapshot.appendItems(Section.mediaAutoDownload.rows, toSection: .mediaAutoDownload)
+        snapshot.appendItems(Section.cacheControl.rows, toSection: .cacheControl)
+        snapshot.appendItems(Section.notifications.rows, toSection: .notifications)
+        snapshot.appendItems(Section.general.rows, toSection: .general)
         return snapshot
     }
 }
@@ -154,7 +200,7 @@ extension AppSettingsViewController {
 extension AppSettingsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         selectedIndexPath = indexPath
-        guard let option = self.dataSource.itemIdentifier(for: indexPath) else { return }
+        guard let option = dataSource.itemIdentifier(for: indexPath) else { return }
         handleSetting(forSelectedOption: option, at: indexPath, in: tableView)
     }
     
@@ -170,9 +216,7 @@ extension AppSettingsViewController: UITableViewDelegate {
                 let options:[ListItem] =
                     MediaAutoDownloadState.allCases.map { state in
                         ListItem(title: state.stringValue,
-                                 subtitle: state == .wifi ? "This feature will be available soon" : nil,
                                  isSelected: AppData.autoDownloadImageMessagesState == state,
-                                 isDisabled: state == .wifi ? true : false,
                                  handler: { [weak self] _ in
                                     AppData.autoDownloadImageMessagesState = state
                                     self?.subview.tableView.reloadData()
@@ -238,6 +282,23 @@ extension AppSettingsViewController: UITableViewDelegate {
             case .clearConversationGalleryCache:
                 tableView.deselectRow(at: indexPath, animated: true)
                 alertClearConversationGalleryCache()
+            
+            
+            
+            // MARK: - Alert on saving media to Photo Library
+            case .alertOnImageSave: break
+            
+            
+            
+            
+            
+            
+            
+            
+            /// - Tag: Cache Control Section
+            
+            // MARK: - In App Haptic Feedback setting
+            case .appHaptics: break
             
             
             

@@ -8,6 +8,8 @@
 
 import UIKit
 import os
+import MessageKit
+import CoreData
 
 
 
@@ -33,6 +35,48 @@ extension MessagesController {
     
     
     /* ------------------------------------------------------------------------------------------------------------ */
+    
+    internal func persistFirebaseMessageInStore(entry:FirebaseMessage) {
+        let fetchRequest:NSFetchRequest = UserMessage.fetchRequest()
+        let predicate = NSPredicate(format: "\(#keyPath(UserMessage.firebaseKey)) == %@ AND \(#keyPath(UserMessage.conversation)) == %@", entry.firebaseKey, customer)
+        fetchRequest.predicate = predicate
+        let fetchedEntry = self.messages.first(where: { $0.firebaseKey == entry.firebaseKey })
+        let isSeen = fetchedEntry?.isSeen ?? false
+        let cachedImageUUID = fetchedEntry?.imageUUID
+        let downloadState = fetchedEntry?.downloadState ?? .new
+        let uploadState = fetchedEntry?.uploadState ?? .none
+        var message:UserMessage?
+        viewContext.performAndWait {
+            _ = UserMessage(context: viewContext, messageEntryFromFirebase: entry, forConversationWithCustomer: customer, imageUUID: cachedImageUUID, isSeen: isSeen, downloadState: downloadState, uploadState: uploadState)
+            do {
+                if viewContext.hasChanges { try viewContext.save() }
+            } catch let error {
+                printAndLog(message: "Error persisting observed message: \(error)", log: .coredata, logType: .error)
+            }
+            if let object = try? fetchRequest.execute().first {
+                message = object
+            }
+        }
+        if let message = message {
+            DispatchQueue.main.async {
+                if let index = self.messages.firstIndex(where: { $0.firebaseKey == message.firebaseKey }) {
+                    self.messages[index] = message
+                    self.updateCell(with: message)
+                } else if message.sentDate >= self.screenEntryTime {
+                    self.messages.append(message)
+                    self.messagesCollectionView.performBatchUpdates({
+                        self.messagesCollectionView.insertSections([self.messages.count - 1])
+                        if self.messages.count >= 2 {
+                            self.messagesCollectionView.reloadSections([self.messages.count - 2])
+                        }
+                    }) { _ in }
+                }
+            }
+        }
+    }
+    
+    
+    /*
     internal func persistFirebaseMessageInStore(entry:FirebaseMessage) {
         let fetchedEntry = self.messages.first(where: { $0.firebaseKey == entry.firebaseKey })
         let isSeen = fetchedEntry?.isSeen ?? false
@@ -52,6 +96,7 @@ extension MessagesController {
             }
         }
     }
+     */
     /* ------------------------------------------------------------------------------------------------------------ */
     
     
@@ -74,8 +119,8 @@ extension MessagesController {
                 } else {
                     if operation.serverEntries?.isEmpty == true { self.shouldFetchMore = false }
                     self.messages.isEmpty ?
-                        self.loadInitialMessages(animated: true, fetchFromFirebase: false) :
-                        self.loadInitialMessages(animated: false, fetchFromFirebase: false)
+                        self.loadInitialMessages(animated: true, fetchFromFirebase: false, shouldLoadUnseenMessages: false) :
+                        self.loadInitialMessages(animated: false, fetchFromFirebase: false, shouldLoadUnseenMessages: false)
                     
                 }
         }
@@ -96,18 +141,42 @@ extension MessagesController {
         let referenceContext = context.object(with: objectID) as! Customer
         let operation = MergeMessageEntriesFromFirebaseToStore_Operation(context: context, conversation: referenceContext, serverEntries: entries, fetchedEntries: fetchedEntries)
         operation.completionBlock = {
-                if let error = operation.error {
-                    print(error.localizedDescription)
-                    self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
-                } else {
-                    if operation.serverEntries?.isEmpty == true { self.shouldFetchMore = false }
-                    self.loadMoreMessages(offsetMessage: offsetMessage, fetchFromFirebase: false)
-                }
+            if let error = operation.error {
+                print(error.localizedDescription)
+                self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+            } else {
+                if operation.serverEntries?.isEmpty == true { self.shouldFetchMore = false }
+                self.loadMoreMessages(offsetMessage: offsetMessage, fetchFromFirebase: false)
+            }
         }
         queue.addOperations([operation], waitUntilFinished: false)
     }
     /* ------------------------------------------------------------------------------------------------------------ */
     
+    
+    
+    
+    /* ------------------------------------------------------------------------------------------------------------ */
+    internal func persistUnseenFirebaseMessagesInStore(entries:[FirebaseMessage], fetchedEntries:[UserMessage]?, offsetMessage:UserMessage) {
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+        
+        let context = PersistentContainer.shared.newBackgroundContext()
+        let objectID = customer.objectID
+        let referenceContext = context.object(with: objectID) as! Customer
+        let operation = MergeMessageEntriesFromFirebaseToStore_Operation(context: context, conversation: referenceContext, serverEntries: entries, fetchedEntries: fetchedEntries)
+        operation.completionBlock = {
+            if let error = operation.error {
+                print(error.localizedDescription)
+                self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+            } else {
+                self.loadUnseenMessages(previousMessage: offsetMessage, animated: true, shouldFetchFromFirebase: false)
+            }
+        }
+        queue.addOperations([operation], waitUntilFinished: false)
+    }
+    /* ------------------------------------------------------------------------------------------------------------ */
     
     
     
@@ -184,7 +253,9 @@ extension MessagesController {
         let context = self.viewContext
         let operations = MessageOperations.getOperationsToDeleteUserMessage(using: context, message: message, messageReference: messageReference, updatedAt: Date())
         
-        handleViewsStateForOperations(operations: operations, onOperationQueue: queue, completion: {_ in})
+        handleViewsStateForOperations(operations: operations, onOperationQueue: queue, completion: {_ in
+            self.updateCell(with: message)
+        })
         
         queue.addOperations(operations, waitUntilFinished: false)
     }
@@ -249,7 +320,7 @@ extension MessagesController {
                             print(error.localizedDescription)
                             self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
                         } else {
-                            self.loadInitialMessages(animated: true, fetchFromFirebase: false)
+                            self.loadInitialMessages(animated: true, fetchFromFirebase: false, shouldLoadUnseenMessages: false)
                             if operation.serverEntries?.isEmpty == true {
                                 self.shouldFetchMore = false
                             }
@@ -322,6 +393,9 @@ extension MessagesController {
                             os_log("Error marking message as deleted in Store: %@", log: .coredata, type: .error, error.localizedDescription)
                             
                         } else {
+                            DispatchQueue.main.async {
+                                completion(true)
+                            }
                             let message = "Successfully, marked message as deleted in Core Data Store. Now Updating message on Firebase."
                             printAndLog(message: message, log: .coredata, logType: .info)
                         }

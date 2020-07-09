@@ -265,6 +265,9 @@
 		6FC8230F2475AE68002421F0 /* Blacklist+ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC8230E2475AE68002421F0 /* Blacklist+ServiceProvider.swift */; };
 		6FC823112475AF41002421F0 /* BlacklistCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC823102475AF41002421F0 /* BlacklistCell.swift */; };
 		6FC823132475AF4B002421F0 /* BlacklistCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC823122475AF4B002421F0 /* BlacklistCellView.swift */; };
+		6FD4F7AE24AF526B00BD2569 /* LocalNotificationItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD4F7AD24AF526B00BD2569 /* LocalNotificationItem.swift */; };
+		6FD4F7B024AF527900BD2569 /* LocalNotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD4F7AF24AF527900BD2569 /* LocalNotificationService.swift */; };
+		6FD4F7B224AFA4B200BD2569 /* Messages+Label.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD4F7B124AFA4B200BD2569 /* Messages+Label.swift */; };
 		6FD8955D245ECDB40083D79A /* AgentDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD8955C245ECDB40083D79A /* AgentDetailsView.swift */; };
 		6FD8955F245EDAAB0083D79A /* ManageAgentsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD8955E245EDAAB0083D79A /* ManageAgentsHelpers.swift */; };
 		6FD89561245EDAD40083D79A /* AgentDetailsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD89560245EDAD40083D79A /* AgentDetailsHelpers.swift */; };
@@ -571,6 +574,9 @@
 		6FC8230E2475AE68002421F0 /* Blacklist+ServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Blacklist+ServiceProvider.swift"; sourceTree = "<group>"; };
 		6FC823102475AF41002421F0 /* BlacklistCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlacklistCell.swift; sourceTree = "<group>"; };
 		6FC823122475AF4B002421F0 /* BlacklistCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlacklistCellView.swift; sourceTree = "<group>"; };
+		6FD4F7AD24AF526B00BD2569 /* LocalNotificationItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotificationItem.swift; sourceTree = "<group>"; };
+		6FD4F7AF24AF527900BD2569 /* LocalNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotificationService.swift; sourceTree = "<group>"; };
+		6FD4F7B124AFA4B200BD2569 /* Messages+Label.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Messages+Label.swift"; sourceTree = "<group>"; };
 		6FD8955C245ECDB40083D79A /* AgentDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDetailsView.swift; sourceTree = "<group>"; };
 		6FD8955E245EDAAB0083D79A /* ManageAgentsHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsHelpers.swift; sourceTree = "<group>"; };
 		6FD89560245EDAD40083D79A /* AgentDetailsHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDetailsHelpers.swift; sourceTree = "<group>"; };
@@ -838,6 +844,7 @@
 				6FEE9A08247D366300709E2D /* Messages+ConfigurationHelpers.swift */,
 				6FEE9A0A247D396F00709E2D /* Messages+DataSource.swift */,
 				6FEE9A0C247D3E3A00709E2D /* Messages+Display.swift */,
+				6FD4F7B124AFA4B200BD2569 /* Messages+Label.swift */,
 				6FEE9A0E247D416000709E2D /* Messages+Layout.swift */,
 				6FEE9A16247E696000709E2D /* Messages+Cell.swift */,
 				6FEE9A10247D4D0200709E2D /* Messages+InputBar.swift */,
@@ -1812,6 +1819,7 @@
 		6FB11B17229D06880098D050 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				6FD4F7AA24AF522500BD2569 /* Notifications Service */,
 				6F987A4F2456D64800C6046E /* API Service */,
 				6F987A74245B551B00C6046E /* Persistence Service */,
 				6FAD46EB245098CD0050F7F2 /* ImageService.swift */,
@@ -1999,6 +2007,23 @@
 				6FA3DFF02475C2D60083AB13 /* BlacklistOperations.swift */,
 			);
 			path = Operations;
+			sourceTree = "<group>";
+		};
+		6FD4F7AA24AF522500BD2569 /* Notifications Service */ = {
+			isa = PBXGroup;
+			children = (
+				6FD4F7AB24AF523400BD2569 /* Local Notifications Service */,
+			);
+			path = "Notifications Service";
+			sourceTree = "<group>";
+		};
+		6FD4F7AB24AF523400BD2569 /* Local Notifications Service */ = {
+			isa = PBXGroup;
+			children = (
+				6FD4F7AD24AF526B00BD2569 /* LocalNotificationItem.swift */,
+				6FD4F7AF24AF527900BD2569 /* LocalNotificationService.swift */,
+			);
+			path = "Local Notifications Service";
 			sourceTree = "<group>";
 		};
 		6FEE9A1C247EFE1D00709E2D /* Support Files */ = {
@@ -2368,6 +2393,7 @@
 				6F395C9324802E100023255F /* AuthenticationOperations.swift in Sources */,
 				6F395C90248015E90023255F /* Constants.swift in Sources */,
 				6F8A8306249BDB79002ACDFE /* CircularProgressBar.swift in Sources */,
+				6FD4F7B224AFA4B200BD2569 /* Messages+Label.swift in Sources */,
 				6F0653472464881100F857C1 /* CustomerCell.swift in Sources */,
 				6F098BBB22BE9A4100AF19AA /* BlockedUsersVCTableViewExtensions.swift in Sources */,
 				6F97BA8E24A9167600F8DE72 /* ScheduledMessages+TableView.swift in Sources */,
@@ -2455,6 +2481,7 @@
 				6FEE9A17247E696000709E2D /* Messages+Cell.swift in Sources */,
 				6FEE9A15247D5BE000709E2D /* Messages+ServiceProvider.swift in Sources */,
 				6FB11B0D229BFA430098D050 /* MoreViewController.swift in Sources */,
+				6FD4F7AE24AF526B00BD2569 /* LocalNotificationItem.swift in Sources */,
 				6FB11B14229C3FCA0098D050 /* BadgeBarItem.swift in Sources */,
 				6FC8230D2475AE5A002421F0 /* Blacklist+Helpers.swift in Sources */,
 				6FEF96A422A6679400F2FF83 /* ExternalConversationsAPI.swift in Sources */,
@@ -2497,6 +2524,7 @@
 				6FB11B41229F7A290098D050 /* ManageAgentsCell.swift in Sources */,
 				6F69BE9622D4DE4900F8903F /* QuickResponsesDataProvider.swift in Sources */,
 				6F00F2D624A50D69001E33D9 /* MessageMediaManager.swift in Sources */,
+				6FD4F7B024AF527900BD2569 /* LocalNotificationService.swift in Sources */,
 				6FB11B12229C31DF0098D050 /* Enums.swift in Sources */,
 				6F9E6EBD248E442E0001950E /* Messages+DataProvider.swift in Sources */,
 				6F987A5D2457313C00C6046E /* SelectCompanyServiceProvider.swift in Sources */,

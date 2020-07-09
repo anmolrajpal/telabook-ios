@@ -13,23 +13,21 @@ import CoreData
 
 extension MessagesController {
     
-    // MARK: - Firebase
+    // MARK: - Firebase Methods
+    
+    
     
     func observeNewMessages() -> UInt {
         return reference.queryOrdered(byChild: "date").queryStarting(atValue: screenEntryTime.milliSecondsSince1970).observe(.childAdded, with: { snapshot in
             if snapshot.exists() {
 //                print("New Message Child Added: \(snapshot)")
                 guard let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) else {
-//                    print("###\(#function) Invalid Data for Snapshot key: \(snapshot.key). Error: Failed to create message from Firebase Message")
-//                    os_log("Invalid Data for Snapshot key: %@. Unable to create Message from Firebase Message due to invalid data. Hence not saving it in local db and the message will not be visible to user.", log: .firebase, type: .debug, snapshot.key)
                     return
                 }
-//                self.persistFirebaseMessagesInStore(entries: [message], fetchedEntries: self.messages)
                 self.persistFirebaseMessageInStore(entry: message)
             }
         }) { error in
-//            print("###\(#function) Child Added Observer Event Error: \(error)")
-//            os_log("Firebase Child Added Observer Event Error while observing new Messages: %@", log: .firebase, type: .error, error.localizedDescription)
+            printAndLog(message: "### \(#function) - Firebase Child Added Observer Event Error while observing new Messages: \(error)", log: .firebase, logType: .error)
         }
     }
     
@@ -38,20 +36,12 @@ extension MessagesController {
             if snapshot.exists() {
 //                print("Existing Message Child Updated: \(snapshot)")
                 guard let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) else {
-                    #if !RELEASE
-//                    print("###\(#function) Invalid Data for Snapshot key: \(snapshot.key). Error: Failed to create updated message from Firebase Message.")
-                    #endif
-//                    os_log("Invalid Data for Snapshot key: %@. Unable to create updated Message from Firebase Message due to invalid data. Hence not updating it in core data and the updated message will not be visible to user.", log: .firebase, type: .debug, snapshot.key)
                     return
                 }
-//                self.persistFirebaseMessagesInStore(entries: [message], fetchedEntries: self.messages)
                 self.persistFirebaseMessageInStore(entry: message)
             }
         }) { error in
-            #if !RELEASE
-//            print("###\(#function) Child Changed Observer Event Error: \(error)")
-            #endif
-//            os_log("Firebase Child Changed Observer Event Error while observing existing Messages: %@", log: .firebase, type: .error, error.localizedDescription)
+            printAndLog(message: "### \(#function) - Firebase Child changed Observer Event Error while observing existing Messages: \(error)", log: .firebase, logType: .error)
         }
     }
     
@@ -72,13 +62,9 @@ extension MessagesController {
             var messages:[FirebaseMessage] = []
             for child in snapshot.children {
                 if let snapshot = child as? DataSnapshot {
-                    //                                        print(snapshot)
-                    guard let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) else {
-//                        printAndLog(message: "Invalid Data Error: Failed to create message from Firebase Message", log: .firebase, logType: .debug)
-                        continue
+                    if let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) {
+                        messages.append(message)
                     }
-                    //                    print(conversation)
-                    messages.append(message)
                 }
             }
             self.persistInitialFirebaseMessagesInStore(entries: Array(messages), fetchedEntries: nil)
@@ -96,7 +82,7 @@ extension MessagesController {
 //        print("### \(#function) called")
         let initialMessage = fetchedMessages.last!
         let initialMessageKey = initialMessage.messageId
-//        print("### \(#function) Initial Message: \(initialMessage) where fetched Messages count = \(fetchedMessages.count) and fetched messages to update: \(fetchedMessages)")
+        print("### \(#function) Initial Message: \(initialMessage) where fetched Messages count = \(fetchedMessages.count)")
         reference.queryOrderedByKey().queryEnding(atValue: initialMessageKey).queryLimited(toLast: UInt(limit)).observeSingleEvent(of: .value, with: { snapshot in
             guard snapshot.exists() else {
 //                printAndLog(message: "### \(#function) Snapshot does not exists. Return()", log: .firebase, logType: .info)
@@ -105,20 +91,48 @@ extension MessagesController {
             var messages:[FirebaseMessage] = []
             for child in snapshot.children {
                 if let snapshot = child as? DataSnapshot {
-                    guard let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) else {
-//                        printAndLog(message: "Invalid Data Error: Failed to create message from Firebase Message", log: .firebase, logType: .debug)
-                        continue
+                    if let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) {
+                        messages.append(message)
                     }
-                    //                    print(conversation)
-                    messages.append(message)
                 }
             }
+            print("---------------------\n\n### \(#function) Upserting Firebase messages with count: \(messages.count) ; messages: \n\(messages)\n\n---------------------")
             self.persistInitialFirebaseMessagesInStore(entries: Array(messages), fetchedEntries: fetchedMessages)
         }) { error in
             let errorMessage = "Firebase Single Event Observer Error while observing Messages: \(error.localizedDescription)"
             printAndLog(message: errorMessage, log: .firebase, logType: .error)
         }
     }
+    
+    
+    
+    
+    
+    func upsertUnseenMessagesFromFirebase(previousMessage:UserMessage, fetchedMessages:[UserMessage]) {
+//        print("### \(#function) - Previous Message: \(previousMessage)")
+        let previousMessageKey = previousMessage.messageId
+        reference.queryOrderedByKey().queryStarting(atValue: previousMessageKey).queryLimited(toLast: UInt(unseenFetchLimit)).observeSingleEvent(of: .value, with: { snapshot in
+            guard snapshot.exists() else {
+                printAndLog(message: "### \(#function) Snapshot does not exists. Return()", log: .firebase, logType: .info)
+                return
+            }
+            var messages:[FirebaseMessage] = []
+            for child in snapshot.children {
+                if let snapshot = child as? DataSnapshot {
+                    if let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) {
+                        messages.append(message)
+                    }
+                }
+            }
+            print("-------------------\n\n### \(#function) New Unseen Messages with count: \(messages.count) are: \n\(messages)\n\n----------------------")
+            self.persistUnseenFirebaseMessagesInStore(entries: Array(messages.dropFirst()), fetchedEntries: fetchedMessages, offsetMessage: previousMessage)
+        }) { error in
+            let errorMessage = "Firebase Single Event Observer Error while observing Messages: \(error.localizedDescription)"
+            printAndLog(message: errorMessage, log: .firebase, logType: .error)
+        }
+    }
+    
+    
     
     
     
@@ -210,8 +224,8 @@ extension MessagesController {
         
         limit += 20
         let objectsBefore = messages
-        fetchedResultsController.fetchRequest.fetchLimit = limit
-        self.performFetch()
+//        fetchedResultsController.fetchRequest.fetchLimit = limit
+//        self.performFetch()
         let objectsAfter = messages
         //        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
         //            self.reloadDataKeepingOffset()
@@ -366,7 +380,7 @@ extension MessagesController {
     
     
     
-    func loadInitialMessages(animated:Bool = false, fetchFromFirebase:Bool) {
+    func loadInitialMessages(animated:Bool = false, fetchFromFirebase:Bool, shouldLoadUnseenMessages:Bool) {
 //        print("### \(#function) called")
         
         let fetchRequest:NSFetchRequest = UserMessage.fetchRequest()
@@ -400,26 +414,97 @@ extension MessagesController {
                 } else {
 //                    print("### \(#function) Messages in store exists. Now Upserting!")
                     DispatchQueue.main.async {
-                        self.messages = messages
+                        messages.reversed().forEach { message in
+                            if let index = self.messages.firstIndex(where: { $0.firebaseKey == message.firebaseKey }) {
+                                self.messages[index] = message
+                            } else {
+                                self.messages.insert(message, at: 0)
+                            }
+                        }
                         self.messagesCollectionView.reloadData()
                         self.messagesCollectionView.scrollToBottom(animated: animated)
                         if fetchFromFirebase {
                             self.upsertExistingMessagesFromFirebase(fetchedMessages: messages)
+                        }
+                        if let lastSeenMessage = messages.last, shouldLoadUnseenMessages {
+                            self.loadUnseenMessages(previousMessage: lastSeenMessage, animated: true, shouldFetchFromFirebase: true)
                         }
                     }
                 }
             }
         }
     }
-    
-    func fetchMessagesFromStore(fetchRequest:NSFetchRequest<UserMessage>, completion: @escaping (([UserMessage]) -> Void)) {
+    /*
+    func loadInitialUnseenMessages(animated:Bool, shouldFetchFromFirebase:Bool) {
+        let fetchRequest:NSFetchRequest = UserMessage.fetchRequest()
+        let conversationPredicate = NSPredicate(format: "\(#keyPath(UserMessage.conversation)) == %@", customer)
+        let isSeenPredicate = NSPredicate(format: "\(#keyPath(UserMessage.isSeen)) = %d", false)
+        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [conversationPredicate, isSeenPredicate])
+        fetchRequest.predicate = predicate
+        
+        fetchRequest.sortDescriptors = [ NSSortDescriptor(keyPath: \UserMessage.date, ascending: true) ]
+        
+        fetchRequest.fetchLimit = unseenFetchLimit
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            self.fetchMessagesFromStore(fetchRequest: fetchRequest, shouldReverseResult: false) { messages in
+                
+            }
+        }
+    }
+ */
+    func loadUnseenMessages(previousMessage:UserMessage, animated:Bool, shouldFetchFromFirebase:Bool) {
+        let previousMessageSentDate = previousMessage.sentDate as NSDate
+        let fetchRequest:NSFetchRequest = UserMessage.fetchRequest()
+        let conversationPredicate = NSPredicate(format: "\(#keyPath(UserMessage.conversation)) == %@", customer)
+        let isSeenPredicate = NSPredicate(format: "\(#keyPath(UserMessage.isSeen)) = %d", false)
+        let datePredicate = NSPredicate(format: "\(#keyPath(UserMessage.date)) > %@", previousMessageSentDate)
+        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [conversationPredicate, isSeenPredicate, datePredicate])
+        fetchRequest.predicate = predicate
+        
+        fetchRequest.sortDescriptors = [ NSSortDescriptor(keyPath: \UserMessage.date, ascending: true) ]
+        
+        fetchRequest.fetchLimit = unseenFetchLimit
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            self.fetchMessagesFromStore(fetchRequest: fetchRequest, shouldReverseResult: false) { messages in
+                print("--------------\n\n### \(#function) - Unseen Messages with count: \(messages.count) are: \n\n\(messages)\n\n-----------------")
+                DispatchQueue.main.async {
+                    messages.forEach { message in
+                        if let index = self.messages.firstIndex(where: { $0.firebaseKey == message.firebaseKey }) {
+                            self.messages[index] = message
+                        } else {
+                            self.messages.append(message)
+                        }
+                    }
+                    self.messagesCollectionView.reloadDataAndKeepOffset()
+                    switch messages.count {
+                        case 1, 2:
+                            let indexPath = IndexPath(item: 0, section: self.messages.count - 1)
+                            self.messagesCollectionView.scrollToItem(at: indexPath, at: .bottom, animated: animated)
+                        case 3...:
+                            let indexPath = IndexPath(item: 0, section: (self.messages.count - messages.count) + 1) // scrolls to second unseen message
+                            self.messagesCollectionView.scrollToItem(at: indexPath, at: .bottom, animated: animated)
+                        default: break
+                    }
+                    if shouldFetchFromFirebase {
+                        self.upsertUnseenMessagesFromFirebase(previousMessage: previousMessage, fetchedMessages: messages)
+                    }
+                }
+            }
+        }
+    }
+    func fetchMessagesFromStore(fetchRequest:NSFetchRequest<UserMessage>, shouldReverseResult:Bool = true, completion: @escaping (([UserMessage]) -> Void)) {
         viewContext.perform {
             do {
                 let result = try fetchRequest.execute()
-                completion(result.reversed())
+                shouldReverseResult ?
+                    completion(result.reversed()) :
+                    completion(result)
             } catch let error {
                 printAndLog(message: "Error fetching User Messages From Core Data store: \(error)", log: .coredata, logType: .error)
             }
         }
     }
 }
+

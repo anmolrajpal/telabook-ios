@@ -315,22 +315,23 @@ class MergeMessageEntriesFromFirebaseToStore_Operation: Operation {
             return
         }
         context.performAndWait {
+            _ = serverEntries.map { serverEntry -> UserMessage in
+                let fetchedEntry = fetchedEntries?.first(where: { $0.firebaseKey == serverEntry.firebaseKey })
+                let isSeen = fetchedEntry?.isSeen ?? false
+                let cachedImageUUID = fetchedEntry?.imageUUID
+                let downloadState = fetchedEntry?.downloadState ?? .new
+                let uploadState = fetchedEntry?.uploadState ?? .none
+                return UserMessage(context: context, messageEntryFromFirebase: serverEntry, forConversationWithCustomer: conversation, imageUUID: cachedImageUUID, isSeen: isSeen, downloadState: downloadState, uploadState: uploadState)
+            }
             do {
-                
-                _ = serverEntries.map { serverEntry -> UserMessage in
-                    let fetchedEntry = fetchedEntries?.first(where: { $0.firebaseKey == serverEntry.firebaseKey })
-                    let isSeen = fetchedEntry?.isSeen ?? true
-                    let cachedImageUUID = fetchedEntry?.imageUUID
-                    let downloadState = fetchedEntry?.downloadState ?? .new
-                    let uploadState = fetchedEntry?.uploadState ?? .none
-                    return UserMessage(context: context, messageEntryFromFirebase: serverEntry, forConversationWithCustomer: conversation, imageUUID: cachedImageUUID, isSeen: isSeen, downloadState: downloadState, uploadState: uploadState)
+                if context.hasChanges {
+                    try context.save()
                 }
-                //_ = serverEntries.map { UserMessage(context: context, messageEntryFromFirebase: $0, forConversationWithCustomer: conversation, imageUUID: nil) }
-                try context.save()
             } catch {
                 print("Error adding entries to store: \(error))")
                 self.error = .coreDataError(error: error)
             }
+            context.reset()
         }
     }
 }
@@ -456,9 +457,6 @@ class UpdateNewMessageEntryToFirebase_Operation: Operation {
     convenience init(messageReference:DatabaseReference, conversationReference:DatabaseReference, message:UserMessage) {
         self.init(messageReference:messageReference, conversationReference:conversationReference)
         self.newMessageFromStore = message
-        print("Pre check")
-        print(message)
-        print("passed")
     }
     
     override var isAsynchronous: Bool {
@@ -726,18 +724,15 @@ class ClearUnreadMessagesCountInStore_Operation: Operation {
     
     override func main() {
         context.performAndWait {
+            conversation.unreadMessagesCount = 0
+            conversation.updatedAt = updatedAt
             do {
-                conversation.unreadMessagesCount = 0
-                conversation.updatedAt = updatedAt
-                try context.save()
+                if context.hasChanges { try context.save() }
             } catch {
-                #if !RELEASE
-                print("Error adding entries to store: \(error))")
-                #endif
                 self.error = .coreDataError(error: error)
             }
+            context.reset()
         }
-        
     }
 }
 

@@ -37,7 +37,7 @@ struct FirebaseMessage {
     let sentByApiTimestamp:Date?
     let sentByAppTimestamp:Date?
     let sentByProviderTimestamp:Date?
-    let timestamp: Date?
+    let timestamp: Date
     let updatedAt:Date?
     let senderIsWorker:Bool
     let tags:String?

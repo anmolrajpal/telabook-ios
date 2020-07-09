@@ -57,8 +57,8 @@ class CustomerCell: UITableViewCell {
         
         
         // - Setup name label
-        if let name = name {
-            nameLabel.text = "\(name) (\(number))"
+        if let name = name, !name.isBlank {
+            nameLabel.text = name
         } else {
             nameLabel.text = number
         }

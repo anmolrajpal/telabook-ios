@@ -33,16 +33,10 @@ class AgentsView: UIView {
     // MARK: Constructors
     
     lazy var tableView : UITableView = {
-        let tv = UITableView(frame: CGRect.zero, style: UITableView.Style.plain)
-        tv.backgroundColor = .clear
-        tv.separatorColor = UIColor.telaWhite.withAlphaComponent(0.5)
-        tv.bounces = true
-        tv.alwaysBounceVertical = true
-        tv.clipsToBounds = true
-        tv.showsHorizontalScrollIndicator = false
-        tv.showsVerticalScrollIndicator = true
-        tv.tableFooterView = UIView(frame: CGRect.zero)
-        return tv
+        let view = UITableView(frame: CGRect.zero, style: .plain)
+        view.separatorInset = UIEdgeInsets(top: 0, left: 85, bottom: 0, right: 0)
+        view.tableFooterView = UIView(frame: CGRect.zero)
+        return view
     }()
     lazy var placeholderLabel:UILabel = {
         let label = UILabel()

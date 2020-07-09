@@ -57,13 +57,13 @@ class MessagesController: MessagesViewController {
     let node:Config.FirebaseConfig.Node
     let reference:DatabaseReference
     let conversationID:Int
-    let viewContext:NSManagedObjectContext
+    let viewContext:NSManagedObjectContext = PersistentContainer.shared.viewContext
     var thisSender:MessageSender
     let conversationReference:DatabaseReference
     
     
     init(context:NSManagedObjectContext, customer:Customer, conversationReference:DatabaseReference) {
-        self.viewContext =  context
+//        self.viewContext =  context
         self.customer = customer
         self.conversationReference = conversationReference
         self.node = .messages(companyID: AppData.companyId, node: customer.node!)
@@ -74,13 +74,16 @@ class MessagesController: MessagesViewController {
         self.uploadService = self.mediaManager.uploadService
         super.init(nibName: nil, bundle: nil)
         self.mediaManager.delegate = self
-        setupFetchedResultsController()
+//        setupFetchedResultsController()
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     deinit {
         synthesizer.stopSpeaking(at: .immediate)
+//        fetchedResultsController = nil
+//        fetchedResultsController.delegate = nil
+//        viewContext.reset()
     }
     
     
@@ -104,7 +107,7 @@ class MessagesController: MessagesViewController {
     
     internal var storageUploadTask:StorageUploadTask!
     
-    internal var fetchedResultsController: NSFetchedResultsController<UserMessage>!
+//    internal var fetchedResultsController: NSFetchedResultsController<UserMessage>! = nil
     
     internal var indexPathForMessageBottomLabelToShow:IndexPath?
     
@@ -113,6 +116,10 @@ class MessagesController: MessagesViewController {
     var limit: Int = 20
     
     var offset:Int = 0
+    
+    var unseenFetchLimit = 50
+    
+    var unseenFetchOffset = 0
     
     var didSentNewMessage = false
     
@@ -222,7 +229,10 @@ class MessagesController: MessagesViewController {
         super.viewDidAppear(animated)
         addFirebaseObservers()
     }
-    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        print("Memory warning")
+    }
     
     
     

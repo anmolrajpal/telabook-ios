@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import Photos
 class ClosureSleeve {
     let closure: ()->()
     
@@ -350,6 +350,41 @@ extension UIViewController {
             navigationBar.standardAppearance = defaultAppearance
             navigationBar.compactAppearance = defaultAppearance
         }
+    }
+}
+extension UISwitch {
+    static func createTelaSwitch() -> UISwitch {
+        let switchButton = UISwitch()
+        switchButton.tintColor = UIColor.telaGray5
+        switchButton.thumbTintColor = UIColor.white
+        switchButton.onTintColor = UIColor.telaBlue
+        return switchButton
+    }
+}
+extension UIViewController {
+    // MARK: - Request Photo Library
+    func requestPhotoLibrary(_ actionHandler:(() -> Void)? = nil) {
+        let status = PHPhotoLibrary.authorizationStatus()
+        switch status {
+            case .authorized: actionHandler?()
+            case .notDetermined: requestPhotoLibraryPermission(accessGrantedHandler: actionHandler)
+            case .denied, .restricted: alertPhotoLibraryAccessNeeded()
+            @unknown default: fatalError()
+        }
+    }
+    private func requestPhotoLibraryPermission(accessGrantedHandler:(() -> Void)?) {
+        PHPhotoLibrary.requestAuthorization { status in
+            guard status == .authorized else { return }
+            accessGrantedHandler?()
+        }
+    }
+    private func alertPhotoLibraryAccessNeeded() {
+        let alert = UIAlertController.telaAlertController(title: "Need Library Access", message: "Photo Library access is required to read and write images")
+        alert.addAction(UIAlertAction(title: "Allow", style: .cancel, handler: { _ in
+            AppDelegate.shared.launchAppSettings()
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
     }
 }
 extension UINavigationController {

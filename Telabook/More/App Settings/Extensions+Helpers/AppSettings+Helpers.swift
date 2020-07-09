@@ -136,4 +136,21 @@ extension AppSettingsViewController {
             print(error.localizedDescription)
         }
     }
+    
+    
+    
+    
+    
+    
+    
+    @objc
+    internal func saveMediaNotificationAlertStateDidChange(_ sender:UISwitch) {
+        AppData.alertOnSavingMediaToLibrary = sender.isOn
+    }
+    
+    @objc
+    internal func appHapticFeebackSettingStateDidChange(_ sender:UISwitch) {
+        AppData.isHapticsEnabled = sender.isOn
+    }
+    
 }

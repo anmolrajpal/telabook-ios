@@ -61,7 +61,6 @@ class MMSCell: MediaMessageCell {
         button.setImage(image, for: .normal)
         button.tintColor = UIColor.telaGray6
         button.clipsToBounds = true
-        button.isHidden = true
         return button
     }()
     
@@ -108,7 +107,8 @@ class MMSCell: MediaMessageCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         stopSpinner()
-        overlayView.alpha = 0
+        overlayView.isHidden = true
+        downloadButton.isHidden = true
 //        progressBar.setProgress(to: 0, withAnimation: false)
         progressBar.layer.removeAllAnimations()
         progressBar.isHidden = true
@@ -137,16 +137,16 @@ class MMSCell: MediaMessageCell {
             case .none: break
             case .pending:
                 guard image != nil else {
-                    print("****** Need to resolve this: image not available for cell while uploading media")
-                    return
+                    fatalError("****** Need to resolve this: image not available for cell while uploading media")
                 }
-                overlayView.alpha = 1.0
                 startSpinner()
+                overlayView.isHidden = false
+                downloadButton.isHidden = true
                 statusLabel.text = "Uploading..."
                 statusLabel.isHidden = false
                 if let upload = upload {
                     if upload.progress > 0 || upload.isUploading {
-                        self.stopSpinner()
+//                        self.stopSpinner()
                     }
                 } else {
                     cellDelegate?.startUploadingMedia(forMultimediaMessage: message, at: indexPath)
@@ -157,6 +157,7 @@ class MMSCell: MediaMessageCell {
                 if !imageLoaded {
                     if download != nil {
                         startSpinner()
+                        overlayView.isHidden = false
                         downloadButton.isHidden = true
                         statusLabel.isHidden = false
                         statusLabel.text = "Downloading..."
@@ -164,8 +165,9 @@ class MMSCell: MediaMessageCell {
                         downloadButton.isHidden = false
                     }
                 } else {
-                    overlayView.alpha = 0
+//                    overlayView.alpha = 0
                     self.stopSpinner()
+                    self.overlayView.isHidden = imageLoaded
                     self.downloadButton.isHidden = imageLoaded
                     self.progressBar.isHidden = imageLoaded
                     self.statusLabel.isHidden = imageLoaded
@@ -174,6 +176,7 @@ class MMSCell: MediaMessageCell {
                 return
             case .failed:
                 self.stopSpinner()
+                self.overlayView.isHidden = true
                 self.downloadButton.isHidden = true
                 self.progressBar.isHidden = true
                 self.statusLabel.isHidden = false
@@ -189,29 +192,33 @@ class MMSCell: MediaMessageCell {
                     return
                 }
                 if shouldAutoDownload {
-                    self.startSpinner()
+                    startSpinner()
+                    overlayView.isHidden = false
+                    downloadButton.isHidden = true
                     statusLabel.text = "Downloading..."
-                    self.statusLabel.isHidden = false
+                    statusLabel.isHidden = false
                     if let download = download {
                         if download.progress > 0 || download.isDownloading {
-                            self.stopSpinner()
+//                            self.stopSpinner()
                         }
                     } else {
                         cellDelegate?.startDownloadingMedia(forMultimediaMessage: message, at: indexPath)
                     }
                 } else {
                     if download != nil {
-                        self.startSpinner()
-                        self.downloadButton.isHidden = true
-                        self.statusLabel.isHidden = false
-                        self.statusLabel.text = "Downloading..."
+                        startSpinner()
+                        overlayView.isHidden = false
+                        downloadButton.isHidden = true
+                        statusLabel.isHidden = false
+                        statusLabel.text = "Downloading..."
                     } else {
-                        self.stopSpinner()
-                        self.downloadButton.isHidden = false
-                        self.progressBar.isHidden = true
-                        self.statusLabel.isHidden = true
-                        self.progressLabel.isHidden = true
-                        self.progressLabel.text = "1.5 MB"
+                        stopSpinner()
+                        overlayView.isHidden = true
+                        downloadButton.isHidden = false
+                        progressBar.isHidden = true
+                        statusLabel.isHidden = true
+                        progressLabel.isHidden = true
+                        progressLabel.text = "1.5 MB"
                     }
                 }
             case .downloaded:
@@ -220,6 +227,7 @@ class MMSCell: MediaMessageCell {
                 if image == nil {
                     if download != nil {
                         startSpinner()
+                        overlayView.isHidden = false
                         downloadButton.isHidden = true
                         statusLabel.isHidden = false
                         statusLabel.text = "Downloading..."
@@ -231,19 +239,21 @@ class MMSCell: MediaMessageCell {
                         downloadButton.isHidden = false
                     }
                 } else {
-                    self.stopSpinner()
-                    self.downloadButton.isHidden = imageLoaded
-                    self.progressBar.isHidden = imageLoaded
-                    self.statusLabel.isHidden = imageLoaded
-                    self.progressLabel.isHidden = imageLoaded
+                    stopSpinner()
+                    overlayView.isHidden = imageLoaded
+                    downloadButton.isHidden = imageLoaded
+                    progressBar.isHidden = imageLoaded
+                    statusLabel.isHidden = imageLoaded
+                    progressLabel.isHidden = imageLoaded
                 }
             case .failed:
-                self.stopSpinner()
-                self.downloadButton.isHidden = false
-                self.progressBar.isHidden = true
-                self.statusLabel.isHidden = false
-                self.progressLabel.isHidden = true
-                self.statusLabel.text = "Fail to download"
+                stopSpinner()
+                overlayView.isHidden = true
+                downloadButton.isHidden = false
+                progressBar.isHidden = true
+                statusLabel.isHidden = false
+                progressLabel.isHidden = true
+                statusLabel.text = "Fail to download"
         }
         
         
@@ -254,6 +264,7 @@ class MMSCell: MediaMessageCell {
         progressLabel.text = loadedSize + " / " + totalSize
         if progress > 0 && progressBar.isHidden {
             stopSpinner()
+            overlayView.isHidden = false
             downloadButton.isHidden = true
             progressBar.isHidden = false
             statusLabel.isHidden = false

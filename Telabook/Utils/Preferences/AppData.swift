@@ -66,6 +66,11 @@ struct AppData {
     private static var autoDownloadVideoMessagesStateValue:Int
     
     
+    @UserDefaultsWrapper(key: .isHapticsEnabled, defaultValue: true)
+    static var isHapticsEnabled:Bool
+    
+    
+    
     static var autoDownloadImageMessagesState:MediaAutoDownloadState {
         get {
             .init(rawValue: autoDownloadImageMessagesStateValue)
@@ -85,6 +90,10 @@ struct AppData {
             autoDownloadVideoMessagesStateValue = newValue.rawValue
         }
     }
+    
+    
+    @UserDefaultsWrapper(key: .alertOnSavingMediaToLibrary, defaultValue: false)
+    static var alertOnSavingMediaToLibrary:Bool
     
     
     

@@ -18,13 +18,13 @@ extension MessagesController: MessagesDisplayDelegate {
         guard !message.isFault else { return .clear}
         switch message.kind {
         case .photo:
-            return UIColor.telaGray7.withAlphaComponent(0.4)
+            return .tertiarySystemBackground
         case .custom:
             return .clear
         case .emoji:
             return .clear
         default:
-            return isFromCurrentSender(message: message) ? .telaBlue : .telaGray7
+            return isFromCurrentSender(message: message) ? .telaBlue : .tertiarySystemBackground
         }
         
     }
@@ -50,7 +50,7 @@ extension MessagesController: MessagesDisplayDelegate {
             } else {
                 return [.foregroundColor: UIColor.lightGray]
             }
-            case .url:
+            case .url, .phoneNumber:
                 return [
                     .foregroundColor: UIColor.link,
                     .underlineStyle: NSUnderlineStyle.single.rawValue,
@@ -58,18 +58,18 @@ extension MessagesController: MessagesDisplayDelegate {
             ]
             case .date:
                 return isFromCurrentSender(message: message) ? [
-                    .foregroundColor: UIColor.telaGray7,
+                    .foregroundColor: UIColor.systemGray2,
                     .underlineStyle: NSUnderlineStyle.single.rawValue,
-                    .underlineColor: UIColor.telaGray7 ] : [
-                        .foregroundColor: UIColor.telaGray5,
+                    .underlineColor: UIColor.systemGray2 ] : [
+                        .foregroundColor: UIColor.tertiaryLabel,
                         .underlineStyle: NSUnderlineStyle.single.rawValue,
-                        .underlineColor: UIColor.telaGray5 ]
+                        .underlineColor: UIColor.tertiaryLabel ]
         default: return MessageLabel.defaultAttributes
         }
     }
 
     func enabledDetectors(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> [DetectorType] {
-        return [.url, .address, .phoneNumber, .date, .transitInformation, .mention, .hashtag]
+        return [.url, .phoneNumber, .mention]
     }
 
     func messageStyle(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageStyle {

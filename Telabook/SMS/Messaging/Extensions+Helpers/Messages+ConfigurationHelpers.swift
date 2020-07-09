@@ -10,7 +10,8 @@ import UIKit
 import MessageKit
 import InputBarAccessoryView
 import AVFoundation
-import os
+import UserNotifications
+
 extension MessagesController {
     internal func configureMessageCollectionView() {
         messagesCollectionView.register(BotMessageCell.self)
@@ -114,6 +115,19 @@ extension MessagesController {
     @objc func image(_ image: UIImage, didFinishSavingWithError error: NSError?, contextInfo: UnsafeRawPointer) {
         if let error = error {
             UIAlertController.showTelaAlert(title: "Error", message: error.localizedDescription)
+        } else {
+            guard AppData.alertOnSavingMediaToLibrary else { return }
+            let notificationsService = LocalNotificationService.shared
+            notificationsService.notificationCenter.getNotificationSettings { settings in
+                switch settings.authorizationStatus {
+                    case .authorized, .provisional:
+                        notificationsService.postNotification(forRequest: .imageSavedToLibrary) {
+//                            TapticEngine.generateFeedback(ofType: .Success)
+                        }
+                    default:
+                        AssertionModalController().show()
+                }
+            }
         }
     }
     
@@ -168,7 +182,11 @@ extension MessagesController {
             if message.messageType == .multimedia {
                 if let image = message.getImage() {
                     let saveToCameraRollAction = UIAction(title: "Save Image", image: SFSymbol.download.image) { _ in
-                        UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.image(_:didFinishSavingWithError:contextInfo:)), nil)
+                        DispatchQueue.main.async {
+                            self.requestPhotoLibrary {
+                                UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.image(_:didFinishSavingWithError:contextInfo:)), nil)
+                            }
+                        }
                     }
                     menuItems.append(saveToCameraRollAction)
                 }
@@ -298,11 +316,6 @@ extension MessagesController {
         
         let indexPath = IndexPath(item: 0, section: section)
         guard let cell = messagesCollectionView.cellForItem(at: indexPath) as? MessageContentCell else {
-            let errorMessage = "Unresolved Error While making Target View for Context Menu: Unable to cast collectionViewCell as MessageContentCell"
-            #if !RELEASE
-            print(errorMessage)
-            #endif
-            os_log("%@", log: .ui, type: .error, errorMessage)
             return nil
         }
 

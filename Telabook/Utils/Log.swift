@@ -16,9 +16,10 @@ extension OSLog {
     static let firebase = OSLog (subsystem: subsystem, category: OSLog.Category.LogCategory.Firebase.rawValue)
     static let network = OSLog (subsystem: subsystem, category: OSLog.Category.LogCategory.Network.rawValue)
     static let coredata = OSLog(subsystem: subsystem, category: OSLog.Category.LogCategory.CoreData.rawValue)
+    static let localNotifications = OSLog(subsystem: subsystem, category: OSLog.Category.LogCategory.LocalNotifications.rawValue)
 }
 extension OSLog.Category {
-    fileprivate enum LogCategory:String { case UI, Firebase, Network, CoreData }
+    fileprivate enum LogCategory:String { case UI, Firebase, Network, CoreData, LocalNotifications }
 }
 
 /// A method that logs the provided message in debug console and in mentioned os log. This method will log message in debug console only when it's under NON-RELEASE environement. Check the !RELEASE macro flag.

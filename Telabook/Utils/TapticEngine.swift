@@ -11,7 +11,7 @@ import UIKit
 final class TapticEngine {
     enum HapticFeedback { case Error, Warning, Success, Light, Medium, Heavy, Rigid, Soft, SelectionChanged }
     static func generateFeedback(ofType feedback: HapticFeedback) {
-//        if !AppData().settingsStore.isHapticsEnabled { return }
+        guard AppData.isHapticsEnabled else { return }
         switch feedback {
         case .Error:
             let generator = UINotificationFeedbackGenerator()

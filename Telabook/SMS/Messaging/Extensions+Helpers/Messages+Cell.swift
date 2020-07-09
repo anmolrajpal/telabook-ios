@@ -9,6 +9,7 @@
 import UIKit
 import MessageKit
 import QuickLook
+import CoreData
 
 extension MessagesController: MessageCellDelegate {
     
@@ -87,9 +88,10 @@ extension MessagesController: MessageCellDelegate {
         guard let cell  = cell as? MessageContentCell else { return }
         guard let indexPath = messagesCollectionView.indexPath(for: cell),
             let message = messagesCollectionView.messagesDataSource?.messageForItem(at: indexPath, in: messagesCollectionView) as? UserMessage else {
-                print("Failed to identify message when audio cell receive tap gesture")
                 return
         }
+        guard isFromCurrentSender(message: message) else { return }
+        if !message.errorSending && !message.hasError { return }
         alertActionsForErrorMessage(message: message, at: indexPath)
     }
     func alertActionsForErrorMessage(message:UserMessage, at indexPath:IndexPath) {
@@ -107,6 +109,58 @@ extension MessagesController: MessageCellDelegate {
         alert.preferredAction = retryAction
         present(alert, animated: true)
     }
+    private func deleteMessageEntity(message:UserMessage) {
+        guard let context = message.managedObjectContext else {
+            fatalError("Unable to retrieve managed object context for message: \(message)")
+        }
+        context.performAndWait {
+            message.conversation?.removeFromMessages(message)
+            context.delete(message)
+            if context.hasChanges {
+                do {
+                    try context.save()
+                } catch {
+                    printAndLog(message: error.localizedDescription, log: .coredata, logType: .error)
+                }
+            }
+        }
+        
+    }
+}
+extension MessagesController: MessageLabelDelegate {
+    
+    func didSelectAddress(_ addressComponents: [String: String]) {
+        print("Address Selected: \(addressComponents)")
+    }
+    
+    func didSelectDate(_ date: Date) {
+        print("Date Selected: \(date)")
+    }
+    
+    func didSelectPhoneNumber(_ phoneNumber: String) {
+        print("Phone Number Selected: \(phoneNumber)")
+    }
+    
+    func didSelectURL(_ url: URL) {
+        UIApplication.shared.open(url)
+    }
+    
+    func didSelectTransitInformation(_ transitInformation: [String: String]) {
+        print("TransitInformation Selected: \(transitInformation)")
+    }
+
+    func didSelectHashtag(_ hashtag: String) {
+        print("Hashtag selected: \(hashtag)")
+    }
+
+    func didSelectMention(_ mention: String) {
+        print("Mention selected: \(mention)")
+    }
+
+    func didSelectCustom(_ pattern: String, match: String?) {
+        print("Custom data detector patter selected: \(pattern)")
+    }
+
 }
 
 

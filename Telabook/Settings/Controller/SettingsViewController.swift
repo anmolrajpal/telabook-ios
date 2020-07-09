@@ -593,6 +593,7 @@ class SettingsViewController: UIViewController {
         return button
     }()
     @objc fileprivate func updateButtonTapped() {
+        TapticEngine.generateFeedback(ofType: .Medium)
         self.updateUserProfile()
 //        initiateUpdateUserProfileSequence()
     }

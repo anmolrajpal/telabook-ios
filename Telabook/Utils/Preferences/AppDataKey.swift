@@ -25,5 +25,6 @@ public enum AppDataKey:String, CaseIterable {
     isHapticsEnabled,
     encryptionKey,
     autoDownloadImageMessagesState,
-    autoDownloadVideoMessagesState
+    autoDownloadVideoMessagesState,
+    alertOnSavingMediaToLibrary
 }
