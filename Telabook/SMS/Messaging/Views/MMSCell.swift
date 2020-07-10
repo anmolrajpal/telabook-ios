@@ -163,6 +163,11 @@ class MMSCell: MediaMessageCell {
                         statusLabel.text = "Downloading..."
                     } else {
                         downloadButton.isHidden = false
+                        stopSpinner()
+                        overlayView.isHidden = true
+                        progressBar.isHidden = true
+                        statusLabel.isHidden = true
+                        progressLabel.isHidden = true
                     }
                 } else {
 //                    overlayView.alpha = 0
@@ -237,6 +242,11 @@ class MMSCell: MediaMessageCell {
 //                        }
                     } else {
                         downloadButton.isHidden = false
+                        stopSpinner()
+                        overlayView.isHidden = true
+                        progressBar.isHidden = true
+                        statusLabel.isHidden = true
+                        progressLabel.isHidden = true
                     }
                 } else {
                     stopSpinner()

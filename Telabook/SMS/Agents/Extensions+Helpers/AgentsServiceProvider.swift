@@ -38,26 +38,26 @@ extension AgentsViewController {
         }
         return reference.observe(.value, with: { snapshot in
             guard !self.agents.isEmpty else { return }
-//                print("Wasnotseen snapshot: \(snapshot)")
-                let context = PersistentContainer.shared.newBackgroundContext()
-                let agents = self.agents.compactMap { context.object(with: $0.objectID) as? Agent }
-                var pendingMessages:[PendingMessage] = []
-                for agent in agents {
-                    var count = 0
-                    var lastMessageDate:Date?
-                    for child in snapshot.children {
-                        if let snapshot = child as? DataSnapshot,
-                            let value = snapshot.value as? [String: AnyObject] {
-                            let workerID = mapToInt(value: value["worker_id"])
-                            if workerID == agent.workerID {
-                                count += 1
-                                lastMessageDate = mapToDate(value: value["date"])
-                            }
+            //                print("Wasnotseen snapshot: \(snapshot)")
+            let context = PersistentContainer.shared.newBackgroundContext()
+            let agents = self.agents.compactMap { context.object(with: $0.objectID) as? Agent }
+            var pendingMessages:[PendingMessage] = []
+            for agent in agents {
+                var count = 0
+                var lastMessageDate:Date?
+                for child in snapshot.children {
+                    if let snapshot = child as? DataSnapshot,
+                        let value = snapshot.value as? [String: AnyObject] {
+                        let workerID = mapToInt(value: value["worker_id"])
+                        if workerID == agent.workerID {
+                            count += 1
+                            lastMessageDate = mapToDate(value: value["date"])
                         }
                     }
-                    pendingMessages.append(.init(agent: agent, count: count, lastMessageDate: lastMessageDate))
                 }
-                self.updateAgents(with: pendingMessages, context: context)
+                pendingMessages.append(.init(agent: agent, count: count, lastMessageDate: lastMessageDate))
+            }
+            self.updateAgents(with: pendingMessages, context: context)
         }) { error in
             let message = "### \(#function) - Error observing wasnotseen reference node: \(error.localizedDescription)"
             printAndLog(message: message, log: .firebase, logType: .error)
@@ -70,7 +70,7 @@ extension AgentsViewController {
         let queue = OperationQueue()
         queue.qualityOfService = .userInitiated
         queue.maxConcurrentOperationCount = 1
-
+        
         let operation = UpdatePendingMessagesCount_Operation(context: context, pendingMessages: pendingMessages)
         handleViewsStateForOperations(operations: [operation], onOperationQueue: queue)
         queue.addOperation(operation)
@@ -92,52 +92,59 @@ extension AgentsViewController {
     
     private func handleViewsStateForOperations(operations:[Operation], onOperationQueue queue:OperationQueue) {
         operations.forEach { operation in
-            if let operation = operation as? FetchMostRecentAgentsEntryOperation {
-                operation.completionBlock = {
-                    if case let .failure(error) = operation.result {
-                        print(error.localizedDescription)
-                        self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
-                    } else {
-                        
-                    }
-                }
-            } else if let operation = operation as? DownloadAgentsEntriesFromServerOperation {
-                operation.completionBlock = {
-                    guard case let .failure(error) = operation.result else { return }
-                    print(error.localizedDescription)
-                    self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
-                }
-            } else if let operation = operation as? DeleteRedundantAgentEntriesOperation {
-                operation.completionBlock = {
-                    if let error = operation.error {
-                        print(error.localizedDescription)
-                        self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
-                    }
-                }
-            } else if let operation = operation as? UpdateAgentEntriesOperation {
-                operation.completionBlock = {
-                    if let error = operation.error {
-                        print(error.localizedDescription)
-                        self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
-                    }
-                }
-            } else if let operation = operation as? AddAgentEntriesToStoreOperation {
-                operation.completionBlock = {
-                    if let error = operation.error {
-                        print(error.localizedDescription)
-                        self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
-                    } else {
-                        DispatchQueue.main.async {
-                            self.stopRefreshers()
+            switch operation {
+                case let operation as FetchMostRecentAgentsEntryOperation:
+                    operation.completionBlock = {
+                        if case let .failure(error) = operation.result {
+                            print(error.localizedDescription)
+                            self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+                        } else {
+                            
                         }
-                    }
                 }
-            } else if let operation = operation as? UpdatePendingMessagesCount_Operation {
-                operation.completionBlock = {
-                    if let error = operation.error {
+                case let operation as DownloadAgentsEntriesFromServerOperation:
+                    operation.completionBlock = {
+                        guard case let .failure(error) = operation.result else { return }
+                        print(error.localizedDescription)
                         self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
-                    }
                 }
+                case let operation as DeleteRedundantAgentEntriesOperation:
+                    operation.completionBlock = {
+                        if let error = operation.error {
+                            print(error.localizedDescription)
+                            self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+                        }
+                }
+                case let operation as UpdateAgentEntriesOperation:
+                    operation.completionBlock = {
+                        if let error = operation.error {
+                            print(error.localizedDescription)
+                            self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+                        }
+                }
+                case let operation as AddAgentEntriesToStoreOperation:
+                    operation.completionBlock = {
+                        if let error = operation.error {
+                            print(error.localizedDescription)
+                            self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+                        } else {
+                            DispatchQueue.main.async {
+                                self.stopRefreshers()
+                            }
+                        }
+                }
+                
+                
+                
+                
+                
+                case let operation as UpdatePendingMessagesCount_Operation:
+                    operation.completionBlock = {
+                        if let error = operation.error {
+                            self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+                        }
+                }
+                default: break
             }
         }
     }

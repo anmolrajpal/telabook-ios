@@ -19,7 +19,6 @@ extension MessagesController {
         configureMessageCollectionView()
         configureMessageInputBar()
         loadInitialMessages(fetchFromFirebase: true, shouldLoadUnseenMessages: true)
-        //        loadInitialMessagesFromFirebase()
         setupTargetActions()
         reloadQuickResponses()
         clearUnreadMessagesCount()

@@ -10,7 +10,7 @@ import UIKit
 
 class CustomerCell: UITableViewCell {
     let cellView = CustomerCellView()
-    static let cellHeight:CGFloat = 70.0
+    static let cellHeight:CGFloat = 80.0
     var shouldShowBadgeCount = true
     
     
@@ -116,7 +116,7 @@ class CustomerCell: UITableViewCell {
         badgeCountLabel.text = String(count)
         badgeCountLabel.sizeToFit()
         let frame = badgeCountLabel.frame
-        let newHeight = frame.size.height + CGFloat(Int(fontSize / 2))
+        let newHeight = frame.size.height + CGFloat(Int(fontSize * 0.4))
         let newWidth = count <= 9 ? newHeight : frame.size.width + fontSize
         badgeCountLabel.constraint(equalTo: CGSize(width: newWidth, height: newHeight))
         
@@ -206,9 +206,9 @@ class CustomerCell: UITableViewCell {
         containerView.anchor(top: contentView.topAnchor, left: contentView.leftAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor, topConstant: 0, leftConstant: 16, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         
         nameLabel.anchor(top: nil, left: containerView.leftAnchor, bottom: nil, right: badgeCountLabel.leftAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
-        nameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: -18).activate()
+        nameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: -20).activate()
         
-        badgeCountLabel.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor).activate()
+        badgeCountLabel.bottomAnchor.constraint(equalTo: nameLabel.bottomAnchor).activate()
         badgeCountLabel.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -5).activate()
         
         pinImageView.anchor(top: nil, left: nil, bottom: nil, right: containerView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 5, widthConstant: 17, heightConstant: 17)
@@ -217,7 +217,7 @@ class CustomerCell: UITableViewCell {
         dateTimeLabel.anchor(top: nil, left: containerView.centerXAnchor, bottom: nil, right: containerView.rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 5)
         dateTimeLabel.centerYAnchor.constraint(equalTo: lastMessageLabel.centerYAnchor).activate()
         
-        lastMessageLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: 18).activate()
+        lastMessageLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: 20).activate()
         lastMessageLabel.leftAnchor.constraint(equalTo: nameLabel.leftAnchor).activate()
         lastMessageLabel.rightAnchor.constraint(lessThanOrEqualTo: containerView.centerXAnchor).activate()
     }

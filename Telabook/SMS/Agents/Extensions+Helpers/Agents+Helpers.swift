@@ -13,13 +13,39 @@ extension AgentsViewController {
     // MARK: Common setup
     internal func commonInit() {
         title = "SMS"
+        view.backgroundColor = .telaGray1
         setUpNavBar()
+        configureHierarchy()
         configureTableView()
         configureDataSource()
         configureFetchedResultsController()
-        setupTargetActions()
-        setupSearchController()
+        configureTargetActions()
+        configureSearchController()
     }
+    
+    
+    
+    
+    
+    // MARK: - Setup Views
+    private func configureHierarchy() {
+        view.addSubview(spinner)
+        view.addSubview(placeholderLabel)
+        layoutConstraints()
+    }
+    
+    
+    // MARK: - Layout Methods for views
+    private func layoutConstraints() {
+        spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).activate()
+        spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -60).activate()
+        
+        placeholderLabel.widthAnchor.constraint(equalToConstant: view.frame.size.width - 40).activate()
+        placeholderLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).activate()
+        placeholderLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -100).activate()
+    }
+    
+    
     
     
     internal func addFirebaseObservers() {
@@ -34,23 +60,23 @@ extension AgentsViewController {
     
     /// Manages the UI state based on the fetched results available
     internal func handleState() {
-        if self.fetchedResultsController.sections?.first?.numberOfObjects == 0 {
+        if agents.isEmpty {
             DispatchQueue.main.async {
-                self.subview.placeholderLabel.text = self.isFiltering ? "No Agent Found" : "Loading"
-                self.subview.placeholderLabel.isHidden = false
+                self.placeholderLabel.text = self.isFiltering ? "No Results" : "Loading..."
+                self.placeholderLabel.isHidden = false
             }
         } else {
             DispatchQueue.main.async {
-                self.subview.placeholderLabel.isHidden = true
+                self.placeholderLabel.isHidden = true
             }
         }
     }
     internal func stopRefreshers() {
-        self.subview.spinner.stopAnimating()
-        self.subview.tableView.refreshControl?.endRefreshing()
+        spinner.stopAnimating()
+        tableView.refreshControl?.endRefreshing()
     }
-    internal func setupTargetActions() {
-        subview.refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
+    private func configureTargetActions() {
+        tableViewRefreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
     }
     @objc private func refreshData(_ sender: Any) {
         fetchAgents()
@@ -61,7 +87,7 @@ extension AgentsViewController {
         if !agents.isEmpty {
             if let firstObject = agents.randomElement(),
                 let lastRefreshedAt = firstObject.lastRefreshedAt {
-                let thresholdRefreshTime = lastRefreshedAt.addingTimeInterval(60)
+                let thresholdRefreshTime = lastRefreshedAt.addingTimeInterval(180)
                 Date() > thresholdRefreshTime ?
                     initiateFetchAgentsSequence(withRefreshMode: .refreshControl) :
                     initiateFetchAgentsSequence(withRefreshMode: .none)
@@ -75,12 +101,12 @@ extension AgentsViewController {
         switch refreshMode {
             case .spinner:
                     DispatchQueue.main.async {
-                        self.subview.spinner.startAnimating()
+                        self.spinner.startAnimating()
                         self.fetchAgents()
                     }
             case .refreshControl:
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-                        self.subview.tableView.refreshControl?.beginExplicitRefreshing()
+                        self.tableView.refreshControl?.beginExplicitRefreshing()
                     }
             case .none:
                 self.fetchAgents()

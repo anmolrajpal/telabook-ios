@@ -26,29 +26,37 @@ extension MoreViewController {
     
     
     
-    /* ------------------------------------------------------------------------------------------------------------ */
-    internal func clearCache() {
-        let queue = OperationQueue()
-        queue.qualityOfService = .userInitiated
-        queue.maxConcurrentOperationCount = 1
+    func alertLogout() {
+        if let selectionIndexPath = self.tableView.indexPathForSelectedRow {
+            self.tableView.deselectRow(at: selectionIndexPath, animated: true)
+        }
+        let alertVC = UIAlertController.telaAlertController(title: "Confirm Logout", message: "Are you sure you want to log out?")
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        cancelAction.setTitleColor(color: .telaBlue)
+        let logoutAction = UIAlertAction(title: "Log Out", style: .default) { _ in self.callSignOutSequence() }
+        logoutAction.setTitleColor(color: .systemRed)
         
-        let operation = DeleteAllEntities_Operation(context: PersistentContainer.shared.newBackgroundContext())
-        operation.completionBlock = {
-            if let error = operation.error {
-                self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+        alertVC.addAction(logoutAction)
+        alertVC.addAction(cancelAction)
+        alertVC.preferredAction = logoutAction
+        self.present(alertVC, animated: true, completion: nil)
+    }
+    
+    private func callSignOutSequence() {
+        FirebaseAuthService.shared.signOut { (error) in
+            guard error == nil else {
+                UIAlertController.showTelaAlert(title: "Signout Failed", message: error?.localizedDescription ?? "Try again", controller: self)
+                return
+            }
+            if AppData.isRememberMeChecked {
+                DispatchQueue.main.async {
+                    self.delegate?.presentLogin()
+                }
             } else {
-                PINCache.shared.removeAllObjects()
-                imageCache.removeAllObjects()
-                self.clearCacheDirectory()
+                self.dumpCoreData()
             }
         }
-        queue.addOperations([operation], waitUntilFinished: false)
     }
-    /* ------------------------------------------------------------------------------------------------------------ */
-    
-    
-    
-    
     
     
     

@@ -11,9 +11,9 @@ import InteractiveModal
 
 extension CustomersViewController: StartNewConversationDelegate {
     func conversation(didStartNewConversationWithID id: Int, node:String) {
-        if let conversation = self.fetchedResultsController.fetchedObjects?.first(where: { $0.externalConversationID == id }),
+        if let conversation = customers.first(where: { $0.externalConversationID == id }),
             let indexPath = self.fetchedResultsController.indexPath(forObject: conversation) {
-            self.subview.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .top)
+            self.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .top)
             self.openChat(forSelectedCustomer: conversation, at: indexPath)
             print("selecting from fetched results controller as new firebase entry is loaded into core data store")
         } else {
@@ -27,7 +27,10 @@ extension CustomersViewController {
     
     // MARK: - Common init
     internal func commonInit() {
+        title = agent.personName ?? agent.phoneNumber ?? "Customers"
+        view.backgroundColor = .telaGray1
         setUpNavBar()
+        configureHierarchy()
         configureTableView()
         configureDataSource()
         configureFetchedResultsController()
@@ -35,7 +38,37 @@ extension CustomersViewController {
             configureNavigationBarItems()
         }
         configureTargetActions()
-        //        setupSearchController()
+    }
+    
+    
+    
+    private func configureHierarchy() {
+        view.addSubview(inboxSpinner)
+        view.addSubview(archivedSpinner)
+        view.addSubview(inboxPlaceholderLabel)
+        view.addSubview(archivedPlaceholderLabel)
+        view.addSubview(refreshButton)
+        layoutConstraints()
+    }
+    private func layoutConstraints() {
+        inboxSpinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).activate()
+        inboxSpinner.centerYAnchor.constraint(equalTo: view.centerYAnchor).activate()
+        archivedSpinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).activate()
+        archivedSpinner.centerYAnchor.constraint(equalTo: view.centerYAnchor).activate()
+        
+        inboxPlaceholderLabel.anchor(top: nil, left: view.safeAreaLayoutGuide.leftAnchor, bottom: nil, right: view.safeAreaLayoutGuide.rightAnchor, topConstant: 0, leftConstant: 20, bottomConstant: 0, rightConstant: 20)
+        inboxPlaceholderLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -40).activate()
+        
+        archivedPlaceholderLabel.anchor(top: nil, left: view.safeAreaLayoutGuide.leftAnchor, bottom: nil, right: view.safeAreaLayoutGuide.rightAnchor, topConstant: 0, leftConstant: 20, bottomConstant: 0, rightConstant: 20)
+        archivedPlaceholderLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -40).activate()
+        
+        refreshButton.topAnchor.constraint(equalTo: view.centerYAnchor, constant: 40).activate()
+        refreshButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).activate()
+    }
+    
+    
+    func removeFirebaseObservers() {
+        if handle != nil { reference.removeObserver(withHandle: handle) }
     }
     
     internal func configureNavigationBarItems() {
@@ -48,28 +81,19 @@ extension CustomersViewController {
         self.present(vc, animated: true, completion: nil)
     }
     internal func configureTargetActions() {
-        subview.segmentedControl.addTarget(self, action: #selector(didChangeSegment(_:)), for: .valueChanged)
+        segmentedControl.addTarget(self, action: #selector(didChangeSegment(_:)), for: .valueChanged)
 //        subview.refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
     }
     
     @objc private func didChangeSegment(_ sender:UISegmentedControl) {
-        switch subview.segmentedControl.selectedSegmentIndex {
+        switch segmentedControl.selectedSegmentIndex {
         case 0: selectedSegment = .Inbox
         case 1: selectedSegment = .Archived
         default: fatalError("Invalid Segment")
         }
     }
     internal func handleEvents(for segment:Segment) {
-//        self.stopRefreshers()
         configureFetchedResultsController()
-//        switch segment {
-//        case .Inbox:
-//            print("Segment: Inbox")
-//            synchronizeWithTimeLogic()
-//        case .Archived:
-//            print("Segment: Archived")
-//            synchronizeWithTimeLogic()
-//        }
     }
     
     
@@ -79,27 +103,27 @@ extension CustomersViewController {
             case .Inbox:
                 if !isFetchedResultsAvailable {
                     DispatchQueue.main.async {
-                        self.subview.inboxPlaceholderLabel.text = "No Customer"
-                        self.subview.archivedPlaceholderLabel.isHidden = true
-                        self.subview.inboxPlaceholderLabel.isHidden = false
+                        self.inboxPlaceholderLabel.text = "No Customer"
+                        self.archivedPlaceholderLabel.isHidden = true
+                        self.inboxPlaceholderLabel.isHidden = false
                     }
                 } else {
                     DispatchQueue.main.async {
-                        self.subview.archivedPlaceholderLabel.isHidden = true
-                        self.subview.inboxPlaceholderLabel.isHidden = true
+                        self.archivedPlaceholderLabel.isHidden = true
+                        self.inboxPlaceholderLabel.isHidden = true
                     }
                 }
             case .Archived:
                 if !isFetchedResultsAvailable {
-                    self.subview.archivedPlaceholderLabel.text = "No Archived Conversation"
+                    self.archivedPlaceholderLabel.text = "No Archived Conversation"
                     DispatchQueue.main.async {
-                        self.subview.inboxPlaceholderLabel.isHidden = true
-                        self.subview.archivedPlaceholderLabel.isHidden = false
+                        self.inboxPlaceholderLabel.isHidden = true
+                        self.archivedPlaceholderLabel.isHidden = false
                     }
                 } else {
                     DispatchQueue.main.async {
-                        self.subview.inboxPlaceholderLabel.isHidden = true
-                        self.subview.archivedPlaceholderLabel.isHidden = true
+                        self.inboxPlaceholderLabel.isHidden = true
+                        self.archivedPlaceholderLabel.isHidden = true
                     }
                 }
         }
@@ -107,9 +131,9 @@ extension CustomersViewController {
     }
     internal func stopRefreshers() {
         DispatchQueue.main.async {
-            self.subview.inboxSpinner.stopAnimating()
-            self.subview.archivedSpinner.stopAnimating()
-            self.subview.tableView.refreshControl?.endRefreshing()
+            self.inboxSpinner.stopAnimating()
+            self.archivedSpinner.stopAnimating()
+            self.tableView.refreshControl?.endRefreshing()
         }
     }
     @objc private func refreshData(_ sender: Any) {
@@ -117,57 +141,27 @@ extension CustomersViewController {
     }
     internal func startInboxSpinner() {
         DispatchQueue.main.async {
-            self.subview.inboxSpinner.startAnimating()
+            self.inboxSpinner.startAnimating()
         }
     }
     internal func startArchivedSpinner() {
         DispatchQueue.main.async {
-            self.subview.archivedSpinner.startAnimating()
+            self.archivedSpinner.startAnimating()
         }
     }
     
-    internal func synchronizeWithTimeLogic() {
-        if isFetchedResultsAvailable {
-            if let customer = fetchedResultsController.fetchedObjects?.first,
-                let lastRefreshedAt = customer.lastRefreshedAt {
-                let thresholdRefreshTime = lastRefreshedAt.addingTimeInterval(20)
-                let currentTime = Date()
-                currentTime > thresholdRefreshTime ? initiateFetchCustomersSequence(withRefreshMode: .refreshControl) : ()
-                #if !RELEASE
-                print("\n\n\tLast Refreshed At: \(Date.getStringFromDate(date: lastRefreshedAt, dateFormat: "yyyy-MM-dd HH:mm:ss")) | Threshold Refresh Time: \(Date.getStringFromDate(date: thresholdRefreshTime, dateFormat: "yyyy-MM-dd HH:mm:ss")) | Current time: \(Date.getStringFromDate(date: currentTime, dateFormat: "yyyy-MM-dd HH:mm:ss")))\n\n")
-                #endif
-            }
-        } else {
-            initiateFetchCustomersSequence(withRefreshMode: .spinner)
-        }
-    }
-    internal func initiateFetchCustomersSequence(withRefreshMode refreshMode: RefreshMode) {
-        showLoadingPlaceholers()
-        if refreshMode == .spinner {
-            selectedSegment == .Inbox ? startInboxSpinner() : startArchivedSpinner()
-            // fetching remaing
-        } else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-                self.subview.tableView.refreshControl?.beginExplicitRefreshing()
-            }
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.stopRefreshers()
-            self.handleState()
-        }
-    }
     internal func showLoadingPlaceholers() {
-        subview.inboxPlaceholderLabel.text = "Loading Conversations"
-        subview.archivedPlaceholderLabel.text = "Loading"
+        inboxPlaceholderLabel.text = "Loading Conversations"
+        archivedPlaceholderLabel.text = "Loading"
         if self.selectedSegment == .Inbox {
             DispatchQueue.main.async {
-                self.subview.archivedPlaceholderLabel.isHidden = true
-                self.subview.inboxPlaceholderLabel.isHidden = false
+                self.archivedPlaceholderLabel.isHidden = true
+                self.inboxPlaceholderLabel.isHidden = false
             }
         } else {
             DispatchQueue.main.async {
-                self.subview.inboxPlaceholderLabel.isHidden = true
-                self.subview.archivedPlaceholderLabel.isHidden = false
+                self.inboxPlaceholderLabel.isHidden = true
+                self.archivedPlaceholderLabel.isHidden = false
             }
         }
     }
@@ -244,14 +238,14 @@ extension CustomersViewController {
         alertVC.view.subviews.first?.subviews.first?.backgroundColor = .clear
         alertVC.view.subviews.first?.backgroundColor = .clear
         
-        alertVC.view.addSubview(subview.reasonTextView)
-        subview.reasonTextView.delegate = self
-        subview.reasonTextView.anchor(top: alertVC.view.topAnchor, left: alertVC.view.leftAnchor, bottom: nil, right: alertVC.view.rightAnchor, topConstant: 54, leftConstant: 10, bottomConstant: 54, rightConstant: 10, heightConstant: 60)
-        alertVC.view.addSubview(subview.characterCountLabel)
-        subview.characterCountLabel.anchor(top: subview.reasonTextView.bottomAnchor, left: subview.reasonTextView.leftAnchor, bottom: alertVC.view.bottomAnchor, right: subview.reasonTextView.rightAnchor, topConstant: 5, leftConstant: 0, bottomConstant: 50, rightConstant: 3)
+        alertVC.view.addSubview(reasonTextView)
+        reasonTextView.delegate = self
+        reasonTextView.anchor(top: alertVC.view.topAnchor, left: alertVC.view.leftAnchor, bottom: nil, right: alertVC.view.rightAnchor, topConstant: 54, leftConstant: 10, bottomConstant: 54, rightConstant: 10, heightConstant: 60)
+        alertVC.view.addSubview(characterCountLabel)
+        characterCountLabel.anchor(top: reasonTextView.bottomAnchor, left: reasonTextView.leftAnchor, bottom: alertVC.view.bottomAnchor, right: reasonTextView.rightAnchor, topConstant: 5, leftConstant: 0, bottomConstant: 50, rightConstant: 3)
         let cancelAction = UIAlertAction(title: "Cancel", style: .destructive, handler: { (_) in })
         let submitAction = UIAlertAction(title: "SUBMIT", style: UIAlertAction.Style.default) { (action) in
-            let reason = self.subview.reasonTextView.text
+            let reason = self.reasonTextView.text
             if let reason = reason, !reason.isEmpty {
                 self.blockConversation(for: customer, blockingReason: reason, completion: {_ in})
             }
@@ -260,7 +254,7 @@ extension CustomersViewController {
         alertVC.addAction(cancelAction)
         alertVC.addAction(submitAction)
         self.present(alertVC, animated: true, completion: {
-            self.subview.reasonTextView.becomeFirstResponder()
+            self.reasonTextView.becomeFirstResponder()
         })
     }
 }
@@ -272,7 +266,7 @@ extension CustomersViewController: UITextViewDelegate {
             let submitAction = alertController.actions.last else { return }
         let textCount = textView.text.count
         submitAction.isEnabled = textCount > 0
-        subview.characterCountLabel.text = "Charaters left: \(70 - textCount)"
+        characterCountLabel.text = "Charaters left: \(70 - textCount)"
     }
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {

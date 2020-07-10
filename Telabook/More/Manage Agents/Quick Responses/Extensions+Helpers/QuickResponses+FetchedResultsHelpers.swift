@@ -10,36 +10,37 @@ import UIKit
 import CoreData
 
 extension QuickResponsesViewController {
-    internal func setupFetchedResultsController() {
+    internal func configureFetchedResultsController() {
         let context = PersistentContainer.shared.viewContext
-        context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
-        fetchRequest = QuickResponse.fetchRequest()
+        let fetchRequest:NSFetchRequest<QuickResponse> = QuickResponse.fetchRequest()
         let objectID = agent.objectID
         let agentRefrenceObject = context.object(with: objectID) as! Agent
+        
         let agentPredicate = NSPredicate(format: "\(#keyPath(QuickResponse.sender)) == %@", agentRefrenceObject)
         let deletionCheckPredicate = NSPredicate(format: "\(#keyPath(QuickResponse.markForDeletion)) = %d", false)
-        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [agentPredicate, deletionCheckPredicate])
+        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [agentPredicate, deletionCheckPredicate])
+        fetchRequest.predicate = predicate
+        
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(QuickResponse.updatedAt), ascending: false)]
-        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
-                                                              managedObjectContext: context,
-                                                              sectionNameKeyPath: nil,
-                                                              cacheName: String(describing: self))
+        
+        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
         
         fetchedResultsController.delegate = self
+        
+        performFetch()
+    }
+    
+    func performFetch() {
         do {
             try fetchedResultsController.performFetch()
-            updateSnapshot()
         } catch {
-            print("Error fetching results: \(error)")
+            fatalError("Unable to perform fetch on Quick Responses NSFetchedResultsController")
         }
     }
     
 }
 extension QuickResponsesViewController: NSFetchedResultsControllerDelegate {
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        self.updateSnapshot()
-    }
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
-        self.updateSnapshot(animated: true)
+        updateUI(reloadingData: true)
     }
 }

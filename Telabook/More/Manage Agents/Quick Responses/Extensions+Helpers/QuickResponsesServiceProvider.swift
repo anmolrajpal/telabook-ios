@@ -39,7 +39,7 @@ extension QuickResponsesViewController {
         let operation = CreateNewQuickResponseEntryOnServer_Operation(userID: userID, answer: answer)
         operation.completionBlock = {
             guard case let .failure(error) = operation.result else {
-                print("Quick Response Successfully Created | Fetching New Entries from server")
+                TapticEngine.generateFeedback(ofType: .Success)
                 self.fetchQuickResponses()
                 return
             }
@@ -123,7 +123,6 @@ extension QuickResponsesViewController {
                                 self.subview.characterCountLabel.text = "Max Characters: 70"
                                 self.subview.saveResponseButton.isEnabled = false
                                 self.subview.saveResponseButton.backgroundColor = UIColor.telaGray6
-                                self.updateSnapshot(animated: true)
                             }
                         }
                 }

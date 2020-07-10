@@ -138,7 +138,7 @@ class QuickResponsesView: UIView {
         button.clipsToBounds = true
         return button
     }()
-    lazy var manageResponsesHeaderView = createHeaderView(title: "Manage Quick Responses")
+    lazy var manageResponsesHeaderView = createHeaderView(title: "Manage Quick Responses".uppercased())
     let tableView : UITableView = {
         let tv = UITableView(frame: CGRect.zero, style: UITableView.Style.plain)
         tv.translatesAutoresizingMaskIntoConstraints = false

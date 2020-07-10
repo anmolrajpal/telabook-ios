@@ -15,7 +15,7 @@ extension BlacklistViewController {
         setupFetchedResultsController()
         setupTableView()
         setupTargetActions()
-        setupSearchController()
+        configureSearchController()
         synchronizeWithTimeLogic()
     }
     

@@ -10,7 +10,17 @@ import UIKit
 
 extension QuickResponsesViewController {
     
-    internal func setupTargetActions() {
+    func commonInit() {
+        configureTableView()
+        configureDataSource()
+        configureFetchedResultsController()
+        hideKeyboardWhenTappedAround()
+        configureTargetActions()
+        fetchWithTimeLogic()
+    }
+    
+    
+    private func configureTargetActions() {
         subview.doneButton.addTarget(self, action: #selector(didTapDoneButton), for: .touchUpInside)
         subview.saveResponseButton.addTarget(self, action: #selector(didTapSaveResponseButton), for: .touchUpInside)
     }
@@ -25,6 +35,7 @@ extension QuickResponsesViewController {
     private func saveResponse() {
         if let response = self.subview.responseTextView.text,
             !response.isEmpty {
+            TapticEngine.generateFeedback(ofType: .Medium)
             self.createQuickResponse(answer: response)
 //            self.initiateAddQuickResponseSequence(userId: userId, answer: response)
         } else {

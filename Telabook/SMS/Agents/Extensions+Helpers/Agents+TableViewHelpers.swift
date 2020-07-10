@@ -9,40 +9,23 @@
 import UIKit
 import CoreData
 extension AgentsViewController {
+    
     enum Section { case main }
-    class DataSource: UITableViewDiffableDataSource<String, NSManagedObjectID> {}
+    
+    class DataSource: UITableViewDiffableDataSource<Section, Agent> {}
     
     internal func configureTableView() {
-        subview.tableView.refreshControl = subview.refreshControl
-        subview.tableView.register(AgentCell.self)
-        subview.tableView.delegate = self
-        
-        
-        /*
-        self.diffableDataSource = UITableViewDiffableDataSource<Section, Agent>(tableView: self.subview.tableView, cellProvider: { (tableView, indexPath, agent) -> UITableViewCell? in
-            let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(AgentCell.self), for: indexPath) as! AgentCell
-            cell.agentDetails = agent
-            cell.backgroundColor = .clear
-            if self.pickerDelegate == nil {
-                cell.accessoryType = .disclosureIndicator
-            } else {
-                cell.cellView.badgeCountLabel.isHidden = true
-                cell.tintColor = .telaBlue
-                if agent.workerID == self.selectedAgent?.workerID,
-                    self.selectedAgent != nil {
-                    cell.accessoryType = .checkmark
-                }
-            }
-            return cell
-        })
-        updateSnapshot()
-        */
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 85, bottom: 0, right: 0)
+        tableView.tableFooterView = UIView(frame: .zero)
+        tableView.refreshControl = tableViewRefreshControl
+        tableView.register(AgentCell.self)
+        tableView.delegate = self
     }
     
     internal func configureDataSource() {
-        self.dataSource = DataSource(tableView: subview.tableView, cellProvider: { (tableView, indexPath, objectID) -> UITableViewCell? in
+        dataSource = DataSource(tableView: tableView, cellProvider: { (tableView, indexPath, agent) -> UITableViewCell? in
             let cell = tableView.dequeueReusableCell(AgentCell.self, for: indexPath)
-            let agent = self.fetchedResultsController.object(at: indexPath)
+//            let agent = self.fetchedResultsController.object(at: indexPath)
             cell.backgroundColor = .clear
             if self.pickerDelegate == nil {
                 cell.accessoryType = .disclosureIndicator
@@ -60,19 +43,23 @@ extension AgentsViewController {
             return cell
         })
     }
-    
-    /*
-    /// Create a `NSDiffableDataSourceSnapshot` with the table view data
-    internal func updateSnapshot(animated: Bool = false) {
-        snapshot = NSDiffableDataSourceSnapshot<Section, Agent>()
+    func currentSnapshot() -> NSDiffableDataSourceSnapshot<Section, Agent>? {
+        guard fetchedResultsController != nil else { return nil }
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Agent>()
         snapshot.appendSections([.main])
-        snapshot.appendItems(fetchedResultsController.fetchedObjects ?? [])
-        diffableDataSource?.apply(snapshot, animatingDifferences: animated, completion: {
+        snapshot.appendItems(agents)
+        return snapshot
+    }
+    func updateUI(animating:Bool = true, reloadingData:Bool = false) {
+        guard let snapshot = currentSnapshot() else { return }
+        dataSource.apply(snapshot, animatingDifferences: animating, completion: { [weak self] in
+            guard let self = self else { return }
+            if reloadingData && self.viewDidAppear { self.tableView.reloadData() }
             self.handleState()
         })
     }
-    */
 }
+/*
 extension AgentsViewController.DataSource: NSFetchedResultsControllerDelegate {
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
         let newSnapshot = snapshot as NSDiffableDataSourceSnapshot<String, NSManagedObjectID>
@@ -84,17 +71,23 @@ extension AgentsViewController.DataSource: NSFetchedResultsControllerDelegate {
         }
     }
 }
-extension AgentsViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+*/
+
+
+
+// MARK: - Table View Delegate
+
+extension AgentsViewController {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return AgentCell.cellHeight
     }
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? AgentCell else { return }
         let selectedAgent = fetchedResultsController.object(at: indexPath)
         if pickerDelegate == nil {
             let vc = CustomersViewController(agent: selectedAgent)
-            vc.view.backgroundColor = .telaGray1
             navigationController?.pushViewController(vc, animated: true)
+            viewDidAppear = false
         } else {
             tableView.resetCheckmarks()
             cell.accessoryType = .checkmark
@@ -104,7 +97,7 @@ extension AgentsViewController: UITableViewDelegate {
     }
     
     
-    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+    override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         guard pickerDelegate == nil else { return nil }
         let index = indexPath.row
         let agent = agents[index]
@@ -113,19 +106,46 @@ extension AgentsViewController: UITableViewDelegate {
         return UIContextMenuConfiguration(identifier: identifier, previewProvider: nil) { _ in
             var menuItems = [UIMenuElement]()
             
+            // MARK: - First Time SMS Action
+            
             let firstTimeSMSAction = UIAction(title: "First Time SMS", image: #imageLiteral(resourceName: "automsg_icon")) { _ in
                 self.showFirstTimeSMS(for: agent)
             }
+            menuItems.append(firstTimeSMSAction)
+            
+            
+            
+            
+            // MARK: - Quick Responses Action
+            
             let quickResponsesAction = UIAction(title: "Quick Responses", image: #imageLiteral(resourceName: "autoresponse_icon")) { _ in
                 self.showQuickResponses(for: agent)
             }
+            menuItems.append(quickResponsesAction)
+            
+            
+            
+            
+            // MARK: - Agent's Gallery Action
+            
             let galleryAction = UIAction(title: "Gallery", image: #imageLiteral(resourceName: "camera_icon")) { _ in
                 self.showGallery(for: agent)
             }
-            
-            menuItems.append(firstTimeSMSAction)
-            menuItems.append(quickResponsesAction)
             menuItems.append(galleryAction)
+            
+            
+            
+            
+            // MARK: - Copy Agent's DID Number Action
+            
+            if let text = agent.didNumber, !text.isBlank {
+                let copyDIDAction = UIAction(title: "Copy DID Number", image: SFSymbol.copy.image) { _ in
+                    UIPasteboard.general.string = text
+                }
+                menuItems.append(copyDIDAction)
+            }
+            
+            
             return UIMenu(title: "", children: menuItems)
         }
     }

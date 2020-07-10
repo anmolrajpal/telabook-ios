@@ -175,7 +175,7 @@ extension CustomersViewController {
                         } else {
                             DispatchQueue.main.async {
                                 self.stopRefreshers()
-//                                self.updateSnapshot(animated: true)
+                                self.handleState()
                             }
                         }
                 }
@@ -233,7 +233,7 @@ extension CustomersViewController {
                         } else {
                             completion(true)
                             DispatchQueue.main.async {
-                                self.subview.tableView.scrollToTopRow()
+                                self.tableView.scrollToTopRow()
                             }
                         }
                 }

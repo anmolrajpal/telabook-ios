@@ -10,36 +10,33 @@ import UIKit
 import MenuController
 import CoreData
 
-fileprivate protocol CustomerDataSourceDelegate {
-    func dataSourceDidUpdate()
-}
+
 extension CustomersViewController {
     enum Section { case main }
     
     
     class CustomerDataSource: UITableViewDiffableDataSource<Section, Customer> {
-        fileprivate var delegate:CustomerDataSourceDelegate?
         override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool { return true }
     }
     func configureTableView() {
-        self.subview.tableView.delegate = self
-        self.subview.tableView.register(SubtitleTableViewCell.self)
-        self.subview.tableView.register(UITableViewCell.self)
-        self.subview.tableView.register(CustomerCell.self, forCellReuseIdentifier: NSStringFromClass(CustomerCell.self))
+        tableView.tableFooterView = UIView(frame: CGRect.zero)
+        tableView.delegate = self
+        tableView.register(SubtitleTableViewCell.self)
+        tableView.register(UITableViewCell.self)
+        tableView.register(CustomerCell.self)
     }
     
     func updateUI(animating:Bool = true, reloadingData:Bool = true) {
         guard let snapshot = currentSnapshot() else { return }
         dataSource.apply(snapshot, animatingDifferences: animating, completion: { [weak self] in
             guard let self = self else { return }
-            if reloadingData { self.subview.tableView.reloadData() }
+            if reloadingData && self.viewDidAppear { self.tableView.reloadData() }
             self.handleState()
         })
     }
     
     func configureDataSource() {
-        dataSource = CustomerDataSource(tableView: self.subview.tableView, cellProvider: { (tableView, indexPath, customer) -> UITableViewCell? in
-//            let customer = self.fetchedResultsController.object(at: indexPath)
+        dataSource = CustomerDataSource(tableView: tableView, cellProvider: { (tableView, indexPath, customer) -> UITableViewCell? in
             let reusableCell:UITableViewCell
             if self.pickerDelegate != nil {
                 let phoneNumber = customer.phoneNumber ?? ""
@@ -87,7 +84,6 @@ extension CustomersViewController {
             }
             return reusableCell
         })
-//        dataSource.delegate = self
     }
     
     
@@ -100,39 +96,22 @@ extension CustomersViewController {
     }
     
 }
-/*
-extension CustomersViewController.CustomerDataSource: NSFetchedResultsControllerDelegate {
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
-        let newSnapshot = snapshot as NSDiffableDataSourceSnapshot<String, NSManagedObjectID>
-        let numberOfItems = self.snapshot().numberOfItems
-        switch numberOfItems {
-            case 0:
-                self.apply(newSnapshot, animatingDifferences: false) {
-                    self.delegate?.dataSourceDidUpdate()
-                }
-            case newSnapshot.numberOfItems:
-                self.apply(newSnapshot, animatingDifferences: false) {
-                    self.delegate?.dataSourceDidUpdate()
-                }
-            
-            default:
-                self.apply(newSnapshot, animatingDifferences: true) {
-                    self.delegate?.dataSourceDidUpdate()
-                }
-        }
+
+
+
+// MARK: - UITableView Delegate
+
+extension CustomersViewController {
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        return segmentedControl
     }
-}
-*/
-extension CustomersViewController: CustomerDataSourceDelegate {
-    func dataSourceDidUpdate() {
-        handleState()
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 40
     }
-}
-extension CustomersViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return CustomerCell.cellHeight
     }
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
         guard let customer = dataSource.itemIdentifier(for: indexPath) else { return }
         if pickerDelegate == nil {
@@ -144,7 +123,7 @@ extension CustomersViewController: UITableViewDelegate {
         }
     }
     
-    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+    override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         guard pickerDelegate == nil else { return nil }
         let index = indexPath.row
         let customer = customers[index]
@@ -154,6 +133,36 @@ extension CustomersViewController: UITableViewDelegate {
         let identifier = "\(index)" as NSString
         
         return UIContextMenuConfiguration(identifier: identifier, previewProvider: nil) { _ in
+            var menuItems = [UIMenuElement]()
+            
+            
+            
+            // MARK: - Send Message Action
+            
+            let sendMessageAction = UIAction(title: "Send Message", image: #imageLiteral(resourceName: "autoresponse_icon")) { _ in
+                self.openChat(forSelectedCustomer: customer, at: indexPath)
+            }
+            menuItems.append(sendMessageAction)
+            
+            
+            
+            
+            
+            /*
+            // MARK: - Pin/Unpin Action
+            
+            let pinningAction = UIAction(title: customer.isPinned ? "Unpin" : "Pin", image: (customer.isPinned ? #imageLiteral(resourceName: "unpin") : #imageLiteral(resourceName: "pin")).withInsets(UIEdgeInsets(top: 1, left: 1, bottom: 1, right: 1))) { _ in
+                self.updateConversationInStore(for: customer, pinning: !customer.isPinned, completion: {_ in})
+            }
+            menuItems.append(pinningAction)
+            */
+            
+            
+            
+            
+            
+            // MARK: - Send Color Action
+            
             let yellowAction = UIAction(title: "Yellow", image: SFSymbol.circleSwitch.image.withTintColor(.telaYellow, renderingMode: .alwaysOriginal)) { _ in
                 self.updateColorOnFirebase(forConversation: conversation, color: .Yellow)
             }
@@ -169,50 +178,84 @@ extension CustomersViewController: UITableViewDelegate {
             let setColorMenu = UIMenu(title: "Set Color", image: #imageLiteral(resourceName: "set_color").withInsets(UIEdgeInsets(top: 1, left: 1, bottom: 1, right: 1)), children: [
                 yellowAction, blueAction, greenAction, whiteAction
             ])
-            let sendMessageAction = UIAction(title: "Send Message", image: #imageLiteral(resourceName: "autoresponse_icon")) { _ in
-                self.openChat(forSelectedCustomer: customer, at: indexPath)
-            }
-            let pinningAction = UIAction(title: customer.isPinned ? "Unpin" : "Pin", image: (customer.isPinned ? #imageLiteral(resourceName: "unpin") : #imageLiteral(resourceName: "pin")).withInsets(UIEdgeInsets(top: 1, left: 1, bottom: 1, right: 1))) { _ in
-                self.updateConversationInStore(for: customer, pinning: !customer.isPinned, completion: {_ in})
-            }
+            menuItems.append(setColorMenu)
+            
+            
+            
+            
+            
+            // MARK: - Details Action
+            
             let detailsAction = UIAction(title: "Details", image: SFSymbol.person.image.withTintColor(.telaBlue, renderingMode: .alwaysOriginal)) { _ in
                 
             }
+            menuItems.append(detailsAction)
+            
+            
+            
+            // MARK: - Conversation Gallery Action
+            
             let galleryAction = UIAction(title: "Gallery", image: #imageLiteral(resourceName: "camera_icon")) { _ in
                 let vc = ConversationGalleryController(conversation: customer)
                 let controller = UINavigationController(rootViewController: vc)
                 self.present(controller, animated: true)
             }
+            menuItems.append(galleryAction)
+            
+            
+            
+            // MARK: - Archive/Unarchive Actions
+            
             let archiveAction = UIAction(title: "Archive", image: #imageLiteral(resourceName: "archive")) { _ in
                 self.updateConversation(for: customer, archiving: true, completion: {_ in})
             }
             let unarchiveAction = UIAction(title: "Unarchive", image: #imageLiteral(resourceName: "archive")) { _ in
                 self.updateConversation(for: customer, archiving: false, completion: {_ in})
             }
+            switch self.selectedSegment {
+                case .Inbox: menuItems.append(archiveAction)
+                case .Archived: menuItems.append(unarchiveAction)
+            }
+            
+            
+            
+            
+            // MARK: - Copy Customer Phone Number Action
+            
+            if let text = customer.phoneNumber, !text.isBlank {
+                let copyNumberAction = UIAction(title: "Copy Phone Number", image: SFSymbol.copy.image.withTintColor(.telaBlue, renderingMode: .alwaysOriginal)) { _ in
+                    UIPasteboard.general.string = text
+                }
+                menuItems.append(copyNumberAction)
+            }
+            
+            
+            
+            // MARK: - Block Action
+            
             let blockAction = UIAction(title: "Block", image: #imageLiteral(resourceName: "block_rounded"), attributes: .destructive) { _ in
                 self.promptBlockingReasonAlert(for: customer)
             }
+            menuItems.append(blockAction)
+            
+            
+            
+            // MARK: - Delete Conversation Action
             
             let deleteAction = UIAction(title: "Confirm Delete", image: #imageLiteral(resourceName: "delete_icon"), attributes: .destructive) { _ in
                 self.deleteConversation(for: customer, completion: {_ in})
             }
             let confirmDeleteMenu = UIMenu(title: "Delete", image: SFSymbol.arrowUpRightSquare.image, options: [.destructive], children: [deleteAction])
-            return UIMenu(title: "", children: [
-                sendMessageAction,
-                pinningAction,
-                setColorMenu,
-                detailsAction,
-                galleryAction,
-                self.selectedSegment == .Inbox ? archiveAction : unarchiveAction,
-                blockAction,
-                confirmDeleteMenu
-            ])
+            menuItems.append(confirmDeleteMenu)
+            
+            
+            return UIMenu(title: "", children: menuItems)
         }
     }
     
     
     
-    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         guard pickerDelegate == nil else { return nil }
         let index = indexPath.row
         let customer = customers[index]
@@ -250,7 +293,7 @@ extension CustomersViewController: UITableViewDelegate {
     
     
     
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         guard pickerDelegate == nil else { return nil }
         let index = indexPath.row
         let customer = customers[index]
@@ -267,43 +310,114 @@ extension CustomersViewController: UITableViewDelegate {
         
         
         let moreAction = UIContextualAction(style: .normal, title: "More") { (action, view, completion) in
+            
+            var menuItems = [UIControlMenuAction]()
+            
+            
+            
+            // MARK: - Send Message Action
+            
             let sendMessageAction = UIControlMenuAction(title: "Send Message", image: SFSymbol.sendMessage.image) { _ in
                 self.openChat(forSelectedCustomer: customer, at: indexPath)
             }
+            menuItems.append(sendMessageAction)
+            
+            
+            // MARK: - Pin/Unpin Action
+            
+            let pinningAction = UIControlMenuAction(title: customer.isPinned ? "Unpin" : "Pin", image: (customer.isPinned ? #imageLiteral(resourceName: "unpin") : #imageLiteral(resourceName: "pin"))) { _ in
+                self.updateConversationInStore(for: customer, pinning: !customer.isPinned, completion: completion)
+            }
+            menuItems.append(pinningAction)
+            
+            
+            
+            
+            // MARK: - Send Color Action
+            
             let setColorAction = UIControlMenuAction(title: "Set Color", image: #imageLiteral(resourceName: "set_color").image(scaledTo: CGSize(width: 26, height: 26))!, handler: { _ in
                 self.promptChatColor(indexPath: indexPath)
             })
+            menuItems.append(setColorAction)
+            
+            
+            
+            // MARK: - Details Action
+            
+            let detailsAction = UIControlMenuAction(title: "Details", image: SFSymbol.person.image.withTintColor(.telaBlue, renderingMode: .alwaysOriginal)) { _ in
+                
+            }
+            menuItems.append(detailsAction)
+            
+            
+            
+            
+            // MARK: - Conversation Gallery Action
+            
+            let galleryAction = UIControlMenuAction(title: "Gallery", image: #imageLiteral(resourceName: "camera_icon")) { _ in
+                let vc = ConversationGalleryController(conversation: customer)
+                let controller = UINavigationController(rootViewController: vc)
+                self.present(controller, animated: true)
+            }
+            menuItems.append(galleryAction)
+            
+            
+            
+            
+            
+            
+            // MARK: - Archive/Unarchive Actions
+            
             let archiveAction = UIControlMenuAction(title: "Archive", image: #imageLiteral(resourceName: "archive"), handler: { _ in
                 self.updateConversation(for: customer, archiving: true, completion: { _ in})
             })
             let unarchiveAction = UIControlMenuAction(title: "Unarchive", image: #imageLiteral(resourceName: "archive"), handler: { _ in
                 self.updateConversation(for: customer, archiving: false, completion: { _ in})
             })
-            let pinningAction = UIControlMenuAction(title: customer.isPinned ? "Unpin" : "Pin", image: (customer.isPinned ? #imageLiteral(resourceName: "unpin") : #imageLiteral(resourceName: "pin"))) { _ in
-                self.updateConversationInStore(for: customer, pinning: !customer.isPinned, completion: completion)
+            switch self.selectedSegment {
+                case .Inbox: menuItems.append(archiveAction)
+                case .Archived: menuItems.append(unarchiveAction)
             }
-            let detailsAction = UIControlMenuAction(title: "Details", image: SFSymbol.person.image.withTintColor(.telaBlue, renderingMode: .alwaysOriginal)) { _ in
-                
+            
+ 
+            
+            
+            // MARK: - Copy Customer Phone Number Action
+            
+            if let text = customer.phoneNumber, !text.isBlank {
+                let copyNumberAction = UIControlMenuAction(title: "Copy Phone Number", image: SFSymbol.copy.image) { _ in
+                    UIPasteboard.general.string = text
+                }
+                menuItems.append(copyNumberAction)
             }
+            
+            
+            
+            
+            
+            
+             // MARK: - Block Action
+            
             let blockAction = UIControlMenuAction(title: "Block", image: #imageLiteral(resourceName: "block_rounded")) { _ in
                 self.promptBlockingReasonAlert(for: customer)
             }
+            menuItems.append(blockAction)
+            
+            
+            
+            
+            
+           
+            // MARK: - Delete Conversation Action
             
             let deleteAction = UIControlMenuAction(title: "Delete", image: #imageLiteral(resourceName: "delete_icon")) { _ in
                 self.deleteConversation(for: customer, completion: {_ in})
             }
+            menuItems.append(deleteAction)
             
-            let actions:[UIControlMenuAction] = [
-                sendMessageAction,
-                pinningAction,
-                setColorAction,
-                detailsAction,
-                self.selectedSegment == .Inbox ? archiveAction : unarchiveAction,
-                blockAction,
-                deleteAction
-            ]
+            
 
-            let vc = MenuController(actions: actions)
+            let vc = MenuController(actions: menuItems)
             self.present(vc, animated: true, completion: nil)
             completion(true)
         }
@@ -336,6 +450,7 @@ extension CustomersViewController: UITableViewDelegate {
             customer.node != nil else { return }
         let vc = MessagesController(context: context, customer: customer, conversationReference: self.reference)
         navigationController?.pushViewController(vc, animated: true)
+        viewDidAppear = false
     }
 }
 

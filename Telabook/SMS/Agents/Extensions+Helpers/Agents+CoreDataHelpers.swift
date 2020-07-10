@@ -19,7 +19,7 @@ extension AgentsViewController {
             fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(Agent.date), ascending: false)]
         }
         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
-        fetchedResultsController.delegate = dataSource
+        fetchedResultsController.delegate = self
         performFetch()
     }
     internal func performFetch() {
@@ -30,8 +30,8 @@ extension AgentsViewController {
         }
     }
 }
-//extension AgentsViewController: NSFetchedResultsControllerDelegate {
-//    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
-//        self.updateSnapshot()
-//    }
-//}
+extension AgentsViewController: NSFetchedResultsControllerDelegate {
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
+        updateUI(reloadingData: true)
+    }
+}

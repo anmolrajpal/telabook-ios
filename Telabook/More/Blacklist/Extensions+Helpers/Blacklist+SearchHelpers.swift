@@ -11,7 +11,7 @@ import UIKit
 extension BlacklistViewController {
     
     /// Setup the `UISearchController` to let users search through the list of colors
-    internal func setupSearchController() {
+    internal func configureSearchController() {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.hidesNavigationBarDuringPresentation = false

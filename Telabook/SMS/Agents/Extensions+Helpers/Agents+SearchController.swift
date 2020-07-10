@@ -10,7 +10,7 @@ import UIKit
 
 extension AgentsViewController {
     /// Setup the `UISearchController` to let users search through the list of colors
-    internal func setupSearchController() {
+    internal func configureSearchController() {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.hidesNavigationBarDuringPresentation = false
@@ -31,7 +31,7 @@ extension AgentsViewController {
         ]
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes(attributes, for: .normal)
         navigationItem.searchController = searchController
-        navigationItem.hidesSearchBarWhenScrolling = false
+        navigationItem.hidesSearchBarWhenScrolling = true
     }
 }
 extension AgentsViewController: UISearchResultsUpdating {

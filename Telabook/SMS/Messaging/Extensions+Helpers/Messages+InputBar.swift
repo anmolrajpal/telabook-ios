@@ -54,12 +54,13 @@ extension MessagesController: InputBarAccessoryViewDelegate {
     
     private func showQuickResponsePicker() {
         
-        guard let quickResponses = customer.agent?.quickResponses?.allObjects as? [QuickResponse] else {
+        guard var quickResponses = customer.agent?.quickResponses?.allObjects as? [QuickResponse] else {
             #if !RELEASE
             print("Failed to cast NSSet to quick responses")
             #endif
             return
         }
+        quickResponses.sort(by: { $0.updatedAt ?? Date() > $1.updatedAt ?? Date() })
         let vc = QuickResponsePickerController(responses: quickResponses)
         vc.delegate = self
         let navController = UINavigationController(rootViewController: vc)

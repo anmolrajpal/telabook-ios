@@ -14,42 +14,24 @@ protocol AgentPickerDelegate {
     func agentsController(didPick agent:Agent, at indexPath:IndexPath, controller:UIViewController)
 }
 
-class AgentsViewController: UIViewController {
+class AgentsViewController: UITableViewController {
     
-    // MARK: - Properties
+    // MARK: - Stored Properties / declarations
     
     var pickerDelegate:AgentPickerDelegate?
     var selectedIndexPath:IndexPath?
     var selectedAgent:Agent?
+    var viewDidAppear = false
     
     var handle:UInt!
     let reference = Config.FirebaseConfig.Node.wasNotSeen.reference
-
+    
     let context:NSManagedObjectContext = PersistentContainer.shared.viewContext
     var fetchedResultsController: NSFetchedResultsController<Agent>! = nil
-   
+    
     var dataSource:DataSource! = nil
     let searchController = UISearchController(searchResultsController: nil)
-    
-    
-    // MARK: - Constructors
-    
-    lazy private(set) var subview: AgentsView = {
-        return AgentsView(frame: UIScreen.main.bounds)
-    }()
-    
-    
-    
-    
-    
-    
-//    var diffableDataSource: UITableViewDiffableDataSource<Section, Agent>?
-//    var snapshot: NSDiffableDataSourceSnapshot<Section, Agent>!
-    
-    internal var currentSearchText = ""
-    
-    
-    
+    var currentSearchText = ""
     
     
     
@@ -71,9 +53,6 @@ class AgentsViewController: UIViewController {
     
     //MARK: - Lifecycle
     
-    override func loadView() {
-        view = subview
-    }
     override func viewDidLoad() {
         super.viewDidLoad()
         commonInit()
@@ -82,26 +61,52 @@ class AgentsViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         observeReachability()
-        addFirebaseObservers()
-    }
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        viewDidAppear = true
         synchronizeAgents()
-        
-        if let selectionIndexPath = self.subview.tableView.indexPathForSelectedRow {
-            self.subview.tableView.deselectRow(at: selectionIndexPath, animated: animated)
-        }
+        addFirebaseObservers()
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         removeFirebaseObservers()
         stopObservingReachability()
     }
- 
+    
+    
+    
+    
+    
+    
+    
+    // MARK: - View Constructors
+    
+    lazy var placeholderLabel:UILabel = {
+        let label = UILabel()
+        label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 16)
+        label.textColor = UIColor.telaGray6
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.sizeToFit()
+        label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    lazy var spinner: UIActivityIndicatorView = {
+        let aiView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
+        aiView.backgroundColor = .clear
+        aiView.hidesWhenStopped = true
+        aiView.color = UIColor.white
+        aiView.clipsToBounds = true
+        aiView.translatesAutoresizingMaskIntoConstraints = false
+        return aiView
+    }()
+    lazy var tableViewRefreshControl:UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.tintColor = UIColor.telaGray7
+        return refreshControl
+    }()
     
     
 }
