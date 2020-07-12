@@ -70,7 +70,7 @@ extension UserMessage {
         self.isMessageDeleted = entry.deleted
         self.isSentByWorker = entry.senderIsWorker
         self.messageSID = entry.messageSID
-//        self.type = entry.messageType.rawValue
+        //        self.type = entry.messageType.rawValue
         self.messageType = entry.messageType
         self.sentByApiAt = entry.sentByApiTimestamp
         self.sentByAppAt = entry.sentByAppTimestamp
@@ -152,99 +152,127 @@ extension UserMessage: MessageType {
     var messageSender: MessageSender {
         return self.isSentByWorker ? worker : customer
     }
+    private func deletedMessageText() -> String {
+        return isSentByWorker ? " You deleted this message." : " This Message was deleted."
+    }
+    private func deletedMessageAttributedText() -> NSAttributedString {
+        let message = deletedMessageText()
+        let attachment = NSTextAttachment()
+        let image = SFSymbol.messageDeleted.image(withSymbolConfiguration: .init(textStyle: .footnote))
+        attachment.image = isSentByWorker ? image.withTintColor(.telaGray5) : image.withTintColor(.telaGray6)
+        attachment.bounds = CGRect(x: 0, y: -2.0, width: attachment.image!.size.width, height: attachment.image!.size.height)
+        let icon = NSAttributedString(attachment: attachment)
+        let messageString = NSMutableAttributedString(string: message, attributes: [
+            .font: UIFont.italicSystemFont(ofSize: 13),
+            .foregroundColor: isSentByWorker ? UIColor.telaGray5 : UIColor.telaGray6
+        ])
+        let attributedText = NSMutableAttributedString()
+        attributedText.append(icon)
+        attributedText.append(messageString)
+        return attributedText
+    }
+    private func getSystemMessageText() -> String {
+        return textMessage?.replacingOccurrences(of: "_", with: " ").capitalized ?? ""
+    }
+    private func getSystemMessageAttributedText() -> NSAttributedString {
+        let messageAttributedString = NSAttributedString(string: getSystemMessageText(), attributes: [
+            .font : UIFont.preferredFont(forTextStyle: .footnote),
+            .foregroundColor: UIColor.telaYellow
+        ])
+        let dateAttributedString = NSAttributedString(string: "\nTelabook 🤖 @ \(Date.getStringFromDate(date: self.date!, dateFormat: .ddMMyyyy·hmma))", attributes: [
+            .font : UIFont.preferredFont(forTextStyle: .caption1),
+            .foregroundColor: UIColor.telaYellow
+        ])
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 4
+        paragraphStyle.alignment = .center
+        let attributedText = NSMutableAttributedString()
+        attributedText.append(messageAttributedString)
+        attributedText.append(dateAttributedString)
+        attributedText.addAttribute(.paragraphStyle, value:paragraphStyle, range:NSMakeRange(0, attributedText.length))
+        return attributedText
+    }
+    private func getScheduledMessageAttributedText() -> NSAttributedString {
+        let messageAttributedString = NSAttributedString(string: self.textMessage ?? "", attributes: [
+            .font : UIFont.preferredFont(forTextStyle: .body),
+            .foregroundColor: UIColor.telaWhite
+        ])
+        let dateAttributedString = NSAttributedString(string: "\nTelabook 🤖 @ \(Date.getStringFromDate(date: self.date!, dateFormat: .ddMMyyyy·hmma))", attributes: [
+            .font : UIFont.preferredFont(forTextStyle: .footnote),
+            .foregroundColor: UIColor.telaGray5
+        ])
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 4
+        let attributedText = NSMutableAttributedString()
+        attributedText.append(messageAttributedString)
+        attributedText.append(dateAttributedString)
+        attributedText.addAttribute(.paragraphStyle, value:paragraphStyle, range:NSMakeRange(0, attributedText.length))
+        return attributedText
+    }
+    private func getTextMessageAttributedText(textMessage: String) -> NSAttributedString {
+        return NSAttributedString(string: textMessage, attributes: [
+            .font: UIFont.preferredFont(forTextStyle: .body),
+            .foregroundColor: UIColor.white
+        ])
+    }
     private func messageKind() -> MessageKind {
         switch messageType {
             case .text:
-                if self.isMessageDeleted {
-                    let message:String = isSentByWorker ? " You deleted this message." : " This Message was deleted."
-                    let attachment = NSTextAttachment()
-                    let image = SFSymbol.messageDeleted.image(withSymbolConfiguration: .init(textStyle: .footnote))
-                    attachment.image = isSentByWorker ? image.withTintColor(.telaGray5) : image.withTintColor(.telaGray6)
-                    attachment.bounds = CGRect(x: 0, y: -2.0, width: attachment.image!.size.width, height: attachment.image!.size.height)
-                    let icon = NSAttributedString(attachment: attachment)
-                    let messageString = NSMutableAttributedString(string: message, attributes: [
-                        .font: UIFont.italicSystemFont(ofSize: 13),
-                        .foregroundColor: isSentByWorker ? UIColor.telaGray5 : UIColor.telaGray6
-                    ])
-                    let attributedText = NSMutableAttributedString()
-                    attributedText.append(icon)
-                    attributedText.append(messageString)
+                if isMessageDeleted {
+                    let attributedText = deletedMessageAttributedText()
                     return .attributedText(attributedText)
                 } else {
                     let text = self.textMessage ?? ""
                     if text.containsOnlyEmoji {
                         return .emoji(text)
                     } else {
-                        return .attributedText(NSAttributedString(string: text, attributes: [
-                            .font: UIFont.preferredFont(forTextStyle: .body),
-                            .foregroundColor: UIColor.telaWhite
-                        ]))
+                        return .attributedText(getTextMessageAttributedText(textMessage: text))
                     }
             }
             case .multimedia:
-                if let url = self.imageURL {
-                    if let imageText = self.textMessage, !imageText.isBlank {
-                        return .photo(ImageItem(imageUrl: url, imageText: imageText))
-                    } else {
-                        return .photo(ImageItem(imageUrl: url))
-                    }
+                if isMessageDeleted {
+                    let attributedText = deletedMessageAttributedText()
+                    return .attributedText(attributedText)
                 } else {
-                    return .text(self.textMessage ?? "")
-            }
+                    if let url = self.imageURL {
+                        let width = UIScreen.main.bounds.width * 0.7
+                        let size = CGSize(width: width, height: width)
+                        if let imageText = self.textMessage, !imageText.isBlank {
+                            return .photo(ImageItem(imageUrl: url, attributedText: getTextMessageAttributedText(textMessage: imageText), size: size))
+                        } else {
+                            return .photo(ImageItem(imageUrl: url, size: size))
+                        }
+                    } else {
+                        return .attributedText(getTextMessageAttributedText(textMessage: "Media Unavailable"))
+                    }
+                }
+            
             case .scheduled:
-                let messageAttributedString = NSAttributedString(string: self.textMessage ?? "", attributes: [
-                    .font : UIFont.preferredFont(forTextStyle: .body),
-                    .foregroundColor: UIColor.telaWhite
-                ])
-//                let typeAttributedString = NSAttributedString(string: "Scheduled Message: ", attributes: [
-//                    .font : UIFont.preferredFont(forTextStyle: .caption1),
-//                    .foregroundColor: UIColor.telaGray6
-//                ])
-                let dateAttributedString = NSAttributedString(string: "\nTelabook 🤖 @ \(Date.getStringFromDate(date: self.date!, dateFormat: .ddMMyyyy·hmma))", attributes: [
-                    .font : UIFont.preferredFont(forTextStyle: .footnote),
-                    .foregroundColor: UIColor.telaGray5
-                ])
-                let paragraphStyle = NSMutableParagraphStyle()
-                paragraphStyle.lineSpacing = 4
-//                paragraphStyle.alignment = .center
-                let attributedText = NSMutableAttributedString()
-//                attributedText.append(typeAttributedString)
-                attributedText.append(messageAttributedString)
-                attributedText.append(dateAttributedString)
-                attributedText.addAttribute(.paragraphStyle, value:paragraphStyle, range:NSMakeRange(0, attributedText.length))
-                return .attributedText(attributedText)
+                if isMessageDeleted {
+                    let attributedText = deletedMessageAttributedText()
+                    return .attributedText(attributedText)
+                } else {
+                    let attributedText = getScheduledMessageAttributedText()
+                    return .attributedText(attributedText)
+                }
             
             case .system:
-                let messageAttributedString = NSAttributedString(string: self.textMessage?.replacingOccurrences(of: "_", with: " ").capitalized ?? "", attributes: [
-                    .font : UIFont.preferredFont(forTextStyle: .footnote),
-                    .foregroundColor: UIColor.telaYellow
-                ])
-                let dateAttributedString = NSAttributedString(string: "\nTelabook 🤖 @ \(Date.getStringFromDate(date: self.date!, dateFormat: .ddMMyyyy·hmma))", attributes: [
-                    .font : UIFont.preferredFont(forTextStyle: .caption1),
-                    .foregroundColor: UIColor.telaYellow
-                ])
-                let paragraphStyle = NSMutableParagraphStyle()
-                paragraphStyle.lineSpacing = 4
-                paragraphStyle.alignment = .center
-                let attributedText = NSMutableAttributedString()
-                attributedText.append(messageAttributedString)
-                attributedText.append(dateAttributedString)
-                attributedText.addAttribute(.paragraphStyle, value:paragraphStyle, range:NSMakeRange(0, attributedText.length))
+                let attributedText = getSystemMessageAttributedText()
                 return .custom(attributedText)
         }
     }
 }
 
 
-extension UserMessage: Comparable {
-    public static func == (lhs: UserMessage, rhs: UserMessage) -> Bool {
-        return lhs.sentDate == rhs.sentDate
-    }
-    
-    public static func < (lhs: UserMessage, rhs: UserMessage) -> Bool {
-        return lhs.sentDate < rhs.sentDate
-    }
-}
+//extension UserMessage: Comparable {
+//    public static func == (lhs: UserMessage, rhs: UserMessage) -> Bool {
+//        return lhs.sentDate == rhs.sentDate
+//    }
+//
+//    public static func < (lhs: UserMessage, rhs: UserMessage) -> Bool {
+//        return lhs.sentDate < rhs.sentDate
+//    }
+//}
 
 
 
@@ -265,43 +293,52 @@ struct ImageItem: MediaItem {
     var image: UIImage?
     var imageUUID:UUID?
     var imageText:String?
+    var attributedText:NSAttributedString?
     var placeholderImage: UIImage
     var size: CGSize
     
     init(image: UIImage) {
         self.image = image
-        self.size = CGSize(width: 240, height: 240)
+        self.size = CGSize(width: 270, height: 270)
         self.placeholderImage = UIImage()
     }
-    init(imageUrl: URL, size:CGSize = .init(width: 240, height: 240)) {
+    init(imageUrl: URL, size:CGSize = .init(width: 270, height: 270)) {
         self.url = imageUrl
         self.size = size
         self.placeholderImage = UIImage()
-//        self.placeholderImage = size.width > size.height ? #imageLiteral(resourceName: "placeholder-image") : #imageLiteral(resourceName: "placeholder.png")
     }
-    init(imageUrl: URL, imageText:String, size:CGSize = .init(width: 240, height: 240)) {
-        self.url = imageUrl
+    init(imageUrl: URL, imageText:String, size:CGSize = .init(width: 270, height: 270)) {
+        self.init(imageUrl: imageUrl, size: size)
         self.imageText = imageText
-        self.size = size
-        self.placeholderImage = UIImage()
-//        self.placeholderImage = size.width > size.height ? #imageLiteral(resourceName: "placeholder-image") : #imageLiteral(resourceName: "placeholder.png")
     }
-    init(imageUrl:URL, image:UIImage, size:CGSize = .init(width: 240, height: 240)) {
+    init(imageUrl: URL, attributedText:NSAttributedString, size:CGSize = .init(width: 270, height: 270)) {
+        self.init(imageUrl: imageUrl, imageText: attributedText.string, size: size)
+        self.attributedText = attributedText
+    }
+    init(imageUrl:URL, image:UIImage?, attributedText:NSAttributedString, size:CGSize = .init(width: 270, height: 270)) {
+        self.init(imageUrl: imageUrl, attributedText: attributedText, size: size)
+        self.image = image
+    }
+    init(imageUrl:URL, image:UIImage?, size:CGSize = .init(width: 270, height: 270)) {
         self.url = imageUrl
         self.image = image
         self.size = size
         self.placeholderImage = UIImage()
-//        self.placeholderImage = size.width > size.height ? #imageLiteral(resourceName: "placeholder-image") : #imageLiteral(resourceName: "placeholder.png")
+        //        self.placeholderImage = size.width > size.height ? #imageLiteral(resourceName: "placeholder-image") : #imageLiteral(resourceName: "placeholder.png")
     }
     
     
-    init(image:UIImage, imageUUID:UUID, uploadURL:URL?, imageText:String?, size:CGSize = .init(width: 240, height: 240)) {
+    init(image:UIImage, imageUUID:UUID, uploadURL:URL?, imageText:String?, size:CGSize = .init(width: 270, height: 270)) {
         self.image = image
         self.imageText = imageText
         self.imageUUID = imageUUID
         self.url = uploadURL
         self.size = size
         self.placeholderImage = UIImage()
+    }
+    init(image:UIImage, imageUUID:UUID, uploadURL:URL?, attributedText:NSAttributedString, size:CGSize = .init(width: 270, height: 270)) {
+        self.init(image: image, imageUUID: imageUUID, uploadURL: uploadURL, imageText: attributedText.string, size: size)
+        self.attributedText = attributedText
     }
 }
 
@@ -362,7 +399,7 @@ extension UserMessage {
             return nil
         }
         let mediaFolder = con.mediaFolder()
-//        print("Media folder url: \(mediaFolder)")
+        //        print("Media folder url: \(mediaFolder)")
         let url = mediaFolder.appendingPathComponent(fileName)
         return url
     }

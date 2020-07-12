@@ -776,6 +776,15 @@ extension String {
 }
 
 
+extension UIEdgeInsets {
+    var horizontal:CGFloat {
+        return left + right
+    }
+    var vertical:CGFloat {
+        return top + bottom
+    }
+}
+
 
 let imageCache = NSCache<NSString, UIImage>()
 

@@ -11,22 +11,16 @@ import MessageKit
 
 extension MessagesController: MessagesDataSource {
     func currentSender() -> SenderType {
-        self.thisSender
+        return self.thisSender
     }
     
     func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
-//        let messages = self.fetchedResults ?? []
-        
-//        messages.sort(by: { $0.sentDate < $1.sentDate })
         return messages[indexPath.section]
     }
-    func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int { messages.count }
-    
-    func isEarliest(_ message:UserMessage) -> Bool {
-//        guard let messages = self.fetchedResults else { return false }
-        let filteredMessages = messages.filter{( Date.isDateSame(date1: message.sentDate, date2: $0.sentDate) )}
-        return message == filteredMessages.min() ? true : false
+    func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int {
+        return messages.count
     }
+    
     
     func cellTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
         if !isPreviousMessageDateInSameDay(at: indexPath) {
@@ -37,18 +31,6 @@ extension MessagesController: MessagesDataSource {
                 ]
             )
         }
-        /*
-        if isEarliest(message as! UserMessage) {
-            let date = Date.getStringFromDate(date: message.sentDate, dateFormat: CustomDateFormat.chatHeaderDate)
-            return NSAttributedString(
-                string: date,
-                attributes: [
-                    .font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 12.0)!,
-                    .foregroundColor: UIColor.telaGray7
-                ]
-            )
-        }
- */
         return nil
     }
     
@@ -66,36 +48,10 @@ extension MessagesController: MessagesDataSource {
     
     
     func messageBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
-        
-        
-        guard let message = message as? UserMessage else {
-            #if !RELEASE
-            print("Unresolved Error: Failed to cast Message Type as UserMessage")
-            #endif
-            return nil
-        }
+
+        let message = message as! UserMessage
         
         let time = Date.getStringFromDate(date: message.sentDate, dateFormat: CustomDateFormat.hmma)
-        
-        /*
-        let singleTickAttachment = NSTextAttachment()
-        let singleTickImage = #imageLiteral(resourceName: "tick.single.glyph").image(scaledTo: .init(width: 15, height: 15))!.withTintColor(.telaGray6)
-        singleTickAttachment.image = singleTickImage
-        singleTickAttachment.bounds = CGRect(x: 0, y: -4.0, width: singleTickAttachment.image!.size.width, height: singleTickAttachment.image!.size.height)
-        let singleTick = NSAttributedString(attachment: singleTickAttachment)
-        
-        let doubleTickAttachment = NSTextAttachment()
-        let doubleTickImage = #imageLiteral(resourceName: "tick.double.glyph").image(scaledTo: .init(width: 15, height: 15))!.withTintColor(.telaBlue)
-        doubleTickAttachment.image = doubleTickImage
-        doubleTickAttachment.bounds = CGRect(x: 0, y: -4.0, width: doubleTickAttachment.image!.size.width, height: doubleTickAttachment.image!.size.height)
-        let doubleTick = NSAttributedString(attachment: doubleTickAttachment)
-        
-        let blueDoubleTickAttachment = NSTextAttachment()
-        let blueDoubleTickImage = #imageLiteral(resourceName: "tick.double.glyph").image(scaledTo: .init(width: 15, height: 15))!.withTintColor(.telaGray6)
-        blueDoubleTickAttachment.image = blueDoubleTickImage
-        blueDoubleTickAttachment.bounds = CGRect(x: 0, y: -4.0, width: blueDoubleTickAttachment.image!.size.width, height: blueDoubleTickAttachment.image!.size.height)
-        let blueDoubleTick = NSAttributedString(attachment: blueDoubleTickAttachment)
-        */
         
         let attributedText = NSMutableAttributedString(string: "")
         let prefix = NSAttributedString(
@@ -203,25 +159,37 @@ class NewMessagesCountReusableView:MessageReusableView {
     }
     override class var requiresConstraintBasedLayout: Bool { true }
 }
-open class CustomMessagesFlowLayout: MessagesCollectionViewFlowLayout {
+open class CustomMessagesCollectionViewFlowLayout: MessagesCollectionViewFlowLayout {
+    public var leftNormalInsets = UIEdgeInsets(top: 1, left: 10, bottom: 1, right: 0)
+    public var leftTailInsets = UIEdgeInsets(top: 1, left: 0, bottom: 1, right: 0)
+    public var rightNormalInsets = UIEdgeInsets(top: 1, left: 0, bottom: 1, right: 10)
+    public var rightTailInsets = UIEdgeInsets(top: 1, left: 0, bottom: 1, right: 0)
     
-    open lazy var customMessageSizeCalculator = CustomMessageSizeCalculator(layout: self)
     
+    
+    lazy var customMessageSizeCalculator = CustomMessageSizeCalculator(layout: self)
+    lazy var photoItemMessageSizeCalculator = PhotoMessageSizeCalculator(layout: self)
+    lazy var videoItemMessageSizeCalculator = PhotoMessageSizeCalculator(layout: self)
+
     open override func cellSizeCalculatorForItem(at indexPath: IndexPath) -> CellSizeCalculator {
         if isSectionReservedForTypingIndicator(indexPath.section) {
             return typingIndicatorSizeCalculator
         }
         let message = messagesDataSource.messageForItem(at: indexPath, in: messagesCollectionView)
-        if case .custom = message.kind {
-            return customMessageSizeCalculator
+        switch message.kind {
+            case .photo: return photoItemMessageSizeCalculator
+            case .video: return videoItemMessageSizeCalculator
+            case .custom: return customMessageSizeCalculator
+            default: return super.cellSizeCalculatorForItem(at: indexPath)
         }
-        return super.cellSizeCalculatorForItem(at: indexPath)
     }
     
     open override func messageSizeCalculators() -> [MessageSizeCalculator] {
         var superCalculators = super.messageSizeCalculators()
         // Append any of your custom `MessageSizeCalculator` if you wish for the convenience
         // functions to work such as `setMessageIncoming...` or `setMessageOutgoing...`
+        superCalculators.append(photoItemMessageSizeCalculator)
+        superCalculators.append(videoItemMessageSizeCalculator)
         superCalculators.append(customMessageSizeCalculator)
         return superCalculators
     }
@@ -242,4 +210,83 @@ open class CustomMessageSizeCalculator: MessageSizeCalculator {
         return CGSize(width: collectionViewWidth - inset, height: 44)
     }
   
+}
+
+
+open class PhotoMessageSizeCalculator: MessageSizeCalculator {
+    
+    
+    public var incomingMessageLabelInsets = UIEdgeInsets(top: 7, left: 18, bottom: 7, right: 14)
+    public var outgoingMessageLabelInsets = UIEdgeInsets(top: 7, left: 14, bottom: 7, right: 18)
+
+    public var messageLabelFont = UIFont.preferredFont(forTextStyle: .body)
+    
+    
+    internal func labelSize(for attributedText: NSAttributedString, considering maxWidth: CGFloat) -> CGSize {
+        let constraintBox = CGSize(width: maxWidth, height: .greatestFiniteMagnitude)
+        let rect = attributedText.boundingRect(with: constraintBox, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).integral
+
+        return rect.size
+    }
+    open override func messageContainerSize(for message: MessageType) -> CGSize {
+        let maxWidth = messageContainerMaxWidth(for: message)
+        
+        var messageContainerSize: CGSize
+        let attributedText: NSAttributedString
+        
+        
+        let sizeForMediaItem = { (maxWidth: CGFloat, item: ImageItem) -> CGSize in
+            
+            if maxWidth < item.size.width {
+                // Maintain the ratio if width is too great
+                let height = maxWidth * item.size.height / item.size.width
+                return CGSize(width: maxWidth, height: height)
+            }
+            return item.size
+        }
+        
+        switch message.kind {
+        case .photo(let item as ImageItem):
+            attributedText = NSAttributedString(string: item.imageText ?? "", attributes: [.font: messageLabelFont])
+            messageContainerSize = sizeForMediaItem(maxWidth, item)
+        default:
+            fatalError("messageContainerSize received unhandled MessageDataType: \(message.kind)")
+        }
+        if !attributedText.string.isEmpty {
+            let messageLabelSize = labelSize(for: attributedText, considering: messageContainerSize.width)
+            messageContainerSize.height += messageLabelSize.height
+            
+//            let messageInsets = messageLabelInsets(for: message)
+//            messageContainerSize.width += messageInsets.left + messageInsets.right
+//            messageContainerSize.height += messageInsets.top + messageInsets.bottom
+        }
+        return messageContainerSize
+    }
+    
+    
+    open override func configure(attributes: UICollectionViewLayoutAttributes) {
+        super.configure(attributes: attributes)
+        guard let attributes = attributes as? MessagesCollectionViewLayoutAttributes else { return }
+
+        let dataSource = messagesLayout.messagesDataSource
+        let indexPath = attributes.indexPath
+        let message = dataSource.messageForItem(at: indexPath, in: messagesLayout.messagesCollectionView)
+
+        attributes.messageLabelInsets = messageLabelInsets(for: message)
+        attributes.messageLabelFont = messageLabelFont
+
+        switch message.kind {
+        case .photo(let mediaItem as ImageItem):
+            guard let text = mediaItem.attributedText, !text.string.isEmpty else { return }
+            guard let font = text.attribute(.font, at: 0, effectiveRange: nil) as? UIFont else { return }
+            attributes.messageLabelFont = font
+        default: break
+        }
+    }
+    
+    internal func messageLabelInsets(for message: MessageType) -> UIEdgeInsets {
+        let dataSource = messagesLayout.messagesDataSource
+        let isFromCurrentSender = dataSource.isFromCurrentSender(message: message)
+        return isFromCurrentSender ? outgoingMessageLabelInsets : incomingMessageLabelInsets
+    }
 }

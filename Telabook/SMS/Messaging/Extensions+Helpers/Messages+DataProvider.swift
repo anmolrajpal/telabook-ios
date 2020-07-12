@@ -18,7 +18,8 @@ extension MessagesController {
     
     
     func observeNewMessages() -> UInt {
-        return reference.queryOrdered(byChild: "date").queryStarting(atValue: screenEntryTime.milliSecondsSince1970).observe(.childAdded, with: { snapshot in
+        return reference.queryOrdered(byChild: "date").queryStarting(atValue: screenEntryTime.milliSecondsSince1970).observe(.childAdded, with: { [weak self] snapshot in
+            guard let self = self else { return }
             if snapshot.exists() {
 //                print("New Message Child Added: \(snapshot)")
                 guard let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) else {
@@ -32,7 +33,8 @@ extension MessagesController {
     }
     
     func observeExistingMessages() -> UInt {
-        return reference.queryOrdered(byChild: "date").queryStarting(atValue: screenEntryTime.milliSecondsSince1970).observe(.childChanged, with: { snapshot in
+        return reference.queryOrdered(byChild: "date").queryStarting(atValue: screenEntryTime.milliSecondsSince1970).observe(.childChanged, with: { [weak self] snapshot in
+            guard let self = self else { return }
             if snapshot.exists() {
 //                print("Existing Message Child Updated: \(snapshot)")
                 guard let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) else {

@@ -41,10 +41,6 @@ extension URLSessionConfiguration {
 
 class MessagesController: MessagesViewController {
     
-    
-    
-    
-    
     // MARK: - init
     let mediaManager = MessageMediaManager.shared
     let downloadService:DownloadService
@@ -105,11 +101,9 @@ class MessagesController: MessagesViewController {
     
     var shouldAutoDownloadImageMessages = false
     
-    internal var storageUploadTask:StorageUploadTask!
+    var storageUploadTask:StorageUploadTask!
     
-//    internal var fetchedResultsController: NSFetchedResultsController<UserMessage>! = nil
-    
-    internal var indexPathForMessageBottomLabelToShow:IndexPath?
+    var indexPathForMessageBottomLabelToShow:IndexPath?
     
     var isLoading = false
     
@@ -173,22 +167,6 @@ class MessagesController: MessagesViewController {
     }
     
     
-//    var mediaMessages:[URL] {
-//        var contents = [URL]()
-//        do {
-//            contents = try FileManager.default.contentsOfDirectory(at: customer.mediaFolder(), includingPropertiesForKeys: nil)
-//        } catch {
-//            printAndLog(message: error.localizedDescription, log: .ui, logType: .error)
-//        }
-//        return contents
-//    }
-    
-    
-    
-//    var messages:[UserMessage] {
-//        fetchedResultsController.fetchedObjects?.reversed() ?? []
-//    }
-    
     
     
    // MARK: - Constructors
@@ -198,26 +176,19 @@ class MessagesController: MessagesViewController {
     //MARK: - Lifecycle
     
     override func viewDidLoad() {
+        super.messagesCollectionView.collectionViewLayout = CustomMessagesCollectionViewFlowLayout()
         super.viewDidLoad()
         commonInit()
-//        uploadService.uploadsSession = uploadSession
-//        MessageDownloadManager.delegate = self
-//        let downloadManager = MessageDownloadManager.shared
-//        let downloadSession = downloadManager.session
-//        activeDownloadMessages.forEach({
-//            guard let url = $0.imageURL else { return }
-//            let download = Download(message: $0)
-//            downloadService.activeDownloads[url] = download
-//        })
-        
-//        downloadService.downloadsSession = downloadSession
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        markAllMessagesAsSeen()
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         stopMonitoringNetwork()
         stopObservingReachability()
         removeFirebaseObservers()
-        markAllMessagesAsSeen()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -248,7 +219,8 @@ class MessagesController: MessagesViewController {
         if childUpdatedHandle != nil { reference.removeObserver(withHandle: childUpdatedHandle) }
     }
     private func monitorNetwork() {
-        monitor.pathUpdateHandler = { path in
+        monitor.pathUpdateHandler = { [weak self] path in
+            guard let self = self else { return }
             switch self.autoDownloadImageMessagesState {
                 case .never:
                     self.shouldAutoDownloadImageMessages = false
@@ -279,8 +251,11 @@ class MessagesController: MessagesViewController {
         guard !isSectionReservedForTypingIndicator(indexPath.section) else {
             return super.collectionView(collectionView, cellForItemAt: indexPath)
         }
-
+        
         let message = messagesDataSource.messageForItem(at: indexPath, in: messagesCollectionView) as! UserMessage
+        
+
+        
         if case .photo = message.kind {
             let cell = messagesCollectionView.dequeueReusableCell(MMSCell.self, for: indexPath)
             cell.cellDelegate = self
@@ -290,58 +265,72 @@ class MessagesController: MessagesViewController {
         return super.collectionView(collectionView, cellForItemAt: indexPath)
     }
 
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        guard let layout = collectionViewLayout as? CustomMessagesCollectionViewFlowLayout else {
+            fatalError()
+        }
 
+        let indexPath = IndexPath(item: 0, section: section)
+        let dataSource = layout.messagesDataSource
+        let message = dataSource.messageForItem(at: indexPath, in: messagesCollectionView) as! UserMessage
+        if isFromCurrentSender(message: message) {
+            if !isNextMessageSameSender(at: indexPath) || !isNextMessageDateInSameDay(at: indexPath) {
+                return layout.rightTailInsets
+            } else {
+                return layout.rightNormalInsets
+            }
+        } else {
+            if !isNextMessageSameSender(at: indexPath) || !isNextMessageDateInSameDay(at: indexPath) {
+                return layout.leftTailInsets
+            } else {
+                return layout.leftNormalInsets
+            }
+        }
+    }
+     
     
-    
-    //MARK: - Override
-    
-    // MARK: Implementation may be faulty as the top key from core data is the proper key but there may be possible loss where app is unable to create conversation from Firebase and save it to core data. and hence, at first load, new entries from firebase get appends in core data. Thus, offset difference is there and some firebase entries won't be overwritten when updated.
-//    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-//        guard messages.count > 2 else { return }
-//        if indexPath.section == 0 {
-//            let offsetTime = Calendar.current.date(byAdding: .second, value: 2, to: screenEntryTime)!
-//            if !isLoading && Date() > offsetTime {
-//                print("isLoading: \(isLoading)")
-////                firstMessage = fetchedResults?.first
-//
-//                self.loadMoreMessages(offsetMessage: messages[0])
-////                self.fetchMoreMessages(offsetMessage: messages[0])
-//            }
-//        }
-//    }
-    //    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-    //        guard let messagesFlowLayout = collectionViewLayout as? MessagesCollectionViewFlowLayout else { return .zero }
-    //        let dataSource = messagesFlowLayout.messagesDataSource
-    //        let message = dataSource.messageForItem(at: indexPath, in: messagesCollectionView) as! UserMessage
-    ////        messagesFlowLayout.estimatedItemSize = MessagesCollectionViewFlowLayout.automaticSize
-    //        if message.isFault {
-    //            print("Fault at indexPath: \(indexPath)")
-    //            return .zero
-    //        } else {
-    //            print("Firing Fault at indexPath: \(indexPath)")
-    //            return messagesFlowLayout.sizeForItem(at: indexPath)
-    //        }
-    ////        return .init(width: collectionView.frame.width, height: 200)
-    //    }
+    /*
+     
+    // MARK: - Can Be used to play more with section insets
+     
+    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        guard let layout = collectionViewLayout as? CustomMessagesCollectionViewFlowLayout else { return .zero }
+        let dataSource = layout.messagesDataSource
+        let message = dataSource.messageForItem(at: indexPath, in: messagesCollectionView) as! UserMessage
 
-    
-//    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//        if indexPath.section == 0 {
-//            let offsetTime = Calendar.current.date(byAdding: .second, value: 2, to: screenEntryTime)!
-//            if !isLoading && Date() > offsetTime {
-//                print("isLoading: \(isLoading)")
-//                //                firstMessage = fetchedResults?.first
-//                self.loadMoreMessages(offsetMessage: messages[0])
-//                //                self.fetchMoreMessages(offsetMessage: messages[0])
-//            }
-//        }
-//        let cell = super.collectionView(collectionView, cellForItemAt: indexPath)
-////        cell.layer.shouldRasterize = true
-////        cell.layer.rasterizationScale = UIScreen.main.scale
-//        return cell
-//    }
-    
-    
+        
+        let leftNormalHorizontalInset = layout.leftNormalInsets.horizontal
+        let leftTailHorizontalInset = layout.leftTailInsets.horizontal
+        let rightNormalHorizontalInset = layout.rightNormalInsets.horizontal
+        let rightTailHorizontalInset = layout.rightTailInsets.horizontal
+        
+        let collectionViewWidth = layout.collectionView?.bounds.width ?? 0
+        let contentInset = layout.collectionView?.contentInset ?? .zero
+        let horizontalContentInset = contentInset.horizontal
+        
+        var size = layout.sizeForItem(at: indexPath)
+        let inset:CGFloat
+        
+        if isFromCurrentSender(message: message) {
+            if !isNextMessageSameSender(at: indexPath) || !isNextMessageDateInSameDay(at: indexPath) {
+                inset = rightTailHorizontalInset + horizontalContentInset
+            } else {
+                inset = rightNormalHorizontalInset + horizontalContentInset
+            }
+        } else {
+            if !isNextMessageSameSender(at: indexPath) || !isNextMessageDateInSameDay(at: indexPath) {
+                inset = leftTailHorizontalInset + horizontalContentInset
+            } else {
+                inset = leftNormalHorizontalInset + horizontalContentInset
+            }
+        }
+        
+//        size.width += inset
+        return size
+//        return CGSize(width: collectionViewWidth - inset, height: size.height)
+    }
+     */
     
     
     
@@ -423,4 +412,20 @@ class MessagesController: MessagesViewController {
     
 
     
+}
+
+
+
+open class CustomMessagesCollectionView: MessagesCollectionView {
+    public override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
+        super.init(frame: frame, collectionViewLayout: layout)
+        
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        super.init(frame: .zero, collectionViewLayout: CustomMessagesCollectionViewFlowLayout())
+    }
+    public convenience init() {
+        self.init(frame: .zero, collectionViewLayout: CustomMessagesCollectionViewFlowLayout())
+    }
 }
