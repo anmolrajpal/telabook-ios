@@ -11,7 +11,8 @@ import Firebase
 import CoreData
 
 protocol AgentGalleryImagePickerDelegate {
-    func agentGalleryController(didPickImage image:UIImage, forGalleryItem item:AgentGalleryItem, at indexPath:IndexPath)
+    func agentGalleryController(controller: AgentGalleryController, didPickImage image:UIImage, forGalleryItem item:AgentGalleryItem, at indexPath:IndexPath)
+    func agentGalleryController(controller: AgentGalleryController, didFinishCancelled cancelled:Bool)
 }
 class AgentGalleryController:UIViewController {
     

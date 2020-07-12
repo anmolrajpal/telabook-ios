@@ -136,7 +136,7 @@ extension MessagesController {
     
     // MARK: - Upload Conversation Media Image
     
-    func uploadImage(_ image: UIImage) {
+    func uploadImage(_ image: UIImage, textMessage:String) {
         guard let key = reference.childByAutoId().key else {
             printAndLog(message: "### \(#function) Failed to create child by auto id while uploading image", log: .firebase, logType: .error)
             return
@@ -180,7 +180,7 @@ extension MessagesController {
         let uploadURLString = FirebaseConfiguration.storageURLString + slashEncodedPath
         let uploadURL = URL(string: uploadURLString)!
         
-        let message = NewMessage(kind: .photo(ImageItem(image: scaledImage, imageUUID: imageUUID, uploadURL: uploadURL, imageText: nil)), messageId: key, sender: thisSender, sentDate: Date())
+        let message = NewMessage(kind: .photo(ImageItem(image: scaledImage, imageUUID: imageUUID, uploadURL: uploadURL, imageText: textMessage)), messageId: key, sender: thisSender, sentDate: Date())
         
         viewContext.performAndWait {
             let newMessage = UserMessage(context: viewContext, newMessageEntryFromCurrentUser: message, forConversationWithCustomer: customer)
@@ -222,32 +222,84 @@ extension MessagesController:MMSCellDelegate {
 }
 
 
-extension MessagesController: UIImagePickerControllerDelegate, UINavigationControllerDelegate, CropViewControllerDelegate {
-    
+
+
+
+
+// MARK: - Photo Library / Camera Image picker delegate
+
+extension MessagesController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        
         let image = info[UIImagePickerController.InfoKey.originalImage] as! UIImage
         let vc = CropViewController(image: image)
         vc.delegate = self
         picker.pushViewController(vc, animated: true)
     }
-    
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
     }
-    
+}
+
+
+
+// MARK: - Agent Gallery image picker delegate
+
+extension MessagesController: AgentGalleryImagePickerDelegate {
+    func agentGalleryController(controller: AgentGalleryController, didPickImage image: UIImage, forGalleryItem item: AgentGalleryItem, at indexPath: IndexPath) {
+        let vc = CropViewController(image: image)
+        vc.delegate = self
+        controller.show(vc, sender: controller)
+    }
+    func agentGalleryController(controller: AgentGalleryController, didFinishCancelled cancelled: Bool) {
+        controller.dismiss(animated: true)
+    }
+}
+
+
+
+// MARK: - Conversation Gallery image picker delegate
+
+extension MessagesController: ConversationGalleryImagePickerDelegate {
+    func conversationGalleryController(controller: ConversationGalleryController, didPickImage image: UIImage, forMessage message: UserMessage, at indexPath: IndexPath) {
+        let vc = CropViewController(image: image)
+        vc.delegate = self
+        controller.show(vc, sender: controller)
+    }
+    func conversationGalleryController(controller: ConversationGalleryController, didFinishCancelled cancelled: Bool) {
+        controller.dismiss(animated: true)
+    }
+}
+
+
+
+// MARK: - Crop View Controller delegate
+
+extension MessagesController: CropViewControllerDelegate {
     func cropViewController(_ cropViewController: CropViewController, didFinishCancelled cancelled: Bool) {
-        cropViewController.dismiss(animated: true) {
-            
-        }
+        cropViewController.dismiss(animated: true)
     }
     func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
-        cropViewController.dismiss(animated: true) {
-            self.uploadImage(image)
+        let vc = MediaAssertionController(image: image)
+        vc.delegate = self
+        cropViewController.show(vc, sender: cropViewController)
+    }
+}
+
+
+
+// MARK: - Media Assertion delegate: Add text message to image
+
+extension MessagesController: MediaAssertionDelegate {
+    func mediaAssertionController(controller: UIViewController, didPickImage image: UIImage, textMessage: String) {
+        controller.dismiss(animated: true) {
+            self.uploadImage(image, textMessage: textMessage)
         }
     }
-    
+    func mediaAssertionController(controller: UIViewController, didFinishCancelled cancelled: Bool) {
+        controller.dismiss(animated: true)
+    }
 }
+
 
 
 

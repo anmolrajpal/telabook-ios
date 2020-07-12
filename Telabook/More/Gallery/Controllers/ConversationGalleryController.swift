@@ -10,7 +10,8 @@ import UIKit
 import CoreData
 
 protocol ConversationGalleryImagePickerDelegate {
-    func conversationGalleryController(didPickImage image:UIImage, forMessage message:UserMessage, at indexPath:IndexPath)
+    func conversationGalleryController(controller:ConversationGalleryController, didPickImage image:UIImage, forMessage message:UserMessage, at indexPath:IndexPath)
+    func conversationGalleryController(controller:ConversationGalleryController, didFinishCancelled cancelled:Bool)
 }
 
 class ConversationGalleryController: UIViewController {

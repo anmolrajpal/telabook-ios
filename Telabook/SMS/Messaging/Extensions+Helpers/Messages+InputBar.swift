@@ -69,16 +69,7 @@ extension MessagesController: InputBarAccessoryViewDelegate {
     }
 }
 
-extension MessagesController: AgentGalleryImagePickerDelegate {
-    func agentGalleryController(didPickImage image: UIImage, forGalleryItem item: AgentGalleryItem, at indexPath: IndexPath) {
-        uploadImage(image)
-    }
-}
-extension MessagesController: ConversationGalleryImagePickerDelegate {
-    func conversationGalleryController(didPickImage image: UIImage, forMessage message: UserMessage, at indexPath: IndexPath) {
-        uploadImage(image)
-    }
-}
+
 
 extension MessagesController: QuickResponsePickerDelegate {
     func quickResponseDidPick(at indexPath: IndexPath, response: QuickResponse) {

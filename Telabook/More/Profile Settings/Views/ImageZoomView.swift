@@ -24,24 +24,39 @@ extension UIImageView {
 }
 class ImageZoomView: UIScrollView, UIScrollViewDelegate {
     
-    var imageView: UIImageView!
+    lazy var imageView: UIImageView = {
+        let view = UIImageView(image: UIImage())
+        return view
+    }()
     var gestureRecognizer: UITapGestureRecognizer!
     
+    var image:UIImage? {
+        didSet {
+            guard let image = image else { return }
+            imageView.image = image
+            setupScrollView(image: image)
+        }
+    }
     
-    
-    required init(image:UIImage, frame:CGRect) {
+    required init(image:UIImage? = nil, frame:CGRect = UIScreen.main.bounds) {
         super.init(frame: frame)
         imageView = UIImageView(image: image)
-        imageView.frame = bounds
-//        imageView.contentMode = .scaleAspectFit
-        addSubview(imageView)
-        
-        setupScrollView(image: image)
+        configureHierarchy()
+        if let image = image {
+            setupScrollView(image: image)
+        }
         setupGestureRecognizer()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    
+    func configureHierarchy() {
+        imageView.frame = bounds
+        addSubview(imageView)
+//        imageView.fillSuperview()
     }
     
     // Sets the scroll view delegate and zoom scale limits.
@@ -50,9 +65,7 @@ class ImageZoomView: UIScrollView, UIScrollViewDelegate {
         delegate = self
         showsVerticalScrollIndicator = false
         showsHorizontalScrollIndicator = false
-        self.setMinZoomScaleForImageSize(image.size)
-//        minimumZoomScale = 1.0
-//        maximumZoomScale = 2.0
+        setMinZoomScaleForImageSize(image.size)
     }
     func scrollViewDidZoom(_ scrollView: UIScrollView) {
         centerImage()
@@ -89,7 +102,7 @@ class ImageZoomView: UIScrollView, UIScrollViewDelegate {
         return zoomRect
     }
     // Calculates the zoom rectangle for the scale
-    func zoomRectForScale(_ scale: CGFloat, center: CGPoint) -> CGRect {
+    func zoomRectForScale(scale: CGFloat, center: CGPoint) -> CGRect {
         var zoomRect = CGRect.zero
         zoomRect.size.height = imageView.frame.size.height / scale
         zoomRect.size.width = imageView.frame.size.width / scale
@@ -131,6 +144,7 @@ class ImageZoomView: UIScrollView, UIScrollViewDelegate {
         let imageWidth = imageSize.width * minScale
         let imageHeight = imageSize.height * minScale
         let newImageFrame = CGRect(x: 0, y: 0, width: imageWidth, height: imageHeight)
+
         imageView.frame = newImageFrame
         
         centerImage()

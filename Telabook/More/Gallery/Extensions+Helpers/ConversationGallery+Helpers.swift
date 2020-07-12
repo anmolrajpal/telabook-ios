@@ -24,7 +24,7 @@ extension ConversationGalleryController {
     }
     @objc
     private func doneButtonDidTap() {
-        self.dismiss(animated: true)
+        delegate == nil ? dismiss(animated: true) : delegate?.conversationGalleryController(controller: self, didFinishCancelled: true)
     }
     private func configureHierarchy() {
         view.backgroundColor = .telaGray1

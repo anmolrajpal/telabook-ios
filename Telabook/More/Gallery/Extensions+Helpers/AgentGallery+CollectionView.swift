@@ -81,9 +81,7 @@ extension AgentGalleryController: UICollectionViewDelegate {
             openGalleryItem(item: item)
         } else {
             guard let image = item.getImage() else { return }
-            self.dismiss(animated: true) {
-                self.delegate?.agentGalleryController(didPickImage: image, forGalleryItem: item, at: indexPath)
-            }
+            self.delegate?.agentGalleryController(controller: self, didPickImage: image, forGalleryItem: item, at: indexPath)
         }
         /*
         if indexPath.row == 0 {

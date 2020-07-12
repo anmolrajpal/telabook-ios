@@ -74,9 +74,7 @@ extension ConversationGalleryController: UICollectionViewDelegate {
             openGalleryItem(message: message)
         } else {
             guard let image = message.getImage() else { return }
-            self.dismiss(animated: true) {
-                self.delegate?.conversationGalleryController(didPickImage: image, forMessage: message, at: indexPath)
-            }
+            self.delegate?.conversationGalleryController(controller: self, didPickImage: image, forMessage: message, at: indexPath)
         }
     }
     internal func openGalleryItem(message:UserMessage) {

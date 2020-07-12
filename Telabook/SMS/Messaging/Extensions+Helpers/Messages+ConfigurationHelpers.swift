@@ -99,6 +99,8 @@ extension MessagesController {
         messageInputBar.sendButton.setImage(#imageLiteral(resourceName: "autoresponse_icon"), for: .normal)
         messageInputBar.sendButton.title = nil
         messageInputBar.sendButton.isEnabled = true
+        messageInputBar.rightStackView.alignment = .center
+        
         let cameraItem = InputBarButtonItem(type: .custom)
         cameraItem.image = #imageLiteral(resourceName: "camera_icon")
         cameraItem.addTarget(

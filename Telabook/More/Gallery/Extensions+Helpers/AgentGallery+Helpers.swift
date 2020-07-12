@@ -54,7 +54,7 @@ extension AgentGalleryController {
     }
     @objc
     private func doneButtonDidTap() {
-        self.dismiss(animated: true, completion: nil)
+        delegate == nil ? dismiss(animated: true) : delegate?.agentGalleryController(controller: self, didFinishCancelled: true)
     }
     @objc
     private func selectButtonDidTap() {
