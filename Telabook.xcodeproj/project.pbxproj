@@ -121,6 +121,14 @@
 		6F69BE9622D4DE4900F8903F /* QuickResponsesDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69BE9522D4DE4900F8903F /* QuickResponsesDataProvider.swift */; };
 		6F6B44C624B8CD7800AD2649 /* MediaAssertionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B44C524B8CD7800AD2649 /* MediaAssertionController.swift */; };
 		6F6B44C824B9F5B900AD2649 /* MediaAssertion+Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B44C724B9F5B800AD2649 /* MediaAssertion+Keyboard.swift */; };
+		6F6B44CA24BC69B800AD2649 /* MessageDetailsViewConroller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B44C924BC69B800AD2649 /* MessageDetailsViewConroller.swift */; };
+		6F6B44CC24BC77F700AD2649 /* MessageDetailsController+DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B44CB24BC77F700AD2649 /* MessageDetailsController+DataSource.swift */; };
+		6F6B44CE24BC794400AD2649 /* MessageDetailsController+Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B44CD24BC794400AD2649 /* MessageDetailsController+Delegate.swift */; };
+		6F6B44D024BC79AA00AD2649 /* MessageDetailsController+CellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B44CF24BC79A900AD2649 /* MessageDetailsController+CellDelegate.swift */; };
+		6F6B44D224BC79FC00AD2649 /* MessageDetailsController+Display.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B44D124BC79FC00AD2649 /* MessageDetailsController+Display.swift */; };
+		6F6B44D424BC7A2600AD2649 /* MessageDetailsController+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B44D324BC7A2600AD2649 /* MessageDetailsController+Layout.swift */; };
+		6F6B44D624BC855F00AD2649 /* MessageDetailsController+TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B44D524BC855F00AD2649 /* MessageDetailsController+TableView.swift */; };
+		6F6B44D824BCD1A400AD2649 /* MMSMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B44D724BCD1A400AD2649 /* MMSMessageCell.swift */; };
 		6F83FC2124608C6A00518201 /* QuickResponsesHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F83FC2024608C6A00518201 /* QuickResponsesHelpers.swift */; };
 		6F83FC232460A39B00518201 /* QuickResponsesTableViewHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F83FC222460A39B00518201 /* QuickResponsesTableViewHelpers.swift */; };
 		6F8927FB24A8A82E0025DF64 /* ScheduledMessageJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8927FA24A8A82E0025DF64 /* ScheduledMessageJSON.swift */; };
@@ -424,6 +432,14 @@
 		6F69BE9522D4DE4900F8903F /* QuickResponsesDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponsesDataProvider.swift; sourceTree = "<group>"; };
 		6F6B44C524B8CD7800AD2649 /* MediaAssertionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaAssertionController.swift; sourceTree = "<group>"; };
 		6F6B44C724B9F5B800AD2649 /* MediaAssertion+Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MediaAssertion+Keyboard.swift"; sourceTree = "<group>"; };
+		6F6B44C924BC69B800AD2649 /* MessageDetailsViewConroller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDetailsViewConroller.swift; sourceTree = "<group>"; };
+		6F6B44CB24BC77F700AD2649 /* MessageDetailsController+DataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageDetailsController+DataSource.swift"; sourceTree = "<group>"; };
+		6F6B44CD24BC794400AD2649 /* MessageDetailsController+Delegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageDetailsController+Delegate.swift"; sourceTree = "<group>"; };
+		6F6B44CF24BC79A900AD2649 /* MessageDetailsController+CellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageDetailsController+CellDelegate.swift"; sourceTree = "<group>"; };
+		6F6B44D124BC79FC00AD2649 /* MessageDetailsController+Display.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageDetailsController+Display.swift"; sourceTree = "<group>"; };
+		6F6B44D324BC7A2600AD2649 /* MessageDetailsController+Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageDetailsController+Layout.swift"; sourceTree = "<group>"; };
+		6F6B44D524BC855F00AD2649 /* MessageDetailsController+TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageDetailsController+TableView.swift"; sourceTree = "<group>"; };
+		6F6B44D724BCD1A400AD2649 /* MMSMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MMSMessageCell.swift; sourceTree = "<group>"; };
 		6F6F9F89247FB76900C9114D /* Config-PreRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Config-PreRelease.xcconfig"; sourceTree = "<group>"; };
 		6F83FC2024608C6A00518201 /* QuickResponsesHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponsesHelpers.swift; sourceTree = "<group>"; };
 		6F83FC222460A39B00518201 /* QuickResponsesTableViewHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponsesTableViewHelpers.swift; sourceTree = "<group>"; };
@@ -860,6 +876,13 @@
 				6F00F2DB24A50E37001E33D9 /* MessageUploadService.swift */,
 				6FF842192482EFF00069A789 /* QuickResponsePicker+TableViewHelpers.swift */,
 				6FF8421B2482F0030069A789 /* QuickResponsePicker+Helpers.swift */,
+				6F6B44C724B9F5B800AD2649 /* MediaAssertion+Keyboard.swift */,
+				6F6B44CB24BC77F700AD2649 /* MessageDetailsController+DataSource.swift */,
+				6F6B44CD24BC794400AD2649 /* MessageDetailsController+Delegate.swift */,
+				6F6B44CF24BC79A900AD2649 /* MessageDetailsController+CellDelegate.swift */,
+				6F6B44D124BC79FC00AD2649 /* MessageDetailsController+Display.swift */,
+				6F6B44D324BC7A2600AD2649 /* MessageDetailsController+Layout.swift */,
+				6F6B44D524BC855F00AD2649 /* MessageDetailsController+TableView.swift */,
 			);
 			path = "Extensions+Helpers";
 			sourceTree = "<group>";
@@ -870,7 +893,7 @@
 				6F21378124743529002AB150 /* MessagesController.swift */,
 				6FF842152482EACD0069A789 /* QuickResponsePickerController.swift */,
 				6F6B44C524B8CD7800AD2649 /* MediaAssertionController.swift */,
-				6F6B44C724B9F5B800AD2649 /* MediaAssertion+Keyboard.swift */,
+				6F6B44C924BC69B800AD2649 /* MessageDetailsViewConroller.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -882,6 +905,7 @@
 				6FEE9A18247ED6A300709E2D /* BotMessageCell.swift */,
 				6FF842172482EADD0069A789 /* QuickResponsePickerView.swift */,
 				6F8A8300249B7C1A002ACDFE /* MMSCell.swift */,
+				6F6B44D724BCD1A400AD2649 /* MMSMessageCell.swift */,
 				6F8A8302249B7C2F002ACDFE /* MMSCellView.swift */,
 			);
 			path = Views;
@@ -2303,6 +2327,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F6B44CE24BC794400AD2649 /* MessageDetailsController+Delegate.swift in Sources */,
 				6F987A78245B6BE700C6046E /* CustomerCodable.swift in Sources */,
 				6FB11B33229EB5190098D050 /* OnlineUsersViewController.swift in Sources */,
 				6FB11AFB229BF0590098D050 /* TabBarController.swift in Sources */,
@@ -2355,6 +2380,7 @@
 				6F8A831C249E13B6002ACDFE /* ListItem.swift in Sources */,
 				6F087DD722E1E34900CAD840 /* ImageAssertionViewController.swift in Sources */,
 				6F41013F22DDF8FB0038AA76 /* CallGroupsDataProvider.swift in Sources */,
+				6F6B44D824BCD1A400AD2649 /* MMSMessageCell.swift in Sources */,
 				6F23BD1122DA0D7A0001A888 /* ScheduleNewMessageViewController.swift in Sources */,
 				6FB8EA4122AA371900294EAC /* SMSDetailVCExtensions.swift in Sources */,
 				6FC822F52474496E002421F0 /* NewConversationController.swift in Sources */,
@@ -2366,6 +2392,7 @@
 				6F9453BF22DB2E2F00047C7F /* AgentPickerDataProvider.swift in Sources */,
 				6F8A8301249B7C1B002ACDFE /* MMSCell.swift in Sources */,
 				6F987A7E245C9B9000C6046E /* ManageAgentsCellView.swift in Sources */,
+				6F6B44CA24BC69B800AD2649 /* MessageDetailsViewConroller.swift in Sources */,
 				6F9453CD22DC3CCA00047C7F /* ChangePasswordAPI.swift in Sources */,
 				6FA3DFF12475C2D60083AB13 /* BlacklistOperations.swift in Sources */,
 				6F23BD0D22D9F3480001A888 /* ScheduleMessageAPI.swift in Sources */,
@@ -2424,6 +2451,7 @@
 				6FEE9A05247D305D00709E2D /* Messages+CoreDataHelpers.swift in Sources */,
 				6FF2E6A3248FA4B300502B99 /* Profile+Helpers.swift in Sources */,
 				6F395C9B248135A30023255F /* Login+ForgotPassword.swift in Sources */,
+				6F6B44D024BC79AA00AD2649 /* MessageDetailsController+CellDelegate.swift in Sources */,
 				6F1BD2EF22C4B0ED0053D0CC /* Protocols.swift in Sources */,
 				6FF2E6B1249002BF00502B99 /* FullImage+Helpers.swift in Sources */,
 				6FB11B2D229EB4C40098D050 /* RemindersViewController.swift in Sources */,
@@ -2461,6 +2489,7 @@
 				6F1BD2ED22C4ADED0053D0CC /* FollowUpVCTableViewExtensions.swift in Sources */,
 				6FD8955D245ECDB40083D79A /* AgentDetailsView.swift in Sources */,
 				6FF2E6AF248FF72400502B99 /* HoldPinchImageView.swift in Sources */,
+				6F6B44D224BC79FC00AD2649 /* MessageDetailsController+Display.swift in Sources */,
 				6F02B2DF2461C8B600FFB34E /* AutoResponse+CoreDataHelpers.swift in Sources */,
 				6FEE9A11247D4D0200709E2D /* Messages+InputBar.swift in Sources */,
 				6F83FC232460A39B00518201 /* QuickResponsesTableViewHelpers.swift in Sources */,
@@ -2489,6 +2518,7 @@
 				6FEE9A17247E696000709E2D /* Messages+Cell.swift in Sources */,
 				6FEE9A15247D5BE000709E2D /* Messages+ServiceProvider.swift in Sources */,
 				6FB11B0D229BFA430098D050 /* MoreViewController.swift in Sources */,
+				6F6B44D424BC7A2600AD2649 /* MessageDetailsController+Layout.swift in Sources */,
 				6FD4F7AE24AF526B00BD2569 /* LocalNotificationItem.swift in Sources */,
 				6FB11B14229C3FCA0098D050 /* BadgeBarItem.swift in Sources */,
 				6FC8230D2475AE5A002421F0 /* Blacklist+Helpers.swift in Sources */,
@@ -2525,6 +2555,7 @@
 				6F5064AD24A09147003CAC2E /* AddMediaCell.swift in Sources */,
 				6F8A8333249F87AB002ACDFE /* AgentGallery+CollectionView.swift in Sources */,
 				6F69BE9222D4DCE600F8903F /* QuickResponsesAPIProtocol.swift in Sources */,
+				6F6B44CC24BC77F700AD2649 /* MessageDetailsController+DataSource.swift in Sources */,
 				6F29FD5122B8B36400BCA2AB /* FollowUpCell.swift in Sources */,
 				6F02B2DB2461C47300FFB34E /* AutoResponseView.swift in Sources */,
 				6F02B2E42461EF3800FFB34E /* AutoResponseServiceProvider.swift in Sources */,
@@ -2556,6 +2587,7 @@
 				6FB11B4922A503E00098D050 /* SMSCell.swift in Sources */,
 				6FEE99FF247BB8E900709E2D /* UserMessage.swift in Sources */,
 				6FB11B4622A2A5110098D050 /* PersistenceService.swift in Sources */,
+				6F6B44D624BC855F00AD2649 /* MessageDetailsController+TableView.swift in Sources */,
 				6F23BCFF22D724A70001A888 /* UserProfileCodable.swift in Sources */,
 				6FF8421A2482EFF00069A789 /* QuickResponsePicker+TableViewHelpers.swift in Sources */,
 				6F69BE8622D4742E00F8903F /* ManageAgentsAPIProtocol.swift in Sources */,
@@ -2665,7 +2697,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 25;
+				CURRENT_PROJECT_VERSION = 27;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2807,7 +2839,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 25;
+				CURRENT_PROJECT_VERSION = 27;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2830,7 +2862,7 @@
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 25;
+				CURRENT_PROJECT_VERSION = 27;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2910,7 +2942,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 25;
+				CURRENT_PROJECT_VERSION = 27;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;

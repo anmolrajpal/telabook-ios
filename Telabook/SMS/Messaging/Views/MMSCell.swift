@@ -231,10 +231,8 @@ class MMSCell: MessageContentCell {
                     if let attributedText = mediaItem.attributedText, !attributedText.string.isEmpty {
                         messageLabel.attributedText = attributedText
                         messageLabelHeightConstraint.deactivate()
-//                        messageLabel.isHidden = false
                     } else {
                         messageLabelHeightConstraint.activate()
-//                        messageLabel.isHidden = true
                         /*
                         let textColor = displayDelegate.textColor(for: message, at: indexPath, in: messagesCollectionView)
                         messageLabel.text = mediaItem.imageText

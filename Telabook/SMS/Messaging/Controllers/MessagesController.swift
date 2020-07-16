@@ -89,9 +89,7 @@ class MessagesController: MessagesViewController {
     
     // MARK: - Properties
     
-    let monitor = NWPathMonitor()
-    
-    let monitorQueue = DispatchQueue(label: "network-monitor")
+    var monitor:NWPathMonitor?
     
     let synthesizer = AVSpeechSynthesizer()
     
@@ -219,7 +217,12 @@ class MessagesController: MessagesViewController {
         if childUpdatedHandle != nil { reference.removeObserver(withHandle: childUpdatedHandle) }
     }
     private func monitorNetwork() {
-        monitor.pathUpdateHandler = { [weak self] path in
+        monitor = NWPathMonitor()
+        
+        let monitorQueue = DispatchQueue(label: "network-monitor")
+        monitor?.start(queue: monitorQueue)
+        
+        monitor?.pathUpdateHandler = { [weak self] path in
             guard let self = self else { return }
             switch self.autoDownloadImageMessagesState {
                 case .never:
@@ -230,10 +233,11 @@ class MessagesController: MessagesViewController {
                     self.shouldAutoDownloadImageMessages = path.status == .satisfied
             }
         }
-        monitor.start(queue: monitorQueue)
+        
     }
     private func stopMonitoringNetwork() {
-        monitor.cancel()
+        monitor?.cancel()
+        monitor = nil
     }
     
     

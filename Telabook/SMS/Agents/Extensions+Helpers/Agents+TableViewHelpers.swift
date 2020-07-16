@@ -139,7 +139,7 @@ extension AgentsViewController {
             // MARK: - Copy Agent's DID Number Action
             
             if let text = agent.didNumber, !text.isBlank {
-                let copyDIDAction = UIAction(title: "Copy DID Number", image: SFSymbol.copy.image) { _ in
+                let copyDIDAction = UIAction(title: "Copy DID Number", image: SFSymbol.copy.image.withTintColor(.telaBlue, renderingMode: .alwaysOriginal)) { _ in
                     UIPasteboard.general.string = text
                 }
                 menuItems.append(copyDIDAction)

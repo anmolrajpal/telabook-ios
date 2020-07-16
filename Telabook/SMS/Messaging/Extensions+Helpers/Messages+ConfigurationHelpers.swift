@@ -137,48 +137,22 @@ extension MessagesController {
     
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
 
-        
-//        guard let fetchedMessages = fetchedResultsController.fetchedObjects else {
-//            print("No Fetched Messages")
-//            return nil
-//        }
        guard let message = messagesCollectionView.messagesDataSource?.messageForItem(at: indexPath, in: messagesCollectionView) as? UserMessage else {
             print("Failed to identify message when audio cell receive tap gesture")
             return nil
         }
-        guard !message.isMessageDeleted else { return nil }
+        let userRole = AppData.getUserRole()
+        if userRole != .Developer && message.isMessageDeleted {
+            return nil
+        }
+        
         if case .custom = message.kind { return nil }
+        
         let identifier = "\(message.firebaseKey!)" as NSString
         
        
         return UIContextMenuConfiguration(identifier: identifier, previewProvider: nil) { _ in
             var menuItems = [UIMenuElement]()
-            
-            
-            
-            let detailsAction = UIAction(title: "Details", image: SFSymbol.info.image) { _ in
-                
-            }
-            let forwardAction = UIAction(title: "Forward", image: SFSymbol.forward.image) { _ in
-                
-            }
-            let replyAction = UIAction(title: "Reply", image: SFSymbol.reply.image) { _ in
-                
-            }
-            
-            
-            
-            
-            
-            let setTagsAction = UIAction(title: "Add Tags", image: SFSymbol.tag.image) { _ in
-                
-            }
-            
-            
-            
-            
-            
-            
             
             
             // MARK: - Save Image Action
@@ -191,14 +165,18 @@ extension MessagesController {
                             }
                         }
                     }
-                    menuItems.append(saveToCameraRollAction)
+                    if !message.isMessageDeleted {
+                        menuItems.append(saveToCameraRollAction)
+                    }
                 }
                 // MARK: - Copy Image message Text Action
                 if let text = message.textMessage, !text.isEmpty, !text.isBlank {
                     let copyAction = UIAction(title: "Copy Text", image: SFSymbol.copy.image) { _ in
                         UIPasteboard.general.string = text
                     }
-                    menuItems.append(copyAction)
+                    if !message.isMessageDeleted {
+                        menuItems.append(copyAction)
+                    }
                 }
             } else {
                 // MARK: - Copy Action
@@ -206,14 +184,48 @@ extension MessagesController {
                     let copyAction = UIAction(title: "Copy", image: SFSymbol.copy.image) { _ in
                         UIPasteboard.general.string = text
                     }
-                    menuItems.append(copyAction)
+                    if !message.isMessageDeleted {
+                        menuItems.append(copyAction)
+                    }
                 }
             }
             
             
+            /*
+            let replyAction = UIAction(title: "Reply", image: SFSymbol.reply.image) { _ in
+                
+            }
             menuItems.append(replyAction)
+            */
+            
+            
+            /*
+            let forwardAction = UIAction(title: "Forward", image: SFSymbol.forward.image) { _ in
+                
+            }
             menuItems.append(forwardAction)
+            */
+            
+            
+            
+            /*
+            let setTagsAction = UIAction(title: "Add Tags", image: SFSymbol.tag.image) { _ in
+                
+            }
             menuItems.append(setTagsAction)
+            */
+            
+            
+            
+            let detailsAction = UIAction(title: "Details", image: SFSymbol.info.image) { [weak self] _ in
+                guard let self = self else { return }
+                let vc = MessageDetailsViewController(message: message, currentSender: self.thisSender)
+                vc.delegate = self
+                vc.hidesBottomBarWhenPushed = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
             menuItems.append(detailsAction)
             
             
@@ -225,7 +237,9 @@ extension MessagesController {
                     self.synthesizer.stopSpeaking(at: .immediate)
                     self.synthesizer.speak(utterance)
                 }
-                menuItems.append(speakAction)
+                if !message.isMessageDeleted {
+                    menuItems.append(speakAction)
+                }
             }
             
             
@@ -234,10 +248,9 @@ extension MessagesController {
             let deleteAction = UIAction(title: "Delete", image: SFSymbol.delete.image, attributes: .destructive) { _ in
                 self.promptDeleteMessageAlert(forMessage: message)
             }
-            menuItems.append(deleteAction)
-            
-            
-            
+            if !message.isMessageDeleted {
+                menuItems.append(deleteAction)
+            }
             
             
             return UIMenu(title: "", children: menuItems)
@@ -248,10 +261,10 @@ extension MessagesController {
         guard let identifier = configuration.identifier as? String else { return }
         guard let section = messages.firstIndex(where: { $0.firebaseKey == identifier }) else { return }
         let message = messages[section]
-        guard message.messageType == .multimedia else { return }
+        guard message.messageType == .multimedia, message.getImage() != nil else { return }
         
-        animator.addCompletion {
-            self.openMediaMessage(message: message)
+        animator.addCompletion { [weak self] in
+            self?.openMediaMessage(message: message)
         }
     }
     
@@ -400,3 +413,9 @@ extension MessagesController {
     }
 }
 
+extension MessagesController: MessageDetailsControllerDelegate {
+    func deleteMessage(message: UserMessage, controller: MessageDetailsViewController) {
+        navigationController?.popViewController(animated: true)
+        deleteUserMessage(message: message)
+    }
+}

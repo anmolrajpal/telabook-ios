@@ -215,50 +215,41 @@ extension UserMessage: MessageType {
             .foregroundColor: UIColor.white
         ])
     }
+    func multimediaFormattedMessage() -> MessageKind {
+        if let url = self.imageURL {
+            let width = UIScreen.main.bounds.width * 0.7
+            let size = CGSize(width: width, height: width)
+            if let imageText = self.textMessage, !imageText.isBlank {
+                return .photo(ImageItem(imageUrl: url, attributedText: getTextMessageAttributedText(textMessage: imageText), size: size))
+            } else {
+                return .photo(ImageItem(imageUrl: url, size: size))
+            }
+        } else {
+            return .attributedText(getTextMessageAttributedText(textMessage: "Media Unavailable"))
+        }
+    }
+    func textFormattedMessage() -> MessageKind {
+        let text = self.textMessage ?? ""
+        if text.containsOnlyEmoji {
+            return .emoji(text)
+        } else {
+            return .attributedText(getTextMessageAttributedText(textMessage: text))
+        }
+    }
     private func messageKind() -> MessageKind {
         switch messageType {
             case .text:
-                if isMessageDeleted {
-                    let attributedText = deletedMessageAttributedText()
-                    return .attributedText(attributedText)
-                } else {
-                    let text = self.textMessage ?? ""
-                    if text.containsOnlyEmoji {
-                        return .emoji(text)
-                    } else {
-                        return .attributedText(getTextMessageAttributedText(textMessage: text))
-                    }
-            }
+                return isMessageDeleted && !shouldRevealDeletedMessage ? .attributedText(deletedMessageAttributedText()) : textFormattedMessage()
+                
             case .multimedia:
-                if isMessageDeleted {
-                    let attributedText = deletedMessageAttributedText()
-                    return .attributedText(attributedText)
-                } else {
-                    if let url = self.imageURL {
-                        let width = UIScreen.main.bounds.width * 0.7
-                        let size = CGSize(width: width, height: width)
-                        if let imageText = self.textMessage, !imageText.isBlank {
-                            return .photo(ImageItem(imageUrl: url, attributedText: getTextMessageAttributedText(textMessage: imageText), size: size))
-                        } else {
-                            return .photo(ImageItem(imageUrl: url, size: size))
-                        }
-                    } else {
-                        return .attributedText(getTextMessageAttributedText(textMessage: "Media Unavailable"))
-                    }
-                }
+                return isMessageDeleted && !shouldRevealDeletedMessage ? .attributedText(deletedMessageAttributedText()) : multimediaFormattedMessage()
+                
             
             case .scheduled:
-                if isMessageDeleted {
-                    let attributedText = deletedMessageAttributedText()
-                    return .attributedText(attributedText)
-                } else {
-                    let attributedText = getScheduledMessageAttributedText()
-                    return .attributedText(attributedText)
-                }
+                return isMessageDeleted && !shouldRevealDeletedMessage ? .attributedText(deletedMessageAttributedText()) : .attributedText(getScheduledMessageAttributedText())
             
             case .system:
-                let attributedText = getSystemMessageAttributedText()
-                return .custom(attributedText)
+                return .custom(getSystemMessageAttributedText())
         }
     }
 }

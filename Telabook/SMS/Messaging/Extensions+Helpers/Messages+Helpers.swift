@@ -113,19 +113,25 @@ extension MessagesController {
     func isNextMessageDateInSameDay(at indexPath:IndexPath) -> Bool {
         guard !messages.isEmpty else { return false }
         guard indexPath.section + 1 < messages.count else { return false }
-        return Calendar.current.isDate(messages[indexPath.section].sentDate, inSameDayAs: messages[indexPath.section + 1].sentDate)
+        guard let currentMessageDate = messages[indexPath.section].date, let nextMessageDate = messages[indexPath.section + 1].date else { return false }
+        return Calendar.current.isDate(currentMessageDate, inSameDayAs: nextMessageDate)
     }
     func isPreviousMessageDateInSameDay(at indexPath:IndexPath) -> Bool {
         guard !messages.isEmpty else { return false }
         guard indexPath.section - 1 >= 0 else { return false }
-        return Calendar.current.isDate(messages[indexPath.section].sentDate, inSameDayAs: messages[indexPath.section - 1].sentDate)
+        guard let currentMessageDate = messages[indexPath.section].date, let previousMessageDate = messages[indexPath.section - 1].date else { return false }
+        return Calendar.current.isDate(currentMessageDate, inSameDayAs: previousMessageDate)
     }
     func shouldShowNewMessagesCountFooter(at section:Int) -> Bool {
         //        print("Last message: \(messages[section]) : section: \(section) & refresh time: \(String(describing: messages[section].lastRefreshedAt))")
         guard !messages.isEmpty else { return false }
         guard section + 1 < messages.count else { return false }
         guard !isFromCurrentSender(message: messages[section + 1]) else { return false }
-        guard let match = messages.firstIndex(where: { $0.sentDate > self.screenEntryTime }) else { return false }
+        
+        guard let match = messages.firstIndex(where: {
+            guard let currentMessageDate = $0.date else { return false }
+            return currentMessageDate > self.screenEntryTime
+        }) else { return false }
         return section == match - 1
     }
     
@@ -153,21 +159,33 @@ extension MessagesController {
     }
     
     func updateCell(with message:UserMessage) {
-        messagesCollectionView.performBatchUpdates({
+        messagesCollectionView.performBatchUpdates({ [weak self] in
+            guard let self = self else { return }
             if let index = self.messages.firstIndex(of: message) {
                 let indexPath = IndexPath(item: 0, section: index)
-                if case .photo = message.kind {
-                    if let cell = self.messagesCollectionView.cellForItem(at: indexPath) as? MMSCell {
-                        cell.configure(with: message, at: indexPath, and: self.messagesCollectionView, upload: self.uploadService.activeUploads[message.imageURL!], download: self.downloadService.activeDownloads[message.imageURL!], shouldAutoDownload: self.shouldAutoDownloadImageMessages)
-                    }
-                } else {
-                    if let cell = self.messagesCollectionView.cellForItem(at: indexPath) as? MessageContentCell {
-                        cell.configure(with: message, at: indexPath, and: self.messagesCollectionView)
-                    }
+                if let cell = self.messagesCollectionView.cellForItem(at: indexPath) as? MessageContentCell {
+                    cell.configure(with: message, at: indexPath, and: self.messagesCollectionView)
+                }
+                /*
+                switch message.kind {
+                    case .photo:
+                        if let cell = self.messagesCollectionView.cellForItem(at: indexPath) as? MMSCell {
+                            cell.configure(with: message, at: indexPath, and: self.messagesCollectionView, upload: self.uploadService.activeUploads[message.imageURL!], download: self.downloadService.activeDownloads[message.imageURL!], shouldAutoDownload: self.shouldAutoDownloadImageMessages)
+                        }
+                    default:
+                        if let cell = self.messagesCollectionView.cellForItem(at: indexPath) as? MessageContentCell {
+                            cell.configure(with: message, at: indexPath, and: self.messagesCollectionView)
+                        }
+                }
+                */
+            }
+        }) { [weak self] _ in
+            guard let self = self else { return }
+            if let index = self.messages.firstIndex(of: message) {
+                UIView.performWithoutAnimation {
+                    self.messagesCollectionView.reloadSections([index])
                 }
             }
-        }) { _ in
-            
         }
     }
     
