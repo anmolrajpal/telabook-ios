@@ -1286,13 +1286,24 @@ extension Date {
     /// - Parameter string: This value must be in a string format: `yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ`
     /// - Returns: An optional  `Date` object with added milliseconds.
     static func getDate(fromMicrosecondsFormattedDateString string:String) -> Date? {
-        let groups = string.split(separator: ".")
-        let datePart = String(groups[0])
-        guard let date = Date.getDateFromString(dateString: datePart, dateFormat: "yyyy-MM-dd'T'HH:mm:ss") else { return nil }
-        let microseconds = groups[1].replacingOccurrences(of: "Z", with: "")
-        let milliseconds = Int(microseconds)! / 1000
-        let timeIntervalToAdd:TimeInterval = TimeInterval((Double(milliseconds) / 1000.0))
-        return date.addingTimeInterval(timeIntervalToAdd)
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [
+            .withDashSeparatorInDate,
+            .withColonSeparatorInTime,
+            .withFullDate,
+            .withFullTime,
+            .withFractionalSeconds,
+            .withTimeZone
+        ]
+        guard let date = formatter.date(from: string) else { return nil }
+//        let groups = string.split(separator: ".")
+//        let datePart = String(groups[0])
+//        guard let date = Date.getDateFromString(dateString: datePart, dateFormat: "yyyy-MM-dd'T'HH:mm:ss") else { return nil }
+//        let microseconds = groups[1].replacingOccurrences(of: "Z", with: "")
+//        let milliseconds = Int(microseconds)! / 1000
+//        let timeIntervalToAdd:TimeInterval = TimeInterval((Double(milliseconds) / 1000.0))
+//        let final = date.addingTimeInterval(timeIntervalToAdd)
+        return date
     }
     
     /// This function returns the Date object depending on the parameter which maybe is seconds or milliseconds.
@@ -1372,7 +1383,7 @@ extension JSONDecoder.DateDecodingStrategy {
 
 extension String {
     var dateFromFormattedString:Date? {
-        if self.contains("Z") && self.count == 27 {
+        if self.contains("Z") && self.count >= 22 {
             return .getDate(fromMicrosecondsFormattedDateString: self)
         } else {
             return .getDateFromString(dateString: self, dateFormat: "yyyy-MM-dd HH:mm:ss")

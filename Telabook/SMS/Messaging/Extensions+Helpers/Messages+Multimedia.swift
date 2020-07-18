@@ -181,7 +181,7 @@ extension MessagesController {
         let uploadURL = URL(string: uploadURLString)!
         
         let message = NewMessage(kind: .photo(ImageItem(image: scaledImage, imageUUID: imageUUID, uploadURL: uploadURL, imageText: textMessage)), messageId: key, sender: thisSender, sentDate: Date())
-        
+        print(message)
         viewContext.performAndWait {
             let newMessage = UserMessage(context: viewContext, newMessageEntryFromCurrentUser: message, forConversationWithCustomer: customer)
             newMessage.uploadState = .pending
@@ -200,7 +200,7 @@ extension MessagesController {
     }
 }
 
-
+/*
 extension MessagesController:MMSCellDelegate {
     func didTapDownloadButton(in cell: MMSCell) {
         guard let indexPath = messagesCollectionView.indexPath(for: cell),
@@ -220,8 +220,35 @@ extension MessagesController:MMSCellDelegate {
         uploadService.startUpload(message)
     }
 }
+*/
 
-
+extension MessagesController: MultimediaMessageCellDelegate {
+    func handleMediaState(_ cell: MultimediaMessageCell, message: UserMessage, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
+        guard let imageURL = message.imageURL else { return }
+        let upload = uploadService.activeUploads[imageURL]
+        let download = downloadService.activeDownloads[imageURL]
+        cell.handleMediaState(for: message, at: indexPath, in: messagesCollectionView, upload: upload, download: download, shouldAutoDownload: shouldAutoDownloadImageMessages)
+    }
+    
+    func didTapDownloadButton(in cell: MultimediaMessageCell) {
+        guard let indexPath = messagesCollectionView.indexPath(for: cell),
+            let message = messagesCollectionView.messagesDataSource?.messageForItem(at: indexPath, in: messagesCollectionView) as? UserMessage else {
+                print("Failed to identify MMS message download button when MMS message cell download button receive tap gesture")
+                return
+        }
+        downloadService.startDownload(message)
+        UIView.performWithoutAnimation {
+            self.messagesCollectionView.reloadSections([indexPath.section])
+        }
+    }
+    func startDownloadingMedia(forMultimediaMessage message: UserMessage, at indexPath: IndexPath) {
+        downloadService.startDownload(message)
+    }
+    func startUploadingMedia(forMultimediaMessage message: UserMessage, at indexPath: IndexPath) {
+        uploadService.startUpload(message)
+    }
+    
+}
 
 
 

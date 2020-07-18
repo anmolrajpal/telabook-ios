@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-protocol MessageMediaManagerDelegate {
+protocol MessageMediaManagerDelegate: class {
     func downloadProgressDidUpdate(for downloadItem:Download, formattedDownloadedSize:String, formattedTotalSize:String)
     func downloadDidFinish(for downloadItem:Download)
     func uploadProgressDidUpdate(for uploadItem:Upload, formattedUploadedSize:String, formattedTotalSize:String)
@@ -21,7 +21,7 @@ final class MessageMediaManager:NSObject {
     
     static let shared = MessageMediaManager()
     
-    var delegate:MessageMediaManagerDelegate?
+    weak var delegate:MessageMediaManagerDelegate?
 
     var backgroundCompletionHandler: (() -> Void)?
 
@@ -215,9 +215,10 @@ extension MessageMediaManager: URLSessionDownloadDelegate {
 }
 extension MessagesController: MessageMediaManagerDelegate {
     func uploadProgressDidUpdate(for uploadItem: Upload, formattedUploadedSize: String, formattedTotalSize: String) {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             if let index = self.messages.firstIndex(where: { $0.messageId == uploadItem.message.messageId }),
-                let cell = self.messagesCollectionView.cellForItem(at: IndexPath(item: 0, section: Int(index))) as? MMSCell {
+                let cell = self.messagesCollectionView.cellForItem(at: IndexPath(item: 0, section: Int(index))) as? MultimediaMessageCell {
                 cell.updateProgress(progress: uploadItem.progress, loadedSize: formattedUploadedSize, totalSize: formattedTotalSize)
             }
         }
@@ -233,9 +234,10 @@ extension MessagesController: MessageMediaManagerDelegate {
     }
     
     func downloadProgressDidUpdate(for downloadItem: Download, formattedDownloadedSize: String, formattedTotalSize: String) {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             if let index = self.messages.firstIndex(where: { $0.messageId == downloadItem.message.messageId }),
-                let cell = self.messagesCollectionView.cellForItem(at: IndexPath(item: 0, section: Int(index))) as? MMSCell {
+                let cell = self.messagesCollectionView.cellForItem(at: IndexPath(item: 0, section: Int(index))) as? MultimediaMessageCell {
                 cell.updateProgress(progress: downloadItem.progress, loadedSize: formattedDownloadedSize, totalSize: formattedTotalSize)
             }
         }

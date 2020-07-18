@@ -41,7 +41,7 @@ extension MessageDetailsViewController: QLPreviewControllerDataSource {
 extension MessageDetailsViewController: QLPreviewControllerDelegate {
     
     func previewController(_ controller: QLPreviewController, transitionViewFor item: QLPreviewItem) -> UIView? {
-        guard let cell = messagesCollectionView.cellForItem(at: IndexPath(item: 0, section: 0)) as? MMSCell else { return nil }
+        guard let cell = messagesCollectionView.cellForItem(at: IndexPath(item: 0, section: 0)) as? MultimediaMessageCell else { return nil }
         return cell.imageView
     }
 }

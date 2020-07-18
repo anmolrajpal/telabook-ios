@@ -11,8 +11,8 @@
 
 #include "Pods/Target Support Files/Pods-Telabook/Pods-Telabook.prerelease.xcconfig"
 
-BASE_URL              = https://api.noandosaldo.com
-API_HOST              = api.noandosaldo.com
+BASE_URL              = https://api-stage.telabook.com
+API_HOST              = api-stage.telabook.com
 URL_SCHEME            = https
 SUBDOMAIN             = /api
 TIMEOUT_INTERVAL      = 15

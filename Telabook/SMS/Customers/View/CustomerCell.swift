@@ -9,7 +9,7 @@
 import UIKit
 
 class CustomerCell: UITableViewCell {
-    let cellView = CustomerCellView()
+    
     static let cellHeight:CGFloat = 80.0
     var shouldShowBadgeCount = true
     

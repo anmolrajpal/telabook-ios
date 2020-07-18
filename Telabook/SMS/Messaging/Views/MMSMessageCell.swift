@@ -9,23 +9,23 @@
 import UIKit
 import MessageKit
 
-class MMSMessageCell: MessageContentCell {
+open class MMSMessageCell: MessageContentCell {
     
     // MARK: - Properties
 
-    private var messageLabelHeightConstraint:NSLayoutConstraint!
-    
+    private var imageViewHeightConstraint:NSLayoutConstraint!
+    private var messageLabelZeroHeightConstraint:NSLayoutConstraint!
     
     // MARK: - View Constructors
     
     /// The play button view to display on video messages.
-    lazy var playButtonView: PlayButtonView = {
+    open lazy var playButtonView: PlayButtonView = {
         let playButtonView = PlayButtonView()
         return playButtonView
     }()
 
     /// The image view display the media content.
-    lazy var imageView: UIImageView = {
+    open lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.backgroundColor = UIColor.telaGray3
@@ -33,22 +33,23 @@ class MMSMessageCell: MessageContentCell {
         return imageView
     }()
     
-    lazy var messageLabel = MessageLabel()
+    open lazy var messageLabel = MessageLabel()
     
     
     
     /// - Tag: Setup Views
     private func configureHierarchy() {
+        
         messageContainerView.addSubview(imageView)
         messageContainerView.addSubview(messageLabel)
-        
         
         layoutConstraints()
     }
     private func layoutConstraints() {
-        imageView.fillSuperview()
+ 
         messageLabel.anchor(top: nil, left: messageContainerView.leftAnchor, bottom: messageContainerView.bottomAnchor, right: messageContainerView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
-        messageLabelHeightConstraint = messageLabel.heightAnchor.constraint(equalToConstant: 0)
+        messageLabelZeroHeightConstraint = messageLabel.heightAnchor.constraint(equalToConstant: 0)
+        
     }
     
     
@@ -56,40 +57,43 @@ class MMSMessageCell: MessageContentCell {
     
     // MARK: - Lifecycle
     
-    override func setupSubviews() {
+    open override func setupSubviews() {
         super.setupSubviews()
         configureHierarchy()
     }
-    override func apply(_ layoutAttributes: UICollectionViewLayoutAttributes) {
+    open override func apply(_ layoutAttributes: UICollectionViewLayoutAttributes) {
         super.apply(layoutAttributes)
         if let attributes = layoutAttributes as? MessagesCollectionViewLayoutAttributes {
             messageLabel.textInsets = attributes.messageLabelInsets
             messageLabel.font = attributes.messageLabelFont
         }
     }
-    override func prepareForReuse() {
+    
+    open override func prepareForReuse() {
         super.prepareForReuse()
         imageView.image = nil
         messageLabel.text = nil
         messageLabel.attributedText = nil
     }
-    override func handleTapGesture(_ gesture: UIGestureRecognizer) {
+    open override func handleTapGesture(_ gesture: UIGestureRecognizer) {
         let touchLocation = gesture.location(in: self)
+        let translateTouchLocation = convert(touchLocation, to: messageContainerView)
+        
         switch true {
-            case imageView.frame.contains(touchLocation):
+            case imageView.frame.contains(translateTouchLocation):
                 delegate?.didTapImage(in: self)
             default: break
         }
     }
-    override func configure(with message: MessageType, at indexPath: IndexPath, and messagesCollectionView: MessagesCollectionView) {
+    
+    open override func configure(with message: MessageType, at indexPath: IndexPath, and messagesCollectionView: MessagesCollectionView) {
         super.configure(with: message, at: indexPath, and: messagesCollectionView)
         let message = message as! UserMessage
-        let image = message.getImage()
-        imageView.image = image
-        
+
         guard let displayDelegate = messagesCollectionView.messagesDisplayDelegate else {
             fatalError(MessageKitError.nilMessagesDisplayDelegate)
         }
+        
         let enabledDetectors = displayDelegate.enabledDetectors(for: message, at: indexPath, in: messagesCollectionView)
         messageLabel.configure {
             messageLabel.backgroundColor = displayDelegate.backgroundColor(for: message, at: indexPath, in: messagesCollectionView)
@@ -100,14 +104,25 @@ class MMSMessageCell: MessageContentCell {
             }
             switch message.kind {
                 case .photo(let mediaItem as ImageItem):
+                    imageView.frame = CGRect(origin: .zero, size: mediaItem.size)
                     if let attributedText = mediaItem.attributedText, !attributedText.string.isEmpty {
                         messageLabel.attributedText = attributedText
-                        messageLabelHeightConstraint.deactivate()
+                        messageLabelZeroHeightConstraint.deactivate()
                     } else {
-                        messageLabelHeightConstraint.activate()
+                        messageLabelZeroHeightConstraint.activate()
+                    }
+                case .video(let mediaItem as ImageItem):
+                    imageView.frame = CGRect(origin: .zero, size: mediaItem.size)
+                    imageView.image = mediaItem.image ?? mediaItem.placeholderImage
+                    if let attributedText = mediaItem.attributedText, !attributedText.string.isEmpty {
+                        messageLabel.attributedText = attributedText
+                        messageLabelZeroHeightConstraint.deactivate()
+                    } else {
+                        messageLabelZeroHeightConstraint.activate()
                     }
                 default: break
             }
+            
         }
         
     }

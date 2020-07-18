@@ -160,7 +160,6 @@ extension MessagesController: MessagesDisplayDelegate {
         
         if !message.errorSending && !message.hasError { return }
         
-        print("Should show error button")
         let button = UIButton(type: UIButton.ButtonType.custom)
         button.setImage(SFSymbol.errorSendingBadge.image(withSymbolConfiguration: .init(textStyle: .title3)), for: .normal)
         button.tintColor = .systemRed

@@ -281,11 +281,9 @@ class DeleteRedundantBlacklistEntries_Operation: Operation {
             print("No Server Entries, deleting all entries")
         }
         
-        
+        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        batchDeleteRequest.resultType = .resultTypeObjectIDs
         context.performAndWait {
-            let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-            batchDeleteRequest.resultType = .resultTypeObjectIDs
-            
             do {
                 let batchDeleteResult = try context.execute(batchDeleteRequest) as? NSBatchDeleteResult
                 

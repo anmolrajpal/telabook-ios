@@ -9,7 +9,66 @@
 import UIKit
 import MessageKit
 
-extension MessagesController: MessagesDataSource {
+extension MessagesController: MessagesDataSource, UICollectionViewDataSourcePrefetching {
+    func updateMultimediaCell(with image:UIImage?, at indexPath:IndexPath) {
+        guard let dataSource = messagesCollectionView.messagesDataSource else {
+            print("Nil Data source")
+            return
+        }
+        guard let message = dataSource.messageForItem(at: indexPath, in: messagesCollectionView) as? UserMessage else {
+            print("Damn it")
+            return
+        }
+        guard case .photo = message.kind else { return }
+        guard let cell = messagesCollectionView.cellForItem(at: indexPath) as? MultimediaMessageCell else {
+            print("Cell fucked up")
+            return
+        }
+        cell.imageView.image = image
+    }
+    /*
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        let messagesCollectionView = collectionView as! MessagesCollectionView
+        for indexPath in indexPaths {
+            guard let dataSource = messagesCollectionView.messagesDataSource else { return }
+            guard let message = dataSource.messageForItem(at: indexPath, in: messagesCollectionView) as? UserMessage else { return }
+            guard case .photo = message.kind else { return }
+            
+            serialQueue.async {
+                let image = message.getDownsampledImage()
+                DispatchQueue.main.async {
+                    self.updateMultimediaCell(with: image, at: indexPath)
+                }
+            }
+        }
+    }
+    */
+    
+    // MARK: UICollectionViewDataSourcePrefetching
+
+    /// - Tag: Prefetching
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        // Begin asynchronously fetching data for the requested index paths.
+        for indexPath in indexPaths {
+            guard let dataSource = messagesCollectionView.messagesDataSource else { return }
+            let message = dataSource.messageForItem(at: indexPath, in: messagesCollectionView) as! UserMessage
+            guard let url = message.imageLocalURL() else { return }
+            asyncFetcher.fetchAsync(url)
+        }
+    }
+
+    /// - Tag: CancelPrefetching
+    func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
+        // Cancel any in-flight requests for data for the specified index paths.
+        for indexPath in indexPaths {
+            guard let dataSource = messagesCollectionView.messagesDataSource else { return }
+            let message = dataSource.messageForItem(at: indexPath, in: messagesCollectionView) as! UserMessage
+            guard let url = message.imageLocalURL() else { return }
+            asyncFetcher.cancelFetch(url)
+        }
+    }
+    
+    
     func currentSender() -> SenderType {
         return self.thisSender
     }

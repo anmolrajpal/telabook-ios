@@ -11,7 +11,7 @@ import CoreData
 import Firebase
 import FirebaseStorage
 
-protocol CustomerPickerDelegate {
+protocol CustomerPickerDelegate: class {
     func customersController(didPick customer:Customer, at indexPath:IndexPath, controller:UIViewController)
 }
 
@@ -21,15 +21,15 @@ class CustomersViewController: UITableViewController {
     
     var viewDidAppear = false
     
-    var dataSource: CustomerDataSource!
+    var dataSource: CustomerDataSource! = nil
     
-    var fetchedResultsController: NSFetchedResultsController<Customer>!
+    var fetchedResultsController: NSFetchedResultsController<Customer>! = nil
     
     let searchController = UISearchController(searchResultsController: nil)
     
     internal var currentSearchText = ""
     
-    var pickerDelegate:CustomerPickerDelegate?
+    weak var pickerDelegate:CustomerPickerDelegate?
     
     var selectedIndexPath:IndexPath?
     
@@ -64,6 +64,9 @@ class CustomersViewController: UITableViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    deinit {
+        
+    }
     
     
     
@@ -76,7 +79,7 @@ class CustomersViewController: UITableViewController {
     // MARK: - Computed Properties
     
     internal var isFetchedResultsAvailable:Bool {
-        return fetchedResultsController.sections?.first?.numberOfObjects == 0 ? false : true
+        return !(fetchedResultsController.fetchedObjects?.isEmpty ?? true)
     }
     var isSearchBarEmpty: Bool {
         return searchController.searchBar.text?.isEmpty ?? true

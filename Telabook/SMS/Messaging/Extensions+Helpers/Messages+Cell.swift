@@ -185,7 +185,7 @@ extension MessagesController: QLPreviewControllerDelegate {
     func previewController(_ controller: QLPreviewController, transitionViewFor item: QLPreviewItem) -> UIView? {
         guard let url = item.previewItemURL,
             let index = messages.firstIndex(where: { $0.imageLocalURL() == url }),
-            let cell = messagesCollectionView.cellForItem(at: IndexPath(item: 0, section: index)) as? MMSCell else {
+            let cell = messagesCollectionView.cellForItem(at: IndexPath(item: 0, section: index)) as? MultimediaMessageCell else {
                 return nil
         }
         return cell.imageView

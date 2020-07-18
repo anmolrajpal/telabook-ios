@@ -193,7 +193,7 @@ extension UserMessage: MessageType {
         return attributedText
     }
     private func getScheduledMessageAttributedText() -> NSAttributedString {
-        let messageAttributedString = NSAttributedString(string: self.textMessage ?? "", attributes: [
+        let messageAttributedString = NSAttributedString(string: textMessage ?? "", attributes: [
             .font : UIFont.preferredFont(forTextStyle: .body),
             .foregroundColor: UIColor.telaWhite
         ])
@@ -216,10 +216,10 @@ extension UserMessage: MessageType {
         ])
     }
     func multimediaFormattedMessage() -> MessageKind {
-        if let url = self.imageURL {
+        if let url = imageURL {
             let width = UIScreen.main.bounds.width * 0.7
             let size = CGSize(width: width, height: width)
-            if let imageText = self.textMessage, !imageText.isBlank {
+            if let imageText = textMessage?.trimmingCharacters(in: .whitespacesAndNewlines), !imageText.isEmpty {
                 return .photo(ImageItem(imageUrl: url, attributedText: getTextMessageAttributedText(textMessage: imageText), size: size))
             } else {
                 return .photo(ImageItem(imageUrl: url, size: size))
@@ -229,7 +229,7 @@ extension UserMessage: MessageType {
         }
     }
     func textFormattedMessage() -> MessageKind {
-        let text = self.textMessage ?? ""
+        let text = textMessage ?? ""
         if text.containsOnlyEmoji {
             return .emoji(text)
         } else {
@@ -414,21 +414,36 @@ extension UserMessage {
      Provide a new task context to load the image data, and release it after the image finishes loading.
      */
     func getImage() -> UIImage? {
-        // Load the image from the cached file if the file exists.
-        guard let url = imageLocalURL() else { return nil }
-        var image: UIImage?
+        guard let data = getImageData() else { return nil }
+        return UIImage(data: data)
+    }
+    
+    func getDownsampledImage() -> UIImage? {
+        guard let imageData = getImageData() else { return nil }
         
+        let maxDimensionInPixels = max(270, 270) * 1
+        let options = [kCGImageSourceCreateThumbnailWithTransform: true,
+                       kCGImageSourceCreateThumbnailFromImageAlways: true,
+                       kCGImageSourceThumbnailMaxPixelSize: maxDimensionInPixels] as CFDictionary
+        let imageSource = CGImageSourceCreateWithData(imageData as CFData, nil)!
+        let imageReference = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, options)!
+        return UIImage(cgImage: imageReference)
+    }
+    
+    func getImageData() -> Data? {
+        guard let url = imageLocalURL() else { return nil }
+        var imageData:Data?
         var nsError: NSError?
         NSFileCoordinator().coordinate(
             readingItemAt: url, options: .withoutChanges, error: &nsError,
             byAccessor: { (newURL: URL) -> Void in
                 if let data = try? Data(contentsOf: newURL) {
-                    image = UIImage(data: data, scale: UIScreen.main.scale)
+                    imageData = data
                 }
         })
         if let nsError = nsError {
             print("###\(#function): \(nsError.localizedDescription)")
         }
-        return image
+        return imageData
     }
 }

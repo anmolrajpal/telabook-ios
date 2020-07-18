@@ -23,7 +23,8 @@ extension AgentsViewController {
     }
     
     internal func configureDataSource() {
-        dataSource = DataSource(tableView: tableView, cellProvider: { (tableView, indexPath, agent) -> UITableViewCell? in
+        dataSource = DataSource(tableView: tableView, cellProvider: { [weak self] (tableView, indexPath, agent) -> UITableViewCell? in
+            guard let self = self else { return nil }
             let cell = tableView.dequeueReusableCell(AgentCell.self, for: indexPath)
 //            let agent = self.fetchedResultsController.object(at: indexPath)
             cell.backgroundColor = .clear

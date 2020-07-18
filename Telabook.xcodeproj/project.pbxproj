@@ -129,6 +129,8 @@
 		6F6B44D424BC7A2600AD2649 /* MessageDetailsController+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B44D324BC7A2600AD2649 /* MessageDetailsController+Layout.swift */; };
 		6F6B44D624BC855F00AD2649 /* MessageDetailsController+TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B44D524BC855F00AD2649 /* MessageDetailsController+TableView.swift */; };
 		6F6B44D824BCD1A400AD2649 /* MMSMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B44D724BCD1A400AD2649 /* MMSMessageCell.swift */; };
+		6F7BF51724C2C760009B9D5E /* MultimediaMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7BF51624C2C760009B9D5E /* MultimediaMessageCell.swift */; };
+		6F7BF51924C36446009B9D5E /* AsyncMMSFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7BF51824C36446009B9D5E /* AsyncMMSFetcher.swift */; };
 		6F83FC2124608C6A00518201 /* QuickResponsesHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F83FC2024608C6A00518201 /* QuickResponsesHelpers.swift */; };
 		6F83FC232460A39B00518201 /* QuickResponsesTableViewHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F83FC222460A39B00518201 /* QuickResponsesTableViewHelpers.swift */; };
 		6F8927FB24A8A82E0025DF64 /* ScheduledMessageJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8927FA24A8A82E0025DF64 /* ScheduledMessageJSON.swift */; };
@@ -441,6 +443,8 @@
 		6F6B44D524BC855F00AD2649 /* MessageDetailsController+TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageDetailsController+TableView.swift"; sourceTree = "<group>"; };
 		6F6B44D724BCD1A400AD2649 /* MMSMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MMSMessageCell.swift; sourceTree = "<group>"; };
 		6F6F9F89247FB76900C9114D /* Config-PreRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Config-PreRelease.xcconfig"; sourceTree = "<group>"; };
+		6F7BF51624C2C760009B9D5E /* MultimediaMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultimediaMessageCell.swift; sourceTree = "<group>"; };
+		6F7BF51824C36446009B9D5E /* AsyncMMSFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncMMSFetcher.swift; sourceTree = "<group>"; };
 		6F83FC2024608C6A00518201 /* QuickResponsesHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponsesHelpers.swift; sourceTree = "<group>"; };
 		6F83FC222460A39B00518201 /* QuickResponsesTableViewHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponsesTableViewHelpers.swift; sourceTree = "<group>"; };
 		6F8927FA24A8A82E0025DF64 /* ScheduledMessageJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduledMessageJSON.swift; sourceTree = "<group>"; };
@@ -874,6 +878,7 @@
 				6F00F2D524A50D68001E33D9 /* MessageMediaManager.swift */,
 				6F00F2DD24A50E46001E33D9 /* MessageDownloadService.swift */,
 				6F00F2DB24A50E37001E33D9 /* MessageUploadService.swift */,
+				6F7BF51824C36446009B9D5E /* AsyncMMSFetcher.swift */,
 				6FF842192482EFF00069A789 /* QuickResponsePicker+TableViewHelpers.swift */,
 				6FF8421B2482F0030069A789 /* QuickResponsePicker+Helpers.swift */,
 				6F6B44C724B9F5B800AD2649 /* MediaAssertion+Keyboard.swift */,
@@ -905,6 +910,7 @@
 				6FEE9A18247ED6A300709E2D /* BotMessageCell.swift */,
 				6FF842172482EADD0069A789 /* QuickResponsePickerView.swift */,
 				6F8A8300249B7C1A002ACDFE /* MMSCell.swift */,
+				6F7BF51624C2C760009B9D5E /* MultimediaMessageCell.swift */,
 				6F6B44D724BCD1A400AD2649 /* MMSMessageCell.swift */,
 				6F8A8302249B7C2F002ACDFE /* MMSCellView.swift */,
 			);
@@ -2406,6 +2412,7 @@
 				6F087DCD22E0DF3D00CAD840 /* OnlineUsersTableViewExtensions.swift in Sources */,
 				6F098BB922BE4E3700AF19AA /* HandleBlockingHelpers.swift in Sources */,
 				6F04FFBA22C3A12400FA467E /* ChatVCCoreDataHelpers.swift in Sources */,
+				6F7BF51924C36446009B9D5E /* AsyncMMSFetcher.swift in Sources */,
 				6F6457D92462DCE400CECF03 /* Log.swift in Sources */,
 				6FB11B3D229EF4690098D050 /* ArchivedSMSViewController.swift in Sources */,
 				6F9453CF22DC3CE600047C7F /* ChangePasswordAPIProtocol.swift in Sources */,
@@ -2517,6 +2524,7 @@
 				6F265171246C3610003D582F /* SFSymbol.swift in Sources */,
 				6FEE9A17247E696000709E2D /* Messages+Cell.swift in Sources */,
 				6FEE9A15247D5BE000709E2D /* Messages+ServiceProvider.swift in Sources */,
+				6F7BF51724C2C760009B9D5E /* MultimediaMessageCell.swift in Sources */,
 				6FB11B0D229BFA430098D050 /* MoreViewController.swift in Sources */,
 				6F6B44D424BC7A2600AD2649 /* MessageDetailsController+Layout.swift in Sources */,
 				6FD4F7AE24AF526B00BD2569 /* LocalNotificationItem.swift in Sources */,
@@ -2697,7 +2705,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 27;
+				CURRENT_PROJECT_VERSION = 28;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2839,7 +2847,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 27;
+				CURRENT_PROJECT_VERSION = 28;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2862,7 +2870,7 @@
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 27;
+				CURRENT_PROJECT_VERSION = 28;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2942,7 +2950,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 27;
+				CURRENT_PROJECT_VERSION = 28;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;

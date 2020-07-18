@@ -75,12 +75,7 @@ class MessagesController: MessagesViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    deinit {
-        synthesizer.stopSpeaking(at: .immediate)
-//        fetchedResultsController = nil
-//        fetchedResultsController.delegate = nil
-//        viewContext.reset()
-    }
+    
     
     
     
@@ -93,7 +88,9 @@ class MessagesController: MessagesViewController {
     
     let synthesizer = AVSpeechSynthesizer()
     
-    let serialQueue = DispatchQueue(label: "conversation-media-download-queue")
+    let serialQueue = DispatchQueue(label: "media-loader-queue")
+    
+    let asyncFetcher = AsyncMMSFetcher()
     
     let autoDownloadImageMessagesState = AppData.autoDownloadImageMessagesState
     
@@ -173,8 +170,10 @@ class MessagesController: MessagesViewController {
     
     //MARK: - Lifecycle
     
+
     override func viewDidLoad() {
-        super.messagesCollectionView.collectionViewLayout = CustomMessagesCollectionViewFlowLayout()
+//        super.messagesCollectionView = CustomMessagesCollectionView()
+//        super.messagesCollectionView.collectionViewLayout = CustomMessagesCollectionViewFlowLayout()
         super.viewDidLoad()
         commonInit()
     }
@@ -200,9 +199,8 @@ class MessagesController: MessagesViewController {
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        print("Memory warning")
+        asyncFetcher.clearAllCache()
     }
-    
     
     
     
@@ -240,7 +238,20 @@ class MessagesController: MessagesViewController {
         monitor = nil
     }
     
-    
+    func downsample(imageAt imageURL: URL?, to pointSize: CGSize, scale: CGFloat) -> UIImage? {
+        guard let imageURL = imageURL else { return nil }
+        let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
+        guard let imageSource = CGImageSourceCreateWithURL(imageURL as CFURL, imageSourceOptions) else { return nil }
+        let maxDimensionInPixels = max(pointSize.width, pointSize.height) * scale
+        let downsampleOptions =
+            [kCGImageSourceCreateThumbnailFromImageAlways: true,
+             kCGImageSourceShouldCacheImmediately: true,
+             kCGImageSourceCreateThumbnailWithTransform: true,
+             kCGImageSourceThumbnailMaxPixelSize: maxDimensionInPixels] as CFDictionary
+        
+        guard let downsampledImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampleOptions) else { return nil }
+        return UIImage(cgImage: downsampledImage)
+    }
     
     
     // MARK: - Overriden methods
@@ -250,24 +261,58 @@ class MessagesController: MessagesViewController {
             fatalError("Ouch. nil data source for messages")
         }
 
-        // Very important to check this when overriding `cellForItemAt`
-        // Super method will handle returning the typing indicator cell
-        guard !isSectionReservedForTypingIndicator(indexPath.section) else {
-            return super.collectionView(collectionView, cellForItemAt: indexPath)
-        }
-        
         let message = messagesDataSource.messageForItem(at: indexPath, in: messagesCollectionView) as! UserMessage
         
 
-        
-        if case .photo = message.kind {
+        switch message.kind {
+            case .photo, .video:
+                let cell = messagesCollectionView.dequeueReusableCell(MultimediaMessageCell.self, for: indexPath)
+                cell.cellDelegate = self
+                cell.configure(with: message, at: indexPath, and: messagesCollectionView)
+                if let sourceURL = message.imageLocalURL() {
+                    if let fetchedImage = asyncFetcher.fetchedImage(for: sourceURL) {
+                        cell.imageView.image = fetchedImage
+                    } else {
+                        cell.imageView.image = nil
+                        
+                        asyncFetcher.fetchAsync(sourceURL) { image in
+                            DispatchQueue.main.async {
+                                cell.imageView.image = image
+                            }
+                        }
+                    }
+                }
+//                cell.layoutIfNeeded()
+//                let imageViewSize = cell.imageView.bounds.size
+//                let scale = collectionView.traitCollection.displayScale
+//
+//                serialQueue.async {
+//                    let image = self.downsample(imageAt: message.imageLocalURL(), to: imageViewSize, scale: scale)
+//                    DispatchQueue.main.async {
+//                        cell.imageView.image = image
+//                    }
+//                }
+                return cell
+            default:
+                return super.collectionView(collectionView, cellForItemAt: indexPath)
+        }
+        /*
+        if case .photo = message.kind, case .video = message.kind {
             let cell = messagesCollectionView.dequeueReusableCell(MMSCell.self, for: indexPath)
             cell.cellDelegate = self
             cell.configure(with: message, at: indexPath, and: messagesCollectionView, upload: uploadService.activeUploads[message.imageURL!], download: downloadService.activeDownloads[message.imageURL!], shouldAutoDownload: shouldAutoDownloadImageMessages)
             return cell
         }
         return super.collectionView(collectionView, cellForItemAt: indexPath)
+        */
     }
+    
+    
+    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        guard let messagesFlowLayout = collectionViewLayout as? CustomMessagesCollectionViewFlowLayout else { return .zero }
+        return messagesFlowLayout.sizeForItem(at: indexPath)
+    }
+    
 
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {

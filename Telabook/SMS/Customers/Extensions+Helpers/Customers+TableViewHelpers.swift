@@ -36,7 +36,8 @@ extension CustomersViewController {
     }
     
     func configureDataSource() {
-        dataSource = CustomerDataSource(tableView: tableView, cellProvider: { (tableView, indexPath, customer) -> UITableViewCell? in
+        dataSource = CustomerDataSource(tableView: tableView, cellProvider: { [weak self] (tableView, indexPath, customer) -> UITableViewCell? in
+            guard let self = self else { return nil }
             let reusableCell:UITableViewCell
             if self.pickerDelegate != nil {
                 let phoneNumber = customer.phoneNumber ?? ""

@@ -15,7 +15,8 @@ import UserNotifications
 extension MessagesController {
     internal func configureMessageCollectionView() {
         messagesCollectionView.register(BotMessageCell.self)
-        messagesCollectionView.register(MMSCell.self)
+//        messagesCollectionView.register(MMSCell.self)
+        messagesCollectionView.register(MultimediaMessageCell.self)
         messagesCollectionView.register(SpinnerReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader)
         messagesCollectionView.register(NewMessagesCountReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter)
         
@@ -24,6 +25,9 @@ extension MessagesController {
         
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messageCellDelegate = self
+        messagesCollectionView.prefetchDataSource = self
+        
+        messagesCollectionView.collectionViewLayout = CustomMessagesCollectionViewFlowLayout()
         
         messagesCollectionView.delegate = self
         

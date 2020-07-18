@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 import Firebase
 
-protocol AgentPickerDelegate {
+protocol AgentPickerDelegate: class {
     func agentsController(didPick agent:Agent, at indexPath:IndexPath, controller:UIViewController)
 }
 
@@ -18,7 +18,7 @@ class AgentsViewController: UITableViewController {
     
     // MARK: - Stored Properties / declarations
     
-    var pickerDelegate:AgentPickerDelegate?
+    weak var pickerDelegate:AgentPickerDelegate?
     var selectedIndexPath:IndexPath?
     var selectedAgent:Agent?
     var viewDidAppear = false

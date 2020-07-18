@@ -57,6 +57,6 @@ extension CustomersViewController {
 }
 extension CustomersViewController: NSFetchedResultsControllerDelegate {
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
-        self.updateUI()
+        updateUI()
     }
 }

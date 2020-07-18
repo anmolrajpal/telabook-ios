@@ -55,6 +55,7 @@ extension MessageDetailsViewController: UICollectionViewDataSource {
         case .photo, .video:
             let cell = messagesCollectionView.dequeueReusableCell(MMSMessageCell.self, for: indexPath)
             cell.configure(with: message, at: indexPath, and: messagesCollectionView)
+            cell.imageView.image = (message as! UserMessage).getImage()
             return cell
         case .location:
             let cell = messagesCollectionView.dequeueReusableCell(LocationMessageCell.self, for: indexPath)

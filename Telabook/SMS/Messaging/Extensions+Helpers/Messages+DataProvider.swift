@@ -18,13 +18,15 @@ extension MessagesController {
     
     
     func observeNewMessages() -> UInt {
+//        print("Screen Entry Time: \(screenEntryTime.milliSecondsSince1970)")
         return reference.queryOrdered(byChild: "date").queryStarting(atValue: screenEntryTime.milliSecondsSince1970).observe(.childAdded, with: { [weak self] snapshot in
             guard let self = self else { return }
             if snapshot.exists() {
-//                print("New Message Child Added: \(snapshot)")
+//                print("-------------------\n\nNew Message Child Added Snapshot:\n\n \(snapshot)\n\n-------------------\n\n")
                 guard let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) else {
                     return
                 }
+//                print("----------------\n\n### \(#function) - Adding new Message: \n\n\(message)\n\n----------------\n\n")
                 self.persistFirebaseMessageInStore(entry: message)
             }
         }) { error in
@@ -36,10 +38,11 @@ extension MessagesController {
         return reference.queryOrdered(byChild: "date").queryStarting(atValue: screenEntryTime.milliSecondsSince1970).observe(.childChanged, with: { [weak self] snapshot in
             guard let self = self else { return }
             if snapshot.exists() {
-//                print("Existing Message Child Updated: \(snapshot)")
+//                print("-------------\n\nExisting Message Child Updated Snapshot: \n\n\(snapshot)\n\n-------------------")
                 guard let message = FirebaseMessage(snapshot: snapshot, conversationID: self.conversationID) else {
                     return
                 }
+//                print("----------------\n\n### \(#function) - Message to update: \n\n\(message)\n\n----------------\n\n")
                 self.persistFirebaseMessageInStore(entry: message)
             }
         }) { error in
@@ -56,11 +59,13 @@ extension MessagesController {
         //        print("Loading Initial Messages from Firebase")
 //        print("### \(#function) called")
         if messages.isEmpty { self.startSpinner() }
-        reference.queryLimited(toLast: UInt(limit)).observeSingleEvent(of: .value, with: { snapshot in
+        reference.queryLimited(toLast: UInt(limit)).observeSingleEvent(of: .value, with: { [weak self] snapshot in
+            guard let self = self else { return }
             guard snapshot.exists() else {
 //                printAndLog(message: "### \(#function) Snapshot does not exists. Return()", log: .firebase, logType: .info)
                 return
             }
+//            print("----------------\n\n### \(#function) - Load initial messages snapshot: \n\n\(snapshot)\n\n----------------\n\n")
             var messages:[FirebaseMessage] = []
             for child in snapshot.children {
                 if let snapshot = child as? DataSnapshot {
@@ -69,7 +74,8 @@ extension MessagesController {
                     }
                 }
             }
-            self.persistInitialFirebaseMessagesInStore(entries: Array(messages), fetchedEntries: nil)
+//            print("----------------\n\n### \(#function) - inserting initial messages: \n\n\(messages)\n\n----------------\n\n")
+            self.persistInitialFirebaseMessagesInStore(entries: messages, fetchedEntries: nil)
         }) { error in
             let errorMessage = "Firebase Single Event Observer Error while observing Messages: \(error.localizedDescription)"
             printAndLog(message: errorMessage, log: .firebase, logType: .error)
@@ -84,12 +90,14 @@ extension MessagesController {
 //        print("### \(#function) called")
         let initialMessage = fetchedMessages.last!
         let initialMessageKey = initialMessage.messageId
-        print("### \(#function) Initial Message: \(initialMessage) where fetched Messages count = \(fetchedMessages.count)")
-        reference.queryOrderedByKey().queryEnding(atValue: initialMessageKey).queryLimited(toLast: UInt(limit)).observeSingleEvent(of: .value, with: { snapshot in
+//        print("### \(#function) Initial Message: \(initialMessage) where fetched Messages count = \(fetchedMessages.count)")
+        reference.queryOrderedByKey().queryEnding(atValue: initialMessageKey).queryLimited(toLast: UInt(limit)).observeSingleEvent(of: .value, with: { [weak self] snapshot in
+            guard let self = self else { return }
             guard snapshot.exists() else {
 //                printAndLog(message: "### \(#function) Snapshot does not exists. Return()", log: .firebase, logType: .info)
                 return
             }
+//            print("----------------\n\n### \(#function) - Upserting existing messages snapshot: \n\n\(snapshot)\n\n----------------\n\n")
             var messages:[FirebaseMessage] = []
             for child in snapshot.children {
                 if let snapshot = child as? DataSnapshot {
@@ -98,7 +106,7 @@ extension MessagesController {
                     }
                 }
             }
-            print("---------------------\n\n### \(#function) Upserting Firebase messages with count: \(messages.count) ; messages: \n\(messages)\n\n---------------------")
+//            print("---------------------\n\n### \(#function) Upserting Firebase messages with count: \(messages.count) ; messages: \n\(messages)\n\n---------------------")
             self.persistInitialFirebaseMessagesInStore(entries: Array(messages), fetchedEntries: fetchedMessages)
         }) { error in
             let errorMessage = "Firebase Single Event Observer Error while observing Messages: \(error.localizedDescription)"
@@ -113,9 +121,10 @@ extension MessagesController {
     func upsertUnseenMessagesFromFirebase(previousMessage:UserMessage, fetchedMessages:[UserMessage]) {
 //        print("### \(#function) - Previous Message: \(previousMessage)")
         let previousMessageKey = previousMessage.messageId
-        reference.queryOrderedByKey().queryStarting(atValue: previousMessageKey).queryLimited(toLast: UInt(unseenFetchLimit)).observeSingleEvent(of: .value, with: { snapshot in
+        reference.queryOrderedByKey().queryStarting(atValue: previousMessageKey).queryLimited(toLast: UInt(unseenFetchLimit)).observeSingleEvent(of: .value, with: { [weak self] snapshot in
+            guard let self = self else { return }
             guard snapshot.exists() else {
-                printAndLog(message: "### \(#function) Snapshot does not exists. Return()", log: .firebase, logType: .info)
+//                printAndLog(message: "### \(#function) Snapshot does not exists. Return()", log: .firebase, logType: .info)
                 return
             }
             var messages:[FirebaseMessage] = []
@@ -126,7 +135,7 @@ extension MessagesController {
                     }
                 }
             }
-            print("-------------------\n\n### \(#function) New Unseen Messages with count: \(messages.count) are: \n\(messages)\n\n----------------------")
+//            print("-------------------\n\n### \(#function) New Unseen Messages with count: \(messages.count) are: \n\(messages)\n\n----------------------")
             self.persistUnseenFirebaseMessagesInStore(entries: Array(messages.dropFirst()), fetchedEntries: fetchedMessages, offsetMessage: previousMessage)
         }) { error in
             let errorMessage = "Firebase Single Event Observer Error while observing Messages: \(error.localizedDescription)"
@@ -147,7 +156,8 @@ extension MessagesController {
         let key = offsetMessage.firebaseKey!
 //        print("### \(#function) Message Count : \(messages.count) | offset message text: \(offsetMessage.textMessage ?? "---") | Key: \(key)")
         
-        reference.queryOrderedByKey().queryEnding(atValue: key).queryLimited(toLast: UInt(limit + 1)).observeSingleEvent(of: .value, with: { snapshot in
+        reference.queryOrderedByKey().queryEnding(atValue: key).queryLimited(toLast: UInt(limit + 1)).observeSingleEvent(of: .value, with: { [weak self] snapshot in
+            guard let self = self else { return }
             guard snapshot.exists() else {
 //               printAndLog(message: "### \(#function) Snapshot does not exists. Return()", log: .firebase, logType: .info)
                 return
@@ -323,7 +333,8 @@ extension MessagesController {
         fetchRequest.fetchOffset = offset
         
         DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 1) {
-            self.fetchMessagesFromStore(fetchRequest: fetchRequest) { messages in
+            self.fetchMessagesFromStore(fetchRequest: fetchRequest) { [weak self] messages in
+                guard let self = self else { return }
 //                print("Fetched \(messages.count) messages which are: \(messages)")
                 DispatchQueue.main.async {
 //                    print("Original messages count = \(self.messages.count)")
@@ -398,7 +409,8 @@ extension MessagesController {
 //        fetchRequest.fetchOffset = offset
         
         DispatchQueue.global(qos: .userInitiated).async {
-            self.fetchMessagesFromStore(fetchRequest: fetchRequest) { messages in
+            self.fetchMessagesFromStore(fetchRequest: fetchRequest) { [weak self] messages in
+                guard let self = self else { return }
                 if messages.isEmpty {
 //                    print("### \(#function) Messages empty; now changing predicate to conversation only predicate")
                     fetchRequest.predicate = conversationPredicate
@@ -469,8 +481,9 @@ extension MessagesController {
         fetchRequest.fetchLimit = unseenFetchLimit
         
         DispatchQueue.global(qos: .userInitiated).async {
-            self.fetchMessagesFromStore(fetchRequest: fetchRequest, shouldReverseResult: false) { messages in
-                print("--------------\n\n### \(#function) - Unseen Messages with count: \(messages.count) are: \n\n\(messages)\n\n-----------------")
+            self.fetchMessagesFromStore(fetchRequest: fetchRequest, shouldReverseResult: false) { [weak self] messages in
+                guard let self = self else { return }
+//                print("--------------\n\n### \(#function) - Unseen Messages with count: \(messages.count) are: \n\n\(messages)\n\n-----------------")
                 DispatchQueue.main.async {
                     messages.forEach { message in
                         if let index = self.messages.firstIndex(where: { $0.firebaseKey == message.firebaseKey }) {
