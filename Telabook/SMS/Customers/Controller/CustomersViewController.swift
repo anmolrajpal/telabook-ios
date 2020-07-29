@@ -14,10 +14,18 @@ import FirebaseStorage
 protocol CustomerPickerDelegate: class {
     func customersController(didPick customer:Customer, at indexPath:IndexPath, controller:UIViewController)
 }
-
+protocol MessageForwardingDelegate: class {
+    func forwardMessage(to selectedConversations: [Customer], controller: CustomersViewController)
+}
 class CustomersViewController: UITableViewController {
     
     // MARK: - Properties
+    
+    weak var messageForwardingDelegate: MessageForwardingDelegate?
+    
+    weak var pickerDelegate:CustomerPickerDelegate?
+    
+    var selectedConversationsToForwardMessage = [Customer]()
     
     var viewDidAppear = false
     
@@ -28,8 +36,6 @@ class CustomersViewController: UITableViewController {
     let searchController = UISearchController(searchResultsController: nil)
     
     internal var currentSearchText = ""
-    
-    weak var pickerDelegate:CustomerPickerDelegate?
     
     var selectedIndexPath:IndexPath?
     
@@ -239,6 +245,13 @@ class CustomersViewController: UITableViewController {
     }()
     
     
+    
+    lazy var sendButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(#imageLiteral(resourceName: "autoresponse_icon").withRenderingMode(.alwaysOriginal), for: .normal)
+        button.setImage(#imageLiteral(resourceName: "autoresponse_icon").withTintColor(.gray, renderingMode: .alwaysOriginal), for: .disabled)
+        return button
+    }()
     
     
     // MARK: Alert Views

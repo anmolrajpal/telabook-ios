@@ -12,9 +12,10 @@ extension AgentsViewController {
     
     // MARK: Common setup
     internal func commonInit() {
-        title = "SMS"
+        title = messageForwardingDelegate == nil ? "SMS" : "Forward To"
         view.backgroundColor = .telaGray1
-        setUpNavBar()
+        configureNavigationBarAppearance()
+        configureNavigationBarItems()
         configureHierarchy()
         configureTableView()
         configureDataSource()
@@ -46,7 +47,18 @@ extension AgentsViewController {
     }
     
     
-    
+    private func configureNavigationBarItems() {
+        let cancelButtonImage = SFSymbol.cancel.image(withSymbolConfiguration: .init(textStyle: .largeTitle)).image(scaledTo: .init(width: 28, height: 28))
+        let cancelButton = UIBarButtonItem(image: cancelButtonImage, style: .plain, target: self, action: #selector(cancelButtonDidTap))
+        cancelButton.tintColor = UIColor.white.withAlphaComponent(0.2)
+        if messageForwardingDelegate != nil {
+            navigationItem.rightBarButtonItems = [cancelButton]
+        }
+    }
+    @objc
+    private func cancelButtonDidTap() {
+        self.dismiss(animated: true)
+    }
     
     internal func addFirebaseObservers() {
         handle = observePendingMessagesCount()

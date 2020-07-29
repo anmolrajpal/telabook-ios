@@ -25,22 +25,23 @@ struct FirebaseMessage {
     
     let ref: DatabaseReference?
     let firebaseKey: String
-    let accountSID:String?
-    let messageSID:String?
-    let conversationID:Int
-    let deleted:Bool
-    let hasError:Bool
-    let messageText:String?
-    let messageImageURL:String?
-    let messageType:MessageCategory
-    let deliveredByProviderTimestamp:Date?
-    let sentByApiTimestamp:Date?
-    let sentByAppTimestamp:Date?
-    let sentByProviderTimestamp:Date?
+    let accountSID: String?
+    let messageSID: String?
+    let conversationID: Int
+    let deleted: Bool
+    let hasError: Bool
+    let forwardedFromNode: String?
+    let messageText: String?
+    let messageImageURL: String?
+    let messageType: MessageCategory
+    let deliveredByProviderTimestamp: Date?
+    let sentByApiTimestamp: Date?
+    let sentByAppTimestamp: Date?
+    let sentByProviderTimestamp: Date?
     let timestamp: Date
-    let updatedAt:Date?
-    let senderIsWorker:Bool
-    let tags:String?
+    let updatedAt: Date?
+    let senderIsWorker: Bool
+    let tags: String?
     
     
     
@@ -96,6 +97,7 @@ struct FirebaseMessage {
         self.conversationID = conversationId != 0 ? conversationId : conversationID
         self.deleted = mapToBool(value: value["deleted"])
         self.hasError = mapToBool(value: value["error"])
+        self.forwardedFromNode = value["forwarded_from_node"] as? String
         self.messageText = value["message"] as? String
         self.messageImageURL = value["img"] as? String
         let type = value["type"] as? String

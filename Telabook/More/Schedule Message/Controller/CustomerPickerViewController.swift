@@ -50,7 +50,7 @@ class CustomerPickerViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        setUpNavBar()
+//        setUpNavBar()
         setupTableView()
     }
     override func viewDidLayoutSubviews() {

@@ -11,14 +11,18 @@ import CoreData
 import Firebase
 
 protocol AgentPickerDelegate: class {
-    func agentsController(didPick agent:Agent, at indexPath:IndexPath, controller:UIViewController)
+    func agentsController(didPick agent: Agent, at indexPath: IndexPath, controller: AgentsViewController)
 }
-
+protocol MessageForwardingAgentSelectionDelegate: class {
+    func agentsController(didSelect agent: Agent, workerID: Int, at indexPath: IndexPath, controller: AgentsViewController)
+}
 class AgentsViewController: UITableViewController {
     
     // MARK: - Stored Properties / declarations
     
-    weak var pickerDelegate:AgentPickerDelegate?
+    weak var pickerDelegate: AgentPickerDelegate?
+    weak var messageForwardingDelegate: MessageForwardingAgentSelectionDelegate?
+    
     var selectedIndexPath:IndexPath?
     var selectedAgent:Agent?
     var viewDidAppear = false

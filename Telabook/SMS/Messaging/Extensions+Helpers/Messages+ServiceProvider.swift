@@ -10,7 +10,7 @@ import UIKit
 import os
 import MessageKit
 import CoreData
-
+import Firebase
 
 
 extension MessagesController {
@@ -181,7 +181,7 @@ extension MessagesController {
     
     
     /* ------------------------------------------------------------------------------------------------------------ */
-    internal func sendNewTextMessage(newMessage:NewMessage) {
+    internal func sendNewTextMessage(newMessage: NewMessage) {
         let queue = OperationQueue()
         queue.qualityOfService = .userInitiated
         queue.maxConcurrentOperationCount = 1
@@ -195,6 +195,90 @@ extension MessagesController {
         queue.addOperations(operations, waitUntilFinished: false)
     }
     /* ------------------------------------------------------------------------------------------------------------ */
+    
+    
+    /* ------------------------------------------------------------------------------------------------------------ */
+    internal func forwardTextMessage(message: UserMessage, to customer: Customer, forwardedFromNode: String) {
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+        
+        let conversationsNode: Config.FirebaseConfig.Node = .conversations(companyID: AppData.companyId, workerID: Int(customer.agent!.workerID))
+        let messagesNode: Config.FirebaseConfig.Node = .messages(companyID: AppData.companyId, node: customer.node!)
+        let conversationsDatabaseReference = conversationsNode.reference
+        let messagesDatabaseReference = messagesNode.reference
+        
+        guard let key = messagesDatabaseReference.childByAutoId().key else { return }
+        let newMessage = NewMessage(kind: message.kind, messageId: key, sender: thisSender, sentDate: Date(), forwardedFromNode: forwardedFromNode)
+            
+        let context = PersistentContainer.shared.newBackgroundContext()
+        let objectID = customer.objectID
+        let customerObject = context.object(with: objectID) as! Customer
+        let operations = MessageOperations.getOperationsToSend(newTextMessage: newMessage, using: context, forConversationWithCustomer: customerObject, messageReference: messagesDatabaseReference, conversationReference: conversationsDatabaseReference)
+//        handleViewsStateForOperations(operations: operations, onOperationQueue: queue, completion: {_ in })
+        
+        queue.addOperations(operations, waitUntilFinished: false)
+    }
+    /* ------------------------------------------------------------------------------------------------------------ */
+    
+    
+    
+    /* ------------------------------------------------------------------------------------------------------------ */
+    func forwardMultimediaMessage(message: UserMessage, to customer: Customer, forwardedFromNode: String) {
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+        
+        guard let originalMediaItemLocalURL = message.imageLocalURL() else { return }
+        
+//        let conversationsNode: Config.FirebaseConfig.Node = .conversations(companyID: AppData.companyId, workerID: Int(customer.agent!.workerID))
+        let messagesNode: Config.FirebaseConfig.Node = .messages(companyID: AppData.companyId, node: customer.node!)
+//        let conversationsDatabaseReference = conversationsNode.reference
+        let messagesDatabaseReference = messagesNode.reference
+        let imageUUID = UUID()
+        
+        let imageFileName = imageUUID.uuidString + ".jpeg"
+        
+        let localImageURL = customer.mediaFolder().appendingPathComponent(imageFileName)
+        
+        guard let key = messagesDatabaseReference.childByAutoId().key else { return }
+        guard case .photo(let originalMediaItem as ImageItem) = message.kind else { return }
+        var newMediaItem = originalMediaItem
+        newMediaItem.imageUUID = imageUUID
+        
+        DispatchQueue.global().async {
+            let fileManager = FileManager.default
+            do {
+                try fileManager.copyItem(at: originalMediaItemLocalURL, to: localImageURL)
+            } catch {
+                let errorMessage = "### \(#function): Failed to copy image file from original url: \(originalMediaItemLocalURL) to new image local url: \(localImageURL); \nError Description: \(error)"
+                printAndLog(message: errorMessage, log: .ui, logType: .error)
+                fatalError(errorMessage)
+            }
+        }
+        
+        let newMessage = NewMessage(kind: .photo(newMediaItem), messageId: key, sender: thisSender, sentDate: Date(), forwardedFromNode: forwardedFromNode)
+        let context = PersistentContainer.shared.newBackgroundContext()
+        let objectID = customer.objectID
+        let customerObject = context.object(with: objectID) as! Customer
+        
+        var forwardedMessage: UserMessage?
+        context.performAndWait {
+            forwardedMessage = UserMessage(context: context, newMessageEntryFromCurrentUser: newMessage, forConversationWithCustomer: customerObject)
+            forwardedMessage?.uploadState = .uploaded
+            do {
+                if context.hasChanges { try context.save() }
+            } catch {
+                printAndLog(message: "### \(#function) - Core Data Error saving new media message entry in store: \(message) | Error: \(error)", log: .coredata, logType: .error)
+                return
+            }
+        }
+        let operations = MessageOperations.getOperationsToSend(newMultimediaMessage: forwardedMessage!, using: context, forConversationWithCustomer: customerObject)
+        
+        queue.addOperations(operations, waitUntilFinished: false)
+    }
+    /* ------------------------------------------------------------------------------------------------------------ */
+    
     
     
     
@@ -362,7 +446,7 @@ extension MessagesController {
                         #endif
                         os_log("Error updating newly created message from store to Firebase: %@", log: .network, type: .error, error.localizedDescription)
                 }
-                case let operation as SendNewTextMessageOnServer_Operation:
+                case let operation as SendNewMessageOnServer_Operation:
                     operation.completionBlock = {
                         guard case let .failure(error) = operation.result else {
                             operation.newlyCreatedMessage?.isSending = false

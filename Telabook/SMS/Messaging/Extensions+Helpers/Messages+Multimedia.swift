@@ -198,6 +198,7 @@ extension MessagesController {
             uploadService.startUpload(newMessage)
         }
     }
+    
 }
 
 /*

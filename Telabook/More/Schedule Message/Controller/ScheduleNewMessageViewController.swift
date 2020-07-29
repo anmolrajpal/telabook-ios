@@ -141,7 +141,7 @@ class ScheduleNewMessageViewController: UIViewController {
 
 
 extension ScheduleNewMessageViewController: AgentPickerDelegate {
-    func agentsController(didPick agent: Agent, at indexPath: IndexPath, controller: UIViewController) {
+    func agentsController(didPick agent: Agent, at indexPath: IndexPath, controller: AgentsViewController) {
         selectedAgent = agent
         selectedAgentIndexPath = indexPath
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {

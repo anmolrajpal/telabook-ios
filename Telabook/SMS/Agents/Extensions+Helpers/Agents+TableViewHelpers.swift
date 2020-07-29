@@ -28,6 +28,23 @@ extension AgentsViewController {
             let cell = tableView.dequeueReusableCell(AgentCell.self, for: indexPath)
 //            let agent = self.fetchedResultsController.object(at: indexPath)
             cell.backgroundColor = .clear
+            switch true {
+                case self.pickerDelegate != nil:
+                    cell.tintColor = .telaBlue
+                    cell.shouldShowBadgeCount = false
+                    if agent.workerID == self.selectedAgent?.workerID,
+                        self.selectedAgent != nil {
+                        cell.accessoryType = .checkmark
+                    } else {
+                        cell.accessoryType = .none
+                }
+                case self.messageForwardingDelegate != nil:
+                    cell.shouldShowBadgeCount = false
+                    cell.accessoryType = .disclosureIndicator
+                default:
+                    cell.accessoryType = .disclosureIndicator
+            }
+            /*
             if self.pickerDelegate == nil {
                 cell.accessoryType = .disclosureIndicator
             } else {
@@ -40,6 +57,7 @@ extension AgentsViewController {
                     cell.accessoryType = .none
                 }
             }
+            */
             cell.configureCell(with: agent)
             return cell
         })
@@ -52,7 +70,7 @@ extension AgentsViewController {
         return snapshot
     }
     func updateUI(animating:Bool = true, reloadingData:Bool = false) {
-        guard let snapshot = currentSnapshot() else { return }
+        guard let snapshot = currentSnapshot(), dataSource != nil else { return }
         dataSource.apply(snapshot, animatingDifferences: animating, completion: { [weak self] in
             guard let self = self else { return }
             if reloadingData && self.viewDidAppear { self.tableView.reloadData() }
@@ -84,7 +102,22 @@ extension AgentsViewController {
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? AgentCell else { return }
-        let selectedAgent = fetchedResultsController.object(at: indexPath)
+        guard let selectedAgent = dataSource.itemIdentifier(for: indexPath) else { return }
+        
+        switch true {
+            case pickerDelegate != nil:
+                tableView.resetCheckmarks()
+                cell.accessoryType = .checkmark
+                pickerDelegate?.agentsController(didPick: selectedAgent, at: indexPath, controller: self)
+            case messageForwardingDelegate != nil:
+                messageForwardingDelegate?.agentsController(didSelect: selectedAgent, workerID: Int(selectedAgent.workerID), at: indexPath, controller: self)
+            default:
+                let vc = CustomersViewController(agent: selectedAgent)
+                navigationController?.pushViewController(vc, animated: true)
+                viewDidAppear = false
+        }
+        
+        /*
         if pickerDelegate == nil {
             let vc = CustomersViewController(agent: selectedAgent)
             navigationController?.pushViewController(vc, animated: true)
@@ -94,12 +127,12 @@ extension AgentsViewController {
             cell.accessoryType = .checkmark
             pickerDelegate?.agentsController(didPick: selectedAgent, at: indexPath, controller: self)
         }
-        
+        */
     }
     
     
     override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        guard pickerDelegate == nil else { return nil }
+        guard pickerDelegate == nil && messageForwardingDelegate == nil else { return nil }
         let index = indexPath.row
         let agent = agents[index]
         let identifier = String(index) as NSString

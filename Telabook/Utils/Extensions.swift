@@ -336,9 +336,18 @@ extension UIViewController {
     }
     
     func configureNavigationBarAppearance() {
+        let backButtonImage = #imageLiteral(resourceName: "back_arrow").withRenderingMode(.alwaysOriginal)
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        
         if let navigationBar = navigationController?.navigationBar {
+            
             let transparentAppearance = UINavigationBarAppearance()
             transparentAppearance.configureWithTransparentBackground()
+            transparentAppearance.titleTextAttributes = [
+                .foregroundColor: UIColor.telaBlue,
+                .font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 15)!
+            ]
+            transparentAppearance.setBackIndicatorImage(backButtonImage, transitionMaskImage: backButtonImage)
             navigationBar.scrollEdgeAppearance = transparentAppearance
             
             let defaultAppearance = UINavigationBarAppearance()
@@ -347,6 +356,7 @@ extension UIViewController {
                 .foregroundColor: UIColor.telaBlue,
                 .font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 15)!
             ]
+            defaultAppearance.setBackIndicatorImage(backButtonImage, transitionMaskImage: backButtonImage)
             navigationBar.standardAppearance = defaultAppearance
             navigationBar.compactAppearance = defaultAppearance
         }

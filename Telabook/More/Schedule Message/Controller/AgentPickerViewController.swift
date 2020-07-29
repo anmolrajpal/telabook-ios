@@ -38,7 +38,7 @@ class AgentPickerViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        setUpNavBar()
+//        setUpNavBar()
         setupTableView()
         initiateFetchAgentsSequence()
     }

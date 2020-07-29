@@ -37,7 +37,7 @@ extension MessagesController: MessageCellDelegate {
         controller.dataSource = self
         controller.delegate = self
         controller.currentPreviewItemIndex = index
-        present(controller, animated: true)
+        self.present(controller, animated: true)
     }
     func didTapImage(in cell: MessageCollectionViewCell) {
         guard let cell  = cell as? MessageContentCell else { return }
@@ -46,10 +46,9 @@ extension MessagesController: MessageCellDelegate {
                 print("Failed to identify message when media cell receive tap gesture")
                 return
         }
-        
-//        indexPathForMessageBottomLabelToShow = indexPathForMessageBottomLabelToShow == indexPath ? nil : indexPath
-//        messagesCollectionView.reloadItems(at: [indexPath])
-        openMediaMessage(message: message)
+        DispatchQueue.main.async {
+            self.openMediaMessage(message: message)
+        }
     }
     
     func didTapCellTopLabel(in cell: MessageCollectionViewCell) {
@@ -163,7 +162,10 @@ extension MessagesController: MessageLabelDelegate {
 
 }
 
-
+class PreviewItem: NSObject, QLPreviewItem {
+    var previewItemURL: URL?
+    var previewItemTitle: String?
+}
 
 extension MessagesController: QLPreviewControllerDataSource {
     
@@ -173,7 +175,10 @@ extension MessagesController: QLPreviewControllerDataSource {
     }
     
     func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
-        mediaMessages[index].imageLocalURL()! as NSURL
+        let item = PreviewItem()
+        item.previewItemURL = mediaMessages[index].imageLocalURL()
+        item.previewItemTitle = "IMG_\(index)"
+        return item
     }
 }
 

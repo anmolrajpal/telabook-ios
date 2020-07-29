@@ -270,6 +270,7 @@
         <attribute name="deliveredByProviderAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="errorSending" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="firebaseKey" attributeType="String"/>
+        <attribute name="forwardedFrom" optional="YES" attributeType="String"/>
         <attribute name="hasError" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="imageURL" optional="YES" attributeType="URI"/>
         <attribute name="imageUrlString" optional="YES" attributeType="String"/>
@@ -336,7 +337,7 @@
         <element name="Person" positionX="490.1484375" positionY="-384.12890625" width="128" height="105"/>
         <element name="QuickResponse" positionX="-939.1953125" positionY="409.9609375" width="128" height="178"/>
         <element name="ScheduledMessage" positionX="-325.1796875" positionY="788.31640625" width="128" height="163"/>
-        <element name="UserMessage" positionX="51.6953125" positionY="264.48046875" width="128" height="553"/>
+        <element name="UserMessage" positionX="51.6953125" positionY="264.48046875" width="128" height="568"/>
         <element name="UserObject" positionX="233.99609375" positionY="682.64453125" width="128" height="225"/>
     </elements>
 </model>

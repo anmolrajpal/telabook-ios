@@ -230,17 +230,17 @@ struct FirebaseCustomer {
 
 
 extension FirebaseCustomer {
-    typealias UpdatedConversation = [AnyHashable:Any]
-    static func getUpdatedConversationObject(fromLastMessage message:UserMessage) -> UpdatedConversation {
+    typealias UpdatedConversation = [AnyHashable: Any]
+    static func getUpdatedConversationObject(fromLastMessage message: UserMessage) -> UpdatedConversation {
         var dictionary:UpdatedConversation = [
-            "unread_messages":0,
-            "last_message_key":message.messageId,
-            "message_type":message.messageType.rawValue,
-            "updated_at":Date().milliSecondsSince1970,
-            "sent_by_app":message.sentDate.milliSecondsSince1970,
-            "last_message_datetime":message.sentDate.milliSecondsSince1970,
-            "sent_by_api":0,
-            "sent_by_provider":0
+            "unread_messages"       : 0,
+            "last_message_key"      : message.messageId,
+            "message_type"          : message.messageType.rawValue,
+            "updated_at"            : Date().milliSecondsSince1970,
+            "sent_by_app"           : message.sentDate.milliSecondsSince1970,
+            "last_message_datetime" : message.sentDate.milliSecondsSince1970,
+            "sent_by_api"           : 0,
+            "sent_by_provider"      : 0
         ]
         if let textMessage = message.textMessage {
             dictionary["all_last_message_text"] = textMessage
@@ -249,8 +249,8 @@ extension FirebaseCustomer {
     }
     static func getClearMessagesCountConversationObject(updatedAt:Date) -> UpdatedConversation {
         return  [
-            "unread_messages":0,
-            "updated_at":updatedAt.milliSecondsSince1970
+            "unread_messages" : 0,
+            "updated_at"      : updatedAt.milliSecondsSince1970
         ]
     }
 }

@@ -29,17 +29,24 @@ extension CustomersViewController {
     internal func commonInit() {
         title = agent.personName ?? agent.phoneNumber ?? "Customers"
         view.backgroundColor = .telaGray1
-        setUpNavBar()
+        configureNavigationBarAppearance()
         configureHierarchy()
         configureTableView()
         configureDataSource()
         configureFetchedResultsController()
-        if pickerDelegate == nil {
-            configureNavigationBarItems()
-        }
+        configureNavigationBarItems()
         configureTargetActions()
     }
     
+    
+    func updateNavigationBarItems() {
+        let count = selectedConversationsToForwardMessage.count
+        let isEnabled = count > 0
+        title = isEnabled ? "\(count) Selected" : agent.personName ?? agent.phoneNumber ?? "Customers"
+        if let sendButton = navigationItem.rightBarButtonItems?.first {
+            sendButton.isEnabled = isEnabled
+        }
+    }
     
     
     private func configureHierarchy() {
@@ -73,12 +80,28 @@ extension CustomersViewController {
     
     internal func configureNavigationBarItems() {
         let addButton = UIBarButtonItem(image: #imageLiteral(resourceName: "add").withRenderingMode(.alwaysOriginal), style: UIBarButtonItem.Style.done, target: self, action: #selector(addButtonTapped))
-        navigationItem.rightBarButtonItems = [addButton]
+        sendButton.addTarget(self, action: #selector(sendButtonDidTap), for: .touchUpInside)
+        let rightBarButton = UIBarButtonItem(customView: sendButton)
+
+        switch true {
+            case pickerDelegate != nil:
+                navigationItem.rightBarButtonItems = []
+            case messageForwardingDelegate != nil:
+                navigationItem.rightBarButtonItems = [rightBarButton]
+            default:
+                navigationItem.rightBarButtonItems = [addButton]
+        }
+        updateNavigationBarItems()
     }
-    @objc func addButtonTapped() {
+    @objc
+    private func addButtonTapped() {
         let vc = NewConversationController(senderID: Int(agent.workerID))
         vc.delegate = self
         self.present(vc, animated: true, completion: nil)
+    }
+    @objc
+    private func sendButtonDidTap() {
+        messageForwardingDelegate?.forwardMessage(to: selectedConversationsToForwardMessage, controller: self)
     }
     internal func configureTargetActions() {
         segmentedControl.addTarget(self, action: #selector(didChangeSegment(_:)), for: .valueChanged)

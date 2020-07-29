@@ -26,62 +26,94 @@ extension CustomersViewController {
         tableView.register(CustomerCell.self)
     }
     
-    func updateUI(animating:Bool = true, reloadingData:Bool = true) {
-        guard let snapshot = currentSnapshot() else { return }
-        dataSource.apply(snapshot, animatingDifferences: animating, completion: { [weak self] in
-            guard let self = self else { return }
-            if reloadingData && self.viewDidAppear { self.tableView.reloadData() }
-            self.handleState()
-        })
-    }
-    
     func configureDataSource() {
         dataSource = CustomerDataSource(tableView: tableView, cellProvider: { [weak self] (tableView, indexPath, customer) -> UITableViewCell? in
             guard let self = self else { return nil }
             let reusableCell:UITableViewCell
-            if self.pickerDelegate != nil {
-                let phoneNumber = customer.phoneNumber ?? ""
-                let number:String
-                if let formattedPhoneNumber = phoneNumber.getE164FormattedNumber() {
-                    number = formattedPhoneNumber
-                } else {
-                    number = phoneNumber
-                }
-                let name = customer.addressBookName
+            switch true {
+                case self.pickerDelegate != nil:
+                    let phoneNumber = customer.phoneNumber ?? ""
+                    let number:String
+                    if let formattedPhoneNumber = phoneNumber.getE164FormattedNumber() {
+                        number = formattedPhoneNumber
+                    } else {
+                        number = phoneNumber
+                    }
+                    let name = customer.addressBookName
+                    
+                    let conversationColor = CustomerConversationColor.colorCase(from: Int(customer.colorCode)).color
+                    
+                    
+                    let cell:UITableViewCell
+                    if name == nil || name?.isBlank == true {
+                        cell = tableView.dequeueReusableCell(UITableViewCell.self, for: indexPath)
+                        cell.textLabel?.text = phoneNumber
+                    } else {
+                        cell = tableView.dequeueReusableCell(SubtitleTableViewCell.self, for: indexPath)
+                        cell.textLabel?.text = name
+                        cell.detailTextLabel?.text = number
+                    }
+                    
+                    cell.tintColor = .telaBlue
+                    cell.backgroundColor = .clear
+                    cell.textLabel?.textColor = conversationColor
+                    cell.textLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 16)
+                    cell.detailTextLabel?.textColor = UIColor.telaGray7
+                    cell.detailTextLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 12)
+                    
+                    if customer.customerID == self.selectedCustomer?.customerID,
+                        self.selectedCustomer != nil {
+                        cell.accessoryType = .checkmark
+                    } else {
+                        cell.accessoryType = .none
+                    }
+                    reusableCell = cell
                 
-                let conversationColor = CustomerConversationColor.colorCase(from: Int(customer.colorCode)).color
-                
-                
-                let cell:UITableViewCell
-                if name == nil || name?.isBlank == true {
-                    cell = tableView.dequeueReusableCell(UITableViewCell.self, for: indexPath)
-                    cell.textLabel?.text = phoneNumber
-                } else {
-                    cell = tableView.dequeueReusableCell(SubtitleTableViewCell.self, for: indexPath)
-                    cell.textLabel?.text = name
-                    cell.detailTextLabel?.text = number
-                }
+                case self.messageForwardingDelegate != nil:
+                    let phoneNumber = customer.phoneNumber ?? ""
+                    let number:String
+                    if let formattedPhoneNumber = phoneNumber.getE164FormattedNumber() {
+                        number = formattedPhoneNumber
+                    } else {
+                        number = phoneNumber
+                    }
+                    let name = customer.addressBookName
+                    
+                    let conversationColor = CustomerConversationColor.colorCase(from: Int(customer.colorCode)).color
+                    
+                    
+                    let cell:UITableViewCell
 
-                cell.tintColor = .telaBlue
-                cell.backgroundColor = .clear
-                cell.textLabel?.textColor = conversationColor
-                cell.textLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 16)
-                cell.detailTextLabel?.textColor = UIColor.telaGray7
-                cell.detailTextLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 12)
+                    if name == nil || name?.isBlank == true {
+                        cell = tableView.dequeueReusableCell(UITableViewCell.self, for: indexPath)
+                        cell.textLabel?.text = phoneNumber
+                    } else {
+                        cell = tableView.dequeueReusableCell(SubtitleTableViewCell.self, for: indexPath)
+                        cell.textLabel?.text = name
+                        cell.detailTextLabel?.text = number
+                    }
+                    
+                    cell.tintColor = .telaBlue
+                    cell.backgroundColor = .clear
+                    cell.selectionStyle = .none
+                    cell.textLabel?.textColor = conversationColor
+                    cell.textLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 16)
+                    cell.detailTextLabel?.textColor = UIColor.telaGray7
+                    cell.detailTextLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 12)
+                    
+                    if self.selectedConversationsToForwardMessage.contains(where: { $0.customerID == customer.customerID }) {
+                        cell.accessoryType = .checkmark
+                    } else {
+                        cell.accessoryType = .none
+                    }
+                    reusableCell = cell
                 
-                if customer.customerID == self.selectedCustomer?.customerID,
-                    self.selectedCustomer != nil {
-                    cell.accessoryType = .checkmark
-                } else {
-                    cell.accessoryType = .none
-                }
-                reusableCell = cell
-            } else {
-                let cell = tableView.dequeueReusableCell(CustomerCell.self, for: indexPath)
-                cell.configureCell(with: customer)
-                cell.backgroundColor = .clear
-                cell.accessoryType = .disclosureIndicator
-                reusableCell = cell
+                default:
+                    let cell = tableView.dequeueReusableCell(CustomerCell.self, for: indexPath)
+                    cell.configureCell(with: customer)
+                    cell.backgroundColor = .clear
+                    cell.accessoryType = .disclosureIndicator
+                    reusableCell = cell
             }
             return reusableCell
         })
@@ -94,6 +126,15 @@ extension CustomersViewController {
         snapshot.appendSections([.main])
         snapshot.appendItems(customers)
         return snapshot
+    }
+    
+    func updateUI(animating:Bool = true, reloadingData:Bool = true) {
+        guard let snapshot = currentSnapshot(), dataSource != nil else { return }
+        dataSource.apply(snapshot, animatingDifferences: animating, completion: { [weak self] in
+            guard let self = self else { return }
+            if reloadingData && self.viewDidAppear { self.tableView.reloadData() }
+            self.handleState()
+        })
     }
     
 }
@@ -115,17 +156,36 @@ extension CustomersViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
         guard let customer = dataSource.itemIdentifier(for: indexPath) else { return }
-        if pickerDelegate == nil {
-            self.openChat(forSelectedCustomer: customer, at: indexPath)
-        } else {
-            tableView.resetCheckmarks()
-            cell.accessoryType = .checkmark
-            pickerDelegate?.customersController(didPick: customer, at: indexPath, controller: self)
+        
+        switch true {
+            case pickerDelegate != nil:
+                tableView.resetCheckmarks()
+                cell.accessoryType = .checkmark
+                pickerDelegate?.customersController(didPick: customer, at: indexPath, controller: self)
+            case messageForwardingDelegate != nil:
+                if let selectedIndex = selectedConversationsToForwardMessage.firstIndex(of: customer) {
+                    selectedConversationsToForwardMessage.remove(at: selectedIndex)
+                } else {
+                    selectedConversationsToForwardMessage.append(customer)
+                }
+                updateNavigationBarItems()
+                updateUI(animating: false, reloadingData: false)
+            default:
+                self.openChat(forSelectedCustomer: customer, at: indexPath)
         }
+        /*
+         if pickerDelegate == nil {
+         self.openChat(forSelectedCustomer: customer, at: indexPath)
+         } else {
+         tableView.resetCheckmarks()
+         cell.accessoryType = .checkmark
+         pickerDelegate?.customersController(didPick: customer, at: indexPath, controller: self)
+         }
+         */
     }
     
     override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        guard pickerDelegate == nil else { return nil }
+        guard pickerDelegate == nil && messageForwardingDelegate == nil else { return nil }
         let index = indexPath.row
         let customer = customers[index]
         guard let conversation = firebaseCustomers.first(where: { $0.conversationID == customer.externalConversationID }) else { return nil }
@@ -150,13 +210,13 @@ extension CustomersViewController {
             
             
             /*
-            // MARK: - Pin/Unpin Action
-            
-            let pinningAction = UIAction(title: customer.isPinned ? "Unpin" : "Pin", image: (customer.isPinned ? #imageLiteral(resourceName: "unpin") : #imageLiteral(resourceName: "pin")).withInsets(UIEdgeInsets(top: 1, left: 1, bottom: 1, right: 1))) { _ in
-                self.updateConversationInStore(for: customer, pinning: !customer.isPinned, completion: {_ in})
-            }
-            menuItems.append(pinningAction)
-            */
+             // MARK: - Pin/Unpin Action
+             
+             let pinningAction = UIAction(title: customer.isPinned ? "Unpin" : "Pin", image: (customer.isPinned ? #imageLiteral(resourceName: "unpin") : #imageLiteral(resourceName: "pin")).withInsets(UIEdgeInsets(top: 1, left: 1, bottom: 1, right: 1))) { _ in
+             self.updateConversationInStore(for: customer, pinning: !customer.isPinned, completion: {_ in})
+             }
+             menuItems.append(pinningAction)
+             */
             
             
             
@@ -256,8 +316,11 @@ extension CustomersViewController {
     
     
     
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .none
+    }
     override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        guard pickerDelegate == nil else { return nil }
+        guard pickerDelegate == nil && messageForwardingDelegate == nil else { return nil }
         let index = indexPath.row
         let customer = customers[index]
         
@@ -295,16 +358,16 @@ extension CustomersViewController {
     
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        guard pickerDelegate == nil else { return nil }
+        guard pickerDelegate == nil && messageForwardingDelegate == nil else { return nil }
         let index = indexPath.row
         let customer = customers[index]
-//        guard let conversation = firebaseCustomers.first(where: { $0.conversationID == customer.externalConversationID }) else { return nil }
+        //        guard let conversation = firebaseCustomers.first(where: { $0.conversationID == customer.externalConversationID }) else { return nil }
         
         
         
         let blockAction =  UIContextualAction(style: .destructive, title: "Block", handler: { (action,view,completion ) in
             completion(true)
-//            self.initiateBlockNumberSequence(indexPath: indexPath, completion: completion)
+            //            self.initiateBlockNumberSequence(indexPath: indexPath, completion: completion)
         })
         blockAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "unblock"), text: "Block").withRenderingMode(.alwaysOriginal)
         blockAction.backgroundColor = .telaRed
@@ -380,7 +443,7 @@ extension CustomersViewController {
                 case .Archived: menuItems.append(unarchiveAction)
             }
             
- 
+            
             
             
             // MARK: - Copy Customer Phone Number Action
@@ -397,7 +460,7 @@ extension CustomersViewController {
             
             
             
-             // MARK: - Block Action
+            // MARK: - Block Action
             
             let blockAction = UIControlMenuAction(title: "Block", image: #imageLiteral(resourceName: "block_rounded")) { _ in
                 self.promptBlockingReasonAlert(for: customer)
@@ -408,7 +471,7 @@ extension CustomersViewController {
             
             
             
-           
+            
             // MARK: - Delete Conversation Action
             
             let deleteAction = UIControlMenuAction(title: "Delete", image: #imageLiteral(resourceName: "delete_icon")) { _ in
@@ -417,7 +480,7 @@ extension CustomersViewController {
             menuItems.append(deleteAction)
             
             
-
+            
             let vc = MenuController(actions: menuItems)
             self.present(vc, animated: true, completion: nil)
             completion(true)

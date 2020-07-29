@@ -203,12 +203,12 @@ extension MessagesController {
             */
             
             
-            /*
-            let forwardAction = UIAction(title: "Forward", image: SFSymbol.forward.image) { _ in
-                
+            
+            let forwardAction = UIAction(title: "Forward", image: SFSymbol.forward.image) { [weak self] _ in
+                self?.prepareToForwardMessage(message: message)
             }
             menuItems.append(forwardAction)
-            */
+            
             
             
             
@@ -260,7 +260,15 @@ extension MessagesController {
             return UIMenu(title: "", children: menuItems)
         }
     }
-    
+    func prepareToForwardMessage(message: UserMessage) {
+        DispatchQueue.main.async {
+            self.messageToForward = message
+            let vc = AgentsViewController()
+            vc.messageForwardingDelegate = self
+            let navController = UINavigationController(rootViewController: vc)
+            self.present(navController, animated: true)
+        }
+    }
     func collectionView(_ collectionView: UICollectionView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
         guard let identifier = configuration.identifier as? String else { return }
         guard let section = messages.firstIndex(where: { $0.firebaseKey == identifier }) else { return }
@@ -421,5 +429,36 @@ extension MessagesController: MessageDetailsControllerDelegate {
     func deleteMessage(message: UserMessage, controller: MessageDetailsViewController) {
         navigationController?.popViewController(animated: true)
         deleteUserMessage(message: message)
+    }
+}
+
+
+extension MessagesController: MessageForwardingAgentSelectionDelegate {
+    func agentsController(didSelect agent: Agent, workerID: Int, at indexPath: IndexPath, controller: AgentsViewController) {
+        let vc = CustomersViewController(agent: agent)
+        vc.messageForwardingDelegate = self
+        controller.show(vc, sender: controller)
+    }
+}
+
+
+extension MessagesController: MessageForwardingDelegate {
+    func forwardMessageTo(selectedConversations: [Customer]) {
+        guard let message = messageToForward, let forwardedFromNode = customer.node else { return }
+        for conversation in selectedConversations {
+            switch message.messageType {
+                case .text:
+                    forwardTextMessage(message: message, to: conversation, forwardedFromNode: forwardedFromNode)
+                case .multimedia:
+                    forwardMultimediaMessage(message: message, to: conversation, forwardedFromNode: forwardedFromNode)
+                default:
+                    fatalError("Unhandled case")
+            }
+        }
+    }
+    func forwardMessage(to selectedConversations: [Customer], controller: CustomersViewController) {
+        controller.dismiss(animated: true) { [weak self] in
+            self?.forwardMessageTo(selectedConversations: selectedConversations)
+        }
     }
 }

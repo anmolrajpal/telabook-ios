@@ -14,7 +14,7 @@ import MessageKit
 extension MessagesController {
     internal func commonInit() {
         title = customer.addressBookName?.isEmpty ?? true ? customer.phoneNumber : customer.addressBookName
-        setUpNavBar()
+        configureNavigationBarAppearance()
         setupViews()
         configureMessageCollectionView()
         configureMessageInputBar()

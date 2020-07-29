@@ -11,8 +11,8 @@
 
 #include "Pods/Target Support Files/Pods-Telabook/Pods-Telabook.debug.xcconfig"
 
-BASE_URL              = https://fornax.aimservices.tech
-API_HOST              = fornax.aimservices.tech
+BASE_URL              = https://aries.aimservices.tech
+API_HOST              = aries.aimservices.tech
 URL_SCHEME            = https
 SUBDOMAIN             = /api
 TIMEOUT_INTERVAL      = 15

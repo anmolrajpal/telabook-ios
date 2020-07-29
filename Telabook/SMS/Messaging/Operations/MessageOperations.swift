@@ -52,7 +52,7 @@ struct MessageOperations {
     static func getOperationsToSend(newTextMessage message:NewMessage, using context:NSManagedObjectContext, forConversationWithCustomer conversation:Customer, messageReference:DatabaseReference, conversationReference:DatabaseReference) -> [Operation] {
         let addToStore_Operation = AddNewMessageEntryToStore_Operation(context: context, conversation: conversation, message: message)
         let updateEntryToFirebase_Operation = UpdateNewMessageEntryToFirebase_Operation(messageReference: messageReference, conversationReference: conversationReference)
-        let sendOnServer_Operation = SendNewTextMessageOnServer_Operation(customer: conversation)
+        let sendOnServer_Operation = SendNewMessageOnServer_Operation(customer: conversation)
         
         
         let passNewlyCreatedEntryFromStore_Operation = BlockOperation { [unowned addToStore_Operation, unowned updateEntryToFirebase_Operation, unowned sendOnServer_Operation] in
@@ -107,7 +107,7 @@ struct MessageOperations {
         let conversationReference = Config.FirebaseConfig.Node.conversations(companyID: AppData.companyId, workerID: Int(worker.workerID)).reference
         
         let updateEntryToFirebase_Operation = UpdateNewMultimediaMessageEntryOnFirebase_Operation(context:context, message:message, messageReference: messageReference, conversationReference: conversationReference)
-        let sendOnServer_Operation = SendNewTextMessageOnServer_Operation(customer: conversation)
+        let sendOnServer_Operation = SendNewMessageOnServer_Operation(customer: conversation)
         
 //        updateEntryToFirebase_Operation.newMessageFromStore = message
         sendOnServer_Operation.newlyCreatedMessage = message
@@ -585,8 +585,8 @@ class UpdateNewMultimediaMessageEntryOnFirebase_Operation: Operation {
 
 
 
-/// Send New Text Message on the server operation.
-class SendNewTextMessageOnServer_Operation: Operation {
+/// Send New Message on the server operation.
+class SendNewMessageOnServer_Operation: Operation {
     var result: Result<Bool, APIService.APIError>?
     
     private var downloading = false

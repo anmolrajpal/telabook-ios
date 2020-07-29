@@ -42,6 +42,7 @@ extension URLSessionConfiguration {
 class MessagesController: MessagesViewController {
     
     // MARK: - init
+    var messageToForward:UserMessage?
     let mediaManager = MessageMediaManager.shared
     let downloadService:DownloadService
     let uploadService:UploadService
@@ -51,10 +52,10 @@ class MessagesController: MessagesViewController {
     var childAddedHandle:UInt!
     let customer:Customer
     let node:Config.FirebaseConfig.Node
-    let reference:DatabaseReference
     let conversationID:Int
     let viewContext:NSManagedObjectContext = PersistentContainer.shared.viewContext
     var thisSender:MessageSender
+    let reference:DatabaseReference
     let conversationReference:DatabaseReference
     
     
@@ -84,7 +85,7 @@ class MessagesController: MessagesViewController {
     
     // MARK: - Properties
     
-    var monitor:NWPathMonitor?
+    var monitor: NWPathMonitor?
     
     let synthesizer = AVSpeechSynthesizer()
     
