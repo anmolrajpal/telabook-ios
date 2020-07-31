@@ -512,7 +512,7 @@ extension CustomersViewController {
         guard
             id != 0,
             customer.node != nil else { return }
-        let vc = MessagesController(context: context, customer: customer, conversationReference: self.reference)
+        let vc = MessagesController(customer: customer)
         navigationController?.pushViewController(vc, animated: true)
         viewDidAppear = false
     }

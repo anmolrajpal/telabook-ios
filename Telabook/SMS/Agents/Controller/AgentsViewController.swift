@@ -38,7 +38,25 @@ class AgentsViewController: UITableViewController {
     var currentSearchText = ""
     
     
+    var messageNotificationPayload: MessagePayloadJSON? {
+        didSet {
+            handleMessagePayload()
+        }
+    }
     
+    func handleMessagePayload()  {
+        guard let payload = messageNotificationPayload else { return }
+        let workerId = Int(payload.workerId ?? "0") ?? 0
+        if workerId == 0 { return }
+        if let agent = agents.first(where: { $0.workerID == Int32(workerId) }) {
+            let vc = CustomersViewController(agent: agent)
+            DispatchQueue.main.async { [weak self] in
+                self?.navigationController?.pushViewController(vc, animated: false)
+                vc.messageNotificationPayload = payload
+                self?.messageNotificationPayload = nil
+            }
+        }
+    }
     
     // MARK: - Computed Properties
     
@@ -76,6 +94,7 @@ class AgentsViewController: UITableViewController {
         super.viewDidDisappear(animated)
         removeFirebaseObservers()
         stopObservingReachability()
+        messageNotificationPayload = nil
     }
     
     

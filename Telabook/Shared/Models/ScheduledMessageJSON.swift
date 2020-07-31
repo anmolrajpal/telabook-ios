@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-// MARK: - Codable
+// MARK: - Decodable
 
 /**
  A struct for decoding JSON with the following structure:

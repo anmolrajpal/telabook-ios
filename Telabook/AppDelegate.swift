@@ -16,7 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     static let shared = AppDelegate()
     
     let gcmMessageIDKey = "gcm.message_id"
-    var window = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
+    var window = (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window
     
     
 
@@ -176,13 +176,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return
             }
             print("\n\n••• ---------------------------------------------- •••\n\n###\(#function)\n\n\(jsonString)\n\n••• ---------------------------------------------- •••\n\n")
-//            guard let type = userInfo["type"] as? String,
-//                let notificationType = NotificationType(rawValue: type) else {
-//                    print("Notification Type not available")
-//                    return
-//            }
-//            completionHandler([.alert, .badge, .sound])
-//            handleNotification(withNotificationType: notificationType, data: data, state: .Background, completion: completionHandler)
+            let notificationCentre = UNUserNotificationCenter.current()
+            let externalConversationId = userInfo["external_conversation_id"] as? String
+            if let action = userInfo["action"] as? String,
+                action == "DELETE_CONVERSATION" {
+                var identifiers = [String]()
+                notificationCentre.getDeliveredNotifications { notifications in
+                    notifications.forEach { notification in
+                        let dictionary = notification.request.content.userInfo
+                        if let conversationId = dictionary["external_conversation_id"] as? String,
+                            conversationId == externalConversationId {
+                            identifiers.append(notification.request.identifier)
+                        }
+                    }
+                    notificationCentre.removeDeliveredNotifications(withIdentifiers: identifiers)
+                }
+            }
             completionHandler(UIBackgroundFetchResult.newData)
         } catch {
             print(error)
@@ -206,49 +215,91 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 extension AppDelegate : UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        print(notification)
         let userInfo = notification.request.content.userInfo
         do {
             let data = try JSONSerialization.data(withJSONObject: userInfo, options: JSONSerialization.WritingOptions.prettyPrinted)
             guard let jsonString = String(data: data, encoding: .utf8) else {
-                print("Unable to convert Data to JSON String")
+                printAndLog(message: "\n\n••• ---------------------------------------------- •••\n\n###\(#function)\n\nUnable to convert Notification Data to JSON String where userInfo: \(userInfo)\n\n••• ---------------------------------------------- •••\n\n", log: .notifications, logType: .error)
                 return
             }
-            print("\n\n••• ---------------------------------------------- •••\n\n###\(#function)\n\n\(jsonString)\n\n••• ---------------------------------------------- •••\n\n")
+            printAndLog(message: "\n\n••• ---------------------------------------------- •••\n\n###\(#function)\n\n\(jsonString)\n\n••• ---------------------------------------------- •••\n\n", log: .notifications, logType: .debug)
+            let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+            let payload = try decoder.decode(MessagePayloadJSON.self, from: data)
+            guard let rootViewController = (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window?.rootViewController else {
+                return
+            }
+            if let node = payload.node, !node.isBlank {
+                if let tabBarController = rootViewController as? TabBarController,
+                    let selectedNavigationController = tabBarController.selectedViewController as? UINavigationController,
+                    let currentViewController = selectedNavigationController.viewControllers.last as? MessagesController {
+                    let currentConversationNode = currentViewController.customer.node
+                    if node == currentConversationNode {
+                        return
+                    }
+                }
+            }
+            completionHandler([.alert, .sound, .badge])
         } catch {
-            print(error)
+            printAndLog(message: "\n\n••• ---------------------------------------------- •••\n\n###\(#function)\n\nuserInfo: \(userInfo)\n\n and Error: \n\n\(error)\n\n••• ---------------------------------------------- •••\n\n", log: .notifications, logType: .error)
         }
         if let messageID = userInfo[gcmMessageIDKey] {
             print("Message ID: \(messageID)")
         }
         
-        completionHandler([.alert, .sound, .badge])
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        let userInfo = response.notification.request.content.userInfo
-        print("UserNotificationCenter didRecieve Response: \(response)")
-        do {
-            let data = try JSONSerialization.data(withJSONObject: userInfo, options: JSONSerialization.WritingOptions.prettyPrinted)
-            guard let jsonString = String(data: data, encoding: .utf8) else {
-                print("Unable to convert Data to JSON String")
-                return
-            }
-            print("\n\n••• ---------------------------------------------- •••\n\n###\(#function)\n\n\(jsonString)\n\n••• ---------------------------------------------- •••\n\n")
-        } catch {
-            print(error)
-        }
+        
+        // MARK: - Handle Local Notification Tap
+        
         let requestIdentifier = response.notification.request.identifier
-        if let messageID = userInfo[gcmMessageIDKey] {
-            print("Message ID: \(messageID)")
-        }
         if let key = LocalNotificationService.NotificationKey(rawValue: requestIdentifier) {
             switch key {
                 case .imageSavedToLibrary:
                     LocalNotificationItem.imageSavedToPhotosNotificationItem.tapHandler?()
+                    completionHandler()
+                    return
             }
         }
-        completionHandler()
+        
+        
+        // MARK: - Handle Remote Notification Tap
+        
+        let userInfo = response.notification.request.content.userInfo
+        do {
+            let data = try JSONSerialization.data(withJSONObject: userInfo, options: JSONSerialization.WritingOptions.prettyPrinted)
+            guard let jsonString = String(data: data, encoding: .utf8) else {
+                printAndLog(message: "\n\n••• ---------------------------------------------- •••\n\n###\(#function)\n\nUnable to convert Notification Data to JSON String where userInfo: \(userInfo)\n\n••• ---------------------------------------------- •••\n\n", log: .notifications, logType: .error)
+                return
+            }
+            printAndLog(message: "\n\n••• ---------------------------------------------- •••\n\n###\(#function)\n\n\(jsonString)\n\n••• ---------------------------------------------- •••\n\n", log: .notifications, logType: .debug)
+            let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+            let payload = try decoder.decode(MessagePayloadJSON.self, from: data)
+            guard let rootViewController = (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window?.rootViewController else {
+                return
+            }
+            if let tabBarController = rootViewController as? TabBarController {
+                tabBarController.selectedIndex = 0
+                if let selectedNavigationController = tabBarController.selectedViewController as? UINavigationController {
+                    selectedNavigationController.popToRootViewController(animated: false)
+                    let agentsController = selectedNavigationController.viewControllers.last! as! AgentsViewController
+                    agentsController.messageNotificationPayload = payload
+                    completionHandler()
+                }
+            } else {
+                fatalError("Root View Controller must be Tab Bar Controller: \(TabBarController.self)")
+            }
+        } catch {
+            printAndLog(message: "\n\n••• ---------------------------------------------- •••\n\n###\(#function)\n\nuserInfo: \(userInfo)\n\n and Error: \n\n\(error)\n\n••• ---------------------------------------------- •••\n\n", log: .notifications, logType: .error)
+        }
+        if let messageID = userInfo[gcmMessageIDKey] {
+            print("Message ID: \(messageID)")
+        }
+        
+        
+        
     }
 }
 

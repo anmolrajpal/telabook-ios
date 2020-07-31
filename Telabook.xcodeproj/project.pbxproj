@@ -288,6 +288,7 @@
 		6FD8955D245ECDB40083D79A /* AgentDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD8955C245ECDB40083D79A /* AgentDetailsView.swift */; };
 		6FD8955F245EDAAB0083D79A /* ManageAgentsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD8955E245EDAAB0083D79A /* ManageAgentsHelpers.swift */; };
 		6FD89561245EDAD40083D79A /* AgentDetailsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD89560245EDAD40083D79A /* AgentDetailsHelpers.swift */; };
+		6FEC641324D48DCC0012B234 /* MessagePayloadJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEC641224D48DCB0012B234 /* MessagePayloadJSON.swift */; };
 		6FEE99FF247BB8E900709E2D /* UserMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE99FE247BB8E900709E2D /* UserMessage.swift */; };
 		6FEE9A01247BF69C00709E2D /* FirebaseMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE9A00247BF69C00709E2D /* FirebaseMessage.swift */; };
 		6FEE9A03247C841B00709E2D /* ExponentOperator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE9A02247C841A00709E2D /* ExponentOperator.swift */; };
@@ -614,6 +615,7 @@
 		6FD8955E245EDAAB0083D79A /* ManageAgentsHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsHelpers.swift; sourceTree = "<group>"; };
 		6FD89560245EDAD40083D79A /* AgentDetailsHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDetailsHelpers.swift; sourceTree = "<group>"; };
 		6FEC641124D19FE40012B234 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		6FEC641224D48DCB0012B234 /* MessagePayloadJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePayloadJSON.swift; sourceTree = "<group>"; };
 		6FEE99FE247BB8E900709E2D /* UserMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserMessage.swift; sourceTree = "<group>"; };
 		6FEE9A00247BF69C00709E2D /* FirebaseMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseMessage.swift; sourceTree = "<group>"; };
 		6FEE9A02247C841A00709E2D /* ExponentOperator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponentOperator.swift; sourceTree = "<group>"; };
@@ -1691,6 +1693,7 @@
 				6F8A831B249E13B6002ACDFE /* ListItem.swift */,
 				6F8A8329249F5896002ACDFE /* AgentGalleryItem.swift */,
 				6F8927FA24A8A82E0025DF64 /* ScheduledMessageJSON.swift */,
+				6FEC641224D48DCB0012B234 /* MessagePayloadJSON.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -2500,6 +2503,7 @@
 				6F987A462454AB5D00C6046E /* LoginServiceProvider.swift in Sources */,
 				6FD89561245EDAD40083D79A /* AgentDetailsHelpers.swift in Sources */,
 				6F8A8310249DE13F002ACDFE /* AppSettingsView.swift in Sources */,
+				6FEC641324D48DCC0012B234 /* MessagePayloadJSON.swift in Sources */,
 				6F37E24F2460ABFE003E9126 /* QuickResponseOperations.swift in Sources */,
 				6FB11B10229C23840098D050 /* Extensions.swift in Sources */,
 				6FF2E6A7248FA4E500502B99 /* Profile+ServicePorvider.swift in Sources */,
@@ -2726,7 +2730,7 @@
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2870,7 +2874,7 @@
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2894,7 +2898,7 @@
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2975,7 +2979,7 @@
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;

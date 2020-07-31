@@ -59,10 +59,10 @@ class MessagesController: MessagesViewController {
     let conversationReference:DatabaseReference
     
     
-    init(context:NSManagedObjectContext, customer:Customer, conversationReference:DatabaseReference) {
-//        self.viewContext =  context
+    init(customer: Customer) {
         self.customer = customer
-        self.conversationReference = conversationReference
+        let conversationsNode: Config.FirebaseConfig.Node = .conversations(companyID: AppData.companyId, workerID: Int(customer.agent?.workerID ?? 0))
+        self.conversationReference = conversationsNode.reference
         self.node = .messages(companyID: AppData.companyId, node: customer.node!)
         self.reference = node.reference
         self.conversationID = Int(customer.externalConversationID)

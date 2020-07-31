@@ -57,7 +57,28 @@ class CustomersViewController: UITableViewController {
         didSet { configureFetchedResultsController() }
     }
     
-    
+    var messageNotificationPayload: MessagePayloadJSON? {
+        didSet {
+            handleMessagePayload()
+        }
+    }
+    func handleMessagePayload()  {
+        guard let payload = messageNotificationPayload else { return }
+        let conversationID = Int(payload.externalConversationId ?? "0") ?? 0
+        if conversationID == 0 { return }
+        let fetchRequest: NSFetchRequest<Customer> = Customer.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "\(#keyPath(Customer.agent)) == %@ AND \(#keyPath(Customer.externalConversationID)) = %d", agent, conversationID)
+        fetchRequest.fetchLimit = 1
+        context.performAndWait {
+            if let conversation = try? fetchRequest.execute().first {
+                let vc = MessagesController(customer: conversation)
+                messageNotificationPayload = nil
+                DispatchQueue.main.async { [weak self] in
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
+        }
+    }
 
     // MARK: - Init
     

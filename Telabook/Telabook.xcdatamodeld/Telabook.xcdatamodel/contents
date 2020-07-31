@@ -58,7 +58,7 @@
         <relationship name="quickResponses" toMany="YES" deletionRule="Cascade" destinationEntity="QuickResponse" inverseName="sender" inverseEntity="QuickResponse"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
-                <constraint value="userID"/>
+                <constraint value="workerID"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>

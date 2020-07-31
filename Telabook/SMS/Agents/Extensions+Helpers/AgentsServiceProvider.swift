@@ -130,6 +130,7 @@ extension AgentsViewController {
                         } else {
                             DispatchQueue.main.async {
                                 self.stopRefreshers()
+                                self.handleMessagePayload()
                             }
                         }
                 }

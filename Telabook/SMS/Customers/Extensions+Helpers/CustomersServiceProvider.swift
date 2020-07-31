@@ -176,6 +176,7 @@ extension CustomersViewController {
                             DispatchQueue.main.async {
                                 self.stopRefreshers()
                                 self.handleState()
+                                self.handleMessagePayload()
                             }
                         }
                 }
