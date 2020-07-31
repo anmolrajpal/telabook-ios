@@ -39,16 +39,6 @@ extension CustomersViewController {
     }
     
     
-    func updateNavigationBarItems() {
-        let count = selectedConversationsToForwardMessage.count
-        let isEnabled = count > 0
-        title = isEnabled ? "\(count) Selected" : agent.personName ?? agent.phoneNumber ?? "Customers"
-        if let sendButton = navigationItem.rightBarButtonItems?.first {
-            sendButton.isEnabled = isEnabled
-        }
-    }
-    
-    
     private func configureHierarchy() {
         view.addSubview(inboxSpinner)
         view.addSubview(archivedSpinner)
@@ -88,11 +78,18 @@ extension CustomersViewController {
                 navigationItem.rightBarButtonItems = []
             case messageForwardingDelegate != nil:
                 navigationItem.rightBarButtonItems = [rightBarButton]
+                updateNavigationBarItems()
             default:
                 navigationItem.rightBarButtonItems = [addButton]
         }
-        updateNavigationBarItems()
     }
+    func updateNavigationBarItems() {
+        let count = selectedConversationsToForwardMessage.count
+        let isEnabled = count > 0
+        title = isEnabled ? "\(count) Selected" : agent.personName ?? agent.phoneNumber ?? "Customers"
+        sendButton.isEnabled = isEnabled
+    }
+    
     @objc
     private func addButtonTapped() {
         let vc = NewConversationController(senderID: Int(agent.workerID))

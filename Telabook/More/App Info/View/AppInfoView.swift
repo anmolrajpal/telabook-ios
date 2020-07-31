@@ -29,7 +29,6 @@ class AppInfoView: UIView {
     
     lazy var appNameLabel:UILabel = {
         let label = UILabel()
-        label.text = "Telabook"
         label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 16)
         label.textColor = UIColor.telaWhite
         label.textAlignment = .center

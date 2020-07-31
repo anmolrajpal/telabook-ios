@@ -69,7 +69,7 @@ public class LocalNotificationService {
                 case .authorized, .provisional:
                     self.notificationCenter.add(request) { error in
                         if let error = error {
-                            printAndLog(message: error.localizedDescription, log: .localNotifications, logType: .error)
+                            printAndLog(message: error.localizedDescription, log: .notifications, logType: .error)
                         } else {
                             completion?()
                         }

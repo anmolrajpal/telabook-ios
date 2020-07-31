@@ -17,7 +17,6 @@ enum Configuration {
         case urlScheme = "URL_SCHEME"
         case subdomain = "SUBDOMAIN"
         case timoutInterval = "TIMEOUT_INTERVAL"
-        case appName = "APP_NAME"
         case bundleID = "CFBundleIdentifier"
         case bundleDisplayName = "CFBundleDisplayName"
     }

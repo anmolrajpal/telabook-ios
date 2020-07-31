@@ -127,25 +127,19 @@ final class AuthenticationService: NSObject {
         AppData.isLoggedIn = false
         let rootVC = UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.rootViewController
         guard (rootVC?.presentedViewController as? LoginViewController) == nil else {
-            print("RootVC presentedviewcontroller is a Login View Controller")
             return
         }
-        print("Root VC isn't Login VC")
         if let rootVC = rootVC {
             rootVC.presentedViewController?.dismiss(animated: true, completion: nil)
             if let tbc = rootVC .tabBarController as? TabBarController {
-                print("Hurray.... I'm loving this one")
-                tbc.isLoaded = false
                 tbc.present(loginViewController, animated: true, completion: {
                     tbc.selectedViewController?.view.isHidden = true
                     tbc.viewControllers = nil
                 })
             } else {
-                print("Holy noooooo!!!! I hate this one")
                 UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.rootViewController = TabBarController()
             }
         } else {
-            print("OMG I super hate this one")
             UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.rootViewController = TabBarController()
         }
     }

@@ -24,7 +24,8 @@ extension QuickResponsesViewController {
     
     
     internal func configureDataSource() {
-        dataSource = DataSource(tableView: self.subview.tableView, cellProvider: { (tableView, indexPath, quickResponse) -> UITableViewCell? in
+        dataSource = DataSource(tableView: self.subview.tableView, cellProvider: { [weak self] (tableView, indexPath, quickResponse) -> UITableViewCell? in
+            guard self != nil else { return nil }
             let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(UITableViewCell.self), for: indexPath)
             cell.textLabel?.text = quickResponse.answer
             cell.selectionStyle = .none

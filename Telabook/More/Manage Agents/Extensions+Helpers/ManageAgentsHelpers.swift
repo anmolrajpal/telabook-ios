@@ -41,7 +41,8 @@ extension ManageAgentsViewController {
         subview.tableView.register(ManageAgentsCell.self, forCellReuseIdentifier: NSStringFromClass(ManageAgentsCell.self))
         subview.tableView.delegate = self
         
-        self.diffableDataSource = UITableViewDiffableDataSource<Section, Agent>(tableView: self.subview.tableView, cellProvider: { (tableView, indexPath, agent) -> UITableViewCell? in
+        self.diffableDataSource = UITableViewDiffableDataSource<Section, Agent>(tableView: self.subview.tableView, cellProvider: { [weak self] (tableView, indexPath, agent) -> UITableViewCell? in
+            guard self != nil else { return nil }
             let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(ManageAgentsCell.self), for: indexPath) as! ManageAgentsCell
             cell.backgroundColor = .clear
             cell.agentDetails = agent

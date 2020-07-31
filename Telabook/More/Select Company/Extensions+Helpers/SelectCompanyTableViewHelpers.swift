@@ -21,7 +21,8 @@ extension SelectCompanyViewController {
     internal func setupTableView() {
         subview.companiesTableView.delegate = self
         subview.companiesTableView.register(UITableViewCell.self, forCellReuseIdentifier: NSStringFromClass(UITableViewCell.self))
-        self.diffableDataSource = UITableViewDiffableDataSource<Section, UserCompaniesCodable>(tableView: self.subview.companiesTableView, cellProvider: { (tableView, indexPath, company) -> UITableViewCell? in
+        self.diffableDataSource = UITableViewDiffableDataSource<Section, UserCompaniesCodable>(tableView: self.subview.companiesTableView, cellProvider: { [weak self] (tableView, indexPath, company) -> UITableViewCell? in
+            guard let self = self else { return nil }
             let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(UITableViewCell.self), for: indexPath)
             cell.selectionStyle = .none
             cell.backgroundColor = UIColor.telaGray4
@@ -31,6 +32,8 @@ extension SelectCompanyViewController {
                 company == self.selectedCompany {
                 print("diffable selected checkmark at company- \(company.name!)")
                 cell.accessoryType = .checkmark
+            } else {
+                cell.accessoryType = .none
             }
             return cell
         })

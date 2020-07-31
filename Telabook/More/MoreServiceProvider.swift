@@ -10,6 +10,8 @@
 import UIKit
 import os
 import PINCache
+import FirebaseMessaging
+
 extension MoreViewController {
     /* ------------------------------------------------------------------------------------------------------------ */
     internal func dumpCoreData() {
@@ -43,10 +45,19 @@ extension MoreViewController {
     }
     
     private func callSignOutSequence() {
+        
         FirebaseAuthService.shared.signOut { (error) in
             guard error == nil else {
                 UIAlertController.showTelaAlert(title: "Signout Failed", message: error?.localizedDescription ?? "Try again", controller: self)
                 return
+            }
+            let topic = "operator_ios_\(AppData.workerId)"
+            Messaging.messaging().unsubscribe(fromTopic: topic) { error in
+                if let error = error {
+                    printAndLog(message: "### \(#function) Error unsubscribing from topic: \(topic) | Error: \n\(error)", log: .notifications, logType: .error)
+                } else {
+                    printAndLog(message: "Successfully unsubscribed from topic: \(topic)", log: .notifications, logType: .info)
+                }
             }
             if AppData.isRememberMeChecked {
                 DispatchQueue.main.async {

@@ -8,14 +8,12 @@
 
 import UIKit
 import Firebase
-import CoreData
-import PINCache
 
 class SettingsViewController: UIViewController {
-    static let shared = SettingsViewController()
-    var uploadTask:StorageUploadTask!
+
+    var uploadTask: StorageUploadTask!
     
-    internal var userProfile:UserInfoCodable? {
+    var userProfile: UserInfoCodable? {
         didSet {
             guard let profile = userProfile else { return }
             if let userDetails = profile.user {
@@ -101,35 +99,47 @@ class SettingsViewController: UIViewController {
             }
         }
     }
-    override func loadView() {
-        super.loadView()
-        setupViews()
-//        setupConstraints()
-    }
-    let userId = String(AppData.userId)
+    
+    
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        setUpNavBar()
-//        setUpNavBarItems()
-        
-        hideKeyboardWhenTappedAround()
-        setupTextFields()
-        setupTextFieldsDelegates()
-
-        scrollView.delegate = self
-        scrollView.setContentOffset(CGPoint(x: 0, y: self.scrollView.contentOffset.y), animated: true)
-        self.userProfile = AppData.userInfo
-        self.fetchUserProfile()
-        
-        configureProgressAlert()
-        configureProfileImageView()
-//        self.initiateFetchUserProfileSequence(userId: userId)
+        commonInit()
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         setupConstraints()
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        observeKeyboardNotifications()
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        removeKeyboardNotificationsObservers()
+    }
     
+    var topBarHeight: CGFloat {
+        return (UIApplication.shared.windows.first?.windowScene?.statusBarManager?.statusBarFrame.size.height ?? 0.0) + (navigationController?.navigationBar.frame.height ?? 0.0)
+    }
+    
+    
+    private func commonInit() {
+        title = "SETTINGS"
+        view.backgroundColor = .telaGray1
+        configureHierarchy()
+        configureNavigationBarAppearance()
+        hideKeyboardWhenTappedAround()
+        configureTextFields()
+        
+        scrollView.contentInset = UIEdgeInsets(top: topBarHeight, left: 0, bottom: 0, right: 0)
+        setupTextFieldsDelegates()
+        userProfile = AppData.userInfo
+        fetchUserProfile()
+        configureProgressAlert()
+        configureProfileImageView()
+    }
     private func configureProfileImageView() {
         profileImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profileImageViewDidTap)))
     }
@@ -159,7 +169,7 @@ class SettingsViewController: UIViewController {
         address = details.address
     }
     
-    func setupData(details:UserInfoCodable.User) {
+    func setupData(details: UserInfoCodable.User) {
         let role = AppData.getUserRole()
         let first_name = details.name
         let last_name = details.lastName
@@ -174,35 +184,9 @@ class SettingsViewController: UIViewController {
         contactEmail = details.contactEmail
         address = details.address
     }
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.navigationItem.title = "SETTINGS"
-        observeKeyboardNotifications()
-    }
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        removeKeyboardNotificationsObservers()
-    }
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
-    func setUpNavBarItems() {
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Log Out", style: .plain, target: self, action: #selector(handleRightBarButtonItem))
-        let normalStateAttributes = [NSAttributedString.Key.font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 11)!,
-                                     NSAttributedString.Key.foregroundColor: UIColor.telaRed]
-        navigationItem.rightBarButtonItem?.setTitleTextAttributes(normalStateAttributes, for: .normal)
-        navigationItem.rightBarButtonItem?.setTitleTextAttributes(normalStateAttributes, for: .highlighted)
-    }
-    @objc func handleRightBarButtonItem() {
-        let alertVC = UIAlertController.telaAlertController(title: "Confirm Logout", message: "Are you sure you want to log out?")
-        alertVC.addAction(UIAlertAction(title: "Log Out", style: UIAlertAction.Style.destructive) { (action:UIAlertAction) in
-            self.callSignOutSequence()
-        })
-        alertVC.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
-        self.present(alertVC, animated: true, completion: nil)
-    }
-    fileprivate func setupViews() {
+    
+    
+    fileprivate func configureHierarchy() {
         view.addSubview(placeholderLabel)
         view.addSubview(refreshButton)
         
@@ -210,65 +194,18 @@ class SettingsViewController: UIViewController {
         view.addSubview(scrollView)
     }
     fileprivate func setupConstraints() {
-        scrollView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        scrollView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
         placeholderLabel.anchor(top: nil, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 20, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
-        placeholderLabel.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: -40).isActive = true
+        placeholderLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -40).isActive = true
         refreshButton.topAnchor.constraint(equalTo: view.centerYAnchor, constant: 40).isActive = true
-        refreshButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+        refreshButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         setupScrollViewSubviewsConstraints()
         
 //        scrollView.subviews.forEach({ $0.widthAnchor.constraint(equalTo: self.view.widthAnchor).activate() })
     }
     
-    private func signOut() {
-        let loginViewController = LoginViewController()
-        loginViewController.isModalInPresentation = true
-        AppData.isLoggedIn = false
-        AppData.clearData()
-        DispatchQueue.main.async {
-            guard let tbc = self.tabBarController as? TabBarController else {
-                print("No Tab bar")
-                return
-            }
-            loginViewController.delegate = tbc
-            tbc.isLoaded = false
-            tbc.present(loginViewController, animated: true, completion: {
-                tbc.selectedViewController?.view.isHidden = true
-                tbc.viewControllers = nil
-            })
-        }
-    }
-    fileprivate func dumpCoreDataStorage() {
-        do {
-            
-            let context = PersistenceService.shared.persistentContainer.viewContext
-            let entityNames = [String(describing: ExternalConversation.self), String(describing: InternalConversation.self), String(describing: Permission.self), String(describing: UserObject.self), String(describing: Agent.self), String(describing: Customer.self)]
-            for entityName in entityNames {
-                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
-                do {
-                    let objects  = try context.fetch(fetchRequest) as? [NSManagedObject]
-                    _ = objects.map{$0.map{context.delete($0)}}
-                    PersistenceService.shared.saveContext()
-                } catch let error {
-                    print("ERROR DELETING : \(error)")
-                }
-            }
-        }
-    }
-    func callSignOutSequence() {
-        print("Signing out")
-        FirebaseAuthService.shared.signOut { (error) in
-            guard error == nil else {
-                UIAlertController.showTelaAlert(title: "Signout Failed", message: error?.localizedDescription ?? "Try again", controller: self)
-                return
-            }
-            self.dumpCoreDataStorage()
-            self.signOut()
-        }
-    }
     
-    
-    let placeholderLabel:UILabel = {
+    lazy var placeholderLabel:UILabel = {
         let label = UILabel()
         label.text = "Turn on Mobile Data or Wifi to Access Telabook"
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -280,7 +217,7 @@ class SettingsViewController: UIViewController {
         label.isHidden = true
         return label
     }()
-    let refreshButton:UIButton = {
+    lazy var refreshButton:UIButton = {
         let button = UIButton(type: UIButton.ButtonType.roundedRect)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Refresh", for: UIControl.State.normal)
@@ -301,7 +238,7 @@ class SettingsViewController: UIViewController {
         self.fetchUserProfile()
     }
     
-    let scrollView:UIScrollView = {
+    lazy var scrollView:UIScrollView = {
         let view = UIScrollView(frame: CGRect.zero)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = UIColor.clear
@@ -369,7 +306,7 @@ class SettingsViewController: UIViewController {
         return aiView
     }()
     
-    let profileImageView:UIImageView = {
+    lazy var profileImageView:UIImageView = {
         let imageView = UIImageView()
         imageView.image = #imageLiteral(resourceName: "placeholder.png")
         imageView.contentMode = .scaleAspectFill
@@ -402,7 +339,7 @@ class SettingsViewController: UIViewController {
         print("Camera Icon Tapped")
         promptPhotosPickerMenu()
     }
-    let userNameLabel:UILabel = {
+    lazy var userNameLabel:UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
@@ -412,7 +349,7 @@ class SettingsViewController: UIViewController {
         label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 16.0)
         return label
     }()
-    let userDesignationLabel:UILabel = {
+    lazy var userDesignationLabel:UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
@@ -422,7 +359,7 @@ class SettingsViewController: UIViewController {
         label.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 14.0)
         return label
     }()
-    let changePasswordButton:UIButton = {
+    lazy var changePasswordButton:UIButton = {
         let button = UIButton(type: UIButton.ButtonType.system)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Change Password", for: .normal)
@@ -436,7 +373,7 @@ class SettingsViewController: UIViewController {
         let vc = ChangePasswordViewController()
         self.show(vc, sender: self)
     }
-    let topContainerView:UIView = {
+    lazy var topContainerView:UIView = {
         let view = UIView(frame: CGRect.zero)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = UIColor.telaGray5.withAlphaComponent(0.5)
@@ -469,7 +406,7 @@ class SettingsViewController: UIViewController {
         
     }
     
-    fileprivate func setupTextFields() {
+    fileprivate func configureTextFields() {
         emailTextField.keyboardType = .emailAddress
         emailTextField.textContentType = .emailAddress
         emailTextField.isEnabled = false
@@ -538,13 +475,13 @@ class SettingsViewController: UIViewController {
         addressTextField.delegate = self
     }
     
-    let firstNameTextField = createTextField(placeholder: "First Name")
-    let lastNameTextField = createTextField(placeholder: "Last Name")
-    let emailTextField = createTextField(placeholder: "Email")
-    let assignDIDsTextField = createTextField(placeholder: "Assign DIDs")
-    let phoneNumberTextField = createTextField(placeholder: "Phone Number")
-    let contactEmailTextField = createTextField(placeholder: "Contact Email")
-    let addressTextField = createTextField(placeholder: "Address")
+    lazy var firstNameTextField = createTextField(placeholder: "First Name")
+    lazy var lastNameTextField = createTextField(placeholder: "Last Name")
+    lazy var emailTextField = createTextField(placeholder: "Email")
+    lazy var assignDIDsTextField = createTextField(placeholder: "Assign DIDs")
+    lazy var phoneNumberTextField = createTextField(placeholder: "Phone Number")
+    lazy var contactEmailTextField = createTextField(placeholder: "Contact Email")
+    lazy var addressTextField = createTextField(placeholder: "Address")
     
     lazy var firstNameTextFieldContainerView = createTextFieldContainerView(labelTitle: "First Name", firstNameTextField)
     lazy var lastNameTextFieldContainerView = createTextFieldContainerView(labelTitle: "Last Name", lastNameTextField)
@@ -578,8 +515,8 @@ class SettingsViewController: UIViewController {
         addressTextFieldContainerView.anchor(top: contactEmailTextFieldContainerView.bottomAnchor, left: scrollView.leftAnchor, bottom: nil, right: scrollView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: width, heightConstant: height)
     }
     
-    let profileHeaderView = createHeaderView(title: "Profile")
-    let updateButton:UIButton = {
+    lazy var profileHeaderView = createHeaderView(title: "PROFILE")
+    lazy var updateButton:UIButton = {
         let button = UIButton(type: UIButton.ButtonType.system)
         button.setTitle("Update", for: UIControl.State.normal)
         button.setTitleColor(.telaGray5, for: UIControl.State.normal)
@@ -597,7 +534,7 @@ class SettingsViewController: UIViewController {
         self.updateUserProfile()
 //        initiateUpdateUserProfileSequence()
     }
-    static func createTextField(placeholder:String? = nil) -> UITextField {
+    func createTextField(placeholder:String? = nil) -> UITextField {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 16)
@@ -612,7 +549,7 @@ class SettingsViewController: UIViewController {
     }
     
 
-    func createTextFieldContainerView(labelTitle:String, _ textField:UITextField) -> UIView {
+    func createTextFieldContainerView(labelTitle: String, _ textField: UITextField) -> UIView {
         let container = UIView(frame: CGRect.zero)
         container.translatesAutoresizingMaskIntoConstraints = false
         container.backgroundColor = UIColor.telaGray4.withAlphaComponent(0.5)
@@ -640,7 +577,7 @@ class SettingsViewController: UIViewController {
         separator.anchor(top: nil, left: textField.leftAnchor, bottom: container.bottomAnchor, right: textField.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 1)
         return container
     }
-    static func createHeaderView(title:String) -> UIView {
+    func createHeaderView(title: String) -> UIView {
         let headerView = UIView(frame: CGRect.zero)
         headerView.backgroundColor = UIColor.telaGray4.withAlphaComponent(1.0)
         headerView.translatesAutoresizingMaskIntoConstraints = false
@@ -660,11 +597,7 @@ class SettingsViewController: UIViewController {
     }
     
     
-    
-    
-    
-    
-    var activeField:UITextField?
+
     
     fileprivate func observeKeyboardNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardShow), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -677,78 +610,27 @@ class SettingsViewController: UIViewController {
     }
     @objc func keyboardHide() {
         UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
-
-            let contentInsets: UIEdgeInsets = .zero
-            
+            let contentInsets: UIEdgeInsets = UIEdgeInsets(top: self.topBarHeight, left: 0, bottom: 0, right: 0)
             self.scrollView.contentInset = contentInsets
-            
             self.scrollView.scrollIndicatorInsets = contentInsets
-            
-
-//            self.view.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height)
-            
         }, completion: nil)
     }
     @objc func keyboardShow(notification:NSNotification) {
         let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue
         let keyboardHeight:CGFloat = keyboardSize?.height ?? 280.0
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
-            
-            
-            let contentInsets: UIEdgeInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: keyboardHeight + 50.0, right: 0.0)
-            
+            let contentInsets: UIEdgeInsets = UIEdgeInsets(top: self.topBarHeight, left: 0.0, bottom: keyboardHeight + 50.0, right: 0.0)
             self.scrollView.contentInset = contentInsets
             self.scrollView.scrollIndicatorInsets = contentInsets
-//            self.scrollView.contentOffset = CGPoint(x: 0, y: keyboardHeight)
-            
-//            var frame: CGRect = self.view.frame
-//            frame.size.height -= keyboardHeight
-//            let activeFieldFrameOrigin:CGPoint = self.activeField!.frame.origin
-//
-//            if !frame.contains(activeFieldFrameOrigin) {
-//                print("Positive")
-//                self.scrollView.scrollRectToVisible(self.activeField!.frame, animated: true)
-//
-//            }
-//            let y: CGFloat = UIDevice.current.orientation.isLandscape ? -iPadKeyboardHeight : -keyboardHeight
-//            self.view.frame = CGRect(x: 0, y: y, width: self.view.frame.width, height: self.view.frame.height)
-            
         }, completion: nil)
     }
     
 }
-extension SettingsViewController: UIScrollViewDelegate {
-//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-//        view.endEditing(true)
-//    }
-//
-//    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-//
-//        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
-//            self.view.layoutIfNeeded()
-//        }, completion: nil)
-//    }
 
-}
 extension SettingsViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        
         textField.resignFirstResponder()
-        
         return true
-        
-    }
-    
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        
-        activeField = textField
-        
-    }
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        
-        activeField = nil
-        
     }
 }
 

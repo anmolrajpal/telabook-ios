@@ -14,11 +14,12 @@ extension BlacklistViewController {
         override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool { return true }
     }
     internal func setupTableView() {
-        subview.tableView.register(BlacklistCell.self, forCellReuseIdentifier: NSStringFromClass(BlacklistCell.self))
+        subview.tableView.register(BlacklistCell.self)
         subview.tableView.delegate = self
         
-        self.diffableDataSource = BlacklistDataSource(tableView: self.subview.tableView, cellProvider: { (tableView, indexPath, blockedUser) -> UITableViewCell? in
-            let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(BlacklistCell.self), for: indexPath) as! BlacklistCell
+        self.diffableDataSource = BlacklistDataSource(tableView: self.subview.tableView, cellProvider: { [weak self] (tableView, indexPath, blockedUser) -> UITableViewCell? in
+            guard self != nil else { return nil }
+            let cell = tableView.dequeueReusableCell(BlacklistCell.self, for: indexPath)
             cell.blockedUser = blockedUser
             cell.backgroundColor = .clear
             cell.accessoryType = .disclosureIndicator

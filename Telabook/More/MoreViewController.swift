@@ -10,7 +10,7 @@ import UIKit
 
 class MoreViewController: UITableViewController {
     
-    var delegate:LogoutDelegate?
+    weak var delegate: LogoutDelegate?
     var options:[String] = {
         let role = AppData.getUserRole()
         switch role {
@@ -39,7 +39,7 @@ class MoreViewController: UITableViewController {
     private func commonInit() {
         title = "MORE"
         view.backgroundColor = .telaGray1
-        setUpNavBar()
+        configureNavigationBarAppearance()
         configureTableView()
     }
     private func configureTableView() {
@@ -59,7 +59,7 @@ class MoreViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(UITableViewCell.self), for: indexPath)
+        let cell = tableView.dequeueReusableCell(UITableViewCell.self, for: indexPath)
         cell.backgroundColor = .clear
         cell.textLabel?.textColor = UIColor.telaWhite
         let backgroundView = UIView()

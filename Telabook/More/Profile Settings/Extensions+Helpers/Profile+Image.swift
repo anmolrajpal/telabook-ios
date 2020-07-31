@@ -215,9 +215,9 @@ extension SettingsViewController {
     
     
     func configureProgressAlert() {
-        let cancelAction = UIAlertAction(title: "Cancel", style: .destructive) { (action) in
+        let cancelAction = UIAlertAction(title: "Cancel", style: .destructive) { [weak self] (action) in
             printAndLog(message: "User is cancelling Upload Progile Picture task", log: .firebase, logType: .debug)
-            self.uploadTask.cancel()
+            self?.uploadTask.cancel()
         }
         progressAlert.addAction(cancelAction)
         progressAlert.view.addSubview(progressTitleLabel)

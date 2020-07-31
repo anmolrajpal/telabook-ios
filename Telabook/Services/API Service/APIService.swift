@@ -12,7 +12,7 @@ import Foundation
 public struct APIService: APIServiceProtocol {
     typealias APICompletion<T> = (Result<T, APIError>) -> Void
     static let shared = APIService()
-    var isLoggingEnabled = false
+    var isLoggingEnabled = true
     let decoder = JSONDecoder()
     
     enum APIVersion { case v1, v2, mock; var stringValue:String { String(describing: self) }}

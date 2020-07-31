@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-fileprivate protocol DataSourceDelegate {
+fileprivate protocol DataSourceDelegate: class {
     func dataSourceDidUpdate()
 }
 
@@ -21,7 +21,7 @@ extension ScheduleMessageViewController {
     typealias Snapshot = NSDiffableDataSourceSnapshot<SectionType, ItemType>
     
     class DataSource: UITableViewDiffableDataSource<String, NSManagedObjectID> {
-        fileprivate var delegate:DataSourceDelegate?
+        fileprivate weak var delegate:DataSourceDelegate?
     }
     internal func configureTableView() {
         tableView.delegate = self
@@ -29,7 +29,8 @@ extension ScheduleMessageViewController {
         configureDataSource()
     }
     private func configureDataSource() {
-        dataSource = DataSource(tableView: tableView, cellProvider: { (tableView, indexPath, objectID) -> UITableViewCell? in
+        dataSource = DataSource(tableView: tableView, cellProvider: { [weak self] (tableView, indexPath, objectID) -> UITableViewCell? in
+            guard let self = self else { return nil }
             let cell = tableView.dequeueReusableCell(ScheduledMessageCell.self, for: indexPath)
 //            let scheduledMessage = self.viewContext.object(with: objectID) as! ScheduledMessage
             let scheduledMessage = self.fetchedResultsController.object(at: indexPath)

@@ -9,11 +9,11 @@
 import UIKit
 import MessageKit
 
-protocol LoginDelegate {
+protocol LoginDelegate: class {
     func didLoginIWithSuccess()
 }
 class LoginViewController: UIViewController {
-    var delegate:LoginDelegate?
+    weak var delegate: LoginDelegate?
     var token:String?
     var userInfo:UserInfoCodable?
     var isEmailValid = false

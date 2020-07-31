@@ -22,7 +22,8 @@ extension ConversationGalleryController {
         configureDataSource()
     }
     private func configureDataSource() {
-        self.dataSource = DataSource(collectionView: collectionView, cellProvider: { (collectionView, indexPath, item) -> UICollectionViewCell? in
+        self.dataSource = DataSource(collectionView: collectionView, cellProvider: { [weak self] (collectionView, indexPath, item) -> UICollectionViewCell? in
+            guard self != nil else { return nil }
             let cell = collectionView.dequeueReusableCell(ConversationGalleryCell.self, forItemAt: indexPath)
             cell.imageView.image = item.getImage()
             return cell

@@ -199,7 +199,18 @@ class HitEndpointOperation<T:Decodable>: Operation {
             finish(result: .failure(.cancelled))
             return
         }
-        if let httpBody = httpBody { request.httpBody = httpBody }
+        if let httpBody = httpBody {
+            request.httpBody = httpBody
+            if isLoggingEnabled {
+                guard let jsonObject = try? JSONSerialization.jsonObject(with: httpBody, options: []) as? [String: Any],
+                    let jsonData = try? JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted),
+                    let json = String(data: jsonData, encoding: .utf8) else {
+                    print("Unable to convert Data to JSON String")
+                    return
+                }
+                printAndLog(message: "\n\n------------------------------------------------ Request HTTP Body JSON: BEGIN ------------------------------------------------\n\n"+json+"\n\n--------------------------------------------------- Request HTTP Body JSON: END ------------------------------------------------\n\n", log: .network, logType: .debug)
+            }
+        }
         guard !isCancelled else {
             finish(result: .failure(.cancelled))
             return
@@ -240,7 +251,7 @@ class HitEndpointOperation<T:Decodable>: Operation {
                 }
                 
                 if self.isLoggingEnabled {
-                    let jsonString = String(data: data, encoding: .utf8)!
+                    guard let jsonString = String(data: data, encoding: .utf8) else { return }
                     let jsonMessage = "\n\n------------------------------------------------ Raw JSON Object: BEGIN ------------------------------------------------\n\n"+jsonString+"\n\n--------------------------------------------------- Raw JSON Object: END ------------------------------------------------\n\n"
                     printAndLog(message: jsonMessage, log: .network, logType: .info, isPrivate: true)
                 }

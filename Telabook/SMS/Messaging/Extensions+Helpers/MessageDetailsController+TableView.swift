@@ -105,7 +105,8 @@ extension MessageDetailsViewController {
     }
     
     func configureDataSource() {
-        dataSource = DataSource(tableView: tableView, cellProvider: { (tableView, indexPath, item) -> UITableViewCell? in
+        dataSource = DataSource(tableView: tableView, cellProvider: { [weak self] (tableView, indexPath, item) -> UITableViewCell? in
+            guard let self = self else { return nil }
             let cell = tableView.dequeueReusableCell(KeyValueCell.self, for: indexPath)
             cell.backgroundColor = .clear
             cell.selectionStyle = .none

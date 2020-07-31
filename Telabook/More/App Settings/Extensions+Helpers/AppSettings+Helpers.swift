@@ -10,11 +10,53 @@ import UIKit
 import PINCache
 
 extension AppSettingsViewController {
-    // MARK: - init
+    // MARK: - common setup
     internal func commonInit() {
         title = "APP SETTINGS"
-        setUpNavBar()
+        view.backgroundColor = .telaGray1
+        configureNavigationBarAppearance()
         configureTableView()
+        configureDataSource()
+        checkNotificationsPreferences()
+        observeForegroundNotifications()
+    }
+    func checkNotificationsPreferences() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            switch settings.authorizationStatus {
+                case .notDetermined, .denied:
+                    guard var snapshot = self.currentSnapshot() else { return }
+                    snapshot.insertItems([.enableNotifications], beforeItem: .alertOnImageSave)
+                    DispatchQueue.main.async {
+                        self.updateUI(with: snapshot)
+                    }
+                case .authorized, .provisional:
+                    // Deliver Quietly
+                    if settings.soundSetting == .disabled,
+                        settings.alertSetting == .disabled,
+                        settings.badgeSetting == .disabled {
+                        guard var snapshot = self.currentSnapshot() else { return }
+                        snapshot.insertItems([.enableNotificationAlerts], beforeItem: .alertOnImageSave)
+                        DispatchQueue.main.async {
+                            self.updateUI(with: snapshot)
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            self.updateUI()
+                        }
+                    }
+                @unknown default: fatalError()
+            }
+        }
+    }
+    internal func observeForegroundNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationWillEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
+    }
+    internal func removeForegroundNotificationsObservers() {
+        NotificationCenter.default.removeObserver(self, name: UIApplication.willEnterForegroundNotification, object: nil)
+    }
+    @objc
+    private func applicationWillEnterForeground() {
+        checkNotificationsPreferences()
     }
     internal func clearsTableViewSelectionOnViewDidAppear(_ animated: Bool) {
         if let selectionIndexPath = self.subview.tableView.indexPathForSelectedRow {
@@ -80,11 +122,13 @@ extension AppSettingsViewController {
     }
     /* ------------------------------------------------------------------------------------------------------------ */
     private func clearCacheDirectory() {
-        let cacheURL =  FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        let appName:String = try! Configuration.value(for: .bundleDisplayName)
+        let cacheURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        let appFolderURL = cacheURL.appendingPathComponent(appName, isDirectory: true)
         let fileManager = FileManager.default
         do {
             // Get the directory contents urls (including subfolders urls)
-            let directoryContents = try FileManager.default.contentsOfDirectory(at: cacheURL, includingPropertiesForKeys: nil, options: [])
+            let directoryContents = try FileManager.default.contentsOfDirectory(at: appFolderURL, includingPropertiesForKeys: nil, options: [])
             directoryContents.forEach({
                 do {
                     try fileManager.removeItem(at: $0)

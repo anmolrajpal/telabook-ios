@@ -22,11 +22,12 @@ extension AgentGalleryController {
         configureDataSource()
     }
     private func configureDataSource() {
-        self.dataSource = DataSource(collectionView: collectionView, cellProvider: { (collectionView, indexPath, item) -> UICollectionViewCell? in
-        let cell = collectionView.dequeueReusableCell(AgentGalleryCell.self, forItemAt: indexPath)
-        cell.delegate = self
-        cell.configure(withGalleryItem: item, at: indexPath, showSelectionIcons: collectionView.allowsMultipleSelection)
-        return cell
+        self.dataSource = DataSource(collectionView: collectionView, cellProvider: { [weak self] (collectionView, indexPath, item) -> UICollectionViewCell? in
+            guard let self = self else { return nil }
+            let cell = collectionView.dequeueReusableCell(AgentGalleryCell.self, forItemAt: indexPath)
+            cell.delegate = self
+            cell.configure(withGalleryItem: item, at: indexPath, showSelectionIcons: collectionView.allowsMultipleSelection)
+            return cell
         })
         updateUI(animating: false)
     }

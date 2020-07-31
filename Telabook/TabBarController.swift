@@ -7,9 +7,9 @@
 //
 
 import UIKit
+import Firebase
 
 class TabBarController: UITabBarController {
-    static let shared = TabBarController()
     
     enum Tabs: Int, Codable {
         case tab1, tab2, tab3
@@ -19,14 +19,6 @@ class TabBarController: UITabBarController {
                 case .tab1: return "SMS"
                 case .tab2: return "CALLS"
                 case .tab3: return "MORE"
-                
-                /*
-                case .tab1: return "HOME"
-                case .tab2: return "CALLS"
-                case .tab3: return "SMS"
-//                case .tab4: return "SETTINGS"
-                case .tab4: return "MORE"
-                */
             }
         }
         private var tabImage:UIImage {
@@ -34,14 +26,6 @@ class TabBarController: UITabBarController {
                 case .tab1: return #imageLiteral(resourceName: "tab_sms_inactive")
                 case .tab2: return #imageLiteral(resourceName: "tab_call_inactive")
                 case .tab3: return #imageLiteral(resourceName: "tab_more_inactive")
-                
-                /*
-                case .tab1: return #imageLiteral(resourceName: "tab_home_inactive")
-                case .tab2: return #imageLiteral(resourceName: "tab_call_inactive")
-                case .tab3: return #imageLiteral(resourceName: "tab_sms_inactive")
-//                case .tab4: return #imageLiteral(resourceName: "tab_settings_inactive")
-                case .tab4: return #imageLiteral(resourceName: "tab_more_inactive")
-                */
             }
         }
         private var tabSelelctedImage:UIImage {
@@ -49,15 +33,6 @@ class TabBarController: UITabBarController {
                 case .tab1: return #imageLiteral(resourceName: "tab_sms_active")
                 case .tab2: return #imageLiteral(resourceName: "tab_call_active")
                 case .tab3: return #imageLiteral(resourceName: "tab_more_active")
-
-                
-                /*
-                case .tab1: return #imageLiteral(resourceName: "tab_home_active")
-                case .tab2: return #imageLiteral(resourceName: "tab_call_active")
-                case .tab3: return #imageLiteral(resourceName: "tab_sms_active")
-//                case .tab4: return #imageLiteral(resourceName: "tab_settings_active")
-                case .tab4: return #imageLiteral(resourceName: "tab_more_active")
-                */
             }
         }
         var tabBarItem:UITabBarItem {
@@ -65,49 +40,24 @@ class TabBarController: UITabBarController {
         }
     }
     
-    var isLoaded:Bool = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        setup()
+        commonInit()
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-//        authenticate()
+    override func didReceiveMemoryWarning() {
+        print("Did Receive memory warning on \(self)")
     }
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
-    private func setup() {
-        self.delegate = self
-//        self.view.addSubview(spinner)
-//        spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).activate()
-//        spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor).activate()
-//        setUpTabBarViewControllers()
+    private func commonInit() {
+        delegate = self
         authenticate()
     }
     
-    func showLoginController() {
-        let loginViewController = LoginViewController()
-        loginViewController.isModalInPresentation = true
-        loginViewController.delegate = self
-        AppData.clearData()
-        AppData.isLoggedIn = false
-        
-        tabBarController?.present(loginViewController, animated: true, completion: nil)
-        //        present(loginController, animated: false, completion: {
-        //            UserDefaults.standard.setIsLoggedIn(value: false)
-        //            UserDefaults.clearUserData()
-        //        })
-    }
-    private func handleSignOut() {
-        self.showLoginController()
-    }
-    func authenticate(animated:Bool = false) {
-        guard !AppData.isLoggedIn else { setUpTabBarViewControllers(); return }
-        self.selectedViewController?.view.isHidden = true
-        self.viewControllers = nil
-        guard !(self.presentedViewController is LoginViewController) else { return }
+    fileprivate func authenticate(animated:Bool = false) {
+        guard !AppData.isLoggedIn else { configureTabBarController(); return }
+        selectedViewController?.view.isHidden = true
+        viewControllers = nil
+        guard !(presentedViewController is LoginViewController) else { return }
         let loginViewController = LoginViewController()
         loginViewController.delegate = self
         loginViewController.isModalInPresentation = true
@@ -117,83 +67,78 @@ class TabBarController: UITabBarController {
             self.present(loginViewController, animated: animated, completion: nil)
         }
     }
-    private func setUpTabBarViewControllers() {
-        /*
-        DispatchQueue.main.async {
-            self.spinner.startAnimating()
-        }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
-            self.spinner.stopAnimating()
-        }
-        */
+    
+    private func configureTabBarController() {
+        var controllers = [UINavigationController]()
         
-//        let homeViewController = UINavigationController(rootViewController: HomeViewController())
-        let callsViewController = UINavigationController(rootViewController: CallsViewController())
-        let agentsViewController = UINavigationController(rootViewController: AgentsViewController())
-//        let smsViewController = UINavigationController(rootViewController: SMSViewController())
-//        let settingsViewController = UINavigationController(rootViewController: SettingsViewController())
-        let moreVC = MoreViewController()
-        moreVC.delegate = self
-        let moreViewController = UINavigationController(rootViewController: moreVC)
-//        homeViewController.tabBarItem = Tabs.tab1.tabBarItem
-        callsViewController.tabBarItem = Tabs.tab2.tabBarItem
-//        smsViewController.tabBarItem = Tabs.tab3.tabBarItem
-        agentsViewController.tabBarItem = Tabs.tab1.tabBarItem
-//        settingsViewController.tabBarItem = Tabs.tab4.tabBarItem
-        moreViewController.tabBarItem = Tabs.tab3.tabBarItem
-        let role = CustomUtils.shared.getUserRole()
-        var viewControllersList:[UIViewController]
-        if role == .Agent {
-            viewControllersList = [agentsViewController, callsViewController, moreViewController]
-        } else {
-            viewControllersList = [agentsViewController, callsViewController, moreViewController]
-        }
-        self.setupTabBarUI()
-        self.viewControllers = viewControllersList
-        self.selectedIndex = AppData.selectedTab.rawValue
-        self.isLoaded = true
+        // MARK: - Tab 1
+        let agentsNavController = UINavigationController(rootViewController: AgentsViewController())
+        agentsNavController.tabBarItem = Tabs.tab1.tabBarItem
+        controllers.append(agentsNavController)
         
-        /*
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.28) {
-            self.setupTabBarUI()
-            self.viewControllers = viewControllersList
-            self.selectedIndex = AppData.selectedTab.rawValue
-            self.isLoaded = true
-        }
-        */
+        // MARK: - Tab 2
+        let callsNavController = UINavigationController(rootViewController: CallsViewController())
+        callsNavController.tabBarItem = Tabs.tab2.tabBarItem
+        controllers.append(callsNavController)
+        
+        // MARK: - Tab 3
+        let moreViewController = MoreViewController()
+        moreViewController.delegate = self
+        let moreNavController = UINavigationController(rootViewController: moreViewController)
+        moreNavController.tabBarItem = Tabs.tab3.tabBarItem
+        controllers.append(moreNavController)
+        
+        configureTabBarUI()
+        viewControllers = controllers
+        selectedIndex = AppData.selectedTab.rawValue
     }
-    fileprivate func setupTabBarUI() {
-        tabBar.barTintColor = UIColor.telaGray4
+    
+    private func configureTabBarUI() {
+//        tabBar.barTintColor = UIColor.telaGray4
         tabBar.tintColor = UIColor.telaBlue
-    UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 10)!, NSAttributedString.Key.foregroundColor: UIColor.telaGray7], for: .normal)
-    UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 10)!,
-        NSAttributedString.Key.foregroundColor: UIColor.telaBlue], for: .selected)
+        let normalAttributes:[NSAttributedString.Key: Any] = [
+            .font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 10)!,
+            .foregroundColor: UIColor.telaGray7
+        ]
+        let selectedAttributes:[NSAttributedString.Key: Any] = [
+            .font: UIFont(name: CustomFonts.gothamMedium.rawValue, size: 10)!,
+            .foregroundColor: UIColor.telaBlue
+        ]
+        UITabBarItem.appearance().setTitleTextAttributes(normalAttributes, for: .normal)
+        UITabBarItem.appearance().setTitleTextAttributes(selectedAttributes, for: .selected)
         UITabBarItem.appearance().titlePositionAdjustment.vertical = -5
     }
     
-    
-    
-    let spinner: UIActivityIndicatorView = {
-        let aiView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
-        aiView.backgroundColor = .clear
-        aiView.hidesWhenStopped = true
-        aiView.color = UIColor.white
-        aiView.clipsToBounds = true
-        aiView.translatesAutoresizingMaskIntoConstraints = false
-        return aiView
-    }()
+    fileprivate func configureNotifications() {
+        if AppData.isLoggedIn && AppData.workerId != 0 {
+            requestNotifications {
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                    let topic = "operator_ios_\(AppData.workerId)"
+                    Messaging.messaging().subscribe(toTopic: topic) { error in
+                        if let error = error {
+                            printAndLog(message: "### \(#function) Error subscribing to topic: \(topic) | Error: \n\(error)", log: .notifications, logType: .error)
+                        } else {
+                            printAndLog(message: "Successfully subscribed to topic: \(topic)", log: .notifications, logType: .info)
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 extension TabBarController: UITabBarControllerDelegate {
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-        AppData.selectedTab = Tabs(rawValue: self.selectedIndex)!
+        AppData.selectedTab = Tabs(rawValue: selectedIndex)!
     }
 }
 
 
 extension TabBarController: LoginDelegate {
     func didLoginIWithSuccess() {
-        self.setUpTabBarViewControllers()
+        configureTabBarController()
+        configureNotifications()
+        
     }
 }
 extension TabBarController: LogoutDelegate {
@@ -202,6 +147,6 @@ extension TabBarController: LogoutDelegate {
         authenticate(animated: true)
     }
 }
-protocol LogoutDelegate {
+protocol LogoutDelegate: class {
     func presentLogin()
 }

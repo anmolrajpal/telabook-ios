@@ -396,6 +396,70 @@ extension UIViewController {
         alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
     }
+    
+    
+    
+    // MARK: - Request Photo Library
+    func requestNotifications(_ actionHandler:(() -> Void)? = nil) {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            switch settings.authorizationStatus {
+                case .authorized, .provisional:
+                    actionHandler?()
+                case .notDetermined:
+                    self.requestNotificationsAuthorization(accessGrantedHandler: actionHandler)
+                case .denied:
+                    break
+                @unknown default:
+                    fatalError()
+            }
+        }
+    }
+    private func requestNotificationsAuthorization(accessGrantedHandler:(() -> Void)?) {
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+        UNUserNotificationCenter.current().requestAuthorization(options: authOptions, completionHandler: { granted, error in
+            if let error = error {
+                printAndLog(message: "### \(#function) Error: \(error)", log: .ui, logType: .error)
+            }
+            guard granted else { return }
+            accessGrantedHandler?()
+        })
+    }
+    func alertNotificationsEnabledNeeded() {
+        let appName:String = try! Configuration.value(for: .bundleDisplayName)
+        let alert = UIAlertController.telaAlertController(title: "Enable Notifications", message: "Enable to receive voice and message notifications. To configure Notifications, open Settings -> \(appName) -> Notifications")
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+        cancelAction.setTitleColor(color: .telaRed)
+        
+        let openSettingsAction = UIAlertAction(title: "Settings", style: .cancel, handler: { _ in
+            AppDelegate.shared.launchAppSettings()
+        })
+        openSettingsAction.setTitleColor(color: .telaBlue)
+        
+        alert.addAction(cancelAction)
+        alert.addAction(openSettingsAction)
+        
+        alert.preferredAction = openSettingsAction
+
+        present(alert, animated: true, completion: nil)
+    }
+    func alertNotificationAlertsEnabledNeeded() {
+        let appName:String = try! Configuration.value(for: .bundleDisplayName)
+        let alert = UIAlertController.telaAlertController(title: "Enable Notification Alerts", message: "To configure Notifications, open Settings -> \(appName) -> Notifications")
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+        cancelAction.setTitleColor(color: .telaRed)
+        
+        let openSettingsAction = UIAlertAction(title: "Settings", style: .cancel, handler: { _ in
+            AppDelegate.shared.launchAppSettings()
+        })
+        openSettingsAction.setTitleColor(color: .telaBlue)
+        
+        alert.addAction(openSettingsAction)
+        alert.addAction(cancelAction)
+        alert.preferredAction = openSettingsAction
+        present(alert, animated: true, completion: nil)
+    }
 }
 extension UIAlertAction {
     func setTitleColor(color:UIColor) {

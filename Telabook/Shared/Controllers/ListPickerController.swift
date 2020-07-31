@@ -71,7 +71,8 @@ extension ListPickerController {
     }
     
     func configureDataSource() {
-        self.dataSource = DataSource(tableView: tableView, cellProvider: { (tableView, indexPath, item) -> UITableViewCell? in
+        self.dataSource = DataSource(tableView: tableView, cellProvider: { [weak self] (tableView, indexPath, item) -> UITableViewCell? in
+            guard self != nil else { return nil }
             let reusableCell:UITableViewCell
             if item.subtitle == nil {
                 let cell = tableView.dequeueReusableCell(UITableViewCell.self, for: indexPath)

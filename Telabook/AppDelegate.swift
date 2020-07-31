@@ -25,27 +25,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        FirebaseAuthService.shared.addObservers()
         Messaging.messaging().delegate = self
         
-        if Messaging.messaging().fcmToken != nil {
-            let topic = "operator_\(AppData.workerId)"
-            Messaging.messaging().subscribe(toTopic: topic) { error in
-                if let error = error {
-                    print(error)
-                } else {
-                    print("Subscribed to topic: \(topic)")
-                }
-            }
-        }
-        
+//        if Messaging.messaging().fcmToken != nil {
+//            let topic = "operator_ios_\(AppData.workerId)"
+//            Messaging.messaging().subscribe(toTopic: topic) { error in
+//                if let error = error {
+//                    print(error)
+//                } else {
+//                    print("Subscribed to topic: \(topic)")
+//                }
+//            }
+//        }
+//
         
      
         UNUserNotificationCenter.current().delegate = self
         
-        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-        UNUserNotificationCenter.current().requestAuthorization(options: authOptions, completionHandler: {_, _ in })
-        
-        application.registerForRemoteNotifications()
-        
+//        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+//        UNUserNotificationCenter.current().requestAuthorization(options: authOptions, completionHandler: {_, _ in })
+//
+//        application.registerForRemoteNotifications()
+//
 //        FirebaseAuthService.shared.monitorAndSaveToken()
+
         return true
     }
     
@@ -161,7 +162,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     */
     // [END receive_message]
-    
+    func applicationDidReceiveMemoryWarning(_ application: UIApplication) {
+        print("### \(#function)")
+    }
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
+        print("### \(#function) - User Info:\n\n \(userInfo)")
+    }
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        do {
+            let data = try JSONSerialization.data(withJSONObject: userInfo, options: JSONSerialization.WritingOptions.prettyPrinted)
+            guard let jsonString = String(data: data, encoding: .utf8) else {
+                print("Unable to convert Data to JSON String")
+                return
+            }
+            print("\n\n••• ---------------------------------------------- •••\n\n###\(#function)\n\n\(jsonString)\n\n••• ---------------------------------------------- •••\n\n")
+//            guard let type = userInfo["type"] as? String,
+//                let notificationType = NotificationType(rawValue: type) else {
+//                    print("Notification Type not available")
+//                    return
+//            }
+//            completionHandler([.alert, .badge, .sound])
+//            handleNotification(withNotificationType: notificationType, data: data, state: .Background, completion: completionHandler)
+            completionHandler(UIBackgroundFetchResult.newData)
+        } catch {
+            print(error)
+        }
+    }
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         print("Unable to register for remote notifications: \(error.localizedDescription)")
     }
@@ -170,10 +196,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // If swizzling is disabled then this function must be implemented so that the APNs token can be paired to
     // the FCM registration token.
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        print("APNs token retrieved: \(deviceToken)")
-        
         // With swizzling disabled you must set the APNs token here.
-//         Messaging.messaging().apnsToken = deviceToken
+         Messaging.messaging().apnsToken = deviceToken
     }
  
 }
@@ -184,7 +208,16 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         print(notification)
         let userInfo = notification.request.content.userInfo
-        print("UserNotificationCenter will present notification - userInfo: \(userInfo)")
+        do {
+            let data = try JSONSerialization.data(withJSONObject: userInfo, options: JSONSerialization.WritingOptions.prettyPrinted)
+            guard let jsonString = String(data: data, encoding: .utf8) else {
+                print("Unable to convert Data to JSON String")
+                return
+            }
+            print("\n\n••• ---------------------------------------------- •••\n\n###\(#function)\n\n\(jsonString)\n\n••• ---------------------------------------------- •••\n\n")
+        } catch {
+            print(error)
+        }
         if let messageID = userInfo[gcmMessageIDKey] {
             print("Message ID: \(messageID)")
         }
@@ -194,7 +227,17 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
-        print("UserNotificationCenter didRecieve Response: \(response) - userInfo: \(userInfo)")
+        print("UserNotificationCenter didRecieve Response: \(response)")
+        do {
+            let data = try JSONSerialization.data(withJSONObject: userInfo, options: JSONSerialization.WritingOptions.prettyPrinted)
+            guard let jsonString = String(data: data, encoding: .utf8) else {
+                print("Unable to convert Data to JSON String")
+                return
+            }
+            print("\n\n••• ---------------------------------------------- •••\n\n###\(#function)\n\n\(jsonString)\n\n••• ---------------------------------------------- •••\n\n")
+        } catch {
+            print(error)
+        }
         let requestIdentifier = response.notification.request.identifier
         if let messageID = userInfo[gcmMessageIDKey] {
             print("Message ID: \(messageID)")
@@ -212,20 +255,116 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
 
 
 extension AppDelegate : MessagingDelegate {
-    // [START refresh_token]
+    
+    
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
-        print("Firebase registration token: \(fcmToken)")
-        let topic = "operator_\(AppData.workerId)"
-        Messaging.messaging().subscribe(toTopic: topic) { error in
-            if let error = error {
-                print(error)
-            } else {
-                print("Subscribed to topic: \(topic)")
-            }
-        }
+        /*
         let dataDict:[String: String] = ["token": fcmToken]
         NotificationCenter.default.post(name: Notification.Name("FCMToken"), object: nil, userInfo: dataDict)
         // TODO: If necessary send token to application server.
         // Note: This callback is fired at each app startup and whenever a new token is generated.
+        */
     }
 }
+
+
+
+
+
+// MARK: - •••••••••••••••••• FCM curl request [BEGIN] ••••••••••••••••••••
+/// - tag: This is how you test firebase push notifications directly
+/*
+curl -X "POST" "https://fcm.googleapis.com/fcm/send" \
+    -H "Authorization: key=AAAAc9CnvIg:APA91bGbCZpLa90RaU9Le1SXK5doTiig6pPM_Ww17C3jsrW_yrXFSylnTb-kARfnjp7YWyR7fWjqYhCygtJipG-ALB8gTXGgeiIEBV7NfJuZ1oebvZZa1VKXrMWgAv50b2_5ENv6BBnO" \
+    -H "Content-Type: application/json" \
+    -d $'{
+        "notification": {
+        "body": "Testing with direct FCM API",
+        "title": "Test Message",
+        "badge": "0",
+        "sound": "default"
+    },
+    "registration_ids": [
+    "db8qjxl3CUVzoqKrT2gf6n:APA91bHYUW6zsfwpBW2L4FUfZQNFRM-7CDF_QkYFIVXHwY-hg8r7AuXAfiFCdYpun217Tia4JAT2gtl9uyDz1HO0P-w_nbMrBCvpb3uOnrwPWhJ3_GumwvqYozHqNeAhMRo4_XDMX6Wk"
+    ]
+}'
+*/
+// MARK: - •••••••••••••••••• FCM curl request [End] ••••••••••••••••••••
+
+
+
+/*
+{
+    "id":"994",
+    "title":"Message for Esther Luna",
+    "body":"Esther 2!!!...",
+    "sound":"default",
+    "color":"#90CAF9",
+    "node":"144-631-Customer",
+    "group":"144-631-Customer",
+    "groupSummary":"Message for Esther Luna",
+    "notify":"1",
+    "external_conversation_id":"994",
+    "lines":"[{\"date\":1596037530636,\"message\":\"Esther 2!!!\"}]",
+    "sender_name":"Hilary Spencer",
+    "sender_number":"+18324101983",
+    "recipient_did":"+17162411222",
+    "recipient_id":"144",
+    "worker_name":"Esther Luna",
+    "worker_id":"144"
+}
+*/
+/*
+{
+  "lines" : "[{\"date\":1596040064206,\"message\":\"Bo\"}]",
+  "google.c.sender.id" : "497421892744",
+  "notify" : "1",
+  "node" : "282-626-Customer",
+  "external_conversation_id" : "1116",
+  "sender_name" : "Esther GLOBAL!!",
+  "sender_number" : "+17162411222",
+  "body" : "Bo...",
+  "group" : "282-626-Customer",
+  "aps" : {
+    "content-available" : 1
+  },
+  "groupSummary" : "Message for Christen Eaton",
+  "worker_name" : "Christen Eaton",
+  "title" : "Message for Christen Eaton",
+  "worker_id" : "282",
+  "recipient_did" : "+12536520616",
+  "gcm.message_id" : "1596040065610880",
+  "sound" : "default",
+  "color" : "#90CAF9",
+  "id" : "1116",
+  "recipient_id" : "282"
+}
+*/
+
+
+
+/*
+ {
+   "key 1" : "value 1",
+   "key 5" : "value 5",
+   "google.c.a.ts" : "1596045265",
+   "key 4" : "value 4",
+   "google.c.a.udt" : "0",
+   "gcm.notification.sound2" : "default",
+   "google.c.sender.id" : "497421892744",
+   "gcm.n.e" : "1",
+   "google.c.a.e" : "1",
+   "aps" : {
+     "alert" : {
+       "title" : "Test O 143 #3",
+       "body" : "Test O 143 #3 iOS"
+     },
+     "sound" : "default"
+   },
+   "google.c.a.c_l" : "Test O 143 #3",
+   "key 2" : "value 2",
+   "key 3" : "value 3",
+   "google.c.a.c_id" : "5748676660012981423",
+   "gcm.message_id" : "1596045266032678"
+ }
+ */

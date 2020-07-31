@@ -11,7 +11,7 @@ import UIKit
 class AppSettingsViewController:UIViewController {
  
     // MARK: - Properties
-    var dataSource: DataSource!
+    var dataSource: DataSource! = nil
     var selectedIndexPath:IndexPath?
     
     
@@ -25,12 +25,9 @@ class AppSettingsViewController:UIViewController {
     
     
     //MARK: - Lifecycle
+    
     override func loadView() {
         view = subview
-    }
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
     }
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,6 +36,8 @@ class AppSettingsViewController:UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         clearsTableViewSelectionOnViewDidAppear(animated)
-//        updateUI(animating: false)
+    }
+    deinit {
+        removeForegroundNotificationsObservers()
     }
 }

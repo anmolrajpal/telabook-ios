@@ -161,13 +161,6 @@ class CustomersViewController: UITableViewController {
     
     
     
-    
-    
-    
-    
-    
-    
-    
     // MARK: - View Constructors
     
     lazy var segmentedControl:UISegmentedControl = {

@@ -36,9 +36,10 @@ extension AppSettingsViewController {
                 case .cacheControl: return [
                     .clearAllCache, .clearAgentGalleryCache, .clearConversationGalleryCache
                 ]
-                case .notifications: return [
-                    .alertOnImageSave
-                ]
+                case .notifications:
+                    return [
+                        .alertOnImageSave
+                    ]
                 case .general: return [
                     .appHaptics
                 ]
@@ -46,7 +47,7 @@ extension AppSettingsViewController {
         }
     }
     enum SettingRow:CaseIterable {
-        case photosOption, videosOption, restoreDefaultsOption, clearAllCache, clearAgentGalleryCache, clearConversationGalleryCache, alertOnImageSave, appHaptics
+        case photosOption, videosOption, restoreDefaultsOption, clearAllCache, clearAgentGalleryCache, clearConversationGalleryCache, enableNotifications, enableNotificationAlerts, alertOnImageSave, appHaptics
         
         var section:Section {
             switch self {
@@ -56,6 +57,8 @@ extension AppSettingsViewController {
                 case .clearAllCache: return .cacheControl
                 case .clearAgentGalleryCache: return .cacheControl
                 case .clearConversationGalleryCache: return .cacheControl
+                case .enableNotifications: return .notifications
+                case .enableNotificationAlerts: return .notifications
                 case .alertOnImageSave: return .notifications
                 case .appHaptics: return .general
             }
@@ -68,6 +71,8 @@ extension AppSettingsViewController {
                 case .clearAllCache: return Setting(name: "Clear All Cache", value: nil)
                 case .clearAgentGalleryCache: return Setting(name: "Clear Agent's Gallery Cache", value: nil)
                 case .clearConversationGalleryCache: return Setting(name: "Clear Conversation Gallery Cache", value: nil)
+                case .enableNotifications: return Setting(name: "Enable Notifications", value: nil)
+                case .enableNotificationAlerts: return Setting(name: "Enable Notification Alerts", value: nil)
                 case .alertOnImageSave: return Setting(name: "Save Image Alerts", value: AppData.alertOnSavingMediaToLibrary)
                 case .appHaptics: return Setting(name: "App Haptics", value: AppData.isHapticsEnabled)
             }
@@ -105,11 +110,11 @@ extension AppSettingsViewController {
         self.subview.tableView.delegate = self
         self.subview.tableView.register(KeyValueCell.self)
         self.subview.tableView.register(UITableViewCell.self)
-        configureDataSource()
     }
     
     func configureDataSource() {
-        self.dataSource = DataSource(tableView: subview.tableView, cellProvider: { (tableView, indexPath, item) -> UITableViewCell? in
+        self.dataSource = DataSource(tableView: subview.tableView, cellProvider: { [weak self] (tableView, indexPath, item) -> UITableViewCell? in
+            guard let self = self else { return nil }
             let cell:UITableViewCell
             switch item.section {
                 case .mediaAutoDownload:
@@ -144,6 +149,16 @@ extension AppSettingsViewController {
                 }
                 case .notifications:
                     switch item {
+                        case .enableNotifications:
+                            cell = tableView.dequeueReusableCell(UITableViewCell.self, for: indexPath)
+                            cell.textLabel?.text = item.setting.name
+                            cell.textLabel?.textColor = .telaBlue
+                        
+                        case .enableNotificationAlerts:
+                            cell = tableView.dequeueReusableCell(UITableViewCell.self, for: indexPath)
+                            cell.textLabel?.text = item.setting.name
+                            cell.textLabel?.textColor = .telaBlue
+                        
                         case .alertOnImageSave:
                             cell = tableView.dequeueReusableCell(UITableViewCell.self, for: indexPath)
                             cell.textLabel?.text = item.setting.name
@@ -156,6 +171,7 @@ extension AppSettingsViewController {
                             switchButton.isOn = isOn
                             switchButton.addTarget(self, action: #selector(self.saveMediaNotificationAlertStateDidChange(_:)), for: .valueChanged)
                             cell.accessoryView = switchButton
+                        
                         default: fatalError()
                 }
                 case .general:
@@ -178,12 +194,19 @@ extension AppSettingsViewController {
     }
     
     
-    func updateUI(animating:Bool = true, reloadingData:Bool = true) {
-        guard let snapshot = currentSnapshot() else { return }
-        dataSource.apply(snapshot, animatingDifferences: animating, completion: { [weak self] in
-            guard let self = self else { return }
-            if reloadingData { self.subview.tableView.reloadData() }
-        })
+    func updateUI(with snapshot: NSDiffableDataSourceSnapshot<SectionType, ItemType>? = nil, animating:Bool = true, reloadingData:Bool = false) {
+        if let snapshot = snapshot {
+            dataSource.apply(snapshot, animatingDifferences: animating, completion: { [weak self] in
+                guard let self = self else { return }
+                if reloadingData { self.subview.tableView.reloadData() }
+            })
+        } else {
+            guard let snapshot = currentSnapshot() else { return }
+            dataSource.apply(snapshot, animatingDifferences: animating, completion: { [weak self] in
+                guard let self = self else { return }
+                if reloadingData { self.subview.tableView.reloadData() }
+            })
+        }
     }
     func currentSnapshot() -> NSDiffableDataSourceSnapshot<SectionType, ItemType>? {
         var snapshot = NSDiffableDataSourceSnapshot<SectionType, ItemType>()
@@ -282,6 +305,26 @@ extension AppSettingsViewController: UITableViewDelegate {
             case .clearConversationGalleryCache:
                 tableView.deselectRow(at: indexPath, animated: true)
                 alertClearConversationGalleryCache()
+            
+            
+            
+            
+            
+            
+            /// - Tag: Notifications and Alerts Section
+            
+            // MARK:- Enable Notifications - Open Settings
+            case .enableNotifications:
+                tableView.deselectRow(at: indexPath, animated: true)
+                alertNotificationsEnabledNeeded()
+            
+            
+            
+            // MARK:- Enable Notification Alerts - Open Settings
+            case .enableNotificationAlerts:
+                tableView.deselectRow(at: indexPath, animated: true)
+                alertNotificationAlertsEnabledNeeded()
+            
             
             
             
