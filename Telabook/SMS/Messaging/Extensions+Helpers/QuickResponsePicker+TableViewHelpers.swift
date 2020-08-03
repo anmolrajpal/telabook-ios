@@ -14,8 +14,6 @@ import UIKit
 extension QuickResponsePickerController {
     internal func commonInit() {
         setupTableView()
-//        setUpNavBar()
-        
         configureNavBarAppearance()
         setupNavBarItems()
         handleViewState()

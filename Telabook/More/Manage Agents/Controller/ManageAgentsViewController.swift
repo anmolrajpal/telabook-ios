@@ -65,7 +65,7 @@ class ManageAgentsViewController: UIViewController {
     
     // MARK: Common setup
     private func setup() {
-        setUpNavBar()
+        configureNavigationBarAppearance()
         setupFetchedResultsController()
         setupTableView()
         setupTargetActions()

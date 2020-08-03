@@ -56,7 +56,7 @@ class SelectCompanyViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        setUpNavBar()
+        configureNavigationBarAppearance()
         setupTargetActions()
         setupTableView()
         fetchUserCompanies()

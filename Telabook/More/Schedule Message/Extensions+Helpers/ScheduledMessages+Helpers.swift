@@ -10,10 +10,10 @@ import UIKit
 
 extension ScheduleMessageViewController {
     internal func commonInit() {
+        view.backgroundColor = .telaGray1
         title = "SCHEDULED MESSAGES"
-        setUpNavBar()
+        configureNavigationBarAppearance()
         setupNavBarItems()
-//        configureFetchedResultsController()
         configureHierarchy()
         configureTableView()
         configureFetchedResultsController()

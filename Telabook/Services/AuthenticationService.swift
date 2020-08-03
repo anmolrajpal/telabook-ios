@@ -109,56 +109,6 @@ final class AuthenticationService: NSObject {
     
     
     
-    func callSignOutSequence() {
-        print("Signing out")
-        FirebaseAuthService.shared.signOut { (error) in
-            guard error == nil else {
-                self.callSignOutSequence()
-                return
-            }
-            self.dumpCoreDataStorage()
-            self.signOut()
-        }
-    }
-    fileprivate func signOut() {
-        let loginViewController = LoginViewController()
-        loginViewController.isModalInPresentation = true
-        AppData.clearData()
-        AppData.isLoggedIn = false
-        let rootVC = UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.rootViewController
-        guard (rootVC?.presentedViewController as? LoginViewController) == nil else {
-            return
-        }
-        if let rootVC = rootVC {
-            rootVC.presentedViewController?.dismiss(animated: true, completion: nil)
-            if let tbc = rootVC .tabBarController as? TabBarController {
-                tbc.present(loginViewController, animated: true, completion: {
-                    tbc.selectedViewController?.view.isHidden = true
-                    tbc.viewControllers = nil
-                })
-            } else {
-                UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.rootViewController = TabBarController()
-            }
-        } else {
-            UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.rootViewController = TabBarController()
-        }
-    }
-    fileprivate func dumpCoreDataStorage() {
-        do {
-            
-            let context = PersistenceService.shared.persistentContainer.viewContext
-            let entityNames = [String(describing: ExternalConversation.self), String(describing: InternalConversation.self), String(describing: Permission.self), String(describing: UserObject.self)]
-            for entityName in entityNames {
-                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
-                do {
-                    let objects  = try context.fetch(fetchRequest) as? [NSManagedObject]
-                    _ = objects.map{$0.map{context.delete($0)}}
-                    PersistenceService.shared.saveContext()
-                } catch let error {
-                    print("ERROR DELETING : \(error)")
-                }
-            }
-        }
-    }
+    
     
 }

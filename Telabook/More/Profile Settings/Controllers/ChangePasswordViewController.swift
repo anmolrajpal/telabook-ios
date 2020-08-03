@@ -19,7 +19,7 @@ class ChangePasswordViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        setUpNavBar()
+        configureNavigationBarAppearance()
         setupNavBarItems()
         setupTextFields()
     }

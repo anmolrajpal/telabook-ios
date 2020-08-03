@@ -50,17 +50,12 @@ class CustomerPickerViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-//        setUpNavBar()
         setupTableView()
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         setupConstraints()
     }
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
-    
     fileprivate func setupViews() {
         view.addSubview(tableView)
         view.addSubview(placeholderLabel)

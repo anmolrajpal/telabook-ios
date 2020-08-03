@@ -17,16 +17,14 @@ class GalleryViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        setUpNavBar()
+        configureNavigationBarAppearance()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationItem.title = "GALLERY"
     }
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
+    
     fileprivate func setupViews() {
         
     }

@@ -512,6 +512,7 @@ extension CustomersViewController {
         guard
             id != 0,
             customer.node != nil else { return }
+        printAndLog(message: "Conversation ID: \(customer.externalConversationID)\nNode: \(customer.node ?? "--")", log: .ui, logType: .info)
         let vc = MessagesController(customer: customer)
         navigationController?.pushViewController(vc, animated: true)
         viewDidAppear = false

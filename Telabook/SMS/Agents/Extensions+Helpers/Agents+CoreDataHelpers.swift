@@ -16,6 +16,7 @@ extension AgentsViewController {
             fetchRequest.predicate = NSPredicate(format: "\(#keyPath(Agent.personName)) CONTAINS[c] %@", currentSearchText)
             fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(Agent.personName), ascending: true)]
         } else {
+            fetchRequest.predicate = NSPredicate(format: "\(#keyPath(Agent.isDisabled)) = %d", showOnlyDisabledAccounts)
             fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(Agent.date), ascending: false)]
         }
         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)

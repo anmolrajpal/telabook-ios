@@ -11,7 +11,8 @@ import UIKit
 extension BlacklistViewController {
     
     internal func commonInit() {
-        setUpNavBar()
+        view.backgroundColor = .telaGray1
+        configureNavigationBarAppearance()
         setupFetchedResultsController()
         setupTableView()
         setupTargetActions()

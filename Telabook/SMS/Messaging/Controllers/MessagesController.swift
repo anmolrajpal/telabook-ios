@@ -14,13 +14,7 @@ import AVFoundation
 import os
 import Network
 
-extension ActiveDownload {
-    convenience init(context:NSManagedObjectContext, downloadURL:URL, conversation:Customer) {
-        self.init(context:context)
-        self.downloadURL = downloadURL
-        self.conversation = conversation
-    }
-}
+
 public enum BackgroundIdentifier {
     case messageDownload, messageUpload
     

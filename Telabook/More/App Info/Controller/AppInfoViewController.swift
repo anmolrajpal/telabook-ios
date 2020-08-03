@@ -20,8 +20,10 @@ class AppInfoViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        setUpNavBar()
+        view.backgroundColor = .telaGray1
         title = "APP INFORMATION"
+        configureNavigationBarAppearance()
+        
         let appName:String = try! Configuration.value(for: .bundleDisplayName)
         subview.appNameLabel.text = appName
         let version = Bundle.versionNumber ?? ""

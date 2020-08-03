@@ -66,8 +66,7 @@ class MessageDetailsViewController: UIViewController {
     private func commonInit() {
         view.backgroundColor = UIColor.telaGray1
         title = "Message Info"
-//        configureNavigationBarAppearance()
-        setUpNavBar()
+        configureNavigationBarAppearance()
         configureHierarchy()
         configureMessagesCollectionView()
         configureTableView()

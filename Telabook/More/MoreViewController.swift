@@ -28,7 +28,7 @@ class MoreViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        commonInit()
+        commonInit()   
     }
     
     
@@ -61,16 +61,15 @@ class MoreViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(UITableViewCell.self, for: indexPath)
         cell.backgroundColor = .clear
-        cell.textLabel?.textColor = UIColor.telaWhite
-        let backgroundView = UIView()
-        backgroundView.backgroundColor = UIColor.telaGray7.withAlphaComponent(0.2)
-        cell.selectedBackgroundView  = backgroundView
+        cell.textLabel?.textColor = UIColor.white
         cell.textLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 13)
-        cell.accessoryType = .disclosureIndicator
         let option = options[indexPath.row]
         cell.textLabel?.text = option
         if option == "Log Out" {
             cell.textLabel?.textColor = UIColor.telaRed
+            cell.accessoryType = .none
+        } else {
+            cell.accessoryType = .disclosureIndicator
         }
         return cell
     }

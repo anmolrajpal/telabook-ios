@@ -38,16 +38,12 @@ class AgentPickerViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-//        setUpNavBar()
         setupTableView()
         initiateFetchAgentsSequence()
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         setupConstraints()
-    }
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
     }
     fileprivate func setupViews() {
         view.addSubview(tableView)

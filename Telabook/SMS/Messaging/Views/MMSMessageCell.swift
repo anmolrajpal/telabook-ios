@@ -91,6 +91,7 @@ open class MMSMessageCell: MessageContentCell {
         let message = message as! UserMessage
 
         guard let displayDelegate = messagesCollectionView.messagesDisplayDelegate else {
+        
             fatalError(MessageKitError.nilMessagesDisplayDelegate)
         }
         

@@ -26,6 +26,7 @@ class AgentsViewController: UITableViewController {
     var selectedIndexPath:IndexPath?
     var selectedAgent:Agent?
     var viewDidAppear = false
+    var showOnlyDisabledAccounts = false
     
     var handle:UInt!
     let reference = Config.FirebaseConfig.Node.wasNotSeen.reference

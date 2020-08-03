@@ -47,7 +47,8 @@ class ListPickerController: UITableViewController {
         commonInit()
     }
     private func commonInit() {
-        setUpNavBar()
+        view.backgroundColor = .telaGray1
+        configureNavigationBarAppearance()
         configureTableView()
     }
 }

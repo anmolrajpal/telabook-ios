@@ -82,7 +82,7 @@ final class FirebaseAuthService:NSObject {
     func handleUserState(_ user:User?) {
         guard user != nil else {
             print("Calling signout sequence")
-            AuthenticationService.shared.callSignOutSequence()
+//            AuthenticationService.shared.callSignOutSequence()
             return
         }
         print("Firebase User exists:\(String(describing: user))")
@@ -185,7 +185,7 @@ final class FirebaseAuthService:NSObject {
             print("Failed to unwrap Firebase Current User. Error: \(FirebaseError.noCurrentUser.localizedDescription)")
             #endif
             defer {
-                AuthenticationService.shared.callSignOutSequence()
+//                AuthenticationService.shared.callSignOutSequence()
             }
             DispatchQueue.main.async {
                 completion(.failure(.noCurrentUser))

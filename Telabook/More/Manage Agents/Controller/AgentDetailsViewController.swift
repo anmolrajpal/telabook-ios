@@ -30,7 +30,7 @@ class AgentDetailsViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        setUpNavBar()
+        configureNavigationBarAppearance()
         setupTargetActions()
     }
     override var preferredStatusBarStyle: UIStatusBarStyle {

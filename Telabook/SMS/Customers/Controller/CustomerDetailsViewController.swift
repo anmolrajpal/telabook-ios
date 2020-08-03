@@ -619,66 +619,8 @@ class CustomerDetailsViewController: UIViewController {
         }
     }
     fileprivate func updateCustomerDetails(token:String) {
-        print(self.workerId)
-        print(self.customerId)
-        let companyId = String(AppData.companyId)
-        let first_name = self.firstNameTextField.text ?? ""
-        let last_name = self.lastNameTextField.text ?? ""
-        let address_one = self.addressOneTextField.text ?? ""
-        let address_two = self.addressTwoTextField.text ?? ""
-        let customer_description = self.customerDescription ?? ""
-        let classification_star = ConversationPriority.getPriority(by: self.classificationStar ?? ConversationPriority.getPriorityCode(by: .Low))
-        let is_customer = self.isCustomerSwitch.isOn
-        let is_name_active = self.isNameActiveSwitch.isOn
+      
         
-        ExternalConversationsAPI.shared.updateCustomerDetails(token: token, companyId: companyId, customerId: String(self.customerId), workerId: String(self.workerId), name: first_name, surname: last_name, addressOne: address_one, addressTwo: address_two, description: customer_description, star: classification_star, isCustomer: is_customer, isNameActive: is_name_active) { (responseStatus, data, serviceError, error) in
-            if let err = error {
-                print("***Error Updating Customer Details****\n\(err.localizedDescription)")
-                DispatchQueue.main.async {
-                    self.stopSpinner()
-                    UIAlertController.showTelaAlert(title: "Error", message: err.localizedDescription, controller: self)
-                }
-            } else if let serviceErr = serviceError {
-                print("***Error Updating Customer Details****\n\(serviceErr.localizedDescription)")
-                DispatchQueue.main.async {
-                    self.stopSpinner()
-                    UIAlertController.showTelaAlert(title: "Service Error", message: serviceErr.localizedDescription, controller: self)
-                }
-            } else if let status = responseStatus {
-                guard status == .Created else {
-                    DispatchQueue.main.async {
-                        self.stopSpinner()
-                        UIAlertController.showTelaAlert(title: "Error", message: "Invalid Response: \(status)", controller: self)
-                    }
-                    return
-                }
-                DispatchQueue.main.async {
-                    self.dismiss(animated: true, completion: {
-                        self.delegate?.triggerUpdate()
-                    })
-                }
-                if let data = data {
-                    let decoder = JSONDecoder()
-                    do {
-                        print(data)
-                        let response = try decoder.decode(UpdatedInternalBookCodable.self, from: data)
-                        print("\n\t|\n\t|\n")
-                        print(response as Any)
-                        DispatchQueue.main.async {
-//                            self.internalBook = response
-                            self.stopSpinner()
-                            
-                        }
-                    } catch let error {
-                        print("Error decoding data: \(error.localizedDescription)")
-                        DispatchQueue.main.async {
-                            self.stopSpinner()
-                            UIAlertController.showTelaAlert(title: "Error Decoding Data", message: error.localizedDescription, controller: self)
-                        }
-                    }
-                }
-            }
-        }
     }
     
     
@@ -709,64 +651,7 @@ class CustomerDetailsViewController: UIViewController {
     
     
     fileprivate func fetchCustomerDetails(token:String, customerId:String) {
-        let companyId = String(AppData.companyId)
-        ExternalConversationsAPI.shared.getCustomerDetails(token: token, companyId: companyId, customerId: customerId) { (responseStatus, data, serviceError, error) in
-            if let err = error {
-                print("***Error Fetching Customer Details****\n\(err.localizedDescription)")
-                DispatchQueue.main.async {
-                    self.stopSpinner()
-                    self.setPlaceholdersViewsState(isHidden: false)
-                    self.setViewsState(isHidden: true)
-                    self.placeholderLabel.text = err.localizedDescription
-                }
-            } else if let serviceErr = serviceError {
-                print("***Error Fetching Customer Details****\n\(serviceErr.localizedDescription)")
-                DispatchQueue.main.async {
-                    self.stopSpinner()
-                    self.setPlaceholdersViewsState(isHidden: false)
-                    self.setViewsState(isHidden: true)
-                    self.placeholderLabel.text = serviceErr.localizedDescription
-                }
-            } else if let status = responseStatus {
-                guard status == .OK else {
-                    if status == .NoContent {
-                        DispatchQueue.main.async {
-                            self.stopSpinner()
-                            self.setPlaceholdersViewsState(isHidden: true)
-                            self.setViewsState(isHidden: false)
-                        }
-                    } else {
-                        DispatchQueue.main.async {
-                            self.stopSpinner()
-                            self.setPlaceholdersViewsState(isHidden: false)
-                            self.setViewsState(isHidden: true)
-                            self.placeholderLabel.text = "Invalid Response: \(status)"
-                        }
-                    }
-                    return
-                }
-                if let data = data {
-                    let decoder = JSONDecoder()
-                    do {
-                        let response = try decoder.decode(InternalBookCodable.self, from: data)
-                        DispatchQueue.main.async {
-                            self.internalBook = response.internalBook
-                            self.stopSpinner()
-                            self.setPlaceholdersViewsState(isHidden: true)
-                            self.setViewsState(isHidden: false)
-                        }
-                    } catch let error {
-                        print("Error decoding data: \(error.localizedDescription)")
-                        DispatchQueue.main.async {
-                            self.stopSpinner()
-                            self.setPlaceholdersViewsState(isHidden: false)
-                            self.setViewsState(isHidden: true)
-                            self.placeholderLabel.text = error.localizedDescription
-                        }
-                    }
-                }
-            }
-        }
+        
     }
 }
 extension CustomerDetailsViewController: UITextFieldDelegate {
