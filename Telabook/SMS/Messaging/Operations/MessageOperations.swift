@@ -141,7 +141,7 @@ struct MessageOperations {
     
     static func getOperationsToClearUnreadMessagesCount(using context:NSManagedObjectContext, forConversationWithCustomer conversation:Customer, unreadMessagesCountNodeReference:DatabaseReference, conversationReference:DatabaseReference, updatedAt:Date) -> [Operation] {
         let updateEntryInStore_Operation = ClearUnreadMessagesCountInStore_Operation(context: context, conversation: conversation, updatedAt: updatedAt)
-        let updateEntryToFirebase_Operation = ClearUnreadMessagesCountOnFirebase_Operation(unreadMessagesCountNodeReference: unreadMessagesCountNodeReference, conversationReference: conversationReference, conversation: conversation, updatedAt: updatedAt)
+        let updateEntryToFirebase_Operation = ClearUnreadMessagesCountOnFirebase_Operation(unreadMessagesCountNodeReference: unreadMessagesCountNodeReference, conversationReference: conversationReference, conversationID: String(conversation.externalConversationID), updatedAt: updatedAt)
         return [updateEntryInStore_Operation, updateEntryToFirebase_Operation]
     }
     
@@ -198,18 +198,17 @@ struct MessageOperations {
     fileprivate static func clearUnreadMessagesCountOnFirebase(conversationID:String, unreadMessagesCountNodeReference:DatabaseReference, conversationsNodeReference:DatabaseReference, updatedAt:Date, completion: @escaping (Result<Bool, FirebaseAuthService.FirebaseError>) -> ()) {
         unreadMessagesCountNodeReference.removeValue { (error, _) in
             if let error = error {
-                #if !RELEASE
-                print(error.localizedDescription)
-                #endif
+                printAndLog(message: "### \(#function) - Error: \(error.localizedDescription) where conversationID: \(conversationID)", log: .firebase, logType: .error)
                 completion(.failure(.databaseRemoveValueError(error)))
             } else {
-                conversationsNodeReference.child(conversationID).updateChildValues(FirebaseCustomer.getClearMessagesCountConversationObject(updatedAt: updatedAt)) { (error, _) in
+                printAndLog(message: "### \(#function) - Successfully removed child from wasnotseen node to clear agent's pending messages count where conversationID: \(conversationID)", log: .firebase, logType: .info)
+                let object = FirebaseCustomer.getClearMessagesCountConversationObject(updatedAt: updatedAt)
+                conversationsNodeReference.child(conversationID).updateChildValues(object) { (error, _) in
                     if let error = error {
-                        #if !RELEASE
-                        print(error.localizedDescription)
-                        #endif
+                        printAndLog(message: "### \(#function) - Error: \(error.localizedDescription) where conversationID: \(conversationID)", log: .firebase, logType: .error)
                         completion(.failure(.databaseUpdateValueError(error)))
                     } else {
+                        printAndLog(message: "### \(#function) - Successfully updated Firebase conversation object: \n\(object) \n to clear pending messages count from conversation where conversationID: \(conversationID)", log: .firebase, logType: .info)
                         completion(.success(true))
                     }
                 }
@@ -754,12 +753,12 @@ class ClearUnreadMessagesCountOnFirebase_Operation: Operation {
     
     let unreadMessagesCountNodeReference:DatabaseReference
     let conversationReference:DatabaseReference
-    let conversation:Customer
+    let conversationID:String
     let updatedAt:Date
-    init(unreadMessagesCountNodeReference:DatabaseReference, conversationReference:DatabaseReference, conversation:Customer, updatedAt:Date) {
+    init(unreadMessagesCountNodeReference:DatabaseReference, conversationReference:DatabaseReference, conversationID:String, updatedAt:Date) {
         self.unreadMessagesCountNodeReference = unreadMessagesCountNodeReference
         self.conversationReference = conversationReference
-        self.conversation = conversation
+        self.conversationID = conversationID
         self.updatedAt = updatedAt
     }
     override var isAsynchronous: Bool {
@@ -802,7 +801,7 @@ class ClearUnreadMessagesCountOnFirebase_Operation: Operation {
             finish(result: .failure(.cancelled))
             return
         }
-        MessageOperations.clearUnreadMessagesCountOnFirebase(conversationID: String(conversation.externalConversationID), unreadMessagesCountNodeReference: unreadMessagesCountNodeReference, conversationsNodeReference: conversationReference, updatedAt: updatedAt, completion: finish)
+        MessageOperations.clearUnreadMessagesCountOnFirebase(conversationID: conversationID, unreadMessagesCountNodeReference: unreadMessagesCountNodeReference, conversationsNodeReference: conversationReference, updatedAt: updatedAt, completion: finish)
     }
 }
 

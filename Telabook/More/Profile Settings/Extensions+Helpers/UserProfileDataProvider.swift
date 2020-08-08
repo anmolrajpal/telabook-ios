@@ -18,16 +18,17 @@ extension SettingsViewController {
             self.spinner.startAnimating()
         }
         
-        let userId = AppData.userId
-        let companyId = AppData.companyId
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+    
         guard let first_name = self.firstNameTextField.text,
             let last_name = self.lastNameTextField.text,
             let user_email = self.emailTextField.text,
             let phone_number = self.phoneNumberTextField.text,
             let backup_email = self.contactEmailTextField.text,
             let user_address = self.addressTextField.text,
-            !first_name.isEmpty, !last_name.isEmpty, !user_email.isEmpty, !phone_number.isEmpty, !backup_email.isEmpty, !user_address.isEmpty else {
-                print("Missing Data")
+            !first_name.isBlank, !last_name.isBlank, !user_email.isBlank, !phone_number.isBlank, !backup_email.isBlank, !user_address.isBlank else {
                 DispatchQueue.main.async {
                     self.updateButton.isHidden = false
                     self.spinner.stopAnimating()
@@ -38,6 +39,30 @@ extension SettingsViewController {
         let profile_image = self.profileImage ?? ""
         let profile_image_url = self.profileImageUrl ?? ""
         
+        let operation = UpdateUserProfileOnServer_Operation(address: user_address,
+                                                            backupEmail: backup_email,
+                                                            email: user_email,
+                                                            firstName: first_name,
+                                                            lastName: last_name,
+                                                            phoneNumber: phone_number,
+                                                            profileImage: profile_image,
+                                                            profileImageUrl: profile_image_url)
+        
+        operation.completionBlock = { [weak self] in
+            switch operation.result {
+                case .success:
+                    self?.handleUserProfileUpdationWithSuccess()
+                case let .failure(error):
+                    self?.handleUpdateUserProfileFaliure(error: error)
+                case .none:
+                    fatalError("Update User Profile Operation Result Invalid case. This needs to be handled.")
+            }
+        }
+        
+        queue.addOperations([operation], waitUntilFinished: false)
+        
+        
+        /*
         struct Body:Codable {
             let company_id:String
             let address:String
@@ -56,16 +81,10 @@ extension SettingsViewController {
             HTTPHeader(key: .contentType, value: "application/json"),
             HTTPHeader(key: .xRequestedWith, value: "XMLHttpRequest")
         ]
-        
-        APIService.shared.hit(endpoint: .UpdateUserProfile(userId: userId), httpMethod: .PUT, params: params, httpBody: httpBody, headers: headers, guardResponse: .Created) { (result: Result<UpdateUserProfileCodable, APIService.APIError>) in
-            switch result {
-                case let .success(data): self.handleUserProfileUpdationWithSuccess(userData: data)
-                case let .failure(error): self.handleUpdateUserProfileFaliure(error: error)
-            }
-        }
+        */
     }
     
-    private func handleUserProfileUpdationWithSuccess(userData: UpdateUserProfileCodable?) {
+    private func handleUserProfileUpdationWithSuccess() {
         DispatchQueue.main.async {
             self.updateButton.isHidden = false
             self.spinner.stopAnimating()
@@ -77,7 +96,7 @@ extension SettingsViewController {
     }
     private func handleUpdateUserProfileFaliure(error: APIService.APIError) {
         #if !RELEASE
-        print("***Error Updating Password****\n\(error.localizedDescription)")
+        print("***Error Updating User Profile****\n\(error.localizedDescription)")
         #endif
         DispatchQueue.main.async {
             TapticEngine.generateFeedback(ofType: .Error)

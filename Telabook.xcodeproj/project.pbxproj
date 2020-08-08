@@ -61,6 +61,9 @@
 		6F29FD4F22B7E28700BCA2AB /* OverlaySpinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F29FD4E22B7E28700BCA2AB /* OverlaySpinner.swift */; };
 		6F29FD5122B8B36400BCA2AB /* FollowUpCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F29FD5022B8B36400BCA2AB /* FollowUpCell.swift */; };
 		6F29FD5722BBB1C300BCA2AB /* CustomerDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F29FD5622BBB1C100BCA2AB /* CustomerDetailsViewController.swift */; };
+		6F32793524D99E110078A652 /* CustomerDetailsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F32793424D99E110078A652 /* CustomerDetailsController.swift */; };
+		6F32793724D9D9000078A652 /* CustomerDetails+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F32793624D9D9000078A652 /* CustomerDetails+Helpers.swift */; };
+		6F32793924D9DB0D0078A652 /* CustomerDetails+TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F32793824D9DB0D0078A652 /* CustomerDetails+TableView.swift */; };
 		6F37E2482460A8D7003E9126 /* QuickResponsesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F37E2472460A8D7003E9126 /* QuickResponsesViewController.swift */; };
 		6F37E24A2460A8E7003E9126 /* QuickResponsesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F37E2492460A8E7003E9126 /* QuickResponsesView.swift */; };
 		6F37E24F2460ABFE003E9126 /* QuickResponseOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F37E24E2460ABFE003E9126 /* QuickResponseOperations.swift */; };
@@ -247,6 +250,10 @@
 		6FC8230F2475AE68002421F0 /* Blacklist+ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC8230E2475AE68002421F0 /* Blacklist+ServiceProvider.swift */; };
 		6FC823112475AF41002421F0 /* BlacklistCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC823102475AF41002421F0 /* BlacklistCell.swift */; };
 		6FC823132475AF4B002421F0 /* BlacklistCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC823122475AF4B002421F0 /* BlacklistCellView.swift */; };
+		6FCF7F7424DF0C2A00A7AB0B /* NormalDialerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCF7F7324DF0C2900A7AB0B /* NormalDialerViewController.swift */; };
+		6FCF7F7624DF0C4200A7AB0B /* NormalDialerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCF7F7524DF0C4200A7AB0B /* NormalDialerView.swift */; };
+		6FCF7F7824DF108800A7AB0B /* NormalDialer+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCF7F7724DF108800A7AB0B /* NormalDialer+Helpers.swift */; };
+		6FCF7F7A24DF21D300A7AB0B /* UserProfileOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCF7F7924DF21D300A7AB0B /* UserProfileOperations.swift */; };
 		6FD4F7AE24AF526B00BD2569 /* LocalNotificationItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD4F7AD24AF526B00BD2569 /* LocalNotificationItem.swift */; };
 		6FD4F7B024AF527900BD2569 /* LocalNotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD4F7AF24AF527900BD2569 /* LocalNotificationService.swift */; };
 		6FD4F7B224AFA4B200BD2569 /* Messages+Label.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD4F7B124AFA4B200BD2569 /* Messages+Label.swift */; };
@@ -346,6 +353,9 @@
 		6F29FD4E22B7E28700BCA2AB /* OverlaySpinner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySpinner.swift; sourceTree = "<group>"; };
 		6F29FD5022B8B36400BCA2AB /* FollowUpCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUpCell.swift; sourceTree = "<group>"; };
 		6F29FD5622BBB1C100BCA2AB /* CustomerDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerDetailsViewController.swift; sourceTree = "<group>"; };
+		6F32793424D99E110078A652 /* CustomerDetailsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerDetailsController.swift; sourceTree = "<group>"; };
+		6F32793624D9D9000078A652 /* CustomerDetails+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CustomerDetails+Helpers.swift"; sourceTree = "<group>"; };
+		6F32793824D9DB0D0078A652 /* CustomerDetails+TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CustomerDetails+TableView.swift"; sourceTree = "<group>"; };
 		6F37E2472460A8D7003E9126 /* QuickResponsesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponsesViewController.swift; sourceTree = "<group>"; };
 		6F37E2492460A8E7003E9126 /* QuickResponsesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponsesView.swift; sourceTree = "<group>"; };
 		6F37E24E2460ABFE003E9126 /* QuickResponseOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponseOperations.swift; sourceTree = "<group>"; };
@@ -539,6 +549,10 @@
 		6FC8230E2475AE68002421F0 /* Blacklist+ServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Blacklist+ServiceProvider.swift"; sourceTree = "<group>"; };
 		6FC823102475AF41002421F0 /* BlacklistCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlacklistCell.swift; sourceTree = "<group>"; };
 		6FC823122475AF4B002421F0 /* BlacklistCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlacklistCellView.swift; sourceTree = "<group>"; };
+		6FCF7F7324DF0C2900A7AB0B /* NormalDialerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalDialerViewController.swift; sourceTree = "<group>"; };
+		6FCF7F7524DF0C4200A7AB0B /* NormalDialerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalDialerView.swift; sourceTree = "<group>"; };
+		6FCF7F7724DF108800A7AB0B /* NormalDialer+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NormalDialer+Helpers.swift"; sourceTree = "<group>"; };
+		6FCF7F7924DF21D300A7AB0B /* UserProfileOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileOperations.swift; sourceTree = "<group>"; };
 		6FD4F7AD24AF526B00BD2569 /* LocalNotificationItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotificationItem.swift; sourceTree = "<group>"; };
 		6FD4F7AF24AF527900BD2569 /* LocalNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotificationService.swift; sourceTree = "<group>"; };
 		6FD4F7B124AFA4B200BD2569 /* Messages+Label.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Messages+Label.swift"; sourceTree = "<group>"; };
@@ -663,6 +677,8 @@
 				6F0653522464892800F857C1 /* Customers+CoreDataHelpers.swift */,
 				6FC822F8247459C5002421F0 /* NewConversation+Helpers.swift */,
 				6FC822FA24757E63002421F0 /* NewConversation+ServiceProvider.swift */,
+				6F32793624D9D9000078A652 /* CustomerDetails+Helpers.swift */,
+				6F32793824D9DB0D0078A652 /* CustomerDetails+TableView.swift */,
 			);
 			path = "Extensions+Helpers";
 			sourceTree = "<group>";
@@ -671,8 +687,9 @@
 			isa = PBXGroup;
 			children = (
 				6F065342246487F100F857C1 /* CustomersViewController.swift */,
-				6F29FD5622BBB1C100BCA2AB /* CustomerDetailsViewController.swift */,
 				6FC822F42474496E002421F0 /* NewConversationController.swift */,
+				6F32793424D99E110078A652 /* CustomerDetailsController.swift */,
+				6F29FD5622BBB1C100BCA2AB /* CustomerDetailsViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -821,6 +838,7 @@
 				6F6B44D124BC79FC00AD2649 /* MessageDetailsController+Display.swift */,
 				6F6B44D324BC7A2600AD2649 /* MessageDetailsController+Layout.swift */,
 				6F6B44D524BC855F00AD2649 /* MessageDetailsController+TableView.swift */,
+				6FCF7F7724DF108800A7AB0B /* NormalDialer+Helpers.swift */,
 			);
 			path = "Extensions+Helpers";
 			sourceTree = "<group>";
@@ -832,6 +850,7 @@
 				6FF842152482EACD0069A789 /* QuickResponsePickerController.swift */,
 				6F6B44C524B8CD7800AD2649 /* MediaAssertionController.swift */,
 				6F6B44C924BC69B800AD2649 /* MessageDetailsViewConroller.swift */,
+				6FCF7F7324DF0C2900A7AB0B /* NormalDialerViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -846,6 +865,7 @@
 				6F7BF51624C2C760009B9D5E /* MultimediaMessageCell.swift */,
 				6F6B44D724BCD1A400AD2649 /* MMSMessageCell.swift */,
 				6F8A8302249B7C2F002ACDFE /* MMSCellView.swift */,
+				6FCF7F7524DF0C4200A7AB0B /* NormalDialerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1602,15 +1622,15 @@
 			children = (
 				6FB11B0C229BFA430098D050 /* MoreViewController.swift */,
 				6F395C94248033880023255F /* MoreServiceProvider.swift */,
-				6F8A8309249DE02A002ACDFE /* App Settings */,
 				6FF2E69D248FA43000502B99 /* Profile Settings */,
-				6F987A6224587F6700C6046E /* App Info */,
 				6F987A5024570E8D00C6046E /* Select Company */,
+				6FC822FF2475ADA5002421F0 /* Blacklist */,
 				6F23BCF822D723E30001A888 /* Schedule Message */,
 				6FEC641624D816BC0012B234 /* Disabled Accounts */,
+				6F8A8309249DE02A002ACDFE /* App Settings */,
+				6F987A6224587F6700C6046E /* App Info */,
 				6F69BE6F22D46CF900F8903F /* Manage Agents */,
 				6FC822FE2475ADA0002421F0 /* Gallery */,
-				6FC822FF2475ADA5002421F0 /* Blacklist */,
 			);
 			path = More;
 			sourceTree = "<group>";
@@ -1930,6 +1950,7 @@
 		6FF2E6A1248FA46100502B99 /* Operations */ = {
 			isa = PBXGroup;
 			children = (
+				6FCF7F7924DF21D300A7AB0B /* UserProfileOperations.swift */,
 			);
 			path = Operations;
 			sourceTree = "<group>";
@@ -2105,6 +2126,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6FCF7F7A24DF21D300A7AB0B /* UserProfileOperations.swift in Sources */,
 				6F6B44CE24BC794400AD2649 /* MessageDetailsController+Delegate.swift in Sources */,
 				6F987A78245B6BE700C6046E /* CustomerCodable.swift in Sources */,
 				6FB11B33229EB5190098D050 /* OnlineUsersViewController.swift in Sources */,
@@ -2149,6 +2171,7 @@
 				6F21377A24742DD2002AB150 /* NewConversationCodable.swift in Sources */,
 				6F087DD122E0EFFD00CAD840 /* OnlineUsersAPI.swift in Sources */,
 				6FEC641E24D817AE0012B234 /* DisabledAccountCell.swift in Sources */,
+				6FCF7F7624DF0C4200A7AB0B /* NormalDialerView.swift in Sources */,
 				6F8927FB24A8A82E0025DF64 /* ScheduledMessageJSON.swift in Sources */,
 				6F8A831C249E13B6002ACDFE /* ListItem.swift in Sources */,
 				6F41013F22DDF8FB0038AA76 /* CallGroupsDataProvider.swift in Sources */,
@@ -2174,6 +2197,7 @@
 				6F7BF51924C36446009B9D5E /* AsyncMMSFetcher.swift in Sources */,
 				6F6457D92462DCE400CECF03 /* Log.swift in Sources */,
 				6FC6022C2464462400C1BF6D /* AgentsViewController.swift in Sources */,
+				6F32793524D99E110078A652 /* CustomerDetailsController.swift in Sources */,
 				6F02B2DD2461C6A000FFB34E /* AutoResponseHelpers.swift in Sources */,
 				6FA9537824606963006DAF53 /* QuickResponseCodable.swift in Sources */,
 				6F23BD0722D9F0570001A888 /* ScheduleMessageViewController.swift in Sources */,
@@ -2274,6 +2298,7 @@
 				6F00F2DC24A50E37001E33D9 /* MessageUploadService.swift in Sources */,
 				6FC602342464471A00C1BF6D /* Agents+TableViewHelpers.swift in Sources */,
 				6F6B44C824B9F5B900AD2649 /* MediaAssertion+Keyboard.swift in Sources */,
+				6F32793924D9DB0D0078A652 /* CustomerDetails+TableView.swift in Sources */,
 				6F987A6924587FA300C6046E /* AppInfoView.swift in Sources */,
 				6F265171246C3610003D582F /* SFSymbol.swift in Sources */,
 				6FEE9A17247E696000709E2D /* Messages+Cell.swift in Sources */,
@@ -2325,7 +2350,9 @@
 				6FB11B41229F7A290098D050 /* ManageAgentsCell.swift in Sources */,
 				6F69BE9622D4DE4900F8903F /* QuickResponsesDataProvider.swift in Sources */,
 				6F00F2D624A50D69001E33D9 /* MessageMediaManager.swift in Sources */,
+				6FCF7F7424DF0C2A00A7AB0B /* NormalDialerViewController.swift in Sources */,
 				6FD4F7B024AF527900BD2569 /* LocalNotificationService.swift in Sources */,
+				6F32793724D9D9000078A652 /* CustomerDetails+Helpers.swift in Sources */,
 				6FB11B12229C31DF0098D050 /* Enums.swift in Sources */,
 				6F9E6EBD248E442E0001950E /* Messages+DataProvider.swift in Sources */,
 				6F987A5D2457313C00C6046E /* SelectCompanyServiceProvider.swift in Sources */,
@@ -2345,6 +2372,7 @@
 				6FEE99FF247BB8E900709E2D /* UserMessage.swift in Sources */,
 				6FB11B4622A2A5110098D050 /* PersistenceService.swift in Sources */,
 				6F6B44D624BC855F00AD2649 /* MessageDetailsController+TableView.swift in Sources */,
+				6FCF7F7824DF108800A7AB0B /* NormalDialer+Helpers.swift in Sources */,
 				6F23BCFF22D724A70001A888 /* UserProfileCodable.swift in Sources */,
 				6FF8421A2482EFF00069A789 /* QuickResponsePicker+TableViewHelpers.swift in Sources */,
 				6F69BE8622D4742E00F8903F /* ManageAgentsAPIProtocol.swift in Sources */,
@@ -2450,7 +2478,7 @@
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 31;
+				CURRENT_PROJECT_VERSION = 32;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2594,7 +2622,7 @@
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 31;
+				CURRENT_PROJECT_VERSION = 32;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2618,7 +2646,7 @@
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 31;
+				CURRENT_PROJECT_VERSION = 32;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2699,7 +2727,7 @@
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 31;
+				CURRENT_PROJECT_VERSION = 32;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;

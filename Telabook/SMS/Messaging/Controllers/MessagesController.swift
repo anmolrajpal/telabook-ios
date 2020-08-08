@@ -37,6 +37,7 @@ class MessagesController: MessagesViewController {
     
     // MARK: - init
     var messageToForward:UserMessage?
+    let click2CallManager = Click2CallManager.shared
     let mediaManager = MessageMediaManager.shared
     let downloadService:DownloadService
     let uploadService:UploadService
@@ -70,10 +71,14 @@ class MessagesController: MessagesViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    deinit {
+        print("Messages Controller: DEINITIALIZED")
+    }
     
     
-    
-    
+    var isClick2CallOperationActive: Bool {
+        return click2CallManager.isOperationActive(for: conversationID)
+    }
     
     
     
@@ -185,6 +190,7 @@ class MessagesController: MessagesViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 //        self.becomeFirstResponder()
+        configureNavigationBarItems()
         monitorNetwork()
         observeReachability()
     }
@@ -382,6 +388,17 @@ class MessagesController: MessagesViewController {
     // MARK: - Views
     
     var headerSpinnerView:SpinnerReusableView?
+    var phoneBarButtonItem: UIBarButtonItem = {
+        let phoneButtonImage = SFSymbol.phone·fill.image
+        let phoneButton = UIBarButtonItem(image: phoneButtonImage, style: .plain, target: self, action: #selector(phoneButtonDidTapped(_:)))
+        phoneButton.tintColor = UIColor.telaBlue
+        return phoneButton
+    }()
+    lazy var phoneSpinnerBarButtonItem: UIBarButtonItem = {
+        let barButton = UIBarButtonItem(customView: phoneSpinner)
+        barButton.isEnabled = false
+        return barButton
+    }()
     
     lazy var spinner: UIActivityIndicatorView = {
         let aiView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
@@ -390,6 +407,15 @@ class MessagesController: MessagesViewController {
         aiView.color = UIColor.telaGray7
         aiView.clipsToBounds = true
         aiView.translatesAutoresizingMaskIntoConstraints = false
+        return aiView
+    }()
+    
+    var phoneSpinner: UIActivityIndicatorView = {
+        let aiView = UIActivityIndicatorView(style: .medium)
+        aiView.backgroundColor = .clear
+        aiView.hidesWhenStopped = true
+        aiView.color = UIColor.telaBlue
+        aiView.clipsToBounds = true
         return aiView
     }()
     lazy var scrollToBottomButton:UIButton = {

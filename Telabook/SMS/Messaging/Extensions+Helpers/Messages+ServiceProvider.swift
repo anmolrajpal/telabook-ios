@@ -25,7 +25,7 @@ extension MessagesController {
         let objectID = worker.objectID
         let referenceAgent = context.object(with: objectID) as! Agent
         let userID = Int(worker.userID)
-
+        
         let operations = QuickResponseOperations.getOperationsToFetchAndSaveQuickResponses(using: context, userID: userID, forAgent: referenceAgent)
         
         queue.addOperations(operations, waitUntilFinished: false)
@@ -77,25 +77,25 @@ extension MessagesController {
     
     
     /*
-    internal func persistFirebaseMessageInStore(entry:FirebaseMessage) {
-        let fetchedEntry = self.messages.first(where: { $0.firebaseKey == entry.firebaseKey })
-        let isSeen = fetchedEntry?.isSeen ?? false
-        let cachedImageUUID = fetchedEntry?.imageUUID
-        let downloadState = fetchedEntry?.downloadState ?? .new
-        let uploadState = fetchedEntry?.uploadState ?? .none
-        let context = PersistentContainer.shared.newBackgroundContext()
-        let objectID = customer.objectID
-        let referenceContext = context.object(with: objectID) as! Customer
-//        let context = viewContext
-        context.performAndWait {
-            do {
-                _ = UserMessage(context: context, messageEntryFromFirebase: entry, forConversationWithCustomer: referenceContext, imageUUID: cachedImageUUID, isSeen: isSeen, downloadState: downloadState, uploadState: uploadState)
-                try context.save()
-            } catch let error {
-                printAndLog(message: "Error persisting observed message: \(error)", log: .coredata, logType: .error)
-            }
-        }
-    }
+     internal func persistFirebaseMessageInStore(entry:FirebaseMessage) {
+     let fetchedEntry = self.messages.first(where: { $0.firebaseKey == entry.firebaseKey })
+     let isSeen = fetchedEntry?.isSeen ?? false
+     let cachedImageUUID = fetchedEntry?.imageUUID
+     let downloadState = fetchedEntry?.downloadState ?? .new
+     let uploadState = fetchedEntry?.uploadState ?? .none
+     let context = PersistentContainer.shared.newBackgroundContext()
+     let objectID = customer.objectID
+     let referenceContext = context.object(with: objectID) as! Customer
+     //        let context = viewContext
+     context.performAndWait {
+     do {
+     _ = UserMessage(context: context, messageEntryFromFirebase: entry, forConversationWithCustomer: referenceContext, imageUUID: cachedImageUUID, isSeen: isSeen, downloadState: downloadState, uploadState: uploadState)
+     try context.save()
+     } catch let error {
+     printAndLog(message: "Error persisting observed message: \(error)", log: .coredata, logType: .error)
+     }
+     }
+     }
      */
     /* ------------------------------------------------------------------------------------------------------------ */
     
@@ -113,16 +113,16 @@ extension MessagesController {
         let referenceContext = context.object(with: objectID) as! Customer
         let operation = MergeMessageEntriesFromFirebaseToStore_Operation(context: context, conversation: referenceContext, serverEntries: entries, fetchedEntries: fetchedEntries)
         operation.completionBlock = {
-                if let error = operation.error {
-                    print(error.localizedDescription)
-                    self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
-                } else {
-                    if operation.serverEntries?.isEmpty == true { self.shouldFetchMore = false }
-                    self.messages.isEmpty ?
-                        self.loadInitialMessages(animated: true, fetchFromFirebase: false, shouldLoadUnseenMessages: false) :
-                        self.loadInitialMessages(animated: false, fetchFromFirebase: false, shouldLoadUnseenMessages: false)
-                    
-                }
+            if let error = operation.error {
+                print(error.localizedDescription)
+                self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+            } else {
+                if operation.serverEntries?.isEmpty == true { self.shouldFetchMore = false }
+                self.messages.isEmpty ?
+                    self.loadInitialMessages(animated: true, fetchFromFirebase: false, shouldLoadUnseenMessages: false) :
+                    self.loadInitialMessages(animated: false, fetchFromFirebase: false, shouldLoadUnseenMessages: false)
+                
+            }
         }
         queue.addOperations([operation], waitUntilFinished: false)
     }
@@ -210,12 +210,12 @@ extension MessagesController {
         
         guard let key = messagesDatabaseReference.childByAutoId().key else { return }
         let newMessage = NewMessage(kind: message.kind, messageId: key, sender: thisSender, sentDate: Date(), forwardedFromNode: forwardedFromNode)
-            
+        
         let context = PersistentContainer.shared.newBackgroundContext()
         let objectID = customer.objectID
         let customerObject = context.object(with: objectID) as! Customer
         let operations = MessageOperations.getOperationsToSend(newTextMessage: newMessage, using: context, forConversationWithCustomer: customerObject, messageReference: messagesDatabaseReference, conversationReference: conversationsDatabaseReference)
-//        handleViewsStateForOperations(operations: operations, onOperationQueue: queue, completion: {_ in })
+        //        handleViewsStateForOperations(operations: operations, onOperationQueue: queue, completion: {_ in })
         
         queue.addOperations(operations, waitUntilFinished: false)
     }
@@ -231,9 +231,9 @@ extension MessagesController {
         
         guard let originalMediaItemLocalURL = message.imageLocalURL() else { return }
         
-//        let conversationsNode: Config.FirebaseConfig.Node = .conversations(companyID: AppData.companyId, workerID: Int(customer.agent!.workerID))
+        //        let conversationsNode: Config.FirebaseConfig.Node = .conversations(companyID: AppData.companyId, workerID: Int(customer.agent!.workerID))
         let messagesNode: Config.FirebaseConfig.Node = .messages(companyID: AppData.companyId, node: customer.node!)
-//        let conversationsDatabaseReference = conversationsNode.reference
+        //        let conversationsDatabaseReference = conversationsNode.reference
         let messagesDatabaseReference = messagesNode.reference
         let imageUUID = UUID()
         
@@ -362,6 +362,96 @@ extension MessagesController {
         operation.completionBlock = {
             if let error = operation.error {
                 printAndLog(message: error.localizedDescription, log: .coredata, logType: .error)
+            }
+        }
+        queue.addOperations([operation], waitUntilFinished: false)
+    }
+    /* ------------------------------------------------------------------------------------------------------------ */
+    
+    
+    
+    
+    
+    
+    /* ------------------------------------------------------------------------------------------------------------ */
+    internal func initiateClick2CallOperation(for conversationID: Int, fromPhoneNumber: String, toPhoneNumber: String, isAgent: Int) {
+        click2CallManager.addOperation(for: conversationID) {
+            self.updateNavigationBarItems()
+        }
+        let workerID = customer.agent?.workerID ?? 0
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+        
+        let operation = Click2Call_Operation(fromPhoneNumber: fromPhoneNumber, toPhoneNumber: toPhoneNumber, conversationID: String(conversationID), isAgent: String(isAgent))
+        
+        operation.completionBlock = { [weak self] in
+            switch operation.result {
+                case .failure(let error):
+                    printAndLog(message: "### initiateClick2CallOperation - Error: \(error.localizedDescription)", log: .network, logType: .error)
+                    Click2CallManager.shared.removeOperation(for: conversationID) {
+                        self?.updateNavigationBarItems()
+                    }
+                    DispatchQueue.main.async {
+                        if UIApplication.shared.applicationState == .active {
+                            guard let rootViewController = (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window?.rootViewController else {
+                                return
+                            }
+                            if let tabBarController = rootViewController as? TabBarController {
+                                if let selectedNavigationController = tabBarController.selectedViewController as? UINavigationController {
+                                    if let lastViewController = selectedNavigationController.viewControllers.last {
+                                        if let presentedViewController = lastViewController.presentedViewController {
+                                            UIAlertController.showTelaAlert(title: "Error", message: error.localizedDescription, action: UIAlertAction(title: "OK", style: .cancel, handler: { _ in
+                                                self?.updateNavigationBarItems()
+                                            }), controller: presentedViewController)
+                                        } else {
+                                            UIAlertController.showTelaAlert(title: "Error", message: error.localizedDescription, action: UIAlertAction(title: "OK", style: .cancel, handler: { _ in
+                                                self?.updateNavigationBarItems()
+                                            }), controller: lastViewController)
+                                        }
+                                    }
+                                }
+                            } else {
+                                fatalError("Root View Controller must be Tab Bar Controller: \(TabBarController.self)")
+                            }
+                        } else {
+                            let notificationItem = LocalNotificationItem(key: .click2CallError, title: "Failed to schedule call", body: "There was an error scheduling your call to \(toPhoneNumber). Please try again.", sound: .default, badgeCount: 1, delay: 0, userInfo: ["workerID": workerID, "conversationID": conversationID], tapHandler: nil)
+                            LocalNotificationService.shared.postNotification(for: notificationItem)
+                        }
+                    }
+                case .success:
+                    printAndLog(message: "Successfully scheduled a call from \(fromPhoneNumber) to \(toPhoneNumber) where conversationID: \(conversationID)", log: .network, logType: .info, isPrivate: true)
+                    Click2CallManager.shared.removeOperation(for: conversationID) {
+                        self?.updateNavigationBarItems()
+                    }
+                    DispatchQueue.main.async {
+                        if UIApplication.shared.applicationState == .active {
+                            guard let rootViewController = (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window?.rootViewController else {
+                                return
+                            }
+                            if let tabBarController = rootViewController as? TabBarController {
+                                if let selectedNavigationController = tabBarController.selectedViewController as? UINavigationController {
+                                    if let lastViewController = selectedNavigationController.viewControllers.last {
+                                        if let presentedViewController = lastViewController.presentedViewController {
+                                            UIAlertController.showTelaAlert(title: "Call Scheduled", message: "Please wait for the call on your phone.", action: UIAlertAction(title: "OK", style: .cancel, handler: { _ in
+                                                self?.updateNavigationBarItems()
+                                            }), controller: presentedViewController)
+                                        } else {
+                                            UIAlertController.showTelaAlert(title: "Call Scheduled", message: "Please wait for the call on your phone.", action: UIAlertAction(title: "OK", style: .cancel, handler: { _ in
+                                                self?.updateNavigationBarItems()
+                                            }), controller: lastViewController)
+                                        }
+                                    }
+                                }
+                            } else {
+                                fatalError("Root View Controller must be Tab Bar Controller: \(TabBarController.self)")
+                            }
+                        } else {
+                            let notificationItem = LocalNotificationItem(key: .click2CallSuccess, title: "Call Scheduled", body: "Please wait for the call on your phone.", sound: .default, badgeCount: 1, delay: 0, userInfo: ["workerID": workerID, "conversationID": conversationID], tapHandler: nil)
+                            LocalNotificationService.shared.postNotification(for: notificationItem)
+                        }
+                    }
+                case .none: fatalError("Click2Call Operation Result Invalid case. This needs to be handled.")
             }
         }
         queue.addOperations([operation], waitUntilFinished: false)

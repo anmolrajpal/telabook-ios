@@ -1563,3 +1563,29 @@ extension Array {
         return count > 1 ? self[1] : nil
     }
 }
+
+
+
+extension UIButton {
+    func setBackgroundColor(color: UIColor, forState: UIControl.State) {
+        UIGraphicsBeginImageContext(CGSize(width: 1, height: 1))
+        UIGraphicsGetCurrentContext()!.setFillColor(color.cgColor)
+        UIGraphicsGetCurrentContext()!.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
+        let colorImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        self.setBackgroundImage(colorImage, for: forState)
+    }
+}
+
+extension UIFont {
+    static func gothamBook(forTextStyle style: UIFont.TextStyle) -> UIFont {
+        let font = CustomFonts.gothamBook.font(forTextStyle: style)
+        let scaledFont = UIFontMetrics(forTextStyle: style).scaledFont(for: font)
+        return scaledFont
+    }
+    static func gothamMedium(forTextStyle style: UIFont.TextStyle) -> UIFont {
+        let font = CustomFonts.gothamMedium.font(forTextStyle: style)
+        let scaledFont = UIFontMetrics(forTextStyle: style).scaledFont(for: font)
+        return scaledFont
+    }
+}

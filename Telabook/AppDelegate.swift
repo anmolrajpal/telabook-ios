@@ -260,6 +260,7 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
                     LocalNotificationItem.imageSavedToPhotosNotificationItem.tapHandler?()
                     completionHandler()
                     return
+                default: return
             }
         }
         
@@ -309,6 +310,7 @@ extension AppDelegate : MessagingDelegate {
     
     
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
+        printAndLog(message: "FCM Token: \(fcmToken)", log: .notifications, logType: .info, isPrivate: true)
         /*
         let dataDict:[String: String] = ["token": fcmToken]
         NotificationCenter.default.post(name: Notification.Name("FCMToken"), object: nil, userInfo: dataDict)

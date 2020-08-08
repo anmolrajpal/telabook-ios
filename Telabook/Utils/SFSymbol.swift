@@ -36,7 +36,8 @@ public enum SFSymbol { case
     checkmark·circle·fill,
     plus,
     plus·circle·fill,
-    arrow·down·circle·fill
+    arrow·down·circle·fill,
+    phone·fill
     
     private var imageName:String {
         switch self {
@@ -67,6 +68,7 @@ public enum SFSymbol { case
             case .plus: return "plus"
             case .plus·circle·fill: return "plus.circle.fill"
             case .arrow·down·circle·fill: return "arrow.down.circle.fill"
+            case .phone·fill: return "phone.fill"
         }
     }
     

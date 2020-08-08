@@ -39,7 +39,7 @@ class CustomerCell: UITableViewCell {
     
     // MARK: - Methods
     
-    func configureCell(with customer:Customer, animated:Bool = false) {
+    func configureCell(with customer: Customer, animated: Bool = false) {
         let phoneNumber = customer.phoneNumber ?? ""
         let number:String
         if let formattedPhoneNumber = phoneNumber.getE164FormattedNumber() {

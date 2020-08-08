@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import CoreData
+
 // MARK: - Decodable
 
 /**
@@ -51,12 +53,31 @@ struct CustomerDetailsJSON:Decodable {
 struct CustomerDetailsProperties: Decodable {
     let agentOnlyName : String?     // "Pet Boss"
     let companyId : String?         // "22"
-    let createdAt : String?         // "2020-08-03 06:05:04"
+    let createdAt : Date?           // "2020-08-03 06:05:04" to Date Object
     let customerId : Int?           // 24785
     let id : Int?                   // 19
     let names : String?             // "Big Boss"  <- This is the Global Name
     let ownerId : Int?              // 162
     let surnames : String?          // ""
-    let updatedAt : String?         // "2020-08-03 06:05:04"
+    let updatedAt : Date?           // "2020-08-03 06:05:04" to Date Object
     let workerId : String?          // "164"
+}
+
+
+// MARK: - An extension to create CustomerDetails Object Core Data Entity from CustomerDetailsProperties Server Response Data
+extension CustomerDetails {
+    convenience init?(context: NSManagedObjectContext, customerDetailsEntryFromServer entry: CustomerDetailsProperties, conversationWithCustomer conversation: Customer) {
+        self.init(context: context)
+        guard let id = entry.id, id != 0 else { return nil }
+        self.id = Int64(id)
+        self.companyID = Int64(entry.companyId ?? "0") ?? 0
+        self.createdAt = entry.createdAt
+        self.customerID = Int64(entry.customerId ?? 0)
+        self.globalName = entry.names
+        self.agentOnlyName = entry.agentOnlyName
+        self.ownerID = Int64(entry.ownerId ?? 0)
+        self.updatedAt = entry.updatedAt
+        self.workerID = Int64(entry.workerId ?? "0") ?? 0
+        self.conversation = conversation
+    }
 }

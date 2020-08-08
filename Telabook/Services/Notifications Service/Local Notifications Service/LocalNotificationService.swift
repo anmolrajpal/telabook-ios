@@ -25,8 +25,9 @@ extension UNNotificationRequest {
 }
 public class LocalNotificationService {
     public enum NotificationKey:String {
-        case imageSavedToLibrary
-        
+        case imageSavedToLibrary,
+        click2CallError,
+        click2CallSuccess
     }
     static let shared = LocalNotificationService()
     
@@ -52,6 +53,9 @@ public class LocalNotificationService {
         }
         if let badgeCount = item.badgeCount {
             content.badge = NSNumber(value: badgeCount)
+        }
+        if let userInfo = item.userInfo {
+            content.userInfo = userInfo
         }
         let trigger:UNTimeIntervalNotificationTrigger? = item.delay > 0 ? UNTimeIntervalNotificationTrigger(timeInterval: item.delay, repeats: false) : nil
         

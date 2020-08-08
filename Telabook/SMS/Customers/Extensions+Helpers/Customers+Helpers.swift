@@ -8,6 +8,7 @@
 
 import UIKit
 import InteractiveModal
+import CoreData
 
 extension CustomersViewController: StartNewConversationDelegate {
     func conversation(didStartNewConversationWithID id: Int, node:String) {
@@ -15,10 +16,20 @@ extension CustomersViewController: StartNewConversationDelegate {
             let indexPath = self.fetchedResultsController.indexPath(forObject: conversation) {
             self.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .top)
             self.openChat(forSelectedCustomer: conversation, at: indexPath)
-            print("selecting from fetched results controller as new firebase entry is loaded into core data store")
         } else {
             print("pushing view controller from delegate (with node) as new firebase entry not yet loaded into core data store")
-            
+            let fetchRequest: NSFetchRequest<Customer> = Customer.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "\(#keyPath(Customer.agent)) == %@ AND \(#keyPath(Customer.externalConversationID)) = %d", agent, id)
+            fetchRequest.fetchLimit = 1
+            context.performAndWait {
+                if let conversation = try? fetchRequest.execute().first {
+                    let vc = MessagesController(customer: conversation)
+                    DispatchQueue.main.async { [weak self] in
+                        self?.navigationController?.pushViewController(vc, animated: true)
+                        self?.viewDidAppear = false
+                    }
+                }
+            }
         }
     }
 }

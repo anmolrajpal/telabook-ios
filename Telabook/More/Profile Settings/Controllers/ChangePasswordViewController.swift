@@ -9,26 +9,25 @@
 import UIKit
 
 class ChangePasswordViewController: UIViewController {
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationItem.title = "CHANGE PASSWORD"
-    }
     override func loadView() {
         super.loadView()
         setupViews()
     }
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .telaGray1
+        title = "CHANGE PASSWORD"
         configureNavigationBarAppearance()
         setupNavBarItems()
         setupTextFields()
     }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        currentPasswordTextField.becomeFirstResponder()
+    }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         setupConstraints()
-    }
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
     }
     
     let saveButton:UIBarButtonItem = {

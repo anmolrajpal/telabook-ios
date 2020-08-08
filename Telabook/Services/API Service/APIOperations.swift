@@ -12,7 +12,7 @@ import os
 protocol Server: class {
     init(apiVersion:APIService.APIVersion)
 //    var apiVersion:APIService.APIVersion { get }
-    func hitEndpoint<T:Decodable>(endpoint:APIService.Endpoint, requiresBearerToken:Bool, httpMethod:HTTPMethod, params: [String: String]?, httpBody: Data?, headers: [HTTPHeader]?, guardResponse: ResponseStatus?, expectData:Bool, completion: @escaping APIService.APICompletion<T>, decoder:JSONDecoder)
+    func hitEndpoint<T:Decodable>(endpoint:APIService.Endpoint, requiresBearerToken:Bool, httpMethod:HTTPMethod, params: [String: String]?, httpBody: Data?, headers: [HTTPHeader]?, guardResponse: ResponseStatus?, expectData:Bool, endpointConfiguration: APIService.Configuration?, completion: @escaping APIService.APICompletion<T>, decoder:JSONDecoder)
 }
 
 class APIServer<T:Decodable> : Server {
@@ -20,10 +20,19 @@ class APIServer<T:Decodable> : Server {
     required init(apiVersion: APIService.APIVersion) {
         self.apiVersion = apiVersion
     }
-    func hitEndpoint<T>(endpoint:APIService.Endpoint, requiresBearerToken:Bool = true, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, completion: @escaping APIService.APICompletion<T>, decoder:JSONDecoder = defaultDecoder) where T : Decodable {
+    var configuration: APIService.Configuration {
         switch apiVersion {
-            case .v1: APIOperations.triggerAPIEndpointOperations(endpoint: endpoint, httpMethod: httpMethod, params: params, httpBody: httpBody, headers: headers, guardResponse: guardResponse, expectData: expectData, completion: completion, decoder: decoder)
-            case .v2: APIOperations.triggerAPIEndpointOperations(endpoint: endpoint, requiresBearerToken: requiresBearerToken, httpMethod: httpMethod, params: params, httpBody: httpBody, headers: headers, guardResponse: guardResponse, expectData: expectData, configuration: .init(apiCommonPath: "\(Config.APIConfig.urlPrefix)/\(apiVersion.stringValue)"), completion: completion, decoder: decoder)
+            case .v1: return .defaultConfiguration
+            case .v2: return .init(apiCommonPath: "\(Config.APIConfig.urlPrefix)/\(apiVersion.stringValue)")
+            case .mock: fatalError()
+        }
+    }
+    func hitEndpoint<T>(endpoint:APIService.Endpoint, requiresBearerToken:Bool = true, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, endpointConfiguration: APIService.Configuration? = nil, completion: @escaping APIService.APICompletion<T>, decoder:JSONDecoder = defaultDecoder) where T : Decodable {
+        switch apiVersion {
+            case .v1:
+                APIOperations.triggerAPIEndpointOperations(endpoint: endpoint, httpMethod: httpMethod, params: params, httpBody: httpBody, headers: headers, guardResponse: guardResponse, expectData: expectData, completion: completion, decoder: decoder)
+            case .v2:
+                APIOperations.triggerAPIEndpointOperations(endpoint: endpoint, requiresBearerToken: requiresBearerToken, httpMethod: httpMethod, params: params, httpBody: httpBody, headers: headers, guardResponse: guardResponse, expectData: expectData, configuration: endpointConfiguration ?? configuration, completion: completion, decoder: decoder)
             case .mock: print("Mock")
         }
     }
@@ -33,7 +42,7 @@ class APIServer<T:Decodable> : Server {
 struct APIOperations {
     
     /// Returns an array of operations for creating and hitting API Endpoint
-    static func triggerAPIEndpointOperations<T:Decodable>(endpoint:APIService.Endpoint, requiresBearerToken:Bool = true, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, configuration:APIService.Configuration = .defaultConfiguration, completion: @escaping APIService.APICompletion<T>, decoder:JSONDecoder) {
+    static func triggerAPIEndpointOperations<T:Decodable>(endpoint:APIService.Endpoint, requiresBearerToken:Bool = true, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, configuration: APIService.Configuration = .defaultConfiguration, completion: @escaping APIService.APICompletion<T>, decoder:JSONDecoder) {
         
         let isLoggingEnabled = APIService.shared.isLoggingEnabled
         
@@ -239,6 +248,16 @@ class HitEndpointOperation<T:Decodable>: Operation {
                 }
             } else {
                 guard responseStatus == .OK || responseStatus == .Created || responseStatus == .Accepted || responseStatus == .NoContent else {
+                    if let data = data {
+                        if self.isLoggingEnabled {
+                            if let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+                                let jsonData = try? JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted),
+                                let json = String(data: jsonData, encoding: .utf8) {
+                                let jsonMessage = "\n\n------------------------------------------------ Raw JSON Object: BEGIN ------------------------------------------------\n\n"+json+"\n\n--------------------------------------------------- Raw JSON Object: END ------------------------------------------------\n\n"
+                                printAndLog(message: jsonMessage, log: .network, logType: .info, isPrivate: true)
+                            }
+                        }
+                    }
                     self.finish(result: .failure(.unexptectedResponse(response: responseStatus)))
                     return
                 }
@@ -251,9 +270,15 @@ class HitEndpointOperation<T:Decodable>: Operation {
                 }
                 
                 if self.isLoggingEnabled {
-                    guard let jsonString = String(data: data, encoding: .utf8) else { return }
-                    let jsonMessage = "\n\n------------------------------------------------ Raw JSON Object: BEGIN ------------------------------------------------\n\n"+jsonString+"\n\n--------------------------------------------------- Raw JSON Object: END ------------------------------------------------\n\n"
-                    printAndLog(message: jsonMessage, log: .network, logType: .info, isPrivate: true)
+                    if let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+                        let jsonData = try? JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted),
+                        let json = String(data: jsonData, encoding: .utf8) {
+                        let jsonMessage = "\n\n------------------------------------------------ Raw JSON Object: BEGIN ------------------------------------------------\n\n"+json+"\n\n--------------------------------------------------- Raw JSON Object: END ------------------------------------------------\n\n"
+                        printAndLog(message: jsonMessage, log: .network, logType: .info, isPrivate: true)
+                    } else if let json = String(data: data, encoding: .utf8) {
+                        let jsonMessage = "\n\n------------------------------------------------ Raw JSON Object: BEGIN ------------------------------------------------\n\n"+json+"\n\n--------------------------------------------------- Raw JSON Object: END ------------------------------------------------\n\n"
+                        printAndLog(message: jsonMessage, log: .network, logType: .info, isPrivate: true)
+                    }
                 }
                 do {
                     let object = try self.decoder.decode(T.self, from: data)

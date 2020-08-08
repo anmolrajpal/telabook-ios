@@ -10,12 +10,27 @@ import UIKit
 import Photos
 import FirebaseStorage
 import MessageKit
+import MenuController
+
+
+extension MessagesController: NormalDialerDelegate {
+    func normalDialer(didEnteredNumberToDial number: String, controller: NormalDialerViewController) {
+        controller.dismiss(animated: true) {
+            guard let workerPhoneNumber = self.customer.agent?.phoneNumber,
+                !workerPhoneNumber.isBlank else {
+                    fatalError()
+            }
+            self.initiateClick2CallOperation(for: self.conversationID, fromPhoneNumber: number, toPhoneNumber: workerPhoneNumber, isAgent: 3)
+        }
+    }
+}
 
 extension MessagesController {
     internal func commonInit() {
         title = customer.addressBookName?.isEmpty ?? true ? customer.phoneNumber : customer.addressBookName
         configureNavigationBarAppearance()
-        setupViews()
+//        configureNavigationBarItems()
+        configureHierarchy()
         configureMessageCollectionView()
         configureMessageInputBar()
         loadInitialMessages(fetchFromFirebase: true, shouldLoadUnseenMessages: true)
@@ -23,7 +38,113 @@ extension MessagesController {
         reloadQuickResponses()
         clearUnreadMessagesCount()
     }
-    private func setupViews() {
+    
+    func configureNavigationBarItems() {
+        self.navigationItem.rightBarButtonItems = [self.phoneBarButtonItem]
+        updateNavigationBarItems()
+    }
+    @objc
+    func phoneButtonDidTapped(_ button: UIBarButtonItem) {
+        promptClick2CallMenu()
+    }
+    
+    
+    func updateNavigationBarItems() {
+        if isClick2CallOperationActive {
+            DispatchQueue.main.async {
+                self.navigationItem.rightBarButtonItems = [self.phoneSpinnerBarButtonItem]
+            }
+            startPhoneSpinner()
+        } else {
+            stopPhoneSpinner()
+            DispatchQueue.main.async {
+                self.navigationItem.rightBarButtonItems = [self.phoneBarButtonItem]
+            }
+            if let workerPhoneNumber = customer.agent?.phoneNumber,
+                let currentUserPhoneNumber = AppData.userInfo?.user?.phone,
+                !workerPhoneNumber.isBlank,
+                !currentUserPhoneNumber.isBlank {
+                self.phoneBarButtonItem.isEnabled = true
+            } else {
+                self.phoneBarButtonItem.isEnabled = false
+            }
+        }
+    }
+    
+    private func startPhoneSpinner() {
+        DispatchQueue.main.async {
+            self.phoneSpinner.startAnimating()
+        }
+    }
+    private func stopPhoneSpinner() {
+        DispatchQueue.main.async {
+            self.phoneSpinner.stopAnimating()
+        }
+    }
+    
+    private func promptClick2CallMenu() {
+        var menuItems = [UIControlMenuAction]()
+        
+        guard let workerPhoneNumber = customer.agent?.phoneNumber,
+            let currentUserPhoneNumber = AppData.userInfo?.user?.phone,
+            !workerPhoneNumber.isBlank,
+            !currentUserPhoneNumber.isBlank else {
+                printAndLog(message: "Invalid parameters", log: .ui, logType: .error)
+                fatalError()
+        }
+        
+        let formattedCurrentUserPhoneNumber = currentUserPhoneNumber.getE164FormattedNumber() ?? currentUserPhoneNumber
+        let formattedWorkerPhoneNumber = workerPhoneNumber.getE164FormattedNumber() ?? workerPhoneNumber
+        
+        
+        // MARK: - Call Me Action
+        
+        let callMeAction = UIControlMenuAction(title: "Call Me \(formattedCurrentUserPhoneNumber)", image: SFSymbol.phone·fill.image) { _ in
+            self.initiateClick2CallOperation(for: self.conversationID, fromPhoneNumber: currentUserPhoneNumber, toPhoneNumber: workerPhoneNumber, isAgent: 2)
+        }
+        menuItems.append(callMeAction)
+        
+        
+        // MARK: - Call Agent Action
+        
+        let callAgentAction = UIControlMenuAction(title: "Call Agent \(formattedWorkerPhoneNumber)", image: SFSymbol.phone·fill.image) { _ in
+            self.initiateClick2CallOperation(for: self.conversationID, fromPhoneNumber: currentUserPhoneNumber, toPhoneNumber: workerPhoneNumber, isAgent: 1)
+        }
+        menuItems.append(callAgentAction)
+        
+        
+        // MARK: - Dial Phone Number Action
+        
+        let dialAction = UIControlMenuAction(title: "Dial Phone Number", image: #imageLiteral(resourceName: "keypad")) { _ in
+            self.showDialer()
+        }
+        menuItems.append(dialAction)
+        
+        let label = UILabel()
+        label.text = "Who do you want to call?"
+        label.textColor = .telaBlue
+        label.font = UIFont.gothamBook(forTextStyle: .callout)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        let headerView = UIView()
+        headerView.addSubview(label)
+        
+        label.leftAnchor.constraint(equalTo: headerView.leftAnchor, constant: 8).isActive = true
+        label.centerYAnchor.constraint(equalTo: headerView.centerYAnchor).isActive = true
+        
+        let vc = MenuController(headerView: headerView, actions: menuItems)
+        DispatchQueue.main.async {
+            self.present(vc, animated: true)
+        }
+    }
+    private func showDialer() {
+        let vc = NormalDialerViewController()
+        vc.delegate = self
+        DispatchQueue.main.async {
+            self.present(vc, animated: true)
+        }
+    }
+    private func configureHierarchy() {
         messagesCollectionView.addSubview(spinner)
         downIndicatorContainerView.addSubview(scrollToBottomButton)
         downIndicatorContainerView.addSubview(newMessagesCountLabel)

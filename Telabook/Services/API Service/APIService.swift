@@ -12,7 +12,7 @@ import Foundation
 public struct APIService: APIServiceProtocol {
     typealias APICompletion<T> = (Result<T, APIError>) -> Void
     static let shared = APIService()
-    var isLoggingEnabled = true
+    var isLoggingEnabled = false
     let decoder = JSONDecoder()
     
     enum APIVersion { case v1, v2, mock; var stringValue:String { String(describing: self) }}
@@ -119,6 +119,10 @@ public struct APIService: APIServiceProtocol {
         /// Endpoint to schedule new text message
         case ScheduleNewMessage
         
+        /// Endpoint for click 2 call
+        case Click2Call
+        
+        
         /**
         Returns the path of a specified Endpoint.
         ## Example Usage ##
@@ -134,7 +138,7 @@ public struct APIService: APIServiceProtocol {
                 case .SignIn: return "/android/signin"
                 case .FetchUserCompanies: return "/android/user/companies"
                 case .UpdatePassword: return "/android/profile/password"
-                case let .UpdateUserProfile(userId): return "/android/users/\(String(userId))"
+                case let .UpdateUserProfile(userId): return "/users/\(String(userId))"
                 case .ViewUserProfile: return "/android/signin"
                 case .FetchAgents: return "/agents"
                 case .FetchQuickResponses: return "/android/quick_replies"
@@ -153,6 +157,7 @@ public struct APIService: APIServiceProtocol {
                 case .ForgotPassword: return "/password/email"
                 case .SendMessage: return "/send"
                 case .FetchScheduledMessages, .ScheduleNewMessage: return "/schedule_message"
+                case .Click2Call: return "/call/twilioclicktocall"
             }
         }
     }
