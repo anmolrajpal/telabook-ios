@@ -56,6 +56,8 @@ class SelectCompanyViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
+        title = "SELECT COMPANY"
+        view.backgroundColor = .telaGray1
         configureNavigationBarAppearance()
         setupTargetActions()
         setupTableView()

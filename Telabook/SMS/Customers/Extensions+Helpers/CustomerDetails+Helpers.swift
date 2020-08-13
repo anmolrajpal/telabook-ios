@@ -18,6 +18,10 @@ extension CustomerDetailsController {
         configureNavigationBarItems()
         configureHierarchy()
         configureTargetActions()
+        configureTableView()
+        configureDataSource()
+        hideKeyboardWhenTappedAround()
+        fetchInitialConversationsHistory()
     }
     
     private func configureNavigationBarItems() {
@@ -49,41 +53,88 @@ extension CustomerDetailsController {
     
     
     
+//    internal func handleSegmentViewsState() {
+//        switch selectedSegment {
+//            case .Details:
+//                showDetailsSegmentViews(true)
+//                showHistorySegmentViews(false)
+//            case .History:
+//                view.endEditing(true)
+//                showHistorySegmentViews(true)
+//                showDetailsSegmentViews(false)
+//        }
+//    }
+    
+//    private func showDetailsSegmentViews(_ show: Bool) {
+//        phoneNumberLabel.isHidden = !show
+//        agentOnlyNameHeaderLabel.isHidden = !show
+//        agentOnlyNameTextField.isHidden = !show
+//        agentOnlyNameFooterLabel.isHidden = !show
+//        globalNameHeaderLabel.isHidden = !show
+//        globalNameTextField.isHidden = !show
+//        updateButton.isHidden = !show
+//        detailsSpinner.isHidden = !show
+//        detailsPlaceholderLabel.isHidden = !show
+//    }
+//    private func showHistorySegmentViews(_ show: Bool) {
+//        tableView.isHidden = !show
+//        historySpinner.isHidden = !show
+//        historyPlaceholderLabel.isHidden = !show
+//    }
+    /// Manages the UI state
     internal func handleSegmentViewsState() {
         switch selectedSegment {
-            case .Details:
-                showDetailsSegmentViews(true)
-                showHistorySegmentViews(false)
-            case .History:
-                view.endEditing(true)
-                showHistorySegmentViews(true)
-                showDetailsSegmentViews(false)
+        case .Details:
+            DispatchQueue.main.async {
+                self.scrollView.isHidden = false
+                // TODO: Add  Network result logic to handle loading state
+                #warning("Add Network result logic to handle loading state")
+            }
+        case .History:
+            DispatchQueue.main.async {
+                self.view.endEditing(true)
+                self.scrollView.isHidden = true
+//                if self.lookupConversations.isEmpty {
+//                    self.historyPlaceholderLabel.text = "No Data"
+//                    self.historyPlaceholderLabel.isHidden = false
+//                } else {
+//                    self.historyPlaceholderLabel.isHidden = true
+//                }
+            }
         }
     }
     
-    private func showDetailsSegmentViews(_ show: Bool) {
-        phoneNumberLabel.isHidden = !show
-        agentOnlyNameHeaderLabel.isHidden = !show
-        agentOnlyNameTextField.isHidden = !show
-        agentOnlyNameFooterLabel.isHidden = !show
-        globalNameHeaderLabel.isHidden = !show
-        globalNameTextField.isHidden = !show
-        updateButton.isHidden = !show
-        detailsSpinner.isHidden = !show
-        detailsPlaceholderLabel.isHidden = !show
+    
+    func startDetailsSpinner() {
+        DispatchQueue.main.async {
+            self.detailsSpinner.startAnimating()
+        }
     }
-    private func showHistorySegmentViews(_ show: Bool) {
-        tableView.isHidden = !show
-        historySpinner.isHidden = !show
-        historyPlaceholderLabel.isHidden = !show
+    func stopDetailsSpinner() {
+        DispatchQueue.main.async {
+            self.detailsSpinner.stopAnimating()
+        }
     }
+    func startHistorySpinner() {
+        DispatchQueue.main.async {
+            self.historySpinner.startAnimating()
+        }
+    }
+    func stopHistorySpinner() {
+        DispatchQueue.main.async {
+            self.historySpinner.stopAnimating()
+        }
+    }
+    
+    
     
     private func configureHierarchy() {
         view.addSubview(segmentedControl)
+        tableView.addSubview(historySpinner)
+        tableView.addSubview(historyPlaceholderLabel)
         view.addSubview(tableView)
-        view.addSubview(historySpinner)
-        view.addSubview(historyPlaceholderLabel)
         configureScrollViewContentViewHierarchy()
+        scrollView.backgroundColor = view.backgroundColor
         scrollView.addSubview(scrollViewContentView)
         view.addSubview(scrollView)
         layoutConstraints()
@@ -92,15 +143,12 @@ extension CustomerDetailsController {
         let fontSize = (segmentedControl.titleTextAttributes(for: .normal)![.font] as! UIFont).pointSize
         segmentedControl.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, heightConstant: fontSize * 3.3)
         
-        
-    
         tableView.anchor(top: segmentedControl.bottomAnchor, left: segmentedControl.leftAnchor, bottom: view.bottomAnchor, right: segmentedControl.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
         
-        historySpinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).activate()
-        historySpinner.centerYAnchor.constraint(equalTo: view.centerYAnchor).activate()
+        historySpinner.centerInSuperview()
         
         historyPlaceholderLabel.anchor(top: nil, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 22, bottomConstant: 0, rightConstant: 22)
-        historyPlaceholderLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -40).activate()
+        historyPlaceholderLabel.centerYAnchor.constraint(equalTo: tableView.centerYAnchor, constant: -40).activate()
         
         scrollView.anchor(top: segmentedControl.bottomAnchor, left: segmentedControl.leftAnchor, bottom: view.bottomAnchor, right: segmentedControl.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
         

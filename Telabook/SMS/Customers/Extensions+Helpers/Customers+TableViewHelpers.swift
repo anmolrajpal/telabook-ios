@@ -497,11 +497,11 @@ extension CustomersViewController {
         moreAction.backgroundColor = .telaIndigo
         
         let detailsAction =  UIContextualAction(style: .normal, title: "Details", handler: { (action,view,completionHandler ) in
-//            let vc = CustomerDetailsController(conversation: customer)
-//            let navController = UINavigationController(rootViewController: vc)
-//            DispatchQueue.main.async {
-//                self.present(navController, animated: true)
-//            }
+            let vc = CustomerDetailsController(conversation: customer)
+            let navController = UINavigationController(rootViewController: vc)
+            DispatchQueue.main.async {
+                self.present(navController, animated: true)
+            }
             completionHandler(true)
         })
         detailsAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "edit").withTintColor(.white), text: "Details").withRenderingMode(.alwaysOriginal)

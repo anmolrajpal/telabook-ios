@@ -14,6 +14,14 @@ class CustomerDetailsController: UIViewController {
     
     // MARK: - Properties
     
+    var dataSource: DataSource! = nil
+    var lookupConversations = [LookupConversationProperties]()
+    var currentPageIndex = 0
+    var isFetching = false
+    var limit = 20
+    var shouldFetchMore: Bool {
+        return !isFetching && !lookupConversations.isEmpty && lookupConversations.count % limit == 0
+    }
     var selectedSegment: Segment = .Details {
         didSet {
             handleSegmentViewsState()
@@ -51,8 +59,7 @@ class CustomerDetailsController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        commonInit()
-        hideKeyboardWhenTappedAround()
+        commonInit()        
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

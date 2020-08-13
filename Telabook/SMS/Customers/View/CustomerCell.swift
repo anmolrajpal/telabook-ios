@@ -106,6 +106,61 @@ class CustomerCell: UITableViewCell {
         }
     }
     
+    
+    
+    func configureCell(with conversation: LookupConversationProperties, animated: Bool = false) {
+        let phoneNumber = conversation.customerPhoneNumber ?? ""
+        let number:String
+        if let formattedPhoneNumber = phoneNumber.getE164FormattedNumber() {
+            number = formattedPhoneNumber
+        } else {
+            number = phoneNumber
+        }
+        let name = conversation.customerPerson
+        let messageType = MessageCategory(stringValue: conversation.messageType ?? "")
+        let lastMessage = conversation.allLastMessageText
+        let lastMessageDate = conversation.lastMessageDatetime
+        
+        // - Setup name label
+        if let name = name, !name.isBlank {
+            nameLabel.text = name
+        } else {
+            nameLabel.text = number
+        }
+        
+        // - Setup last message label
+        switch messageType {
+            case .text: lastMessageLabel.text = lastMessage
+            case .multimedia: lastMessageLabel.text = "📷"
+            default: lastMessageLabel.text = nil
+        }
+        
+        // - Setup date label
+        if let lastMessageDate = lastMessageDate {
+            let dateStr = Date.getStringFromDate(date: lastMessageDate, dateFormat: CustomDateFormat.ddMMMyyyy)
+            let timeStr = Date.getStringFromDate(date: lastMessageDate, dateFormat: CustomDateFormat.hmma)
+            let dateTimeStr = "\(dateStr) | \(timeStr)"
+            dateTimeLabel.text = dateTimeStr
+        } else {
+            dateTimeLabel.text = nil
+        }
+        
+        // - Setup PIN image view
+        pinImageView.isHidden = true
+        
+        guard !animated else {
+            self.transform = CGAffineTransform(scaleX: 0.9, y: 1.0)
+            UIView.transition(with: self,
+                              duration: 0.3,
+                              options: [.curveLinear, .beginFromCurrentState, .allowUserInteraction],
+                              animations: {
+                                self.transform = .identity
+            }, completion: nil)
+            return
+        }
+    }
+    
+    
     func updateBadgeCount(count: Int) {
         guard count > 0 && shouldShowBadgeCount else {
             badgeCountLabel.isHidden = true

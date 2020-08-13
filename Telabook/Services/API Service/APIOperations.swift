@@ -12,7 +12,7 @@ import os
 protocol Server: class {
     init(apiVersion:APIService.APIVersion)
 //    var apiVersion:APIService.APIVersion { get }
-    func hitEndpoint<T:Decodable>(endpoint:APIService.Endpoint, requiresBearerToken:Bool, httpMethod:HTTPMethod, params: [String: String]?, httpBody: Data?, headers: [HTTPHeader]?, guardResponse: ResponseStatus?, expectData:Bool, endpointConfiguration: APIService.Configuration?, completion: @escaping APIService.APICompletion<T>, decoder:JSONDecoder)
+    func hitEndpoint<T:Decodable>(endpoint:APIService.Endpoint, requiresBearerToken:Bool, httpMethod:HTTPMethod, params: [String: String]?, httpBody: Data?, headers: [HTTPHeader]?, guardResponse: ResponseStatus?, expectData:Bool, endpointConfiguration: APIService.Configuration?, decoder: JSONDecoder,completion: @escaping APIService.APICompletion<T>)
 }
 
 class APIServer<T:Decodable> : Server {
@@ -27,7 +27,7 @@ class APIServer<T:Decodable> : Server {
             case .mock: fatalError()
         }
     }
-    func hitEndpoint<T>(endpoint:APIService.Endpoint, requiresBearerToken:Bool = true, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, endpointConfiguration: APIService.Configuration? = nil, completion: @escaping APIService.APICompletion<T>, decoder:JSONDecoder = defaultDecoder) where T : Decodable {
+    func hitEndpoint<T>(endpoint:APIService.Endpoint, requiresBearerToken:Bool = true, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, expectData:Bool = true, endpointConfiguration: APIService.Configuration? = nil, decoder: JSONDecoder = defaultDecoder, completion: @escaping APIService.APICompletion<T>) where T : Decodable {
         switch apiVersion {
             case .v1:
                 APIOperations.triggerAPIEndpointOperations(endpoint: endpoint, httpMethod: httpMethod, params: params, httpBody: httpBody, headers: headers, guardResponse: guardResponse, expectData: expectData, completion: completion, decoder: decoder)

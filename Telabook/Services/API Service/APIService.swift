@@ -12,7 +12,7 @@ import Foundation
 public struct APIService: APIServiceProtocol {
     typealias APICompletion<T> = (Result<T, APIError>) -> Void
     static let shared = APIService()
-    var isLoggingEnabled = false
+    var isLoggingEnabled = true
     let decoder = JSONDecoder()
     
     enum APIVersion { case v1, v2, mock; var stringValue:String { String(describing: self) }}
@@ -83,8 +83,11 @@ public struct APIService: APIServiceProtocol {
         /// Endpoint to fetch Agent's First Time SMS
         case AutoResponse
         
-        /// Endpoint to search Agent's customers / external conversations
-        case SearchCustomer
+        /// Endpoint to search external conversations on MySQL
+        case SearchConversations
+        
+        /// Endpoint to search Agent's  external conversations on Firebase
+        case SearchConversationsFirebase
         
         /// Endpoint to archive Agent's conversation with customer
         case ArchiveConversation
@@ -146,7 +149,8 @@ public struct APIService: APIServiceProtocol {
                 case let .UpdateQuickResponse(responseID): return "/android/quick_replies/\(responseID)"
                 case let .DeleteQuickResponse(responseID): return "/android/quick_replies/\(responseID)"
                 case .AutoResponse: return "/android/sms_auto_reply"
-                case .SearchCustomer: return "/external_conversations/search_firebase"
+                case .SearchConversations: return "/external_conversations/search"
+                case .SearchConversationsFirebase: return "/external_conversations/search_firebase"
                 case .ArchiveConversation: return "/archive_external_conversation"
                 case .UnarchiveConversation: return "/remove_archive_external_conversation"
                 case .StartNewConversation: return "/external_conversations"

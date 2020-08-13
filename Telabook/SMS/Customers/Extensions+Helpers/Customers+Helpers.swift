@@ -158,7 +158,6 @@ extension CustomersViewController {
                     }
                 }
         }
-        
     }
     internal func stopRefreshers() {
         DispatchQueue.main.async {

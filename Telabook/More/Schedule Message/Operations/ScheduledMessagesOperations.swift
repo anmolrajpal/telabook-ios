@@ -119,7 +119,7 @@ class FetchScheduledMessagesFromServer_Operation: Operation {
             finish(result: .failure(.cancelled))
             return
         }
-        APIServer<ScheduledMessageJSON>(apiVersion: .v2).hitEndpoint(endpoint: .FetchScheduledMessages, httpMethod: .GET, params: params, completion: finish, decoder: JSONDecoder.apiServiceDecoder)
+        APIServer<ScheduledMessageJSON>(apiVersion: .v2).hitEndpoint(endpoint: .FetchScheduledMessages, httpMethod: .GET, params: params, decoder: JSONDecoder.apiServiceDecoder,  completion: finish)
     }
 }
 
