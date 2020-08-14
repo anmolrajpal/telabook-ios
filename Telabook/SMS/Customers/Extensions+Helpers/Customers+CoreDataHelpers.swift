@@ -11,6 +11,9 @@ import CoreData
 
 extension CustomersViewController {
     internal func configureFetchedResultsController() {
+        guard let context = agent.managedObjectContext else {
+            fatalError("### \(#function) : Unable to retrieve managed object context from agent object:\n\(agent)")
+        }
         let fetchRequest:NSFetchRequest<Customer> = Customer.fetchRequest()
         let objectID = agent.objectID
         let contextAgent = context.object(with: objectID) as! Agent

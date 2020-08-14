@@ -42,7 +42,7 @@ extension CustomerDetailsController {
         return snapshot
     }
     
-    func updateUI(animating:Bool = true, reloadingData:Bool = true) {
+    func updateUI(animating:Bool = true, reloadingData:Bool = false) {
         guard let snapshot = currentSnapshot(), dataSource != nil else { return }
         dataSource.apply(snapshot, animatingDifferences: animating, completion: { [weak self] in
             guard let self = self else { return }

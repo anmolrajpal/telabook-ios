@@ -65,16 +65,30 @@ extension UIViewController {
 }
 extension UIApplication {
     static func currentViewController() -> UIViewController? {
-        var rootViewController = UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.rootViewController
-        if let navigationController = rootViewController as? UINavigationController {
-            rootViewController = navigationController.viewControllers.first
-            print("Current View Controller is: Navigation Controller")
+        guard let rootViewController = (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window?.rootViewController else {
+            return nil
         }
-        if let tabBarController = rootViewController as? TabBarController {
-            rootViewController = tabBarController.selectedViewController
-            print("Current View Controller is: Tab Bar Controller")
+        if let tabBarController = rootViewController as? TabBarController,
+            let selectedNavigationController = tabBarController.selectedViewController as? UINavigationController,
+            let lastViewController = selectedNavigationController.viewControllers.last {
+            if let presentedViewController = lastViewController.presentedViewController {
+                return presentedViewController
+            } else {
+                return lastViewController
+            }
         }
-        return rootViewController
+        return nil
+        
+//        var rootViewController = UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.rootViewController
+//        if let navigationController = rootViewController as? UINavigationController {
+//            rootViewController = navigationController.viewControllers.first
+//            print("Current View Controller is: Navigation Controller")
+//        }
+//        if let tabBarController = rootViewController as? TabBarController {
+//            rootViewController = tabBarController.selectedViewController
+//            print("Current View Controller is: Tab Bar Controller")
+//        }
+//        return rootViewController
     }
 }
 extension UISwitch {

@@ -19,14 +19,20 @@ class CustomerDetailsController: UIViewController {
     var currentPageIndex = 0
     var isFetching = false
     var limit = 20
-    var shouldFetchMore: Bool {
-        return !isFetching && !lookupConversations.isEmpty && lookupConversations.count % limit == 0
-    }
+    
     var selectedSegment: Segment = .Details {
         didSet {
             handleSegmentViewsState()
         }
     }
+    
+    
+    // MARK: - Computed Properties
+    
+    var shouldFetchMore: Bool {
+        return !isFetching && !lookupConversations.isEmpty && lookupConversations.count % limit == 0
+    }
+    
     
     
     // MARK: - Overriden Properties
@@ -44,15 +50,19 @@ class CustomerDetailsController: UIViewController {
     // MARK: - Initialization
     
     let conversation: Customer
+    let conversationID: Int
     
     init(conversation: Customer) {
         self.conversation = conversation
+        self.conversationID = Int(conversation.externalConversationID)
         super.init(nibName: nil, bundle: nil)
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+    deinit {
+        print("\(self) : Deinitialized")
+    }
     
     
     // MARK: - Lifecycle
@@ -190,7 +200,6 @@ class CustomerDetailsController: UIViewController {
         button.layer.cornerRadius = 7
         button.setBackgroundColor(color: .telaBlue, forState: .normal)
         button.setBackgroundColor(color: .telaGray6, forState: .disabled)
-        button.isEnabled = false
         button.clipsToBounds = true
         return button
     }()

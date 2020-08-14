@@ -72,7 +72,8 @@ class MessagesController: MessagesViewController {
         fatalError("init(coder:) has not been implemented")
     }
     deinit {
-        print("Messages Controller: DEINITIALIZED")
+        synthesizer.stopSpeaking(at: .immediate)
+        print("\(self) : Deinitialized")
     }
     
     

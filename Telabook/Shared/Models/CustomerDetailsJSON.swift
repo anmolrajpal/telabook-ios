@@ -64,12 +64,20 @@ struct CustomerDetailsProperties: Decodable {
 }
 
 
+
+
 // MARK: - An extension to create CustomerDetails Object Core Data Entity from CustomerDetailsProperties Server Response Data
+
 extension CustomerDetails {
     convenience init?(context: NSManagedObjectContext, customerDetailsEntryFromServer entry: CustomerDetailsProperties, conversationWithCustomer conversation: Customer) {
         self.init(context: context)
         guard let id = entry.id, id != 0 else { return nil }
-        self.id = Int64(id)
+        updateData(fromCustomerDetailsEntryFromServer: entry)
+        self.conversation = conversation
+    }
+    
+    func updateData(fromCustomerDetailsEntryFromServer entry: CustomerDetailsProperties) {
+        self.id = Int64(entry.id ?? 0)
         self.companyID = Int64(entry.companyId ?? "0") ?? 0
         self.createdAt = entry.createdAt
         self.customerID = Int64(entry.customerId ?? 0)
@@ -78,6 +86,17 @@ extension CustomerDetails {
         self.ownerID = Int64(entry.ownerId ?? 0)
         self.updatedAt = entry.updatedAt
         self.workerID = Int64(entry.workerId ?? "0") ?? 0
-        self.conversation = conversation
+    }
+    var serverObject: CustomerDetailsProperties {
+        return .init(agentOnlyName: agentOnlyName,
+                     companyId: String(companyID),
+                     createdAt: createdAt,
+                     customerId: Int(customerID),
+                     id: Int(id),
+                     names: globalName,
+                     ownerId: Int(ownerID),
+                     surnames: nil,
+                     updatedAt: updatedAt,
+                     workerId: String(workerID))
     }
 }

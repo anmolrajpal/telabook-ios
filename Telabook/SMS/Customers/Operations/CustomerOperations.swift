@@ -107,7 +107,6 @@ class FetchSavedCustomersEntries_Operation: Operation {
         let request: NSFetchRequest<Customer> = Customer.fetchRequest()
         request.predicate = NSPredicate(format: "\(#keyPath(Customer.agent)) == %@", agent)
         request.sortDescriptors = [NSSortDescriptor(key: #keyPath(QuickResponse.updatedAt), ascending: false)]
-        
         context.performAndWait {
             do {
                 let fetchResults = try context.fetch(request)
@@ -296,18 +295,24 @@ class AddCustomerEntriesFromServerToStore_Operation: Operation {
             return
         }
         context.performAndWait {
-            do {
-                _ = serverEntries.map { serverEntry -> Customer in
-                    let isPinned = fetchedEntries?.first(where: { conversation -> Bool in
-                        conversation.externalConversationID == serverEntry.conversationID
-                    })?.isPinned ?? false
-                    return Customer(context: context, conversationEntryFromFirebase: serverEntry, agent: agent, isPinned: isPinned)
+            _ = serverEntries.map { serverEntry -> Customer in
+                let existingConversation = fetchedEntries?.first(where: { $0.externalConversationID == serverEntry.conversationID })
+                let isPinned = existingConversation?.isPinned ?? false
+                let customerDetails = existingConversation?.customerDetails?.serverObject
+                let conversation = Customer(context: context, conversationEntryFromFirebase: serverEntry, agent: agent)
+                conversation.isPinned = isPinned
+                if let existingCustomerDetails = customerDetails {
+                    _ = CustomerDetails(context: context, customerDetailsEntryFromServer: existingCustomerDetails, conversationWithCustomer: conversation)
                 }
-                try context.save()
+                return conversation
+            }
+            do {
+                if context.hasChanges { try context.save() }
             } catch {
                 print("Error adding entries to store: \(error))")
                 self.error = .coreDataError(error: error)
             }
+            context.reset()
         }
         
     }

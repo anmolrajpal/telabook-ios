@@ -7,13 +7,14 @@
 //
 
 import UIKit
+import CoreData
 
 extension CustomerDetailsController {
     
     
     internal func commonInit() {
         view.backgroundColor = .telaGray1
-        title = "Customer Name"
+        title = "CUSTOMER"
         configureNavigationBarAppearance()
         configureNavigationBarItems()
         configureHierarchy()
@@ -21,27 +22,76 @@ extension CustomerDetailsController {
         configureTableView()
         configureDataSource()
         hideKeyboardWhenTappedAround()
+        setupCustomerDetails()
+        fetchCustomerDetails()
         fetchInitialConversationsHistory()
     }
-    
+    func setupCustomerDetails() {
+        let phoneNumber = conversation.phoneNumber ?? ""
+        let number:String
+        if let formattedPhoneNumber = phoneNumber.getE164FormattedNumber() {
+            number = formattedPhoneNumber
+        } else {
+            number = phoneNumber
+        }
+        self.phoneNumberLabel.text = number
+        
+        self.agentOnlyNameTextField.text = conversation.customerDetails?.agentOnlyName
+        
+        self.globalNameTextField.text = conversation.customerDetails?.globalName
+        
+        /*
+//        let context = PersistentContainer.shared.viewContext
+        guard let context = conversation.agent?.managedObjectContext else {
+            fatalError()
+        }
+        let conversationObjectID = conversation.objectID
+        let conversation = context.object(with: conversationObjectID) as! Customer
+        let fetchRequest: NSFetchRequest<CustomerDetails> = CustomerDetails.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "\(#keyPath(CustomerDetails.conversation)) == %@", conversation)
+        
+        context.perform { [weak self] in
+            guard let self = self else { return }
+            if let customerDetails = try? fetchRequest.execute().first {
+                let phoneNumber = customerDetails.conversation?.phoneNumber ?? ""
+                let number:String
+                if let formattedPhoneNumber = phoneNumber.getE164FormattedNumber() {
+                    number = formattedPhoneNumber
+                } else {
+                    number = phoneNumber
+                }
+                self.phoneNumberLabel.text = number
+                
+                self.agentOnlyNameTextField.text = customerDetails.agentOnlyName
+                
+                self.globalNameTextField.text = customerDetails.globalName
+            }
+        }
+        */
+        
+    }
     private func configureNavigationBarItems() {
         let cancelButtonImage = SFSymbol.cancel.image(withSymbolConfiguration: .init(textStyle: .largeTitle)).image(scaledTo: .init(width: 28, height: 28))
         let cancelButton = UIBarButtonItem(image: cancelButtonImage, style: .plain, target: self, action: #selector(cancelButtonDidTapped(_:)))
         cancelButton.tintColor = UIColor.white.withAlphaComponent(0.2)
         navigationItem.rightBarButtonItems = [cancelButton]
     }
+    
     @objc
     private func cancelButtonDidTapped(_ button: UIBarButtonItem) {
         dismiss(animated: true)
     }
+    
     private func configureTargetActions() {
         updateButton.addTarget(self, action: #selector(updateButtonDidTapped(_:)), for: .touchUpInside)
         segmentedControl.addTarget(self, action: #selector(didChangeSegment(_:)), for: .valueChanged)
     }
+    
     @objc
     private func updateButtonDidTapped(_ button: UIButton) {
-        
+        updateCustomerDetails()
     }
+    
     @objc
     private func didChangeSegment(_ sender: UISegmentedControl) {
         switch segmentedControl.selectedSegmentIndex {
@@ -51,55 +101,17 @@ extension CustomerDetailsController {
         }
     }
     
-    
-    
-//    internal func handleSegmentViewsState() {
-//        switch selectedSegment {
-//            case .Details:
-//                showDetailsSegmentViews(true)
-//                showHistorySegmentViews(false)
-//            case .History:
-//                view.endEditing(true)
-//                showHistorySegmentViews(true)
-//                showDetailsSegmentViews(false)
-//        }
-//    }
-    
-//    private func showDetailsSegmentViews(_ show: Bool) {
-//        phoneNumberLabel.isHidden = !show
-//        agentOnlyNameHeaderLabel.isHidden = !show
-//        agentOnlyNameTextField.isHidden = !show
-//        agentOnlyNameFooterLabel.isHidden = !show
-//        globalNameHeaderLabel.isHidden = !show
-//        globalNameTextField.isHidden = !show
-//        updateButton.isHidden = !show
-//        detailsSpinner.isHidden = !show
-//        detailsPlaceholderLabel.isHidden = !show
-//    }
-//    private func showHistorySegmentViews(_ show: Bool) {
-//        tableView.isHidden = !show
-//        historySpinner.isHidden = !show
-//        historyPlaceholderLabel.isHidden = !show
-//    }
     /// Manages the UI state
     internal func handleSegmentViewsState() {
         switch selectedSegment {
         case .Details:
             DispatchQueue.main.async {
                 self.scrollView.isHidden = false
-                // TODO: Add  Network result logic to handle loading state
-                #warning("Add Network result logic to handle loading state")
             }
         case .History:
             DispatchQueue.main.async {
                 self.view.endEditing(true)
                 self.scrollView.isHidden = true
-//                if self.lookupConversations.isEmpty {
-//                    self.historyPlaceholderLabel.text = "No Data"
-//                    self.historyPlaceholderLabel.isHidden = false
-//                } else {
-//                    self.historyPlaceholderLabel.isHidden = true
-//                }
             }
         }
     }

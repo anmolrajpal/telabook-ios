@@ -125,6 +125,11 @@ public struct APIService: APIServiceProtocol {
         /// Endpoint for click 2 call
         case Click2Call
         
+        /// Endpoint to fetch customer details
+        case FetchCustomerDetails(customerID: Int)
+        
+        /// Endpoint to update customer details
+        case UpdateCustomerDetails(customerID: Int)
         
         /**
         Returns the path of a specified Endpoint.
@@ -162,6 +167,8 @@ public struct APIService: APIServiceProtocol {
                 case .SendMessage: return "/send"
                 case .FetchScheduledMessages, .ScheduleNewMessage: return "/schedule_message"
                 case .Click2Call: return "/call/twilioclicktocall"
+                case .FetchCustomerDetails(let customerID): return "/external_address_book/\(customerID)"
+                case .UpdateCustomerDetails(let customerID): return "/customers/\(customerID)/update"
             }
         }
     }
