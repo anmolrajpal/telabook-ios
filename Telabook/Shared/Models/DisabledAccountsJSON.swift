@@ -40,14 +40,14 @@ import Foundation
  
  Stores current page index and an array of decoded ScheduledMessageProperties
 */
-struct DisabledAccountJSON:Decodable {
+struct DisabledAccountsJSON:Decodable {
     private enum RootCodingKeys:String, CodingKey {
         case result, message, data
     }
     
     let result:ServerResult
     let message:String?
-    var disabledAccounts = [DisabledAccountProperties]()
+    var disabledAccounts = [AgentProperties]()
     
     init(from decoder: Decoder) throws {
         let rootContainer = try decoder.container(keyedBy: RootCodingKeys.self)
@@ -58,11 +58,12 @@ struct DisabledAccountJSON:Decodable {
         var dataContainer = try rootContainer.nestedUnkeyedContainer(forKey: .data)
         
         while !dataContainer.isAtEnd {
-            let account = try dataContainer.decode(DisabledAccountProperties.self)
+            let account = try dataContainer.decode(AgentProperties.self)
             disabledAccounts.append(account)
         }
     }
 }
+/*
 struct DisabledAccountProperties: Decodable {
     let didNumber: String?                 // "(+17866344866)"
     let externalPendingMessages: Int?      // 2
@@ -82,11 +83,12 @@ struct DisabledAccountProperties: Decodable {
     let username: String?                  // "DianaWoodard1559691321"
     let workerId: Int?                     // 148
 }
-extension DisabledAccountProperties: Hashable {
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(workerId)
-    }
-    static func == (lhs: DisabledAccountProperties, rhs: DisabledAccountProperties) -> Bool {
-        return lhs.workerId == rhs.workerId
-    }
-}
+*/
+//extension DisabledAccountProperties: Hashable {
+//    func hash(into hasher: inout Hasher) {
+//        hasher.combine(workerId)
+//    }
+//    static func == (lhs: DisabledAccountProperties, rhs: DisabledAccountProperties) -> Bool {
+//        return lhs.workerId == rhs.workerId
+//    }
+//}

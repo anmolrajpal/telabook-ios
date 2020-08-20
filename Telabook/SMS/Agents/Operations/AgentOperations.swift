@@ -11,52 +11,48 @@ import CoreData
 
 struct AgentOperations {
     /// Returns an array of operations for fetching the latest entries and then adding them to the Core Data store.
-    static func getOperationsToFetchLatestEntries(using context: NSManagedObjectContext) -> [Operation] {
-        let fetchMostRecentEntry = FetchMostRecentAgentsEntryOperation(context: context)
-        let downloadFromServer = DownloadAgentsEntriesFromServerOperation()
-        let deleteRedundantAgentEntriesOperation = DeleteRedundantAgentEntriesOperation(context: context)
-//        let updateAgentEntriesOperation = UpdateAgentEntriesOperation(context: context)
-        let addToStore = AddAgentEntriesToStoreOperation(context: context)
+    static func getOperationsToFetchAgents(using context: NSManagedObjectContext, showOnlyDisabledAccounts: Bool) -> [Operation] {
+        let fetchExistingAgentsFromStoreOperation = FetchMostRecentAgentsEntryOperation(context: context, shouldFetchDisabledAccounts: showOnlyDisabledAccounts)
+        let downloadFromServerOperation = DownloadAgentsEntriesFromServerOperation(showOnlyDisabledAccounts: showOnlyDisabledAccounts)
+        let deleteRedundantAgentEntriesOperation = DeleteRedundantAgentEntriesOperation(context: context, shouldFetchDisabledAccounts: showOnlyDisabledAccounts)
+        let upsertInStoreOperation = UpsertAgentEntriesInStoreOperation(context: context, showOnlyDisabledAccounts: showOnlyDisabledAccounts)
         
-        let passFetchedEntriesToStore = BlockOperation { [unowned fetchMostRecentEntry, unowned deleteRedundantAgentEntriesOperation, unowned addToStore] in
-            guard case let .success(entries)? = fetchMostRecentEntry.result else {
+        let passFetchedEntriesToStoreBlockOperation = BlockOperation { [unowned fetchExistingAgentsFromStoreOperation, unowned deleteRedundantAgentEntriesOperation, unowned upsertInStoreOperation] in
+            guard case let .success(entries)? = fetchExistingAgentsFromStoreOperation.result else {
                 print("Unresolved Error: Unable to get result from fetchMostRecentEntriesOperation")
                 deleteRedundantAgentEntriesOperation.cancel()
-                addToStore.cancel()
+                upsertInStoreOperation.cancel()
                 return
             }
             deleteRedundantAgentEntriesOperation.fetchedEntries = entries
-            addToStore.fetchedEntries = entries
+            upsertInStoreOperation.fetchedEntries = entries
         }
-        passFetchedEntriesToStore.addDependency(fetchMostRecentEntry)
-        deleteRedundantAgentEntriesOperation.addDependency(passFetchedEntriesToStore)
-        addToStore.addDependency(passFetchedEntriesToStore)
+        passFetchedEntriesToStoreBlockOperation.addDependency(fetchExistingAgentsFromStoreOperation)
+        deleteRedundantAgentEntriesOperation.addDependency(passFetchedEntriesToStoreBlockOperation)
+        upsertInStoreOperation.addDependency(passFetchedEntriesToStoreBlockOperation)
         
-        let passServerResultsToStore = BlockOperation { [unowned downloadFromServer, unowned deleteRedundantAgentEntriesOperation, unowned addToStore] in
-            guard case let .success(entries)? = downloadFromServer.result else {
+        let passServerResultsToStoreBlockOperation = BlockOperation { [unowned downloadFromServerOperation, unowned deleteRedundantAgentEntriesOperation, unowned upsertInStoreOperation] in
+            guard case let .success(entries)? = downloadFromServerOperation.result else {
                 print("Unresolved Error: unable to get result from download from server operation")
                 deleteRedundantAgentEntriesOperation.cancel()
-//                updateAgentEntriesOperation.cancel()
-                addToStore.cancel()
+                upsertInStoreOperation.cancel()
                 return
             }
             deleteRedundantAgentEntriesOperation.serverEntries = entries
-//            updateAgentEntriesOperation.serverEntries = entries
-            addToStore.serverEntries = entries
+            upsertInStoreOperation.serverEntries = entries
         }
         
-        passServerResultsToStore.addDependency(downloadFromServer)
-        deleteRedundantAgentEntriesOperation.addDependency(passServerResultsToStore)
+        passServerResultsToStoreBlockOperation.addDependency(downloadFromServerOperation)
+        deleteRedundantAgentEntriesOperation.addDependency(passServerResultsToStoreBlockOperation)
 //        updateAgentEntriesOperation.addDependency(passServerResultsToStore)
-        addToStore.addDependency(passServerResultsToStore)
+        upsertInStoreOperation.addDependency(passServerResultsToStoreBlockOperation)
         
-        return [fetchMostRecentEntry,
-                passFetchedEntriesToStore,
-                downloadFromServer,
-                passServerResultsToStore,
+        return [fetchExistingAgentsFromStoreOperation,
+                passFetchedEntriesToStoreBlockOperation,
+                downloadFromServerOperation,
+                passServerResultsToStoreBlockOperation,
                 deleteRedundantAgentEntriesOperation,
-//                updateAgentEntriesOperation,
-                addToStore]
+                upsertInStoreOperation]
     }
 }
 
@@ -75,16 +71,18 @@ class FetchMostRecentAgentsEntryOperation: Operation {
     }
     var error:OperationError?
     private let context: NSManagedObjectContext
-    
+    private let shouldFetchDisabledAccounts: Bool
     var result: Result<[Agent], OperationError>?
     
-    init(context: NSManagedObjectContext) {
+    init(context: NSManagedObjectContext, shouldFetchDisabledAccounts: Bool) {
         self.context = context
+        self.shouldFetchDisabledAccounts = shouldFetchDisabledAccounts
         self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
     }
     
     override func main() {
         let request: NSFetchRequest<Agent> = Agent.fetchRequest()
+        request.predicate = NSPredicate(format: "\(#keyPath(Agent.isDisabled)) = %d", shouldFetchDisabledAccounts)
         request.sortDescriptors = [NSSortDescriptor(key: #keyPath(Agent.date), ascending: false)]
         
         context.performAndWait {
@@ -103,7 +101,14 @@ class FetchMostRecentAgentsEntryOperation: Operation {
 
 /// Downloads Agents entries from the server.
 class DownloadAgentsEntriesFromServerOperation: Operation {
-    var result: Result<[AgentCodable], APIService.APIError>?
+    
+    private let showOnlyDisabledAccounts: Bool
+    
+    init(showOnlyDisabledAccounts: Bool) {
+        self.showOnlyDisabledAccounts = showOnlyDisabledAccounts
+    }
+    
+    var result: Result<[AgentProperties], APIService.APIError>?
     
     private var downloading = false
     
@@ -126,17 +131,53 @@ class DownloadAgentsEntriesFromServerOperation: Operation {
     
     override func cancel() {
         super.cancel()
-        
+        finish()
     }
     
-    func finish(result: Result<[AgentCodable], APIService.APIError>) {
+    func agentsFetchCompletion(result: Result<AgentsJSON, APIService.APIError>) {
         guard downloading else { return }
         
         willChangeValue(forKey: #keyPath(isExecuting))
         willChangeValue(forKey: #keyPath(isFinished))
         
         downloading = false
-        self.result = result
+        switch result {
+            case .failure(let error):
+                self.result = .failure(error)
+            case .success(let resultData):
+                let errorMessage = "Failed to get results from server. Please try again."
+                let serverResult = resultData.result
+                switch serverResult {
+                    case .failure:
+                        self.result = .failure(.resultError(message: resultData.message ?? errorMessage))
+                    case .success:
+                        self.result = .success(resultData.agents)
+            }
+        }
+        
+        didChangeValue(forKey: #keyPath(isFinished))
+        didChangeValue(forKey: #keyPath(isExecuting))
+    }
+    func disabledAccountsFetchCompletion(result: Result<DisabledAccountsJSON, APIService.APIError>) {
+        guard downloading else { return }
+        
+        willChangeValue(forKey: #keyPath(isExecuting))
+        willChangeValue(forKey: #keyPath(isFinished))
+        
+        downloading = false
+        switch result {
+            case .failure(let error):
+                self.result = .failure(error)
+            case .success(let resultData):
+                let errorMessage = "Failed to get results from server. Please try again."
+                let serverResult = resultData.result
+                switch serverResult {
+                    case .failure:
+                        self.result = .failure(.resultError(message: resultData.message ?? errorMessage))
+                    case .success:
+                        self.result = .success(resultData.disabledAccounts)
+            }
+        }
         
         didChangeValue(forKey: #keyPath(isFinished))
         didChangeValue(forKey: #keyPath(isExecuting))
@@ -147,20 +188,102 @@ class DownloadAgentsEntriesFromServerOperation: Operation {
         downloading = true
         didChangeValue(forKey: #keyPath(isExecuting))
         
-        guard !isCancelled else {
+        if isCancelled {
+            finish()
+            return
+        }
+//        APIOperations.triggerAPIEndpointOperations(endpoint: .FetchAgents, httpMethod: .GET, params: params, completion: finish, decoder: defaultDecoder)
+        if !showOnlyDisabledAccounts {
+            APIServer<AgentsJSON>(apiVersion: .v2).hitEndpoint(endpoint: .FetchAgents, httpMethod: .GET, params: params, decoder: JSONDecoder.apiServiceDecoder, completion: agentsFetchCompletion)
+        } else {
+            APIServer<DisabledAccountsJSON>(apiVersion: .v2).hitEndpoint(endpoint: .FetchDisabledAccounts, httpMethod: .GET, params: params, decoder: JSONDecoder.apiServiceDecoder, completion: disabledAccountsFetchCompletion)
+        }
+    }
+    private func finish() {
+        if showOnlyDisabledAccounts {
+            disabledAccountsFetchCompletion(result: .failure(.cancelled))
+        } else {
+            agentsFetchCompletion(result: .failure(.cancelled))
+        }
+    }
+}
+
+
+/*
+/// Download Disbaled Agents entries from the server.
+class DownloadDisabledAgentsEntriesFromServerOperation: Operation {
+    var result: Result<[AgentProperties], APIService.APIError>?
+    
+    private var downloading = false
+    
+    private let params:[String:String] = [
+        "company_id":String(AppData.companyId)
+    ]
+    
+    
+    override var isAsynchronous: Bool {
+        return true
+    }
+    
+    override var isExecuting: Bool {
+        return downloading
+    }
+    
+    override var isFinished: Bool {
+        return result != nil
+    }
+    
+    override func cancel() {
+        super.cancel()
+        finish(result: .failure(.cancelled))
+    }
+    
+    func finish(result: Result<AgentsJSON, APIService.APIError>) {
+        guard downloading else { return }
+        
+        willChangeValue(forKey: #keyPath(isExecuting))
+        willChangeValue(forKey: #keyPath(isFinished))
+        
+        downloading = false
+        switch result {
+            case .failure(let error):
+                self.result = .failure(error)
+            case .success(let resultData):
+                let errorMessage = "Failed to get results from server. Please try again."
+                let serverResult = resultData.result
+                switch serverResult {
+                    case .failure:
+                        self.result = .failure(.resultError(message: resultData.message ?? errorMessage))
+                    case .success:
+                        self.result = .success(resultData.agents)
+            }
+        }
+        
+        didChangeValue(forKey: #keyPath(isFinished))
+        didChangeValue(forKey: #keyPath(isExecuting))
+    }
+    
+    override func start() {
+        willChangeValue(forKey: #keyPath(isExecuting))
+        downloading = true
+        didChangeValue(forKey: #keyPath(isExecuting))
+        
+        if isCancelled {
             finish(result: .failure(.cancelled))
             return
         }
-        APIOperations.triggerAPIEndpointOperations(endpoint: .FetchAgents, httpMethod: .GET, params: params, completion: finish, decoder: defaultDecoder)
+//        APIOperations.triggerAPIEndpointOperations(endpoint: .FetchAgents, httpMethod: .GET, params: params, completion: finish, decoder: defaultDecoder)
+        APIServer<AgentsJSON>(apiVersion: .v2).hitEndpoint(endpoint: .FetchDisabledAccounts, httpMethod: .GET, params: params, decoder: JSONDecoder.apiServiceDecoder, completion: finish)
     }
 }
+
+*/
+
 
 /// Deletes the redundant agent entries from core data store.
 class DeleteRedundantAgentEntriesOperation: Operation {
     
     private let context: NSManagedObjectContext
-    
-    var delay: TimeInterval = 0.0005
     
     enum OperationError: Error, LocalizedError {
         case coreDataError(error:Error)
@@ -175,14 +298,15 @@ class DeleteRedundantAgentEntriesOperation: Operation {
     
     
     var fetchedEntries:[Agent]?
-    var serverEntries:[AgentCodable]?
+    var serverEntries:[AgentProperties]?
+    let shouldFetchDisabledAccounts: Bool
     
-    
-    init(context: NSManagedObjectContext) {
+    init(context: NSManagedObjectContext, shouldFetchDisabledAccounts: Bool) {
         self.context = context
+        self.shouldFetchDisabledAccounts = shouldFetchDisabledAccounts
     }
-    convenience init(context: NSManagedObjectContext, fetchedEntries: [Agent]?, serverEntries:[AgentCodable]?) {
-        self.init(context: context)
+    convenience init(context: NSManagedObjectContext, fetchedEntries: [Agent]?, serverEntries:[AgentProperties]?, shouldFetchDisabledAccounts: Bool) {
+        self.init(context: context, shouldFetchDisabledAccounts: shouldFetchDisabledAccounts)
         self.fetchedEntries = fetchedEntries
         self.serverEntries = serverEntries
     }
@@ -194,13 +318,17 @@ class DeleteRedundantAgentEntriesOperation: Operation {
             print("No Fetched Entries or nil")
             return
         }
-        
+        let disabledAccountsPredicate = NSPredicate(format: "\(#keyPath(Agent.isDisabled)) = %d", shouldFetchDisabledAccounts)
         if let serverEntries = serverEntries,
             !serverEntries.isEmpty {
             let serverAgentIDs = serverEntries.map { $0.userId }.compactMap { $0 }
-            fetchRequest.predicate = NSPredicate(format: "NOT (\(#keyPath(Agent.userID)) IN %@)", serverAgentIDs)
+//            fetchRequest.predicate = NSPredicate(format: "NOT (\(#keyPath(Agent.userID)) IN %@)", serverAgentIDs)
+            let agentIDsPredicate = NSPredicate(format: "NOT (\(#keyPath(Agent.userID)) IN %@)", serverAgentIDs)
+            let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [disabledAccountsPredicate, agentIDsPredicate])
+            fetchRequest.predicate = predicate
         } else {
             print("No Server Entries, deleting all entries")
+            fetchRequest.predicate = disabledAccountsPredicate
         }
         
         context.performAndWait {
@@ -217,6 +345,79 @@ class DeleteRedundantAgentEntriesOperation: Operation {
 }
 
 
+
+
+
+/// Upsert Agents entries returned from the server to the Core Data store.
+class UpsertAgentEntriesInStoreOperation: Operation {
+    enum OperationError: Error, LocalizedError {
+        case coreDataError(error:Error)
+        
+        var localizedDescription: String {
+            switch self {
+                case let .coreDataError(error): return "Core Data Error: \(error.localizedDescription)"
+            }
+        }
+    }
+    var error:OperationError?
+    private let context: NSManagedObjectContext
+    
+    var fetchedEntries:[Agent]?
+    var serverEntries:[AgentProperties]?
+    let showOnlyDisabledAccounts: Bool
+    
+    init(context: NSManagedObjectContext, showOnlyDisabledAccounts: Bool) {
+        self.context = context
+        self.showOnlyDisabledAccounts = showOnlyDisabledAccounts
+    }
+    
+    convenience init(context: NSManagedObjectContext, serverEntries: [AgentProperties], showOnlyDisabledAccounts: Bool) {
+        self.init(context: context, showOnlyDisabledAccounts: showOnlyDisabledAccounts)
+        self.serverEntries = serverEntries
+    }
+    
+    override func main() {
+        //        self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
+        guard let serverEntries = serverEntries, !serverEntries.isEmpty else {
+            print("No Server Entry to add, returning")
+            return
+        }
+        context.performAndWait {
+            _ = serverEntries.map { serverEntry -> Agent in
+                let existingAgent = fetchedEntries?.first(where: { Int($0.workerID) == serverEntry.workerId })
+                let count = existingAgent?.externalPendingMessagesCount ?? 0
+                let autoResponseServerObject = existingAgent?.autoResponse?.serverObject
+                let agent = Agent(context: context, agentEntryFromServer: serverEntry)
+                agent.isDisabled = showOnlyDisabledAccounts
+                agent.externalPendingMessagesCount = count
+                if let autoResponse = autoResponseServerObject {
+                    _ = AutoResponse(context: context, autoResponseEntry: autoResponse, agent: agent, synced: true)
+                }
+                return agent
+            }
+            do {
+                if context.hasChanges { try context.save() }
+            } catch {
+                printAndLog(message: "Error upserting agent entries in core data store: \(error.localizedDescription))", log: .coredata, logType: .error)
+                self.error = .coreDataError(error: error)
+            }
+            context.reset()
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+/// - tag: Not in use since AddToStore operation upserts all entities with the help of TrumpMerge Policy
+/*
 /// Update Agents entries returned from the server to the Core Data store.
 class UpdateAgentEntriesOperation: Operation {
     enum OperationError: Error, LocalizedError {
@@ -269,64 +470,16 @@ class UpdateAgentEntriesOperation: Operation {
         }
     }
 }
+*/
 
 
 
 
-/// Add Agents entries returned from the server to the Core Data store.
-class AddAgentEntriesToStoreOperation: Operation {
-    enum OperationError: Error, LocalizedError {
-        case coreDataError(error:Error)
-        
-        var localizedDescription: String {
-            switch self {
-                case let .coreDataError(error): return "Core Data Error: \(error.localizedDescription)"
-            }
-        }
-    }
-    var error:OperationError?
-    private let context: NSManagedObjectContext
-    
-    var fetchedEntries:[Agent]?
-    var serverEntries:[AgentCodable]?
-    
-    var delay: TimeInterval = 0
-    
-    init(context: NSManagedObjectContext) {
-        self.context = context
-    }
-    
-    convenience init(context: NSManagedObjectContext, serverEntries: [AgentCodable], delay: TimeInterval? = nil) {
-        self.init(context: context)
-        self.serverEntries = serverEntries
-        if let delay = delay {
-            self.delay = delay
-        }
-    }
-    
-    override func main() {
-        //        self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
-        guard let serverEntries = serverEntries, !serverEntries.isEmpty else {
-            print("No Server Entry to add, returning")
-            return
-        }
-        context.performAndWait {
-            do {
-                _ = serverEntries.map { serverEntry -> Agent in
-                    let count = fetchedEntries?.first(where: { agent -> Bool in
-                        Int(agent.workerID) == serverEntry.workerId
-                    })?.externalPendingMessagesCount ?? 0
-                    return Agent(context: context, agentEntryFromServer: serverEntry, pendingMessagesCount: count)
-                }
-                try context.save()
-            } catch {
-                print("Error adding entries to store: \(error))")
-                self.error = .coreDataError(error: error)
-            }
-        }
-    }
-}
 
+
+
+/// - tag: Not in use
+/*
 // Delete Agent entries that match the predicate parameter from the Core Data store.
 class DeleteAgentEntriesOperation: Operation {
     private let context: NSManagedObjectContext
@@ -375,7 +528,7 @@ class DeleteAgentEntriesOperation: Operation {
     }
 }
 
-
+*/
 
 
 

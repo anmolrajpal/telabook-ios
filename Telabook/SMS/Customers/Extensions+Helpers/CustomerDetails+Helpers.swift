@@ -21,7 +21,7 @@ extension CustomerDetailsController {
         configureTargetActions()
         configureTableView()
         configureDataSource()
-        hideKeyboardWhenTappedAround()
+//        hideKeyboardWhenTappedAround()
         setupCustomerDetails()
         fetchCustomerDetails()
         fetchInitialConversationsHistory()

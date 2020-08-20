@@ -24,11 +24,11 @@ class AgentsViewController: UITableViewController {
     weak var messageForwardingDelegate: MessageForwardingAgentSelectionDelegate?
     
     var selectedIndexPath:IndexPath?
-    var selectedAgent:Agent?
+    var selectedAgent: Agent?
     var viewDidAppear = false
     var showOnlyDisabledAccounts = false
     
-    var handle:UInt!
+    var handle: UInt!
     let reference = Config.FirebaseConfig.Node.wasNotSeen.reference
     
     let context:NSManagedObjectContext = PersistentContainer.shared.viewContext
@@ -83,7 +83,7 @@ class AgentsViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        observeReachability()
+//        observeReachability()
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -94,10 +94,13 @@ class AgentsViewController: UITableViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         removeFirebaseObservers()
-        stopObservingReachability()
+//        stopObservingReachability()
         messageNotificationPayload = nil
     }
     
+    deinit {
+        print("\(self): Deinitialized")
+    }
     
     
     

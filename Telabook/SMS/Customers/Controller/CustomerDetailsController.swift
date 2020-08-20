@@ -51,10 +51,12 @@ class CustomerDetailsController: UIViewController {
     
     let conversation: Customer
     let conversationID: Int
+    let workerID: Int
     
     init(conversation: Customer) {
         self.conversation = conversation
         self.conversationID = Int(conversation.externalConversationID)
+        self.workerID = Int(conversation.agent?.workerID ?? 0)
         super.init(nibName: nil, bundle: nil)
     }
     required init?(coder: NSCoder) {
@@ -69,7 +71,7 @@ class CustomerDetailsController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        commonInit()        
+        commonInit()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

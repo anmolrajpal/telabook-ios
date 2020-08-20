@@ -10,9 +10,8 @@ import UIKit
 
 extension AutoResponseViewController {
     internal func fetchAutoResponse() {
-        DispatchQueue.main.async {
-            self.subview.spinner.startAnimating()
-        }
+        /*
+        startSpinner()
         let queue = OperationQueue()
         queue.qualityOfService = .userInitiated
         queue.maxConcurrentOperationCount = 1
@@ -24,10 +23,90 @@ extension AutoResponseViewController {
         handleViewsStateForOperations(operations: operations, onOperationQueue: queue)
         
         queue.addOperations(operations, waitUntilFinished: false)
+        */
+        
+        
+        let userId = String(agent.userID)
+        fetchAutoResponse(userId: userId)
     }
     
-    internal func updateAutoResponse(forID id:Int) {
+    
+    
+    
+    
+    
+    /* ------------------------------------------------------------------------------------------------------------ */
+    private func fetchAutoResponse(userId: String) {
+        startSpinner()
+        subview.saveButton.isHidden = true
         
+        let params: [String: String] = [
+            "company_id": String(AppData.companyId),
+            "user_id": userId
+        ]
+        
+        APIServer<AutoResponseJSON>(apiVersion: .v2).hitEndpoint(endpoint: .AutoResponse, httpMethod: .GET, params: params, decoder: JSONDecoder.apiServiceDecoder, completion: autoResponseFetchCompletion)
+    }
+    /* ------------------------------------------------------------------------------------------------------------ */
+    
+    
+    private func autoResponseFetchCompletion(result: Result<AutoResponseJSON, APIService.APIError>) {
+        switch result {
+            case .failure(let error):
+                self.showAlert(withErrorMessage: error.localizedDescription) {
+                    self.stopSpinner()
+                    self.subview.saveButton.isHidden = false
+            }
+            case .success(let resultData):
+                let serverResult = resultData.result
+                switch serverResult {
+                    case .failure:
+                        let errorMessage = "Error: Failed to fetch customer details from server"
+                        self.showAlert(withErrorMessage: resultData.message ?? errorMessage) {
+                            self.stopSpinner()
+                            self.subview.saveButton.isHidden = false
+                    }
+                    case .success:
+                        guard let autoResponse = resultData.autoResponse else {
+                            let errorMessage = "Error: Auto Response unavailable"
+                            self.showAlert(withErrorMessage: errorMessage) {
+                                self.stopSpinner()
+                                self.subview.saveButton.isHidden = false
+                            }
+                            return
+                        }
+                        guard let context = agent.managedObjectContext else {
+                            fatalError("### \(#function) - Failed to retrieve managed object context of Agent object: \(agent)")
+                        }
+                        context.performAndWait {
+                            if agent.autoResponse == nil {
+                                _ = AutoResponse(context: context, autoResponseEntry: autoResponse, agent: agent, synced: true)
+                            } else {
+                                agent.autoResponse?.updateValues(autoResponseEntry: autoResponse)
+                            }
+                            do {
+                                if context.hasChanges { try context.save() }
+                            } catch {
+                                printAndLog(message: "### \(#function) \(error.localizedDescription)", log: .coredata, logType: .error)
+                                fatalError(error.localizedDescription)
+                            }
+                        }
+                        DispatchQueue.main.async {
+                            self.stopSpinner()
+                            self.subview.saveButton.isHidden = false
+                            self.setupData()
+                    }
+            }
+        }
+    }
+    
+    
+    
+    
+    
+    
+    internal func updateAutoResponse() {
+        /*
         let queue = OperationQueue()
         queue.qualityOfService = .userInitiated
         queue.maxConcurrentOperationCount = 1
@@ -39,10 +118,87 @@ extension AutoResponseViewController {
         handleViewsStateForOperations(operations: operations, onOperationQueue: queue)
         
         queue.addOperations(operations, waitUntilFinished: false)
+        */
+        
+        guard let responseID = agent.autoResponse?.id,
+            responseID != 0 else {
+            showAlert(withErrorMessage: "Error: Auto response does not exists. Please refresh")
+            return
+        }
+        let smsReply = subview.autoReplyTextView.text ?? ""
+        let userID = Int(agent.userID)
+        
+        updateAutoResponse(responseID: Int(responseID), userID: userID, smsReply: smsReply)
+    }
+    
+    
+    /* ------------------------------------------------------------------------------------------------------------ */
+    private func updateAutoResponse(responseID: Int, userID: Int, smsReply: String) {
+        TapticEngine.generateFeedback(ofType: .Medium)
+        
+        startSpinner()
+        subview.saveButton.isHidden = true
+        
+        struct Body:Codable {
+            let id: Int
+            let user_id: Int
+            let company_id: String
+            let sms_replay: String
+        }
+        
+        let headers = [
+            HTTPHeader(key: .contentType, value: "application/json"),
+        ]
+        let companyId = String(AppData.companyId)
+        let params: [String: String] = [
+            "company_id": companyId,
+        ]
+        let body = Body(id: responseID, user_id: userID, company_id: companyId, sms_replay: smsReply)
+        let httpBody = try! JSONEncoder().encode(body)
+        
+        
+        APIServer<APIService.RecurrentResult>(apiVersion: .v2).hitEndpoint(endpoint: .AutoResponse, httpMethod: .POST, params: params, httpBody: httpBody, headers: headers, completion: autoResponseUpdateCompletion)
+    }
+    /* ------------------------------------------------------------------------------------------------------------ */
+    
+    
+    private func autoResponseUpdateCompletion(result: Result<APIService.RecurrentResult, APIService.APIError>) {
+        switch result {
+            case .failure(let error):
+                self.showAlert(withErrorMessage: error.localizedDescription) {
+                    TapticEngine.generateFeedback(ofType: .Error)
+                    self.stopSpinner()
+                    self.subview.saveButton.isHidden = false
+            }
+            case .success(let resultData):
+                let serverResult = ServerResult(rawValue: resultData.result!)
+                
+                switch serverResult {
+                    case .failure:
+                        let errorMessage = "Error: Failed to update customer details"
+                        self.showAlert(withErrorMessage: resultData.message ?? errorMessage) {
+                            TapticEngine.generateFeedback(ofType: .Error)
+                            self.stopSpinner()
+                            self.subview.saveButton.isHidden = false
+                    }
+                    case .success:
+                        DispatchQueue.main.async {
+                            TapticEngine.generateFeedback(ofType: .Success)
+                            AssertionModalController(title: "Updated").show()
+                            self.stopSpinner()
+                            self.subview.saveButton.isHidden = false
+                            self.fetchAutoResponse()
+                    }
+            }
+        }
     }
     
     
     
+    
+    
+    
+    /*
     private func handleViewsStateForOperations(operations:[Operation], onOperationQueue queue:OperationQueue) {
         operations.forEach { operation in
             switch operation {
@@ -149,16 +305,23 @@ extension AutoResponseViewController {
             */
         }
     }
-    
-    
-    private func showAlert(withErrorMessage message:String, cancellingOperationQueue queue:OperationQueue) {
+    */
+    private func showAlert(withErrorMessage message: String, completion: (() -> Void)? = nil) {
         DispatchQueue.main.async {
             UIAlertController.showTelaAlert(title: "Error", message: message, action: UIAlertAction(title: "OK", style: .cancel, handler: { action in
-                self.dismiss(animated: true, completion: nil)
+                completion?()
             }), controller: self, completion: {
-                queue.cancelAllOperations()
-                self.stopRefreshers()
+                
             })
         }
     }
+//    private func showAlert(withErrorMessage message:String, cancellingOperationQueue queue:OperationQueue) {
+//        DispatchQueue.main.async {
+//            UIAlertController.showTelaAlert(title: "Error", message: message, action: UIAlertAction(title: "OK", style: .cancel, handler: { action in
+//
+//            }), controller: self, completion: {
+//                queue.cancelAllOperations()
+//            })
+//        }
+//    }
 }

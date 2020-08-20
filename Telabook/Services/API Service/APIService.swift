@@ -131,6 +131,10 @@ public struct APIService: APIServiceProtocol {
         /// Endpoint to update customer details
         case UpdateCustomerDetails(customerID: Int)
         
+        /// Endpoint to fetch disabled agent accounts
+        case FetchDisabledAccounts
+        
+        
         /**
         Returns the path of a specified Endpoint.
         ## Example Usage ##
@@ -153,7 +157,7 @@ public struct APIService: APIServiceProtocol {
                 case .CreateQuickResponse: return "/android/quick_replies"
                 case let .UpdateQuickResponse(responseID): return "/android/quick_replies/\(responseID)"
                 case let .DeleteQuickResponse(responseID): return "/android/quick_replies/\(responseID)"
-                case .AutoResponse: return "/android/sms_auto_reply"
+                case .AutoResponse: return "/sms_auto_reply"
                 case .SearchConversations: return "/external_conversations/search"
                 case .SearchConversationsFirebase: return "/external_conversations/search_firebase"
                 case .ArchiveConversation: return "/archive_external_conversation"
@@ -169,6 +173,7 @@ public struct APIService: APIServiceProtocol {
                 case .Click2Call: return "/call/twilioclicktocall"
                 case .FetchCustomerDetails(let customerID): return "/external_address_book/\(customerID)"
                 case .UpdateCustomerDetails(let customerID): return "/customers/\(customerID)/update"
+                case .FetchDisabledAccounts: return "/disabledaccount"
             }
         }
     }

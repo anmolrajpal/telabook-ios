@@ -28,15 +28,20 @@ extension AgentDetailsViewController {
         subview.quickResponsesButton.addTarget(self, action: #selector(quickResponsesButtonTapped), for: .touchUpInside)
     }
     @objc private func smsButtonTapped() {
-        if let userID = self.agent.userID != 0 ? Int(agent.userID) : nil {
-            let vc = AutoResponseViewController(userID: userID, agent: agent)
-            vc.view.backgroundColor = .telaGray1
-            present(vc, animated: true, completion: nil)
-        } else {
-            fatalError("User ID not found")
+        showAutoResponseController(forAgent: agent)
+    }
+    private func showAutoResponseController(forAgent agent: Agent) {
+        guard agent.userID != 0 else {
+            DispatchQueue.main.async {
+                UIAlertController.showTelaAlert(title: "Error", message: "Corrupted data")
+            }
+            return
+        }
+        let vc = AutoResponseViewController(agent: agent)
+        DispatchQueue.main.async {
+            self.present(vc, animated: true)
         }
     }
-    
     @objc private func quickResponsesButtonTapped() {
         if let userId = self.agent.userID != 0 ? Int(agent.userID) : nil {
             let vc = QuickResponsesViewController(userID: userId, agent: agent)

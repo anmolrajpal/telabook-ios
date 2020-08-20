@@ -82,7 +82,7 @@ class CustomersViewController: UITableViewController {
 
     // MARK: - Init
     
-    init(agent:Agent) {
+    init(agent: Agent) {
         self.agent = agent
         self.node = .conversations(companyID: AppData.companyId, workerID: Int(agent.workerID))
         self.reference = node.reference
@@ -92,7 +92,7 @@ class CustomersViewController: UITableViewController {
         fatalError("init(coder:) has not been implemented")
     }
     deinit {
-        
+        print("\(self): Deinitialized")
     }
     
     

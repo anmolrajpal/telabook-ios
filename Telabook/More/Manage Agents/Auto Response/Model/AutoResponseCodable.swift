@@ -50,3 +50,4 @@ extension AutoResponse {
         self.synced = synced
     }
 }
+

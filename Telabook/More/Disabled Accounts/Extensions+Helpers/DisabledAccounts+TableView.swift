@@ -11,7 +11,7 @@ import UIKit
 extension DisabledAccountsController {
     enum Section { case main }
     
-    class DataSource: UITableViewDiffableDataSource<Section, DisabledAccountProperties> {}
+    class DataSource: UITableViewDiffableDataSource<Section, AgentProperties> {}
     
     internal func configureTableView() {
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 85, bottom: 0, right: 0)
@@ -32,8 +32,8 @@ extension DisabledAccountsController {
             return cell
         })
     }
-    func currentSnapshot() -> NSDiffableDataSourceSnapshot<Section, DisabledAccountProperties>? {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, DisabledAccountProperties>()
+    func currentSnapshot() -> NSDiffableDataSourceSnapshot<Section, AgentProperties>? {
+        var snapshot = NSDiffableDataSourceSnapshot<Section, AgentProperties>()
         snapshot.appendSections([.main])
         snapshot.appendItems(disabledAccounts)
         return snapshot

@@ -100,7 +100,8 @@ class MoreViewController: UITableViewController {
                         let vc = ScheduleMessageViewController()
                         self.show(vc, sender: self)
                     case 4:
-                        let vc = ScheduleMessageViewController()
+                        let vc = AgentsViewController()
+                        vc.showOnlyDisabledAccounts = true
                         self.show(vc, sender: self)
                     case 5:
                         let vc = AppSettingsViewController()
@@ -125,7 +126,8 @@ class MoreViewController: UITableViewController {
                         let vc = ScheduleMessageViewController()
                         self.show(vc, sender: self)
                     case 3:
-                        let vc = ScheduleMessageViewController()
+                        let vc = AgentsViewController()
+                        vc.showOnlyDisabledAccounts = true
                         self.show(vc, sender: self)
                     case 4:
                         let vc = AppSettingsViewController()

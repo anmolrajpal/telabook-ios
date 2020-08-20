@@ -12,7 +12,11 @@ extension AgentsViewController {
     
     // MARK: Common setup
     internal func commonInit() {
-        title = messageForwardingDelegate == nil ? "SMS" : "Forward To"
+        if !showOnlyDisabledAccounts {
+            title = messageForwardingDelegate == nil ? "SMS" : "Forward To"
+        } else {
+            title = "DISABLED ACCOUNTS"
+        }
         view.backgroundColor = .telaGray1
         configureNavigationBarAppearance()
         configureNavigationBarItems()

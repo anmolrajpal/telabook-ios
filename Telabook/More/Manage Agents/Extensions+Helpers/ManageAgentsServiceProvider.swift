@@ -17,7 +17,7 @@ extension ManageAgentsViewController {
         queue.maxConcurrentOperationCount = 1
         
         let context = PersistentContainer.shared.newBackgroundContext()
-        let operations = AgentOperations.getOperationsToFetchLatestEntries(using: context)
+        let operations = AgentOperations.getOperationsToFetchAgents(using: context, showOnlyDisabledAccounts: false)
         handleViewsStateForOperations(operations: operations, onOperationQueue: queue)
         
         queue.addOperations(operations, waitUntilFinished: false)
@@ -49,14 +49,7 @@ extension ManageAgentsViewController {
                         self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
                     }
                 }
-            } else if let operation = operation as? UpdateAgentEntriesOperation {
-                operation.completionBlock = {
-                    if let error = operation.error {
-                        print(error.localizedDescription)
-                        self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
-                    }
-                }
-            } else if let operation = operation as? AddAgentEntriesToStoreOperation {
+            } else if let operation = operation as? UpsertAgentEntriesInStoreOperation {
                 operation.completionBlock = {
                     if let error = operation.error {
                         print(error.localizedDescription)

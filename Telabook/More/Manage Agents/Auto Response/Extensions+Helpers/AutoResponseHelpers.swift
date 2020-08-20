@@ -10,30 +10,39 @@ import UIKit
 
 extension AutoResponseViewController {
     
-    internal func setupTargetActions() {
-        subview.cancelButton.addTarget(self, action: #selector(didTapCancelButton), for: .touchUpInside)
-        subview.saveButton.addTarget(self, action: #selector(didTapSaveButton), for: .touchUpInside)
-    }
     
-    @objc private func didTapCancelButton() {
-        self.dismiss(animated: true, completion: nil)
+    internal func commonInit() {
+        hideKeyboardWhenTappedAround()
+        configureTargetActions()
+        setupData()
+        fetchAutoResponse()
     }
-    
-    @objc private func didTapSaveButton() {
-        guard isFetchedResultsAvailable else { return }
-        guard let responseID = fetchedResultsController.fetchedObjects?.first?.id,
-            responseID != 0 else {
-            print("AutoResponse Object not exist or Failed to unwrap Response ID")
+    internal func setupData() {
+        guard let autoResponse = agent.autoResponse else {
             return
         }
+        subview.autoReplyTextView.text = autoResponse.smsReply
+    }
+    private func configureTargetActions() {
+        subview.cancelButton.addTarget(self, action: #selector(cancelButtonDidTapped(_:)), for: .touchUpInside)
+        subview.saveButton.addTarget(self, action: #selector(saveButtonDidTap(_:)), for: .touchUpInside)
+    }
+    
+    @objc private func cancelButtonDidTapped(_ button: UIButton) {
+        dismiss(animated: true)
+    }
+    
+    @objc private func saveButtonDidTap(_ button: UIButton) {
+        updateAutoResponse()
+    }
+    
+    func startSpinner() {
         DispatchQueue.main.async {
             self.subview.spinner.startAnimating()
         }
-        self.updateAutoResponse(forID: Int(responseID))
     }
     
-    
-    internal func stopRefreshers() {
+    func stopSpinner() {
         DispatchQueue.main.async {
             self.subview.spinner.stopAnimating()
         }
@@ -41,7 +50,7 @@ extension AutoResponseViewController {
     
     
     
-    
+    /*
     internal func fetchWithTimeLogic() {
         if isFetchedResultsAvailable {
             if let firstObject = fetchedResultsController.fetchedObjects?.first,
@@ -62,4 +71,5 @@ extension AutoResponseViewController {
             fetchAutoResponse()
         }
     }
+    */
 }

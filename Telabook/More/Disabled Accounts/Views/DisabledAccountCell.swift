@@ -34,7 +34,7 @@ class DisabledAccountCell: UITableViewCell {
      
      // MARK: - Methods
      
-     func configureCell(with account: DisabledAccountProperties, animated:Bool = false) {
+     func configureCell(with account: AgentProperties, animated:Bool = false) {
          let name = account.personName ?? "No Name"
          let initialsText = CustomUtils.shared.getInitials(from: name)
          

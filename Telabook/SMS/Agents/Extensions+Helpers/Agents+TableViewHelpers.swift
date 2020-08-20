@@ -143,7 +143,7 @@ extension AgentsViewController {
             // MARK: - First Time SMS Action
             
             let firstTimeSMSAction = UIAction(title: "First Time SMS", image: #imageLiteral(resourceName: "automsg_icon")) { _ in
-                self.showFirstTimeSMS(for: agent)
+                self.showAutoResponseController(forAgent: agent)
             }
             menuItems.append(firstTimeSMSAction)
             
@@ -183,12 +183,16 @@ extension AgentsViewController {
             return UIMenu(title: "", children: menuItems)
         }
     }
-    private func showFirstTimeSMS(for agent:Agent) {
-        if let userID = agent.userID != 0 ? Int(agent.userID) : nil {
-            let vc = AutoResponseViewController(userID: userID, agent: agent)
-            present(vc, animated: true, completion: nil)
-        } else {
-            fatalError("User ID not found")
+    private func showAutoResponseController(forAgent agent: Agent) {
+        guard agent.userID != 0 else {
+            DispatchQueue.main.async {
+                UIAlertController.showTelaAlert(title: "Error", message: "Corrupted data")
+            }
+            return
+        }
+        let vc = AutoResponseViewController(agent: agent)
+        DispatchQueue.main.async {
+            self.present(vc, animated: true)
         }
     }
     

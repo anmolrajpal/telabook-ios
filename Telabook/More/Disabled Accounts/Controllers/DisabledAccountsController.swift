@@ -10,7 +10,7 @@ import UIKit
 
 class DisabledAccountsController: UITableViewController {
     var viewDidAppear = false
-    var disabledAccounts = [DisabledAccountProperties]()
+    var disabledAccounts = [AgentProperties]()
     var dataSource: DataSource! = nil
     
     override func viewDidLoad() {
