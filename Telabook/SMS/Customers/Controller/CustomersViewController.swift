@@ -138,11 +138,11 @@ class CustomersViewController: UITableViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         removeFirebaseObservers()
-        stopObservingReachability()
+//        stopObservingReachability()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        observeReachability()
+//        observeReachability()
         
     }
     override func viewDidAppear(_ animated: Bool) {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="20A5343i" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19G2021" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AddressBook" representedClassName="AddressBook" syncable="YES" codeGenerationType="class">
         <attribute name="addressOne" optional="YES" attributeType="String"/>
         <attribute name="addressTwo" optional="YES" attributeType="String"/>
@@ -44,6 +44,7 @@
         <attribute name="username" optional="YES" attributeType="String"/>
         <attribute name="workerID" optional="YES" attributeType="Integer 32" minValueString="1" usesScalarValueType="YES"/>
         <relationship name="autoResponse" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="AutoResponse" inverseName="autoResponseSender" inverseEntity="AutoResponse"/>
+        <relationship name="calls" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AgentCall" inverseName="worker" inverseEntity="AgentCall"/>
         <relationship name="customers" toMany="YES" deletionRule="Cascade" destinationEntity="Customer" inverseName="agent" inverseEntity="Customer"/>
         <relationship name="galleryItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AgentGalleryItem" inverseName="agent" inverseEntity="AgentGalleryItem"/>
         <relationship name="quickResponses" toMany="YES" deletionRule="Cascade" destinationEntity="QuickResponse" inverseName="sender" inverseEntity="QuickResponse"/>
@@ -52,6 +53,29 @@
                 <constraint value="workerID"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
+    </entity>
+    <entity name="AgentCall" representedClassName="AgentCall" syncable="YES" codeGenerationType="class">
+        <attribute name="companyID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="companyName" optional="YES" attributeType="String"/>
+        <attribute name="companyOwnerID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="companyOwnerName" optional="YES" attributeType="String"/>
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="customerCallerID" optional="YES" attributeType="String"/>
+        <attribute name="customerID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="customerName" optional="YES" attributeType="String"/>
+        <attribute name="direction" optional="YES" attributeType="String"/>
+        <attribute name="duration" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="recordingFileURL" optional="YES" attributeType="URI"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
+        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="uniqueID" optional="YES" attributeType="String"/>
+        <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="workerCallerID" optional="YES" attributeType="String"/>
+        <attribute name="workerDID" optional="YES" attributeType="String"/>
+        <attribute name="workerID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="workerName" optional="YES" attributeType="String"/>
+        <relationship name="worker" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Agent" inverseName="calls" inverseEntity="Agent"/>
     </entity>
     <entity name="AgentGalleryItem" representedClassName="AgentGalleryItem" syncable="YES" codeGenerationType="class">
         <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -235,7 +259,7 @@
     </entity>
     <elements>
         <element name="AddressBook" positionX="-711.54296875" positionY="176.5" width="128" height="268"/>
-        <element name="Agent" positionX="-1461.12109375" positionY="219.5390625" width="128" height="389"/>
+        <element name="Agent" positionX="-1461.12109375" positionY="219.5390625" width="128" height="418"/>
         <element name="AgentGalleryItem" positionX="-1272.69140625" positionY="732" width="128" height="148"/>
         <element name="AutoResponse" positionX="-1644.57421875" positionY="605.0234375" width="128" height="163"/>
         <element name="BlockedUser" positionX="-1268.88671875" positionY="97.640625" width="128" height="208"/>
@@ -244,5 +268,6 @@
         <element name="QuickResponse" positionX="-1465.515625" positionY="706.03515625" width="128" height="178"/>
         <element name="ScheduledMessage" positionX="-1102.84765625" positionY="102.38671875" width="128" height="163"/>
         <element name="UserMessage" positionX="-525.5546875" positionY="217.13671875" width="128" height="568"/>
+        <element name="AgentCall" positionX="-1440" positionY="252" width="128" height="358"/>
     </elements>
 </model>

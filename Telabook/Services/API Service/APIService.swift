@@ -134,6 +134,8 @@ public struct APIService: APIServiceProtocol {
         /// Endpoint to fetch disabled agent accounts
         case FetchDisabledAccounts
         
+        /// Endpoint to fetch calls by worker
+        case FetchAgentCalls(workerID: Int)
         
         /**
         Returns the path of a specified Endpoint.
@@ -174,6 +176,7 @@ public struct APIService: APIServiceProtocol {
                 case .FetchCustomerDetails(let customerID): return "/external_address_book/\(customerID)"
                 case .UpdateCustomerDetails(let customerID): return "/customers/\(customerID)/update"
                 case .FetchDisabledAccounts: return "/disabledaccount"
+                case .FetchAgentCalls(let workerID): return "/worker/\(workerID)/calls"
             }
         }
     }

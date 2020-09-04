@@ -185,7 +185,7 @@ class MessagesController: MessagesViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         stopMonitoringNetwork()
-        stopObservingReachability()
+//        stopObservingReachability()
         removeFirebaseObservers()
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -193,7 +193,7 @@ class MessagesController: MessagesViewController {
 //        self.becomeFirstResponder()
         configureNavigationBarItems()
         monitorNetwork()
-        observeReachability()
+//        observeReachability()
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)

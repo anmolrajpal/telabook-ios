@@ -146,6 +146,8 @@ public enum CustomDateFormat: String {
     case MMMMdEEEE = "MMMM d EEEE"
     case ddMMMyyyy = "dd MMM yyyy"
     
+    case dMMMMyyyy = "d MMMM yyyy"
+    
     static func telaDateTime() -> String {
         return "\(self.ddMMMyyyy.rawValue) | \(self.hmma.rawValue)"
         

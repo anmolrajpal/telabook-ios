@@ -115,6 +115,10 @@
 		6F6B44D624BC855F00AD2649 /* MessageDetailsController+TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B44D524BC855F00AD2649 /* MessageDetailsController+TableView.swift */; };
 		6F6B44D824BCD1A400AD2649 /* MMSMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B44D724BCD1A400AD2649 /* MMSMessageCell.swift */; };
 		6F7310E624E826B4007B082F /* AutoResponseJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7310E524E826B4007B082F /* AutoResponseJSON.swift */; };
+		6F7A382D24FE352F00759922 /* AgentCallCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7A382C24FE352E00759922 /* AgentCallCell.swift */; };
+		6F7A382F24FF7A3C00759922 /* AgentCalls+TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7A382E24FF7A3C00759922 /* AgentCalls+TableView.swift */; };
+		6F7A383125023D8900759922 /* AgentCallSectionHeaderReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7A383025023D8800759922 /* AgentCallSectionHeaderReusableView.swift */; };
+		6F7A38332502650000759922 /* AgentCalls+ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7A38322502650000759922 /* AgentCalls+ServiceProvider.swift */; };
 		6F7BF51724C2C760009B9D5E /* MultimediaMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7BF51624C2C760009B9D5E /* MultimediaMessageCell.swift */; };
 		6F7BF51924C36446009B9D5E /* AsyncMMSFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7BF51824C36446009B9D5E /* AsyncMMSFetcher.swift */; };
 		6F7BF52624D00BE1009B9D5E /* NewMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7BF52524D00BE0009B9D5E /* NewMessage.swift */; };
@@ -302,6 +306,17 @@
 		6FF842182482EADD0069A789 /* QuickResponsePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF842172482EADD0069A789 /* QuickResponsePickerView.swift */; };
 		6FF8421A2482EFF00069A789 /* QuickResponsePicker+TableViewHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF842192482EFF00069A789 /* QuickResponsePicker+TableViewHelpers.swift */; };
 		6FF8421C2482F0030069A789 /* QuickResponsePicker+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF8421B2482F0030069A789 /* QuickResponsePicker+Helpers.swift */; };
+		6FFBCC4A24F9377400C7E96C /* CallsTabAgentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFBCC4924F9377400C7E96C /* CallsTabAgentsViewController.swift */; };
+		6FFBCC4C24F938A600C7E96C /* CallsTabAgents+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFBCC4B24F938A600C7E96C /* CallsTabAgents+Helpers.swift */; };
+		6FFBCC4E24F938DB00C7E96C /* CallsTabAgents+CoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFBCC4D24F938DB00C7E96C /* CallsTabAgents+CoreData.swift */; };
+		6FFBCC5024F9396A00C7E96C /* CallsTabAgents+TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFBCC4F24F9396A00C7E96C /* CallsTabAgents+TableView.swift */; };
+		6FFBCC5224F93A7B00C7E96C /* CallsTabAgents+Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFBCC5124F93A7B00C7E96C /* CallsTabAgents+Search.swift */; };
+		6FFBCC5424F93AC700C7E96C /* CallsTabAgents+ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFBCC5324F93AC700C7E96C /* CallsTabAgents+ServiceProvider.swift */; };
+		6FFBCC5624F93D3900C7E96C /* CallsTabAgentsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFBCC5524F93D3900C7E96C /* CallsTabAgentsCell.swift */; };
+		6FFBCC5D24F9438000C7E96C /* AgentCallsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFBCC5C24F9438000C7E96C /* AgentCallsViewController.swift */; };
+		6FFBCC5F24F9438F00C7E96C /* AgentCalls+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFBCC5E24F9438F00C7E96C /* AgentCalls+Helpers.swift */; };
+		6FFBCC6124F944A500C7E96C /* AgentCallsJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFBCC6024F944A500C7E96C /* AgentCallsJSON.swift */; };
+		6FFBCC6324F948F500C7E96C /* agentCallsMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFBCC6224F948F500C7E96C /* agentCallsMockData.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -414,6 +429,10 @@
 		6F6B44D724BCD1A400AD2649 /* MMSMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MMSMessageCell.swift; sourceTree = "<group>"; };
 		6F6F9F89247FB76900C9114D /* Config-PreRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Config-PreRelease.xcconfig"; sourceTree = "<group>"; };
 		6F7310E524E826B4007B082F /* AutoResponseJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoResponseJSON.swift; sourceTree = "<group>"; };
+		6F7A382C24FE352E00759922 /* AgentCallCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentCallCell.swift; sourceTree = "<group>"; };
+		6F7A382E24FF7A3C00759922 /* AgentCalls+TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AgentCalls+TableView.swift"; sourceTree = "<group>"; };
+		6F7A383025023D8800759922 /* AgentCallSectionHeaderReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentCallSectionHeaderReusableView.swift; sourceTree = "<group>"; };
+		6F7A38322502650000759922 /* AgentCalls+ServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AgentCalls+ServiceProvider.swift"; sourceTree = "<group>"; };
 		6F7BF51624C2C760009B9D5E /* MultimediaMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultimediaMessageCell.swift; sourceTree = "<group>"; };
 		6F7BF51824C36446009B9D5E /* AsyncMMSFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncMMSFetcher.swift; sourceTree = "<group>"; };
 		6F7BF52524D00BE0009B9D5E /* NewMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewMessage.swift; sourceTree = "<group>"; };
@@ -609,6 +628,17 @@
 		6FF842172482EADD0069A789 /* QuickResponsePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponsePickerView.swift; sourceTree = "<group>"; };
 		6FF842192482EFF00069A789 /* QuickResponsePicker+TableViewHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QuickResponsePicker+TableViewHelpers.swift"; sourceTree = "<group>"; };
 		6FF8421B2482F0030069A789 /* QuickResponsePicker+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QuickResponsePicker+Helpers.swift"; sourceTree = "<group>"; };
+		6FFBCC4924F9377400C7E96C /* CallsTabAgentsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallsTabAgentsViewController.swift; sourceTree = "<group>"; };
+		6FFBCC4B24F938A600C7E96C /* CallsTabAgents+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CallsTabAgents+Helpers.swift"; sourceTree = "<group>"; };
+		6FFBCC4D24F938DB00C7E96C /* CallsTabAgents+CoreData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CallsTabAgents+CoreData.swift"; sourceTree = "<group>"; };
+		6FFBCC4F24F9396A00C7E96C /* CallsTabAgents+TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CallsTabAgents+TableView.swift"; sourceTree = "<group>"; };
+		6FFBCC5124F93A7B00C7E96C /* CallsTabAgents+Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CallsTabAgents+Search.swift"; sourceTree = "<group>"; };
+		6FFBCC5324F93AC700C7E96C /* CallsTabAgents+ServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CallsTabAgents+ServiceProvider.swift"; sourceTree = "<group>"; };
+		6FFBCC5524F93D3900C7E96C /* CallsTabAgentsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallsTabAgentsCell.swift; sourceTree = "<group>"; };
+		6FFBCC5C24F9438000C7E96C /* AgentCallsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentCallsViewController.swift; sourceTree = "<group>"; };
+		6FFBCC5E24F9438F00C7E96C /* AgentCalls+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AgentCalls+Helpers.swift"; sourceTree = "<group>"; };
+		6FFBCC6024F944A500C7E96C /* AgentCallsJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AgentCallsJSON.swift; sourceTree = "<group>"; };
+		6FFBCC6224F948F500C7E96C /* agentCallsMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = agentCallsMockData.swift; sourceTree = "<group>"; };
 		7B80F0AE73DD0782D1289F23 /* Pods-Telabook.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.debug.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.debug.xcconfig"; sourceTree = "<group>"; };
 		A24D2E2A3583492FDB7723EF /* Pods_Telabook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Telabook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3D13E12DA10A4904B024B3C /* Pods-Telabook.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.staging.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.staging.xcconfig"; sourceTree = "<group>"; };
@@ -1355,6 +1385,7 @@
 			children = (
 				6F8BC1D224E5CC4000EF6639 /* LookupConversationsMockData.swift */,
 				6F8BC1D424E7FE4900EF6639 /* AgentsMockData.swift */,
+				6FFBCC6224F948F500C7E96C /* agentCallsMockData.swift */,
 			);
 			path = "Mock Data";
 			sourceTree = "<group>";
@@ -1531,6 +1562,7 @@
 				6FEC642324D836A10012B234 /* CustomerDetailsJSON.swift */,
 				6F8BC1CB24E443E000EF6639 /* LookupConversationJSON.swift */,
 				6F7310E524E826B4007B082F /* AutoResponseJSON.swift */,
+				6FFBCC6024F944A500C7E96C /* AgentCallsJSON.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1629,6 +1661,8 @@
 			isa = PBXGroup;
 			children = (
 				6FB11B06229BFA240098D050 /* CallsViewController.swift */,
+				6FFBCC4524F9371800C7E96C /* Agents */,
+				6FFBCC5724F9434F00C7E96C /* Agent Calls */,
 			);
 			path = Calls;
 			sourceTree = "<group>";
@@ -1981,6 +2015,89 @@
 			path = Operations;
 			sourceTree = "<group>";
 		};
+		6FFBCC4524F9371800C7E96C /* Agents */ = {
+			isa = PBXGroup;
+			children = (
+				6FFBCC4824F9373100C7E96C /* Views */,
+				6FFBCC4724F9372C00C7E96C /* Controllers */,
+				6FFBCC4624F9371D00C7E96C /* Extensions+Helpers */,
+			);
+			path = Agents;
+			sourceTree = "<group>";
+		};
+		6FFBCC4624F9371D00C7E96C /* Extensions+Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				6FFBCC4B24F938A600C7E96C /* CallsTabAgents+Helpers.swift */,
+				6FFBCC4D24F938DB00C7E96C /* CallsTabAgents+CoreData.swift */,
+				6FFBCC4F24F9396A00C7E96C /* CallsTabAgents+TableView.swift */,
+				6FFBCC5124F93A7B00C7E96C /* CallsTabAgents+Search.swift */,
+				6FFBCC5324F93AC700C7E96C /* CallsTabAgents+ServiceProvider.swift */,
+			);
+			path = "Extensions+Helpers";
+			sourceTree = "<group>";
+		};
+		6FFBCC4724F9372C00C7E96C /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				6FFBCC4924F9377400C7E96C /* CallsTabAgentsViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		6FFBCC4824F9373100C7E96C /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				6FFBCC5524F93D3900C7E96C /* CallsTabAgentsCell.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		6FFBCC5724F9434F00C7E96C /* Agent Calls */ = {
+			isa = PBXGroup;
+			children = (
+				6FFBCC5B24F9436C00C7E96C /* Operations */,
+				6FFBCC5A24F9436800C7E96C /* Views */,
+				6FFBCC5924F9436300C7E96C /* Controllers */,
+				6FFBCC5824F9435D00C7E96C /* Extensions+Helpers */,
+			);
+			path = "Agent Calls";
+			sourceTree = "<group>";
+		};
+		6FFBCC5824F9435D00C7E96C /* Extensions+Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				6FFBCC5E24F9438F00C7E96C /* AgentCalls+Helpers.swift */,
+				6F7A382E24FF7A3C00759922 /* AgentCalls+TableView.swift */,
+				6F7A38322502650000759922 /* AgentCalls+ServiceProvider.swift */,
+			);
+			path = "Extensions+Helpers";
+			sourceTree = "<group>";
+		};
+		6FFBCC5924F9436300C7E96C /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				6FFBCC5C24F9438000C7E96C /* AgentCallsViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		6FFBCC5A24F9436800C7E96C /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				6F7A382C24FE352E00759922 /* AgentCallCell.swift */,
+				6F7A383025023D8800759922 /* AgentCallSectionHeaderReusableView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		6FFBCC5B24F9436C00C7E96C /* Operations */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Operations;
+			sourceTree = "<group>";
+		};
 		9D78E82FCB5E6192D5C81890 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -2197,6 +2314,7 @@
 				6FB11B37229EF4300098D050 /* ManageAgentsViewController.swift in Sources */,
 				6F21377A24742DD2002AB150 /* NewConversationCodable.swift in Sources */,
 				6F087DD122E0EFFD00CAD840 /* OnlineUsersAPI.swift in Sources */,
+				6F7A382F24FF7A3C00759922 /* AgentCalls+TableView.swift in Sources */,
 				6FEC641E24D817AE0012B234 /* DisabledAccountCell.swift in Sources */,
 				6FCF7F7624DF0C4200A7AB0B /* NormalDialerView.swift in Sources */,
 				6F8927FB24A8A82E0025DF64 /* ScheduledMessageJSON.swift in Sources */,
@@ -2211,6 +2329,7 @@
 				6F9453BF22DB2E2F00047C7F /* AgentPickerDataProvider.swift in Sources */,
 				6F8A8301249B7C1B002ACDFE /* MMSCell.swift in Sources */,
 				6F987A7E245C9B9000C6046E /* ManageAgentsCellView.swift in Sources */,
+				6FFBCC5D24F9438000C7E96C /* AgentCallsViewController.swift in Sources */,
 				6F6B44CA24BC69B800AD2649 /* MessageDetailsViewConroller.swift in Sources */,
 				6FA3DFF12475C2D60083AB13 /* BlacklistOperations.swift in Sources */,
 				6F23BD0D22D9F3480001A888 /* ScheduleMessageAPI.swift in Sources */,
@@ -2280,6 +2399,7 @@
 				6FC602322464470900C1BF6D /* AgentsServiceProvider.swift in Sources */,
 				6F13C4902476A21C00E9C060 /* BlacklistedDetailsViewController.swift in Sources */,
 				6F7BF52A24D00CBC009B9D5E /* UserMessage+ImageItem.swift in Sources */,
+				6FFBCC4E24F938DB00C7E96C /* CallsTabAgents+CoreData.swift in Sources */,
 				6F7BF52824D00C28009B9D5E /* UserMessage+MessageType.swift in Sources */,
 				6F46A8BB22D062750042A667 /* FollowUpAPI.swift in Sources */,
 				6FEC642224D821330012B234 /* DisabledAccounts+TableView.swift in Sources */,
@@ -2296,6 +2416,7 @@
 				6FF2E6A7248FA4E500502B99 /* Profile+ServicePorvider.swift in Sources */,
 				6F987A482456C8B900C6046E /* APIServiceProtocol.swift in Sources */,
 				6F00F2DE24A50E46001E33D9 /* MessageDownloadService.swift in Sources */,
+				6FFBCC5024F9396A00C7E96C /* CallsTabAgents+TableView.swift in Sources */,
 				6F58C33922D618C40091C785 /* AutoResponseAPIProtocol.swift in Sources */,
 				6F1BD2F322C4B4CB0053D0CC /* FollowUpDataProvider.swift in Sources */,
 				6FC8230F2475AE68002421F0 /* Blacklist+ServiceProvider.swift in Sources */,
@@ -2332,6 +2453,9 @@
 				6F265171246C3610003D582F /* SFSymbol.swift in Sources */,
 				6FEE9A17247E696000709E2D /* Messages+Cell.swift in Sources */,
 				6FEE9A15247D5BE000709E2D /* Messages+ServiceProvider.swift in Sources */,
+				6FFBCC4A24F9377400C7E96C /* CallsTabAgentsViewController.swift in Sources */,
+				6F7A382D24FE352F00759922 /* AgentCallCell.swift in Sources */,
+				6FFBCC6124F944A500C7E96C /* AgentCallsJSON.swift in Sources */,
 				6F7BF51724C2C760009B9D5E /* MultimediaMessageCell.swift in Sources */,
 				6FB11B0D229BFA430098D050 /* MoreViewController.swift in Sources */,
 				6FEC642024D820A30012B234 /* DisabledAccounts+Helpers.swift in Sources */,
@@ -2361,6 +2485,7 @@
 				6F58C33522D6178B0091C785 /* AutoResponseViewController.swift in Sources */,
 				6FF2E6A9248FF19500502B99 /* FullImageView.swift in Sources */,
 				6F9453C722DBA45F00047C7F /* ScheduleNewMessageDataProvider.swift in Sources */,
+				6F7A383125023D8900759922 /* AgentCallSectionHeaderReusableView.swift in Sources */,
 				6F69BE8C22D4A63900F8903F /* AgentDetailsViewController.swift in Sources */,
 				6FEE9A2F247F118F00709E2D /* Configuration.swift in Sources */,
 				6F987A4A2456C8FA00C6046E /* APIServiceMethods.swift in Sources */,
@@ -2372,12 +2497,15 @@
 				6F8A8333249F87AB002ACDFE /* AgentGallery+CollectionView.swift in Sources */,
 				6F69BE9222D4DCE600F8903F /* QuickResponsesAPIProtocol.swift in Sources */,
 				6F7BF52C24D00D32009B9D5E /* UserMessage+MediaHelpers.swift in Sources */,
+				6FFBCC5624F93D3900C7E96C /* CallsTabAgentsCell.swift in Sources */,
 				6F6B44CC24BC77F700AD2649 /* MessageDetailsController+DataSource.swift in Sources */,
 				6F29FD5122B8B36400BCA2AB /* FollowUpCell.swift in Sources */,
 				6F02B2DB2461C47300FFB34E /* AutoResponseView.swift in Sources */,
 				6F02B2E42461EF3800FFB34E /* AutoResponseServiceProvider.swift in Sources */,
 				6FEC641524D80F270012B234 /* DisabledAccountsJSON.swift in Sources */,
 				6FB11B41229F7A290098D050 /* ManageAgentsCell.swift in Sources */,
+				6FFBCC5F24F9438F00C7E96C /* AgentCalls+Helpers.swift in Sources */,
+				6F7A38332502650000759922 /* AgentCalls+ServiceProvider.swift in Sources */,
 				6F69BE9622D4DE4900F8903F /* QuickResponsesDataProvider.swift in Sources */,
 				6F00F2D624A50D69001E33D9 /* MessageMediaManager.swift in Sources */,
 				6FCF7F7424DF0C2A00A7AB0B /* NormalDialerViewController.swift in Sources */,
@@ -2386,6 +2514,8 @@
 				6F32793724D9D9000078A652 /* CustomerDetails+Helpers.swift in Sources */,
 				6FB11B12229C31DF0098D050 /* Enums.swift in Sources */,
 				6F9E6EBD248E442E0001950E /* Messages+DataProvider.swift in Sources */,
+				6FFBCC6324F948F500C7E96C /* agentCallsMockData.swift in Sources */,
+				6FFBCC4C24F938A600C7E96C /* CallsTabAgents+Helpers.swift in Sources */,
 				6F987A5D2457313C00C6046E /* SelectCompanyServiceProvider.swift in Sources */,
 				6F23BD0B22D9F33A0001A888 /* ScheduleMessageAPIProtocol.swift in Sources */,
 				6F395C95248033880023255F /* MoreServiceProvider.swift in Sources */,
@@ -2407,8 +2537,10 @@
 				6F8BC1CE24E57C7F00EF6639 /* Click2CallManager.swift in Sources */,
 				6F23BCFF22D724A70001A888 /* UserProfileCodable.swift in Sources */,
 				6FF8421A2482EFF00069A789 /* QuickResponsePicker+TableViewHelpers.swift in Sources */,
+				6FFBCC5224F93A7B00C7E96C /* CallsTabAgents+Search.swift in Sources */,
 				6F69BE8622D4742E00F8903F /* ManageAgentsAPIProtocol.swift in Sources */,
 				6FC823112475AF41002421F0 /* BlacklistCell.swift in Sources */,
+				6FFBCC5424F93AC700C7E96C /* CallsTabAgents+ServiceProvider.swift in Sources */,
 				6F41013D22DDF8E40038AA76 /* CallGroupsCell.swift in Sources */,
 				6F8A8317249DECBC002ACDFE /* KeyValueCell.swift in Sources */,
 				6F8A8320249F3EF9002ACDFE /* AgentGalleryController.swift in Sources */,
@@ -2510,7 +2642,7 @@
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 32;
+				CURRENT_PROJECT_VERSION = 34;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2654,7 +2786,7 @@
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 32;
+				CURRENT_PROJECT_VERSION = 34;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2678,7 +2810,7 @@
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 32;
+				CURRENT_PROJECT_VERSION = 34;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2759,7 +2891,7 @@
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 32;
+				CURRENT_PROJECT_VERSION = 34;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;

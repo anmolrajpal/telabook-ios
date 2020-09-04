@@ -77,7 +77,7 @@ class TabBarController: UITabBarController {
         controllers.append(agentsNavController)
         
         // MARK: - Tab 2
-        let callsNavController = UINavigationController(rootViewController: CallsViewController())
+        let callsNavController = UINavigationController(rootViewController: CallsTabAgentsViewController())
         callsNavController.tabBarItem = Tabs.tab2.tabBarItem
         controllers.append(callsNavController)
         
