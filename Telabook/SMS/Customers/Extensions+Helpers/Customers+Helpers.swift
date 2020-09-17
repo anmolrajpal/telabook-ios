@@ -296,7 +296,7 @@ extension CustomersViewController: UITextViewDelegate {
             let submitAction = alertController.actions.last else { return }
         let textCount = textView.text.count
         submitAction.isEnabled = textCount > 0
-        characterCountLabel.text = "Charaters left: \(70 - textCount)"
+        characterCountLabel.text = "Characters left: \(70 - textCount)"
     }
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {

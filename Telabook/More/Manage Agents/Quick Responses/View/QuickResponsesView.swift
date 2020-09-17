@@ -195,7 +195,7 @@ extension QuickResponsesView: UITextViewDelegate {
         let textCount = textView.text.count
         saveResponseButton.isEnabled = textCount > 0
         saveResponseButton.backgroundColor = textCount > 0 ? .telaBlue : .telaGray6
-        characterCountLabel.text = "Charaters left: \(70 - textCount)"
+        characterCountLabel.text = "Characters left: \(70 - textCount)"
     }
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         let newText = (textView.text as NSString).replacingCharacters(in: range, with: text)

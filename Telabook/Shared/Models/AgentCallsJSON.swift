@@ -6,7 +6,7 @@
 //  Copyright © 2020 Anmol Rajpal. All rights reserved.
 //
 
-import Foundation
+import UIKit
 import CoreData
 
 // MARK: - Decodable
@@ -217,6 +217,20 @@ extension AgentCall {
                 default:
                     let message = rawValue == "" ? "Call Status not initialized yet" : "Call Status Unhandled Case: \(rawValue)"
                     fatalError(message)
+            }
+        }
+        
+        var displayValue: String {
+            switch self {
+            case .answered: return "Incoming Call"
+            case .unanswered: return "Missed Call"
+            }
+        }
+        
+        var tintColor: UIColor {
+            switch self {
+            case .answered: return .systemBlue
+            case .unanswered: return .systemRed
             }
         }
     }

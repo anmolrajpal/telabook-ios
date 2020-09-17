@@ -20,13 +20,13 @@ extension AgentCallsViewController {
     /* ------------------------------------------------------------------------------------------------------------ */
     internal func fetchAgentCalls(limit: String, offset: String) {
         isFetching = true
-        
+        handleState()
         let params: [String: String] = [
             "limit": limit,
             "offset": offset
         ]
         
-        APIServer<CustomerDetailsJSON>(apiVersion: .v2).hitEndpoint(endpoint: .FetchAgentCalls(workerID: workerID), httpMethod: .GET, params: params, decoder: JSONDecoder.apiServiceDecoder, completion: agentCallsFetchCompletion)
+        APIServer<AgentCallsJSON>(apiVersion: .v2).hitEndpoint(endpoint: .FetchAgentCalls(workerID: workerID), httpMethod: .GET, params: params, decoder: JSONDecoder.apiServiceDecoder, completion: agentCallsFetchCompletion)
     }
     /* ------------------------------------------------------------------------------------------------------------ */
     
@@ -64,10 +64,16 @@ extension AgentCallsViewController {
                         }
                     }) {
                         if let groupedCallIndex = sections[sectionIndex].groupedCalls.firstIndex(where: { groupedCall -> Bool in
-                            return groupedCall.recentCall.customerCid == call.customerCid &&
-                                groupedCall.recentCall.callDirection == call.callDirection &&
-                                groupedCall.recentCall.callStatus == call.callStatus &&
-                                groupedCall.recentCall.timestampDate == call.timestampDate
+                                let isCustomerCIDMatched = groupedCall.recentCall.customerCid == call.customerCid
+                                let isCallDirectionMatched = groupedCall.recentCall.callDirection == call.callDirection
+                                let isCallStatusMatched = groupedCall.recentCall.callStatus == call.callStatus
+                                if let recentCallDate = groupedCall.recentCall.timestampDate,
+                                    let serverCallDate = call.timestampDate {
+                                    let isCallInSameDay = Calendar.current.isDate(recentCallDate, inSameDayAs: serverCallDate)
+                                    let allConditionsMatched = isCustomerCIDMatched && isCallDirectionMatched && isCallStatusMatched && isCallInSameDay
+                                    return allConditionsMatched
+                                }
+                                return false
                         }) {
                             sections[sectionIndex].groupedCalls[groupedCallIndex].calls.append(call)
                         } else {
@@ -78,7 +84,9 @@ extension AgentCallsViewController {
                     }
                 }
                 self.isFetching = false
-                self.updateUI()
+                DispatchQueue.main.async {
+                    self.updateUI()
+                }
                 self.stopLoaders()
             }
         }

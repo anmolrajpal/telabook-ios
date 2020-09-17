@@ -318,7 +318,7 @@ extension ScheduleNewMessageViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         let textCount = textView.text.count
         placeholderLabel.isHidden = textCount > 0
-        characterCountLabel.text = "Charaters left: \(1000 - textCount)"
+        characterCountLabel.text = "Characters left: \(1000 - textCount)"
     }
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {

@@ -49,8 +49,10 @@ extension AgentCallsViewController {
     }
     
     func configureTableView() {
+//        tableView.separatorInset = UIEdgeInsets(top: 0, left: 65, bottom: 0, right: 0)
         tableView.tableFooterView = UIView(frame: CGRect.zero)
         tableView.delegate = self
+        tableView.refreshControl = tableViewRefreshControl
         tableView.register(AgentCallCell.self)
     }
     
@@ -92,15 +94,29 @@ extension AgentCallsViewController {
         dataSource.apply(snapshot ?? initialSnapshot(), animatingDifferences: animating, completion: { [weak self] in
             guard let self = self else { return }
             if reloadingData { self.tableView.reloadData() }
+            self.handleState()
         })
     }
 }
+
+
+// MARK: - UITableViewDelegate
 
 extension AgentCallsViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return AgentCallCell.cellHeight
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let groupedCall = dataSource.itemIdentifier(for: indexPath) else { return }
+        
+        if groupedCall.calls.count > 1 {
+            let vc = GroupedCallDetailsViewController()
+            vc.agentCalls = groupedCall.calls
+            navigationController?.pushViewController(vc, animated: true)
+        } else {
+            let vc = CallDetailsViewController(agentCall: groupedCall.recentCall)
+            navigationController?.pushViewController(vc, animated: true)
+        }
         
     }
 }

@@ -71,8 +71,6 @@ class AgentCallsViewController: UITableViewController {
     
     
     
-    
-    
     // MARK: - View Constructors
     
     lazy var placeholderLabel:UILabel = {
