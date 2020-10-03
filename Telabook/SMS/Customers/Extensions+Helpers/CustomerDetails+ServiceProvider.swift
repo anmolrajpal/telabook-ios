@@ -45,7 +45,7 @@ extension CustomerDetailsController {
         switch result {
             case .failure(let error):
                 self.isFetching = false
-                self.showAlert(withErrorMessage: error.localizedDescription)
+                self.showAlert(withErrorMessage: error.publicDescription)
             case .success(let resultData):
                 let serverResult = resultData.result
                 switch serverResult {
@@ -102,7 +102,7 @@ extension CustomerDetailsController {
     private func customerDetailsFetchCompletion(result: Result<CustomerDetailsJSON, APIService.APIError>) {
         switch result {
             case .failure(let error):
-                self.showAlert(withErrorMessage: error.localizedDescription) {
+                self.showAlert(withErrorMessage: error.publicDescription) {
                     self.stopDetailsSpinner()
                     self.updateButton.isHidden = false
             }
@@ -197,7 +197,7 @@ extension CustomerDetailsController {
     private func customerDetailsUpdateCompletion(result: Result<APIService.RecurrentResult, APIService.APIError>) {
         switch result {
             case .failure(let error):
-                self.showAlert(withErrorMessage: error.localizedDescription) {
+                self.showAlert(withErrorMessage: error.publicDescription) {
                     TapticEngine.generateFeedback(ofType: .Error)
                     self.stopDetailsSpinner()
                     self.updateButton.isHidden = false

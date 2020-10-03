@@ -168,7 +168,7 @@ extension LoginViewController {
                         TapticEngine.generateFeedback(ofType: .Error)
                         DispatchQueue.main.async {
                             UIAlertController.dismissModalSpinner(controller: self, completion: {
-                                UIAlertController.showTelaAlert(title: "Error", message: error.localizedDescription, action: UIAlertAction(title: "Ok", style: .destructive, handler: { _ in
+                                UIAlertController.showTelaAlert(title: "Error", message: error.publicDescription, action: UIAlertAction(title: "Ok", style: .destructive, handler: { _ in
                                     self.showForgotPasswordDialogBox()
                                 }), controller: self)
                             })
@@ -187,75 +187,7 @@ extension LoginViewController {
     
     
     
-    
-    
-    
-    
-    
-    fileprivate func initiateForgotPasswordSequence(for email:String) {
-        DispatchQueue.main.async {
-            UIAlertController.showModalSpinner(with: "Requesting...", controller: self)
-        }
-        
-        
-        
-        AuthenticationService.shared.forgotPassword(for: email) { (responseStatus, data, serviceError, error) in
-            if let err = error {
-                DispatchQueue.main.async {
-                    print("***Error Sending Forgot Password Request****\n\(err.localizedDescription)")
-                    UIAlertController.dismissModalSpinner(controller: self, completion: {
-                        UIAlertController.showTelaAlert(title: "Error", message: err.localizedDescription, controller: self)
-                    })
-                }
-            } else if let serviceErr = serviceError {
-                DispatchQueue.main.async {
-                    print("***Error Sending Forgot Password Request****\n\(serviceErr.localizedDescription)")
-                    UIAlertController.dismissModalSpinner(controller: self, completion: {
-                        UIAlertController.showTelaAlert(title: "Error", message: serviceErr.localizedDescription, controller: self)
-                    })
-                }
-            } else if let status = responseStatus {
-                guard status == .OK else {
-                    DispatchQueue.main.async {
-                        print("***Error Sending Forgot Password Request****\nInvalid Response: \(status)")
-                        if let data = data {
-                            do {
-                                let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:Any]
-                                let message = json["message"] as? String ?? "Invalid Response\nStatus => \(status)"
-                                UIAlertController.dismissModalSpinner(controller: self, completion: {
-                                    UIAlertController.showTelaAlert(title: "Error", message: message, controller: self)
-                                })
-                            } catch let err {
-                                fatalError("Error decoding JSON: \(err.localizedDescription)")
-                            }
-                        } else {
-                            UIAlertController.dismissModalSpinner(controller: self, completion: {
-                                UIAlertController.showTelaAlert(title: "Error", message: "Invalid Response\nStatus => \(status)", controller: self)
-                            })
-                        }
-                    }
-                    return
-                }
-                DispatchQueue.main.async {
-                    print("***Forgot Password Request Success***")
-                    UIAlertController.dismissModalSpinner(controller: self, completion: {
-                        UIAlertController.showTelaAlert(title: "Success", message: "Request successfuly sent. Please check your mail & follow the instructions.", controller: self)
-                    })
-                }
-                if let data = data {
-                    do {
-                        let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:Any]
-                        let dict = json["data"] as! [String:Any]
-                        let token = dict["token"] as? String ?? "token: nil"
-                        //handle forgot password token
-                        print("Forgot Password Token => \(token)")
-                    } catch let err {
-                        print(print("Error decoding JSON: \(err.localizedDescription)"))
-                    }
-                }
-            }
-        }
-    }
+
 }
 extension LoginViewController: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {

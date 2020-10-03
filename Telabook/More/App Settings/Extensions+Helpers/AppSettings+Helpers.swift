@@ -44,6 +44,7 @@ extension AppSettingsViewController {
                             self.updateUI()
                         }
                     }
+            case .ephemeral: break
                 @unknown default: fatalError()
             }
         }

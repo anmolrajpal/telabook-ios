@@ -36,8 +36,8 @@ extension NewConversationController {
                     operation.completionBlock = {
                         guard case let .success(conversation) = operation.result else {
                             if case let .failure(error) = operation.result {
-                                print(error.localizedDescription)
-                                self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+                                printAndLog(message: error.localizedDescription, log: .network, logType: .error)
+                                self.showAlert(withErrorMessage: error.publicDescription, cancellingOperationQueue: queue)
                             }
                             return
                         }

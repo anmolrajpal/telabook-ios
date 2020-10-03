@@ -275,7 +275,7 @@ class DeleteRedundantBlacklistEntries_Operation: Operation {
             !serverEntries.isEmpty {
             let serverIDs = serverEntries.map { $0.id }.compactMap { $0 }
             
-            let filterPredicate = NSPredicate(format: "NOT (\(#keyPath(BlockedUser.id)) IN %@)", serverIDs)
+            let filterPredicate = NSPredicate(format: "NOT id IN %@", serverIDs)
             fetchRequest.predicate = filterPredicate
         } else {
             print("No Server Entries, deleting all entries")

@@ -154,8 +154,7 @@ extension CustomersViewController {
                 case let operation as FetchSavedCustomersEntries_Operation:
                     operation.completionBlock = {
                         if case let .failure(error) = operation.result {
-                            print(error.localizedDescription)
-                            self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+                            printAndLog(message: error.localizedDescription, log: .coredata, logType: .error)
                         } else {
                             
                         }
@@ -163,15 +162,14 @@ extension CustomersViewController {
                 case let operation as DeleteRedundantCustomerEntries_Operation:
                     operation.completionBlock = {
                         if let error = operation.error {
-                            print(error.localizedDescription)
-                            self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+                            printAndLog(message: error.localizedDescription, log: .coredata, logType: .error)
                         }
                 }
                 case let operation as AddCustomerEntriesFromServerToStore_Operation:
                     operation.completionBlock = {
                         if let error = operation.error {
                             print(error.localizedDescription)
-                            self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+                            printAndLog(message: error.localizedDescription, log: .coredata, logType: .error)
                         } else {
                             DispatchQueue.main.async {
                                 self.stopRefreshers()
@@ -191,10 +189,7 @@ extension CustomersViewController {
                 case let operation as UpdateConversationInStore_ArchivingOperation:
                     operation.completionBlock = {
                         if let error = operation.error {
-                            #if !RELEASE
-                            print("Error updating Archiving operation in Store: \(error)")
-                            #endif
-                            os_log("Error updating Archiving operation in Store: %@", log: .coredata, type: .error, error.localizedDescription)
+                            printAndLog(message: "Error updating Archiving operation in Store: \(error.localizedDescription)", log: .coredata, logType: .error)
                             DispatchQueue.main.async {
                                 completion(false)
                             }
@@ -208,11 +203,8 @@ extension CustomersViewController {
                     operation.completionBlock = {
                         guard case let .failure(error) = operation.result else { return }
                         self.updateConversationInStore(for: operation.customer, archiving: !operation.shouldArchive, completion: {_ in})
-                        self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
-                        #if !RELEASE
-                        print("Error updating Archiving operation on server: \(error)")
-                        #endif
-                        os_log("Error updating Archiving operation on server: %@", log: .network, type: .error, error.localizedDescription)
+                        self.showAlert(withErrorMessage: error.publicDescription, cancellingOperationQueue: queue)
+                        printAndLog(message: "Error updating Archiving operation on Server: \(error.localizedDescription)", log: .network, logType: .error)
                 }
                 /* ------------------------------------------------------------------------------------------------------------ */
                 
@@ -226,10 +218,7 @@ extension CustomersViewController {
                 case let operation as UpdateConversationInStore_PinningOperation:
                     operation.completionBlock = {
                         if let error = operation.error {
-                            #if !RELEASE
-                            print("Error updating Pinning operation in Store: \(error)")
-                            #endif
-                            os_log("Error updating Pinning operation in Store: %@", log: .coredata, type: .error, error.localizedDescription)
+                            printAndLog(message: "Error updating Pinning operation in Store: \(error.localizedDescription)", log: .coredata, logType: .error)
                             completion(false)
                         } else {
                             completion(true)
@@ -249,10 +238,7 @@ extension CustomersViewController {
                 case let operation as MarkBlockCustomerInStore_Operation:
                     operation.completionBlock = {
                         if let error = operation.error {
-                            #if !RELEASE
-                            print("Error updating Blacklist operation in Store: \(error)")
-                            #endif
-                            os_log("Error updating Blacklist operation in Store: %@", log: .coredata, type: .error, error.localizedDescription)
+                            printAndLog(message: "Error updating Blacklist operation in Store: \(error.localizedDescription)", log: .coredata, logType: .error)
                             DispatchQueue.main.async {
                                 completion(false)
                             }
@@ -266,11 +252,8 @@ extension CustomersViewController {
                     operation.completionBlock = {
                         guard case let .failure(error) = operation.result else { return }
                         self.markConversationInStore(isBlocking: false, for: operation.customer)
-                        self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
-                        #if !RELEASE
-                        print("Error updating Blocking operation on server: \(error)")
-                        #endif
-                        os_log("Error updating Blocking operation on server: %@", log: .network, type: .error, error.localizedDescription)
+                        self.showAlert(withErrorMessage: error.publicDescription, cancellingOperationQueue: queue)
+                        printAndLog(message: "Error updating Blacklist operation on Server: \(error.localizedDescription)", log: .network, logType: .error)
                 }
                 /* ------------------------------------------------------------------------------------------------------------ */
                 
@@ -282,10 +265,7 @@ extension CustomersViewController {
                case let operation as MarkDeleteCustomerInStore_Operation:
                    operation.completionBlock = {
                        if let error = operation.error {
-                           #if !RELEASE
-                           print("Error updating Delete operation in Store: \(error)")
-                           #endif
-                           os_log("Error updating Delete operation in Store: %@", log: .coredata, type: .error, error.localizedDescription)
+                        printAndLog(message: "Error updating Delete operation in Store: \(error.localizedDescription)", log: .coredata, logType: .error)
                            DispatchQueue.main.async {
                                completion(false)
                            }
@@ -299,11 +279,8 @@ extension CustomersViewController {
                    operation.completionBlock = {
                        guard case let .failure(error) = operation.result else { return }
                        self.markConversationInStore(isDeleted: false, for: operation.customer)
-                       self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
-                       #if !RELEASE
-                       print("Error updating Deletion operation on server: \(error)")
-                       #endif
-                       os_log("Error updating Deletion operation on server: %@", log: .network, type: .error, error.localizedDescription)
+                       self.showAlert(withErrorMessage: error.publicDescription, cancellingOperationQueue: queue)
+                    printAndLog(message: "Error updating Delete operation on Server: \(error.localizedDescription)", log: .network, logType: .error)
                }
                /* ------------------------------------------------------------------------------------------------------------ */
                 

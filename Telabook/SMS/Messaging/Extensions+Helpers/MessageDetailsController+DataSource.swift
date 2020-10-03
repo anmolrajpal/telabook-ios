@@ -69,6 +69,10 @@ extension MessageDetailsViewController: UICollectionViewDataSource {
             let cell = messagesCollectionView.dequeueReusableCell(ContactMessageCell.self, for: indexPath)
             cell.configure(with: message, at: indexPath, and: messagesCollectionView)
             return cell
+        case .linkPreview:
+            let cell = messagesCollectionView.dequeueReusableCell(LinkPreviewMessageCell.self, for: indexPath)
+            cell.configure(with: message, at: indexPath, and: messagesCollectionView)
+            return cell
         case .custom:
             return messagesDataSource.customCell(for: message, at: indexPath, in: messagesCollectionView)
         }

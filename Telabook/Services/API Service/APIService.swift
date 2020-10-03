@@ -151,7 +151,7 @@ public struct APIService: APIServiceProtocol {
             switch self {
                 case .SignIn: return "/android/signin"
                 case .FetchUserCompanies: return "/android/user/companies"
-                case .UpdatePassword: return "/android/profile/password"
+                case .UpdatePassword: return "/profile/password"
                 case let .UpdateUserProfile(userId): return "/users/\(String(userId))"
                 case .ViewUserProfile: return "/android/signin"
                 case .FetchAgents: return "/agents"

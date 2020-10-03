@@ -390,7 +390,7 @@ extension UIViewController {
     func requestPhotoLibrary(_ actionHandler:(() -> Void)? = nil) {
         let status = PHPhotoLibrary.authorizationStatus()
         switch status {
-            case .authorized: actionHandler?()
+        case .authorized, .limited: actionHandler?()
             case .notDetermined: requestPhotoLibraryPermission(accessGrantedHandler: actionHandler)
             case .denied, .restricted: alertPhotoLibraryAccessNeeded()
             @unknown default: fatalError()
@@ -421,7 +421,7 @@ extension UIViewController {
                     actionHandler?()
                 case .notDetermined:
                     self.requestNotificationsAuthorization(accessGrantedHandler: actionHandler)
-                case .denied:
+            case .denied, .ephemeral:
                     break
                 @unknown default:
                     fatalError()

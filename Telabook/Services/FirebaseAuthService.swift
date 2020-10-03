@@ -17,6 +17,8 @@ final class FirebaseAuthService:NSObject {
     
     typealias FirebaseTokenFetchCompletion = (Result<String, FirebaseError>) -> Void
     enum FirebaseError:Error, LocalizedError {
+        static let commonErrorDescription = "Something went wrong. Please try again in a while."
+        
         case cancelled
         case noCurrentUser
         case referenceError
@@ -40,6 +42,14 @@ final class FirebaseAuthService:NSObject {
                 case let .databaseRemoveValueError(error): return "Error removing value from Firebase Database: \(error.localizedDescription)"
                 case let .storageDeleteObjectError(error): return "Error deleting object from Firebase Storage: \(error.localizedDescription)"
                 case .unknown: return "Firebase Error (Reason: Unknown). Please try signin in again."
+            }
+        }
+        
+        var publicDescription: String {
+            switch self {
+            case .cancelled, .referenceError, .authenticationError, .noIDToken: return FirebaseError.commonErrorDescription
+            case .noCurrentUser, .unknown: return "Session expired. Please login again."
+            default: return "Application error. Please report this bug."
             }
         }
     }

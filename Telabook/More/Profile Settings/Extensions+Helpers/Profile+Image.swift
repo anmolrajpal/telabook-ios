@@ -84,7 +84,7 @@ extension SettingsViewController {
     fileprivate func requestPhotoLibrary() {
         let status = PHPhotoLibrary.authorizationStatus()
         switch status {
-            case .authorized: presentPhotoLibrary()
+            case .authorized, .limited: presentPhotoLibrary()
             case .notDetermined: requestPhotoLibraryPermission()
             case .denied, .restricted: alertPhotoLibraryAccessNeeded()
             @unknown default: fatalError()

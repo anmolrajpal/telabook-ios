@@ -410,11 +410,16 @@ class SettingsViewController: UIViewController {
         emailTextField.keyboardType = .emailAddress
         emailTextField.textContentType = .emailAddress
         emailTextField.isEnabled = false
+        emailTextField.textColor = .telaGray6
+        
         assignDIDsTextField.keyboardType = .phonePad
         assignDIDsTextField.textContentType = .telephoneNumber
         assignDIDsTextField.isEnabled = false
+        assignDIDsTextField.textColor = .telaGray6
+        
         phoneNumberTextField.keyboardType = .phonePad
         phoneNumberTextField.textContentType = .telephoneNumber
+        
         contactEmailTextField.keyboardType = .emailAddress
         contactEmailTextField.textContentType = .emailAddress
         
@@ -541,7 +546,7 @@ class SettingsViewController: UIViewController {
         if let placeholderText = placeholder {
             textField.attributedPlaceholder = NSAttributedString(string: placeholderText, attributes: [.foregroundColor: UIColor.telaGray5])
         }
-        textField.textColor = UIColor.telaGray7
+        textField.textColor = UIColor.secondaryLabel
         textField.textAlignment = .left
         textField.keyboardAppearance = .dark
         textField.borderStyle = .none

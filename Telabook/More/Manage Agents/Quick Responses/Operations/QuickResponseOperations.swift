@@ -254,7 +254,7 @@ class DeleteRedundantQuickResponsesEntries_Operation: Operation {
         if let serverEntries = serverEntries,
             !serverEntries.isEmpty {
             let serverIDs = serverEntries.map { $0.id }.compactMap { $0 }
-            fetchRequest.predicate = NSPredicate(format: "NOT (\(#keyPath(QuickResponse.id)) IN %@)", serverIDs)
+            fetchRequest.predicate = NSPredicate(format: "NOT id IN %@", serverIDs)
         } else {
             print("No Server Entries, deleting all entries")
         }

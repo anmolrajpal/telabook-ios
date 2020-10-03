@@ -21,7 +21,7 @@ class ScheduleNewMessageViewController: UIViewController {
             self.selectedCustomerIndexPath = nil
             self.customerTextField.text = nil
             let name = agent.personName
-            let phoneNumber = agent.phoneNumber
+            let phoneNumber = agent.didNumber
             if !name.isBlank {
                 self.agentTextField.text = "\(name ?? "") (\(phoneNumber ?? ""))"
             } else {

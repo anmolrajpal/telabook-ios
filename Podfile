@@ -10,7 +10,6 @@ target 'Telabook' do
 	pod 'Firebase/Auth'
   pod 'Firebase/Messaging'
 	pod 'ReachabilitySwift'
-  # Swift 5.0
   pod 'MessageKit'
   pod 'PINRemoteImage'
 end

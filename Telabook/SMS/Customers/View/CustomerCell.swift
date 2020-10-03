@@ -41,12 +41,7 @@ class CustomerCell: UITableViewCell {
     
     func configureCell(with customer: Customer, animated: Bool = false) {
         let phoneNumber = customer.phoneNumber ?? ""
-        let number:String
-        if let formattedPhoneNumber = phoneNumber.getE164FormattedNumber() {
-            number = formattedPhoneNumber
-        } else {
-            number = phoneNumber
-        }
+        let number = phoneNumber.getE164FormattedNumber(shouldPrefixCountryCode: false) ?? phoneNumber
         let name = customer.addressBookName
         let messageType = MessageCategory(stringValue: customer.messageType ?? "")
         let lastMessage = customer.lastMessageText
@@ -110,12 +105,9 @@ class CustomerCell: UITableViewCell {
     
     func configureCell(with conversation: LookupConversationProperties, animated: Bool = false) {
         let phoneNumber = conversation.customerPhoneNumber ?? ""
-        let number:String
-        if let formattedPhoneNumber = phoneNumber.getE164FormattedNumber() {
-            number = formattedPhoneNumber
-        } else {
-            number = phoneNumber
-        }
+        let number = phoneNumber.getE164FormattedNumber(shouldPrefixCountryCode: false) ?? phoneNumber
+        
+        
         let name = conversation.customerPerson
         let messageType = MessageCategory(stringValue: conversation.messageType ?? "")
         let lastMessage = conversation.allLastMessageText

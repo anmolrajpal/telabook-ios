@@ -96,8 +96,7 @@ extension AgentsViewController {
                 case let operation as FetchMostRecentAgentsEntryOperation:
                     operation.completionBlock = {
                         if case let .failure(error) = operation.result {
-                            print(error.localizedDescription)
-                            self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+                            printAndLog(message: error.localizedDescription, log: .coredata, logType: .error)
                         } else {
                             
                         }
@@ -105,14 +104,13 @@ extension AgentsViewController {
                 case let operation as DownloadAgentsEntriesFromServerOperation:
                     operation.completionBlock = {
                         guard case let .failure(error) = operation.result else { return }
-                        print(error.localizedDescription)
-                        self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+                        printAndLog(message: error.localizedDescription, log: .coredata, logType: .error)
+                        self.showAlert(withErrorMessage: error.publicDescription, cancellingOperationQueue: queue)
                 }
                 case let operation as DeleteRedundantAgentEntriesOperation:
                     operation.completionBlock = {
                         if let error = operation.error {
-                            print(error.localizedDescription)
-                            self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+                            printAndLog(message: error.localizedDescription, log: .coredata, logType: .error)
                         }
                 }
                 /* Not in use
@@ -127,8 +125,7 @@ extension AgentsViewController {
                 case let operation as UpsertAgentEntriesInStoreOperation:
                     operation.completionBlock = {
                         if let error = operation.error {
-                            print(error.localizedDescription)
-                            self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+                            printAndLog(message: error.localizedDescription, log: .coredata, logType: .error)
                         } else {
                             DispatchQueue.main.async {
                                 self.stopRefreshers()
@@ -144,7 +141,7 @@ extension AgentsViewController {
                 case let operation as UpdatePendingMessagesCount_Operation:
                     operation.completionBlock = {
                         if let error = operation.error {
-                            self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+                            printAndLog(message: error.localizedDescription, log: .coredata, logType: .error)
                         }
                 }
                 default: break

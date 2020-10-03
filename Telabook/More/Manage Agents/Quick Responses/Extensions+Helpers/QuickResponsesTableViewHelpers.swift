@@ -30,10 +30,11 @@ extension QuickResponsesViewController {
             cell.textLabel?.text = quickResponse.answer
             cell.selectionStyle = .none
             cell.backgroundColor = .clear
-            cell.textLabel?.textColor = UIColor.telaGray7
+            cell.textLabel?.textColor = UIColor.white
             cell.textLabel?.lineBreakMode = .byWordWrapping
             cell.textLabel?.numberOfLines = 0
-            cell.textLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 16)
+            cell.textLabel?.font = UIFont.gothamBook(forTextStyle: .callout)
+            cell.textLabel?.adjustsFontForContentSizeCategory = true
             return cell
         })
     }

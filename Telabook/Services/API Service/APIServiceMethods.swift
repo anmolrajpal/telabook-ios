@@ -55,14 +55,14 @@ extension APIService {
                 if let expectedResponse = guardResponse {
                     guard responseStatus == expectedResponse else {
                         DispatchQueue.main.async {
-                            completion(.failure(.unexptectedResponse(response: responseStatus)))
+                            completion(.failure(.unexpectedResponse(response: responseStatus, data: data)))
                         }
                         return
                     }
                 } else {
                     guard responseStatus == .OK || responseStatus == .Created || responseStatus == .Accepted || responseStatus == .NoContent else {
                         DispatchQueue.main.async {
-                            completion(.failure(.unexptectedResponse(response: responseStatus)))
+                            completion(.failure(.unexpectedResponse(response: responseStatus, data: data)))
                         }
                         return
                     }
@@ -87,7 +87,7 @@ extension APIService {
                         #if !RELEASE
                         print("JSON Decoding Error: \(error.localizedDescription)")
                         #endif
-                        completion(.failure(.jsonDecodingError(error: error)))
+                        completion(.failure(.jsonDecodingError(error: error, data: data)))
                     }
                 }
             }
@@ -144,14 +144,14 @@ extension APIService {
                 if let expectedResponse = guardResponse {
                     guard responseStatus == expectedResponse else {
                         DispatchQueue.main.async {
-                            completion(.failure(.unexptectedResponse(response: responseStatus)))
+                            completion(.failure(.unexpectedResponse(response: responseStatus, data: data)))
                         }
                         return
                     }
                 } else {
                     guard responseStatus == .OK || responseStatus == .Created || responseStatus == .Accepted || responseStatus == .NoContent else {
                         DispatchQueue.main.async {
-                            completion(.failure(.unexptectedResponse(response: responseStatus)))
+                            completion(.failure(.unexpectedResponse(response: responseStatus, data: data)))
                         }
                         return
                     }
@@ -176,7 +176,7 @@ extension APIService {
                         #if !RELEASE
                         print("JSON Decoding Error: \(error.localizedDescription)")
                         #endif
-                        completion(.failure(.jsonDecodingError(error: error)))
+                        completion(.failure(.jsonDecodingError(error: error, data: data)))
                     }
                 }
             }
@@ -233,14 +233,14 @@ extension APIService {
                 if let expectedResponse = guardResponse {
                     guard responseStatus == expectedResponse else {
                         DispatchQueue.main.async {
-                            completion(.failure(.unexptectedResponse(response: responseStatus)))
+                            completion(.failure(.unexpectedResponse(response: responseStatus, data: data)))
                         }
                         return
                     }
                 } else {
                     guard responseStatus == .OK || responseStatus == .Created || responseStatus == .Accepted || responseStatus == .NoContent else {
                         DispatchQueue.main.async {
-                            completion(.failure(.unexptectedResponse(response: responseStatus)))
+                            completion(.failure(.unexpectedResponse(response: responseStatus, data: data)))
                         }
                         return
                     }
@@ -267,7 +267,7 @@ extension APIService {
                             #if !RELEASE
                             print("JSON Decoding Error: \(error.localizedDescription)")
                             #endif
-                            completion(.failure(.jsonDecodingError(error: error)))
+                            completion(.failure(.jsonDecodingError(error: error, data: data)))
                         }
                     }
                 } else {
@@ -328,14 +328,14 @@ extension APIService {
                 if let expectedResponse = guardResponse {
                     guard responseStatus == expectedResponse else {
                         DispatchQueue.main.async {
-                            completion(.failure(.unexptectedResponse(response: responseStatus)))
+                            completion(.failure(.unexpectedResponse(response: responseStatus, data: data)))
                         }
                         return
                     }
                 } else {
                     guard responseStatus == .OK || responseStatus == .Created || responseStatus == .Accepted || responseStatus == .NoContent else {
                         DispatchQueue.main.async {
-                            completion(.failure(.unexptectedResponse(response: responseStatus)))
+                            completion(.failure(.unexpectedResponse(response: responseStatus, data: data)))
                         }
                         return
                     }
@@ -360,7 +360,7 @@ extension APIService {
                         #if !RELEASE
                         print("JSON Decoding Error: \(error.localizedDescription)")
                         #endif
-                        completion(.failure(.jsonDecodingError(error: error)))
+                        completion(.failure(.jsonDecodingError(error: error, data: data)))
                     }
                 }
             }
@@ -415,14 +415,14 @@ extension APIService {
                 if let expectedResponse = guardResponse {
                     guard responseStatus == expectedResponse else {
                         DispatchQueue.main.async {
-                            completion(.failure(.unexptectedResponse(response: responseStatus)))
+                            completion(.failure(.unexpectedResponse(response: responseStatus, data: data)))
                         }
                         return
                     }
                 } else {
                     guard responseStatus == .OK || responseStatus == .Created || responseStatus == .Accepted || responseStatus == .NoContent else {
                         DispatchQueue.main.async {
-                            completion(.failure(.unexptectedResponse(response: responseStatus)))
+                            completion(.failure(.unexpectedResponse(response: responseStatus, data: data)))
                         }
                         return
                     }
@@ -447,7 +447,7 @@ extension APIService {
                         #if !RELEASE
                         print("JSON Decoding Error: \(error.localizedDescription)")
                         #endif
-                        completion(.failure(.jsonDecodingError(error: error)))
+                        completion(.failure(.jsonDecodingError(error: error, data: data)))
                     }
                 }
             }
@@ -501,14 +501,14 @@ extension APIService {
                 if let expectedResponse = guardResponse {
                     guard responseStatus == expectedResponse else {
                         DispatchQueue.main.async {
-                            completion(.failure(.unexptectedResponse(response: responseStatus)))
+                            completion(.failure(.unexpectedResponse(response: responseStatus, data: data)))
                         }
                         return
                     }
                 } else {
                     guard responseStatus == .OK || responseStatus == .Created || responseStatus == .Accepted || responseStatus == .NoContent else {
                         DispatchQueue.main.async {
-                            completion(.failure(.unexptectedResponse(response: responseStatus)))
+                            completion(.failure(.unexpectedResponse(response: responseStatus, data: data)))
                         }
                         return
                     }
@@ -533,7 +533,7 @@ extension APIService {
                         #if !RELEASE
                         print("JSON Decoding Error: \(error.localizedDescription)")
                         #endif
-                        completion(.failure(.jsonDecodingError(error: error)))
+                        completion(.failure(.jsonDecodingError(error: error, data: data)))
                     }
                 }
             }
@@ -587,14 +587,14 @@ extension APIService {
                 if let expectedResponse = guardResponse {
                     guard responseStatus == expectedResponse else {
                         DispatchQueue.main.async {
-                            completion(.failure(.unexptectedResponse(response: responseStatus)))
+                            completion(.failure(.unexpectedResponse(response: responseStatus, data: data)))
                         }
                         return
                     }
                 } else {
                     guard responseStatus == .OK || responseStatus == .Created || responseStatus == .Accepted || responseStatus == .NoContent else {
                         DispatchQueue.main.async {
-                            completion(.failure(.unexptectedResponse(response: responseStatus)))
+                            completion(.failure(.unexpectedResponse(response: responseStatus, data: data)))
                         }
                         return
                     }
@@ -619,7 +619,7 @@ extension APIService {
                         #if !RELEASE
                         print("JSON Decoding Error: \(error.localizedDescription)")
                         #endif
-                        completion(.failure(.jsonDecodingError(error: error)))
+                        completion(.failure(.jsonDecodingError(error: error, data: data)))
                     }
                 }
             }
@@ -685,14 +685,14 @@ extension APIService {
             if let expectedResponse = guardResponse {
                 guard responseStatus == expectedResponse else {
                     DispatchQueue.main.async {
-                        completion(.failure(.unexptectedResponse(response: responseStatus)))
+                        completion(.failure(.unexpectedResponse(response: responseStatus, data: data)))
                     }
                     return
                 }
             } else {
                 guard responseStatus == .OK || responseStatus == .Created || responseStatus == .Accepted || responseStatus == .NoContent else {
                     DispatchQueue.main.async {
-                        completion(.failure(.unexptectedResponse(response: responseStatus)))
+                        completion(.failure(.unexpectedResponse(response: responseStatus, data: data)))
                     }
                     return
                 }
@@ -717,7 +717,7 @@ extension APIService {
                     #if !RELEASE
                     print("JSON Decoding Error: \(error.localizedDescription)")
                     #endif
-                    completion(.failure(.jsonDecodingError(error: error)))
+                    completion(.failure(.jsonDecodingError(error: error, data: data)))
                 }
             }
         }
@@ -773,14 +773,14 @@ extension APIService {
             if let expectedResponse = guardResponse {
                 guard responseStatus == expectedResponse else {
                     DispatchQueue.main.async {
-                        completion(.failure(.unexptectedResponse(response: responseStatus)))
+                        completion(.failure(.unexpectedResponse(response: responseStatus, data: data)))
                     }
                     return
                 }
             } else {
                 guard responseStatus == .OK || responseStatus == .Created || responseStatus == .Accepted || responseStatus == .NoContent else {
                     DispatchQueue.main.async {
-                        completion(.failure(.unexptectedResponse(response: responseStatus)))
+                        completion(.failure(.unexpectedResponse(response: responseStatus, data: data)))
                     }
                     return
                 }
@@ -807,7 +807,7 @@ extension APIService {
                         #if !RELEASE
                         print("JSON Decoding Error: \(error.localizedDescription)")
                         #endif
-                        completion(.failure(.jsonDecodingError(error: error)))
+                        completion(.failure(.jsonDecodingError(error: error, data: data)))
                     }
                 }
             } else {

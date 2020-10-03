@@ -114,8 +114,7 @@ extension MessagesController {
         let operation = MergeMessageEntriesFromFirebaseToStore_Operation(context: context, conversation: referenceContext, serverEntries: entries, fetchedEntries: fetchedEntries)
         operation.completionBlock = {
             if let error = operation.error {
-                print(error.localizedDescription)
-                self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
+                printAndLog(message: error.localizedDescription, log: .coredata, logType: .error)
             } else {
                 if operation.serverEntries?.isEmpty == true { self.shouldFetchMore = false }
                 self.messages.isEmpty ?

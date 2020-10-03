@@ -608,7 +608,7 @@ class CustomerDetailsViewController: UIViewController {
                 print(err)
                 DispatchQueue.main.async {
                     self.stopSpinner()
-                    UIAlertController.showTelaAlert(title: "Error", message: err.localizedDescription, controller: self)
+                    UIAlertController.showTelaAlert(title: "Error", message: err.publicDescription, controller: self)
                 }
             } else if let token = token {
                 DispatchQueue.main.async {

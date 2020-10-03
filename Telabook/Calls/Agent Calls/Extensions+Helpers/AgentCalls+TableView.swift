@@ -47,10 +47,15 @@ extension AgentCallsViewController {
             return snapshot().sectionIdentifiers[section].title
         }
     }
-    
+    func createSpinnerFooterView() -> UIView {
+        let footerView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 80))
+        footerView.addSubview(footerSpinner)
+        footerSpinner.centerInSuperview()
+        return footerView
+    }
     func configureTableView() {
 //        tableView.separatorInset = UIEdgeInsets(top: 0, left: 65, bottom: 0, right: 0)
-        tableView.tableFooterView = UIView(frame: CGRect.zero)
+        tableView.tableFooterView = createSpinnerFooterView()
         tableView.delegate = self
         tableView.refreshControl = tableViewRefreshControl
         tableView.register(AgentCallCell.self)
@@ -118,5 +123,27 @@ extension AgentCallsViewController {
             navigationController?.pushViewController(vc, animated: true)
         }
         
+    }
+}
+
+
+// MARK: - UIScrollViewDelegate
+
+extension AgentCallsViewController {
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if let footerView = tableView.tableFooterView {
+            if !shouldFetchMore {
+                footerView.frame.size.height = 0
+                tableView.tableFooterView = footerView
+            }
+            shouldFetchMore && !sections.isEmpty ? footerSpinner.startAnimating() : footerSpinner.stopAnimating()
+        }
+        
+        let position = scrollView.contentOffset.y
+        let threshold = tableView.contentSize.height - 100 - scrollView.frame.size.height
+        
+        if position > threshold {
+            paginateAgentCalls()
+        }
     }
 }

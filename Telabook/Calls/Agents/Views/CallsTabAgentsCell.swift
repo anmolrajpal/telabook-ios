@@ -39,8 +39,8 @@ class CallsTabAgentsCell: UITableViewCell {
         
         agentNameLabel.text = name
         
-        if let phoneNumber = agent.phoneNumber, !phoneNumber.isBlank {
-            phoneNumberLabel.text = phoneNumber.getE164FormattedNumber()?.replacingOccurrences(of: "+1 ", with: "") ?? phoneNumber
+        if let phoneNumber = agent.didNumber, !phoneNumber.isBlank {
+            phoneNumberLabel.text = phoneNumber.getE164FormattedNumber(shouldPrefixCountryCode: false)
         }
         
 //        let count = Int(agent.externalPendingMessagesCount)

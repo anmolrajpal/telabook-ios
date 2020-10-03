@@ -48,7 +48,6 @@
 		6F21377A24742DD2002AB150 /* NewConversationCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F21377924742DD1002AB150 /* NewConversationCodable.swift */; };
 		6F21378224743529002AB150 /* MessagesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F21378124743529002AB150 /* MessagesController.swift */; };
 		6F21378424743535002AB150 /* MessagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F21378324743535002AB150 /* MessagesView.swift */; };
-		6F234EE822D606DB001FDAD6 /* ScheduleMessagesCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F234EE722D606DB001FDAD6 /* ScheduleMessagesCodable.swift */; };
 		6F23BCFF22D724A70001A888 /* UserProfileCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F23BCFE22D724A70001A888 /* UserProfileCodable.swift */; };
 		6F23BD0122D7299A0001A888 /* UserProfileDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F23BD0022D7299A0001A888 /* UserProfileDataProvider.swift */; };
 		6F23BD0722D9F0570001A888 /* ScheduleMessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F23BD0622D9F0570001A888 /* ScheduleMessageViewController.swift */; };
@@ -369,7 +368,6 @@
 		6F21377924742DD1002AB150 /* NewConversationCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewConversationCodable.swift; sourceTree = "<group>"; };
 		6F21378124743529002AB150 /* MessagesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesController.swift; sourceTree = "<group>"; };
 		6F21378324743535002AB150 /* MessagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesView.swift; sourceTree = "<group>"; };
-		6F234EE722D606DB001FDAD6 /* ScheduleMessagesCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ScheduleMessagesCodable.swift; path = "../../Manage Agents/Model/ScheduleMessagesCodable.swift"; sourceTree = "<group>"; };
 		6F23BCFE22D724A70001A888 /* UserProfileCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileCodable.swift; sourceTree = "<group>"; };
 		6F23BD0022D7299A0001A888 /* UserProfileDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileDataProvider.swift; sourceTree = "<group>"; };
 		6F23BD0622D9F0570001A888 /* ScheduleMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleMessageViewController.swift; sourceTree = "<group>"; };
@@ -974,7 +972,6 @@
 			children = (
 				6F8927FC24A8E8C30025DF64 /* Operations */,
 				6F23BCFD22D724200001A888 /* API */,
-				6F23BCFC22D7241D0001A888 /* Model */,
 				6F23BCFB22D724170001A888 /* View */,
 				6F23BCFA22D724120001A888 /* Controller */,
 				6F23BCF922D724070001A888 /* Extensions+Helpers */,
@@ -1016,14 +1013,6 @@
 				6F97BA8F24A922B500F8DE72 /* ScheduledMessageCellView.swift */,
 			);
 			path = View;
-			sourceTree = "<group>";
-		};
-		6F23BCFC22D7241D0001A888 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				6F234EE722D606DB001FDAD6 /* ScheduleMessagesCodable.swift */,
-			);
-			path = Model;
 			sourceTree = "<group>";
 		};
 		6F23BCFD22D724200001A888 /* API */ = {
@@ -2240,7 +2229,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1020;
-				LastUpgradeCheck = 1150;
+				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = "Anmol Rajpal";
 				TargetAttributes = {
 					6FB11ADF229BDDBD0098D050 = {
@@ -2649,7 +2638,6 @@
 				6F9453C122DB4C1A00047C7F /* CustomerPickerDataProvider.swift in Sources */,
 				6F00F2E024A5356F001E33D9 /* FirebaseMediaMetadata.swift in Sources */,
 				6F8A82FD249A1E05002ACDFE /* Messages+Multimedia.swift in Sources */,
-				6F234EE822D606DB001FDAD6 /* ScheduleMessagesCodable.swift in Sources */,
 				6F8A832F249F8771002ACDFE /* AgentGallery+DataProvider.swift in Sources */,
 				6F41014122DDF9120038AA76 /* CallGroupsTableViewExtensions.swift in Sources */,
 				6F97BA8C24A915BE00F8DE72 /* ScheduledMessages+Helpers.swift in Sources */,
@@ -2700,6 +2688,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -2738,7 +2727,7 @@
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 35;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2781,6 +2770,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -2844,6 +2834,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -2882,7 +2873,7 @@
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 35;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2906,7 +2897,7 @@
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 35;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2949,6 +2940,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -2987,7 +2979,7 @@
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 35;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;

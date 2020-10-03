@@ -26,12 +26,13 @@ class AgentCallsViewController: UITableViewController {
     }
     
     // MARK: - Properties
-    var groupedCalls = [GroupedCall]()
-    var agentCalls = [AgentCallProperties]()
+//    var groupedCalls = [GroupedCall]()
+//    var agentCalls = [AgentCallProperties]()
     var offset = 0
     var limit = 50
     var dataSource: DataSource! = nil
     var isFetching = false
+    var shouldFetchMore = true
     var sections = [SectionType]()
     
     // MARK: - Init
@@ -61,7 +62,10 @@ class AgentCallsViewController: UITableViewController {
         commonInit()
     }
     
-    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+    }
     
     
     
@@ -93,9 +97,18 @@ class AgentCallsViewController: UITableViewController {
         aiView.translatesAutoresizingMaskIntoConstraints = false
         return aiView
     }()
+    lazy var footerSpinner: UIActivityIndicatorView = {
+        let aiView = UIActivityIndicatorView(style: .medium)
+        aiView.backgroundColor = .clear
+        aiView.hidesWhenStopped = true
+        aiView.color = UIColor.white
+        aiView.clipsToBounds = true
+        return aiView
+    }()
     lazy var tableViewRefreshControl:UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         refreshControl.tintColor = UIColor.telaGray7
         return refreshControl
     }()
+    
 }

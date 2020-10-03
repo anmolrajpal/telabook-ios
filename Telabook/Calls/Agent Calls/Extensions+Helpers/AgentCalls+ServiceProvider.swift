@@ -11,11 +11,20 @@ import CoreData
 
 extension AgentCallsViewController {
     
+    
+    
     func fetchAgentCalls() {
         let limit = String(self.limit)
         let offset = String(self.offset)
         fetchAgentCalls(limit: limit, offset: offset)
     }
+    
+    func paginateAgentCalls() {
+        guard !isFetching && shouldFetchMore else { return }
+        offset = offset + limit
+        fetchAgentCalls(limit: String(limit), offset: String(offset))
+    }
+    
     
     /* ------------------------------------------------------------------------------------------------------------ */
     internal func fetchAgentCalls(limit: String, offset: String) {
@@ -34,7 +43,7 @@ extension AgentCallsViewController {
     private func agentCallsFetchCompletion(result: Result<AgentCallsJSON, APIService.APIError>) {
         switch result {
         case .failure(let error):
-            self.showAlert(withErrorMessage: error.localizedDescription) {
+            self.showAlert(withErrorMessage: error.publicDescription) {
                 self.isFetching = false
                 self.stopLoaders()
                 self.handleState()
@@ -44,10 +53,10 @@ extension AgentCallsViewController {
             switch serverResult {
             case .failure:
                 let errorMessage = "Error: Failed to fetch agent calls from server"
-                self.showAlert(withErrorMessage: resultData.message ?? errorMessage) {
-                    self.isFetching = false
-                    self.stopLoaders()
-                    self.handleState()
+                self.showAlert(withErrorMessage: resultData.message ?? errorMessage) { [self] in
+                    isFetching = false
+                    stopLoaders()
+                    handleState()
                 }
             case .success:
                 let calls = resultData.agentCalls
@@ -83,11 +92,12 @@ extension AgentCallsViewController {
                         sections.append(SectionType(groupedCalls: [ItemType(calls: [call])]))
                     }
                 }
-                self.isFetching = false
-                DispatchQueue.main.async {
-                    self.updateUI()
+                isFetching = false
+                shouldFetchMore = calls.count == 50
+                DispatchQueue.main.async { [self] in
+                    updateUI()
                 }
-                self.stopLoaders()
+                stopLoaders()
             }
         }
     }

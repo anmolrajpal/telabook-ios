@@ -243,7 +243,7 @@ class HitEndpointOperation<T:Decodable>: Operation {
             
             if let expectedResponse = self.guardResponse {
                 guard responseStatus == expectedResponse else {
-                    self.finish(result: .failure(.unexptectedResponse(response: responseStatus)))
+                    self.finish(result: .failure(.unexpectedResponse(response: responseStatus)))
                     return
                 }
             } else {
@@ -258,7 +258,7 @@ class HitEndpointOperation<T:Decodable>: Operation {
                             }
                         }
                     }
-                    self.finish(result: .failure(.unexptectedResponse(response: responseStatus)))
+                    self.finish(result: .failure(.unexpectedResponse(response: responseStatus, data: data)))
                     return
                 }
             }
@@ -288,7 +288,7 @@ class HitEndpointOperation<T:Decodable>: Operation {
                         let message = "JSON Decoding Error: \(error)"
                         printAndLog(message: message, log: .network, logType: .error)
                     }
-                    self.finish(result: .failure(.jsonDecodingError(error: error)))
+                    self.finish(result: .failure(.jsonDecodingError(error: error, data: data)))
                 }
             } else {
                 let customObjectString = "{\"result\":\"success\",\"message\":\"Success. Empty Data or Data not required.\",\"data\":{}}"
