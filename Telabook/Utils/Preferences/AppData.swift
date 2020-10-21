@@ -23,7 +23,7 @@ struct AppData {
     static var userId: Int
     
     @UserDefaultsWrapper(key: .userInfo, defaultValue: nil)
-    static var userInfo: UserInfoCodable?
+    static var userInfo: UserProperties?
     
     @UserDefaultsWrapper(key: .encryptionKey, defaultValue: "")
     static var encryptionKey: String

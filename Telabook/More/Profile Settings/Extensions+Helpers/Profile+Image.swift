@@ -120,7 +120,7 @@ extension SettingsViewController {
     // MARK: - Upload Profile Image
     
     private func uploadImage(_ image: UIImage) {
-        guard let username = userProfile?.user?.username else {
+        guard let username = userProfile?.username else {
             let errorMessage = "Error uploading profile image: Username not found"
             printAndLog(message: errorMessage, log: .default, logType: .error)
             return

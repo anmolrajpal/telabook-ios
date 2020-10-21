@@ -67,7 +67,7 @@ final class CustomUtils {
         let groups = fullName.split(separator: " ")
         let firstName = groups.first
         let lastName = groups.last
-        let initials:String = String(firstName?.first ?? "*") + String(lastName?.first ?? "*")
+        let initials:String = "\(String(firstName?.first ?? "*"))\(String(lastName?.first ?? "*"))"
         return initials
     }
 }

@@ -22,6 +22,11 @@
 		6F02B2E22461CBC000FFB34E /* AutoResponseOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F02B2E12461CBC000FFB34E /* AutoResponseOperations.swift */; };
 		6F02B2E42461EF3800FFB34E /* AutoResponseServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F02B2E32461EF3800FFB34E /* AutoResponseServiceProvider.swift */; };
 		6F02E9AC22DF45BF005708B0 /* AssertionModalController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F02E9AB22DF45BF005708B0 /* AssertionModalController.swift */; };
+		6F05C32B2528B0EC001C7FD2 /* Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F05C32A2528B0EC001C7FD2 /* Audio.swift */; };
+		6F05C3302528B178001C7FD2 /* Call.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F05C32F2528B178001C7FD2 /* Call.swift */; };
+		6F05C3342528B182001C7FD2 /* CallManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F05C3332528B182001C7FD2 /* CallManager.swift */; };
+		6F05C3372528B236001C7FD2 /* CallProviderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F05C3362528B236001C7FD2 /* CallProviderDelegate.swift */; };
+		6F05C33A2528C123001C7FD2 /* UserJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F05C3392528C123001C7FD2 /* UserJSON.swift */; };
 		6F065343246487F100F857C1 /* CustomersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F065342246487F100F857C1 /* CustomersViewController.swift */; };
 		6F0653452464880100F857C1 /* CustomersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0653442464880100F857C1 /* CustomersView.swift */; };
 		6F0653472464881100F857C1 /* CustomerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0653462464881100F857C1 /* CustomerCell.swift */; };
@@ -342,6 +347,11 @@
 		6F02B2E12461CBC000FFB34E /* AutoResponseOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoResponseOperations.swift; sourceTree = "<group>"; };
 		6F02B2E32461EF3800FFB34E /* AutoResponseServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoResponseServiceProvider.swift; sourceTree = "<group>"; };
 		6F02E9AB22DF45BF005708B0 /* AssertionModalController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssertionModalController.swift; sourceTree = "<group>"; };
+		6F05C32A2528B0EC001C7FD2 /* Audio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Audio.swift; sourceTree = "<group>"; };
+		6F05C32F2528B178001C7FD2 /* Call.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Call.swift; sourceTree = "<group>"; };
+		6F05C3332528B182001C7FD2 /* CallManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallManager.swift; sourceTree = "<group>"; };
+		6F05C3362528B236001C7FD2 /* CallProviderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallProviderDelegate.swift; sourceTree = "<group>"; };
+		6F05C3392528C123001C7FD2 /* UserJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserJSON.swift; sourceTree = "<group>"; };
 		6F065342246487F100F857C1 /* CustomersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomersViewController.swift; sourceTree = "<group>"; };
 		6F0653442464880100F857C1 /* CustomersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomersView.swift; sourceTree = "<group>"; };
 		6F0653462464881100F857C1 /* CustomerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerCell.swift; sourceTree = "<group>"; };
@@ -402,6 +412,7 @@
 		6F41014222DE13680038AA76 /* ToggleCallGroupHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleCallGroupHelpers.swift; sourceTree = "<group>"; };
 		6F46A8BA22D062750042A667 /* FollowUpAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FollowUpAPI.swift; path = "Telabook/SMS/Internal Conversations/Model/FollowUpAPI.swift"; sourceTree = SOURCE_ROOT; };
 		6F46A8BC22D39E790042A667 /* Checkbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Checkbox.swift; sourceTree = "<group>"; };
+		6F48025D2529A99B00BC3AF2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6F5064AC24A09147003CAC2E /* AddMediaCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddMediaCell.swift; sourceTree = "<group>"; };
 		6F5064AE24A0D012003CAC2E /* ConversationGalleryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationGalleryController.swift; sourceTree = "<group>"; };
 		6F5064B024A0D088003CAC2E /* ConversationGallery+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationGallery+Helpers.swift"; sourceTree = "<group>"; };
@@ -525,7 +536,6 @@
 		6F987A7F245CC1B500C6046E /* FirebaseOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseOperations.swift; sourceTree = "<group>"; };
 		6F987A81245CCA9000C6046E /* APIOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIOperations.swift; sourceTree = "<group>"; };
 		6F9E6EB9248AD81B0001950E /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		6F9E6EBA248AD82A0001950E /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6F9E6EBB248AD8420001950E /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6F9E6EBC248E442E0001950E /* Messages+DataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Messages+DataProvider.swift"; sourceTree = "<group>"; };
 		6FA3DFEE2475BFDE0083AB13 /* Blacklist+SearchHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Blacklist+SearchHelpers.swift"; sourceTree = "<group>"; };
@@ -709,6 +719,15 @@
 			);
 			name = API;
 			path = "New Group/API";
+			sourceTree = "<group>";
+		};
+		6F05C32E2528B16B001C7FD2 /* Call Management */ = {
+			isa = PBXGroup;
+			children = (
+				6F05C32F2528B178001C7FD2 /* Call.swift */,
+				6F05C3332528B182001C7FD2 /* CallManager.swift */,
+			);
+			path = "Call Management";
 			sourceTree = "<group>";
 		};
 		6F06533C246487B900F857C1 /* Customers */ = {
@@ -1638,6 +1657,7 @@
 				6F8BC1CB24E443E000EF6639 /* LookupConversationJSON.swift */,
 				6F7310E524E826B4007B082F /* AutoResponseJSON.swift */,
 				6FFBCC6024F944A500C7E96C /* AgentCallsJSON.swift */,
+				6F05C3392528C123001C7FD2 /* UserJSON.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1693,6 +1713,7 @@
 				6FB11B4222A2A2E10098D050 /* Telabook.xcdatamodeld */,
 				6FB11AEA229BDDBE0098D050 /* Assets.xcassets */,
 				6FB11AE3229BDDBD0098D050 /* AppDelegate.swift */,
+				6F05C3362528B236001C7FD2 /* CallProviderDelegate.swift */,
 				6FAD46E9245066F10050F7F2 /* SceneDelegate.swift */,
 				6FB11AFA229BF0590098D050 /* TabBarController.swift */,
 				6FB11B0E229C236B0098D050 /* Utils */,
@@ -1736,6 +1757,7 @@
 			isa = PBXGroup;
 			children = (
 				6FB11B06229BFA240098D050 /* CallsViewController.swift */,
+				6F05C32E2528B16B001C7FD2 /* Call Management */,
 				6FFBCC4524F9371800C7E96C /* Agents */,
 				6FFBCC5724F9434F00C7E96C /* Agent Calls */,
 				6F97B1552503D0AA006D5A61 /* Grouped Call Details */,
@@ -1775,6 +1797,7 @@
 		6FB11B0E229C236B0098D050 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				6F05C32A2528B0EC001C7FD2 /* Audio.swift */,
 				6F97BA8924A90A8800F8DE72 /* TopLevelMethods.swift */,
 				6FB11B0F229C23840098D050 /* Extensions.swift */,
 				6FEE9A02247C841A00709E2D /* ExponentOperator.swift */,
@@ -2018,7 +2041,7 @@
 		6FEE9A1E247EFE2B00709E2D /* Staging */ = {
 			isa = PBXGroup;
 			children = (
-				6F9E6EBA248AD82A0001950E /* GoogleService-Info.plist */,
+				6F48025D2529A99B00BC3AF2 /* GoogleService-Info.plist */,
 			);
 			path = Staging;
 			sourceTree = "<group>";
@@ -2306,7 +2329,7 @@
 		};
 		6FEE9A23247EFFDE00709E2D /* Setup Firebase Support Files */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			files = (
 			);
 			inputFileListPaths = (
@@ -2360,6 +2383,7 @@
 				6FC60236246447E500C1BF6D /* Agents+Helpers.swift in Sources */,
 				6F69BE8822D4780F00F8903F /* ManageAgentsServiceProvider.swift in Sources */,
 				6F987A5724570EDA00C6046E /* SelectCompanyViewController.swift in Sources */,
+				6F05C33A2528C123001C7FD2 /* UserJSON.swift in Sources */,
 				6F987A76245B556600C6046E /* PersistenceContainer.swift in Sources */,
 				6F8927FE24A8E8FA0025DF64 /* ScheduledMessagesOperations.swift in Sources */,
 				6F02B2E22461CBC000FFB34E /* AutoResponseOperations.swift in Sources */,
@@ -2428,6 +2452,7 @@
 				6F23BD0722D9F0570001A888 /* ScheduleMessageViewController.swift in Sources */,
 				6F23BD0F22D9F9610001A888 /* ScheduleMessageDataProvider.swift in Sources */,
 				6F8A8314249DE6E7002ACDFE /* AppSettings+TableView.swift in Sources */,
+				6F05C3302528B178001C7FD2 /* Call.swift in Sources */,
 				6FF2E6AB248FF1A500502B99 /* FullImageViewController.swift in Sources */,
 				6FB11B27229E5F6F0098D050 /* AuthenticationService.swift in Sources */,
 				6FB11B31229EB5020098D050 /* CallGroupsViewController.swift in Sources */,
@@ -2468,6 +2493,7 @@
 				6FB11B2D229EB4C40098D050 /* RemindersViewController.swift in Sources */,
 				6F9453C522DB53ED00047C7F /* CustomerAPIProtocol.swift in Sources */,
 				6F06534B2464885700F857C1 /* CustomersServiceProvider.swift in Sources */,
+				6F05C3342528B182001C7FD2 /* CallManager.swift in Sources */,
 				6F97BA9024A922B500F8DE72 /* ScheduledMessageCellView.swift in Sources */,
 				6FB11B4422A2A2E10098D050 /* Telabook.xcdatamodeld in Sources */,
 				6FB11B16229D05E00098D050 /* UserDefaults.swift in Sources */,
@@ -2490,6 +2516,7 @@
 				6F37E24A2460A8E7003E9126 /* QuickResponsesView.swift in Sources */,
 				6F987A462454AB5D00C6046E /* LoginServiceProvider.swift in Sources */,
 				6FD89561245EDAD40083D79A /* AgentDetailsHelpers.swift in Sources */,
+				6F05C3372528B236001C7FD2 /* CallProviderDelegate.swift in Sources */,
 				6F8A8310249DE13F002ACDFE /* AppSettingsView.swift in Sources */,
 				6FEC641324D48DCC0012B234 /* MessagePayloadJSON.swift in Sources */,
 				6F37E24F2460ABFE003E9126 /* QuickResponseOperations.swift in Sources */,
@@ -2520,6 +2547,7 @@
 				6F8BC1D524E7FE4A00EF6639 /* AgentsMockData.swift in Sources */,
 				6FB11AE4229BDDBD0098D050 /* AppDelegate.swift in Sources */,
 				6F7BF52624D00BE1009B9D5E /* NewMessage.swift in Sources */,
+				6F05C32B2528B0EC001C7FD2 /* Audio.swift in Sources */,
 				6FAD46ED245098CE0050F7F2 /* ImageService.swift in Sources */,
 				6F02B2D92461C03F00FFB34E /* AutoResponseCodable.swift in Sources */,
 				6F8A8312249DE6DA002ACDFE /* AppSettings+Helpers.swift in Sources */,
@@ -2728,6 +2756,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 35;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2735,11 +2764,14 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -Xfrontend -warn-long-function-bodies=300 -Xfrontend -warn-long-expression-type-checking=300 -Xfrontend -debug-time-function-bodies";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.telabook.web-prerelease";
 				PRODUCT_NAME = Telabook;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = NO;
 			};
 			name = PreRelease;
 		};
@@ -2881,6 +2913,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -Xfrontend -warn-long-function-bodies=300 -Xfrontend -warn-long-expression-type-checking=300 -Xfrontend -debug-time-function-bodies";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.telabook.web-debug";
 				PRODUCT_NAME = Telabook;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2905,6 +2938,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -Xfrontend -warn-long-function-bodies=300 -Xfrontend -warn-long-expression-type-checking=300 -Xfrontend -debug-time-function-bodies";
 				PRODUCT_BUNDLE_IDENTIFIER = com.telabook.web;
 				PRODUCT_NAME = Telabook;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2980,6 +3015,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 35;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2987,11 +3023,14 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -Xfrontend -warn-long-function-bodies=300 -Xfrontend -warn-long-expression-type-checking=300 -Xfrontend -debug-time-function-bodies";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.telabook.web-staging";
 				PRODUCT_NAME = Telabook;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = NO;
 			};
 			name = Staging;
 		};

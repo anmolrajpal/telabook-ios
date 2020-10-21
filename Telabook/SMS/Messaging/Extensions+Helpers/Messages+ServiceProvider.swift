@@ -400,11 +400,11 @@ extension MessagesController {
                                 if let selectedNavigationController = tabBarController.selectedViewController as? UINavigationController {
                                     if let lastViewController = selectedNavigationController.viewControllers.last {
                                         if let presentedViewController = lastViewController.presentedViewController {
-                                            UIAlertController.showTelaAlert(title: "Error", message: error.localizedDescription, action: UIAlertAction(title: "OK", style: .cancel, handler: { _ in
+                                            UIAlertController.showTelaAlert(title: "Error", message: error.publicDescription, action: UIAlertAction(title: "OK", style: .cancel, handler: { _ in
                                                 self?.updateNavigationBarItems()
                                             }), controller: presentedViewController)
                                         } else {
-                                            UIAlertController.showTelaAlert(title: "Error", message: error.localizedDescription, action: UIAlertAction(title: "OK", style: .cancel, handler: { _ in
+                                            UIAlertController.showTelaAlert(title: "Error", message: error.publicDescription, action: UIAlertAction(title: "OK", style: .cancel, handler: { _ in
                                                 self?.updateNavigationBarItems()
                                             }), controller: lastViewController)
                                         }

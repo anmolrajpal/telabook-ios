@@ -131,9 +131,9 @@ extension AgentPickerViewController: UITableViewDataSource {
         if let name = agent?.personName,
             !name.isEmpty {
             cell?.textLabel?.text = name
-            cell?.detailTextLabel?.text = agent?.phoneNumber
+            cell?.detailTextLabel?.text = agent?.didNumber
         } else {
-            cell?.textLabel?.text = agent?.phoneNumber
+            cell?.textLabel?.text = agent?.didNumber
             cell?.detailTextLabel?.text = nil
         }
         if indexPath == selectedAgentIndexPath,

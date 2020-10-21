@@ -119,16 +119,24 @@ extension SettingsViewController {
         }
         let companyId = AppData.companyId
         let params:[String:String] = ["company_id":String(companyId)]
-        APIService.shared.hit(endpoint: .ViewUserProfile, httpMethod: .POST, params: params, guardResponse: .OK) { (result: Result<UserInfoCodable, APIService.APIError>) in
-            switch result {
-                case let .success(data): self.handleFetchUserProfileWithSuccess(userData: data)
-                case let .failure(error): self.handleFetchUserProfileFaliure(error: error)
-            }
+        APIServer<UserJSON>(apiVersion: .v2).hitEndpoint(endpoint: .SignIn, httpMethod: .POST, params: params, decoder: JSONDecoder.apiServiceDecoder, completion: userProfileFetchCompletion)
+//        APIService.shared.hit(endpoint: .SignIn, httpMethod: .POST, params: params, guardResponse: .OK) { (result: Result<UserJSON, APIService.APIError>) in
+//            switch result {
+//                case let .success(data): self.handleFetchUserProfileWithSuccess(userData: data)
+//                case let .failure(error): self.handleFetchUserProfileFaliure(error: error)
+//            }
+//        }
+    }
+    
+    private func userProfileFetchCompletion(result: Result<UserJSON, APIService.APIError>) {
+        switch result {
+            case let .success(data): self.handleFetchUserProfileWithSuccess(userData: data)
+            case let .failure(error): self.handleFetchUserProfileFaliure(error: error)
         }
     }
-    private func handleFetchUserProfileWithSuccess(userData: UserInfoCodable?) {
-        guard let userData = userData,
-            let userObject = userData.user,
+    
+    private func handleFetchUserProfileWithSuccess(userData: UserJSON) {
+       guard let userObject = userData.userDetails,
             let userId = userObject.id,
             let userRole = userObject.role,
             let roleId = userRole.id,
@@ -142,11 +150,12 @@ extension SettingsViewController {
                 }
                 return
         }
-        self.setAppPreferences(userId, companyId, workerId, roleId, userData)
-        self.userProfile = userData
-        DispatchQueue.main.async {
-            self.updateButton.isHidden = false
-            self.spinner.stopAnimating()
+        self.setAppPreferences(userId, companyId, workerId, roleId, userObject)
+        
+        DispatchQueue.main.async { [self] in
+            userProfile = userData.userDetails
+            updateButton.isHidden = false
+            spinner.stopAnimating()
         }
     }
     private func handleFetchUserProfileFaliure(error: APIService.APIError) {
@@ -163,7 +172,7 @@ extension SettingsViewController {
     
     
     
-    fileprivate func setAppPreferences(_ userId:Int, _ companyId:Int, _ workerId:Int, _ roleId:Int, _ userInfo: UserInfoCodable) {
+    fileprivate func setAppPreferences(_ userId:Int, _ companyId:Int, _ workerId:Int, _ roleId:Int, _ userInfo: UserProperties) {
         AppData.userId = userId
         AppData.companyId = companyId
         AppData.workerId = workerId

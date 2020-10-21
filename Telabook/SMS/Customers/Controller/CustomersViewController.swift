@@ -165,6 +165,7 @@ class CustomersViewController: UITableViewController {
         let workerIDstring = String(agent.workerID)
         
         handle = reference.observe(.value, with: { snapshot in
+//            print(snapshot)
             var conversations:[FirebaseCustomer] = []
             for child in snapshot.children {
                 if let snapshot = child as? DataSnapshot {
@@ -179,6 +180,18 @@ class CustomersViewController: UITableViewController {
             print("Value Observer Event Error: \(error)")
         }
     }
+    
+    
+    
+    
+    private func fetchActiveConversations() {
+        
+    }
+    
+    
+    
+    
+    
     
     
     

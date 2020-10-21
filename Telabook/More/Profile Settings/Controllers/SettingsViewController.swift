@@ -13,15 +13,15 @@ class SettingsViewController: UIViewController {
 
     var uploadTask: StorageUploadTask!
     
-    var userProfile: UserInfoCodable? {
+    var userProfile: UserProperties? {
         didSet {
             guard let profile = userProfile else { return }
-            if let userDetails = profile.user {
-                self.setupData(details: userDetails)
-            } else {
-                fatalError("Fail to unwrap user details")
-            }
-            if let did = profile.user?.did {
+//            if let userDetails = profile.user {
+                self.setupData(details: profile)
+//            } else {
+//                fatalError("Fail to unwrap user details")
+//            }
+            if let did = profile.did {
 //                let arr = dids.map { $0.number }.compactMap { $0 }
                 assignedDIDs = did.number
             }
@@ -169,7 +169,7 @@ class SettingsViewController: UIViewController {
         address = details.address
     }
     
-    func setupData(details: UserInfoCodable.User) {
+    func setupData(details: UserProperties) {
         let role = AppData.getUserRole()
         let first_name = details.name
         let last_name = details.lastName

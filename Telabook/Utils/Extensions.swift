@@ -1399,11 +1399,26 @@ extension Date {
     /// - Parameter value: Parameter value must be either `seconds` or `milliseconds` | `10 digits`  or `13 digits` respectively.
     /// - Returns: `Date` object calculted from timeInterval passed since 1970 or milliSeconds passed since 1970
     static func getDate(fromSecondsOrMilliseconds value:Int) -> Date? {
+        let count = value.digitsCount
+        switch count {
+        case 11...13:
+            let suffix = 10 ~^ (13 - count)
+            let sanitizedDate = Int64(value * suffix)
+            return Date(milliSecondsSince1970: sanitizedDate)
+        case 6...10:
+            let suffix = 10 ~^ (10 - count)
+            let sanitizedDate = TimeInterval(value * suffix)
+            return Date(timeIntervalSince1970: sanitizedDate)
+        default:
+            return nil
+        }
+        /*
         if 11...13 ~= value.digitsCount {
             return Date(milliSecondsSince1970: Int64(value * (10 ~^ (13 - value.digitsCount))))
         } else if 6...10 ~= value.digitsCount {
             return Date(timeIntervalSince1970: TimeInterval(value * (10 ~^ (10 - value.digitsCount))))
         } else if value == 0 { return nil} else { return nil }
+        */
     }
     
     
@@ -1412,6 +1427,20 @@ extension Date {
     /// - Parameter value: Parameter value must be either `seconds` or `milliseconds` | `10 digits`  or `13 digits` respectively.
     /// - Returns: `Date` object calculted from timeInterval passed since 1970 or milliSeconds passed since 1970
     init?(fromSecondsOrMilliSeconds value:Int) {
+        let count = value.digitsCount
+        switch count {
+        case 11...13:
+            let suffix = 10 ~^ (13 - count)
+            let sanitizedDate = Int64(value * suffix)
+            self = Date(milliSecondsSince1970: sanitizedDate)
+        case 6...10:
+            let suffix = 10 ~^ (10 - count)
+            let sanitizedDate = TimeInterval(value * suffix)
+            self = Date(timeIntervalSince1970: sanitizedDate)
+        default:
+            return nil
+        }
+        /*
         if 11...13 ~= value.digitsCount {
             self = Date(milliSecondsSince1970: Int64(value * (10 ~^ (13 - value.digitsCount))))
         } else if 6...10 ~= value.digitsCount {
@@ -1419,6 +1448,7 @@ extension Date {
         } else {
             return nil
         }
+        */
     }
 }
 extension DateFormatter {

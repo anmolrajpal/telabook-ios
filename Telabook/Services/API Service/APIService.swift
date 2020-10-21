@@ -149,7 +149,7 @@ public struct APIService: APIServiceProtocol {
         */
         func path() -> String {
             switch self {
-                case .SignIn: return "/android/signin"
+                case .SignIn: return "/signin"
                 case .FetchUserCompanies: return "/android/user/companies"
                 case .UpdatePassword: return "/profile/password"
                 case let .UpdateUserProfile(userId): return "/users/\(String(userId))"

@@ -10,7 +10,7 @@ import Foundation
 
 extension APIService {
     
-    func loginWithCredentials<T: Codable>(endpoint: Endpoint = .SignIn, email: String, password: String, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, completion: @escaping APICompletion<T>) {
+    func loginWithCredentials<T: Decodable>(endpoint: Endpoint = .SignIn, email: String, password: String, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, decoder:JSONDecoder = defaultDecoder, completion: @escaping APICompletion<T>) {
         FirebaseAuthService.shared.authenticateAndFetchToken(email: email, password: password) { (token, error) in
             guard let bearerToken = token else {
                 DispatchQueue.main.async {
@@ -21,7 +21,7 @@ extension APIService {
             #if !RELEASE
             print("\n\n------------------------------------------------ Firebase Token: BEGIN ------------------------------------------------\n\nFirebase Bearer Token: \(bearerToken)\n\n--------------------------------------------------- Firebase Token: END ------------------------------------------------\n\n")
             #endif
-            guard let url = self.constructURL(forEndpoint: endpoint) else {
+            guard let url = self.constructURL(forEndpoint: endpoint, with: .init(apiCommonPath: "\(Config.APIConfig.urlPrefix)/v2")) else {
                 print("Error Log: Unable to Construct URL")
                 completion(.failure(.invalidURL))
                 return
@@ -61,6 +61,16 @@ extension APIService {
                     }
                 } else {
                     guard responseStatus == .OK || responseStatus == .Created || responseStatus == .Accepted || responseStatus == .NoContent else {
+                        if let data = data {
+                            if self.isLoggingEnabled {
+                                if let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+                                    let jsonData = try? JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted),
+                                    let json = String(data: jsonData, encoding: .utf8) {
+                                    let jsonMessage = "\n\n------------------------------------------------ Raw JSON Object: BEGIN ------------------------------------------------\n\n"+json+"\n\n--------------------------------------------------- Raw JSON Object: END ------------------------------------------------\n\n"
+                                    printAndLog(message: jsonMessage, log: .network, logType: .info, isPrivate: true)
+                                }
+                            }
+                        }
                         DispatchQueue.main.async {
                             completion(.failure(.unexpectedResponse(response: responseStatus, data: data)))
                         }
@@ -78,7 +88,7 @@ extension APIService {
                 print("\n\n------------------------------------------------ Raw JSON Object: BEGIN ------------------------------------------------\n\n"+jsonString+"\n\n--------------------------------------------------- Raw JSON Object: END ------------------------------------------------\n\n")
                 #endif
                 do {
-                    let object = try self.decoder.decode(T.self, from: data)
+                    let object = try decoder.decode(T.self, from: data)
                     DispatchQueue.main.async {
                         completion(.success(object))
                     }
@@ -97,7 +107,7 @@ extension APIService {
     }
     
     
-    func hit<T: Codable>(endpoint: Endpoint, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, completion: @escaping APICompletion<T>) {
+    func hit<T: Decodable>(endpoint: Endpoint, httpMethod:HTTPMethod, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, completion: @escaping APICompletion<T>) {
         FirebaseAuthService.shared.getCurrentToken { (token, error) in
             guard let bearerToken = token else {
                 DispatchQueue.main.async {

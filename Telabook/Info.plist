@@ -40,6 +40,12 @@
 	<string>Used to send photos from the camera</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Used to send photos from the camera roll</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Microphone is used to make audio calls</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Connect your BT Headset</string>
+	<key>NSVoIPUsageDescription</key>
+	<string>Make audio calls</string>
 	<key>SUBDOMAIN</key>
 	<string>$(SUBDOMAIN)</string>
 	<key>TIMEOUT_INTERVAL</key>
@@ -68,6 +74,8 @@
 	</dict>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>audio</string>
+		<string>fetch</string>
 		<string>remote-notification</string>
 		<string>voip</string>
 	</array>

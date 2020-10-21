@@ -97,6 +97,21 @@ PODS:
     - InputBarAccessoryView/Core (= 5.2.0)
   - InputBarAccessoryView/Core (5.2.0)
   - leveldb-library (1.22)
+  - linphone-sdk (4.4.2):
+    - linphone-sdk/all-frameworks (= 4.4.2)
+    - linphone-sdk/app-extension (= 4.4.2)
+    - linphone-sdk/app-extension-swift (= 4.4.2)
+    - linphone-sdk/basic-frameworks (= 4.4.2)
+    - linphone-sdk/swift (= 4.4.2)
+  - linphone-sdk/all-frameworks (4.4.2)
+  - linphone-sdk/app-extension (4.4.2)
+  - linphone-sdk/app-extension-swift (4.4.2):
+    - linphone-sdk/app-extension
+  - linphone-sdk/basic-frameworks (4.4.2):
+    - linphone-sdk/app-extension
+  - linphone-sdk/swift (4.4.2):
+    - linphone-sdk/app-extension-swift
+    - linphone-sdk/basic-frameworks
   - MessageKit (3.4.1):
     - InputBarAccessoryView (~> 5.2.0)
   - nanopb (1.30906.0):
@@ -130,11 +145,14 @@ DEPENDENCIES:
   - Firebase/Database
   - Firebase/Messaging
   - Firebase/Storage
+  - linphone-sdk (= 4.4.2)
   - MessageKit
   - PINRemoteImage
   - ReachabilitySwift
 
 SPEC REPOS:
+  https://gitlab.linphone.org/BC/public/podspec.git:
+    - linphone-sdk
   trunk:
     - Firebase
     - FirebaseAnalytics
@@ -178,6 +196,7 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 6f5c8abbab8a9bce4bb3f057e317728ec6182b10
   InputBarAccessoryView: ac1bc2a11508fc2490c2322beb1d4c9f05c8e634
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
+  linphone-sdk: c6840dd25b846cbc577cc365084949500b80c3d8
   MessageKit: aa047ad093f022189ed5a0d1cea04fc59f064c93
   nanopb: 59317e09cf1f1a0af72f12af412d54edf52603fc
   PINCache: ee3c4abadd09970a61cdda0cfc345e69a3d75b26
@@ -187,6 +206,6 @@ SPEC CHECKSUMS:
   Protobuf: 3dac39b34a08151c6d949560efe3f86134a3f748
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
 
-PODFILE CHECKSUM: 46f3dd90babc9618199ad6d08aa40d0d0a0131f6
+PODFILE CHECKSUM: d8cc627392358f0a1cd19ea90e0e4375bb1ff9c4
 
 COCOAPODS: 1.9.3

@@ -10,45 +10,51 @@ import UIKit
 import UserNotifications
 import Firebase
 import CoreData
+import PushKit
+import linphonesw
+import CallKit
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    
+    
     
     static let shared = AppDelegate()
     
     let gcmMessageIDKey = "gcm.message_id"
     var window = (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window
     
+    let callManager = CallManager()
+    var callProviderDelegate: CallProviderDelegate!
+    var voipRegistry: PKPushRegistry!
     
-
+    func registerForVoIPNotifications() {
+        self.voipRegistry = PKPushRegistry(queue: nil)
+        self.voipRegistry.delegate = self
+        self.voipRegistry.desiredPushTypes = [.voIP]
+    }
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         FirebaseApp.configure()
-//        FirebaseAuthService.shared.addObservers()
+        
         Messaging.messaging().delegate = self
         
-//        if Messaging.messaging().fcmToken != nil {
-//            let topic = "operator_ios_\(AppData.workerId)"
-//            Messaging.messaging().subscribe(toTopic: topic) { error in
-//                if let error = error {
-//                    print(error)
-//                } else {
-//                    print("Subscribed to topic: \(topic)")
-//                }
-//            }
-//        }
-//
-        
-     
         UNUserNotificationCenter.current().delegate = self
+        registerForVoIPNotifications()
         
-//        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-//        UNUserNotificationCenter.current().requestAuthorization(options: authOptions, completionHandler: {_, _ in })
-//
-//        application.registerForRemoteNotifications()
-//
-//        FirebaseAuthService.shared.monitorAndSaveToken()
-
+        callProviderDelegate = CallProviderDelegate(callManager: callManager)
         return true
     }
+    
+    
+    func displayIncomingCall(uuid: UUID, handle: String, hasVideo: Bool = false, completion: ((Error?) -> Void)?) {
+        if callProviderDelegate == nil {
+            callProviderDelegate = CallProviderDelegate(callManager: callManager)
+        }
+        callProviderDelegate.reportIncomingCall(uuid: uuid, handle: handle, hasVideo: hasVideo, completion: completion)
+    }
+    
+    
     
     func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Void) {
         MessageMediaManager.shared.backgroundCompletionHandler = completionHandler
@@ -71,20 +77,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     
     // MARK: - UISceneSession Lifecycle
-
+    
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
         // Called when a new scene session is being created.
         // Use this method to select a configuration to create the new scene with.
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
-
+    
     func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
         // Called when the user discards a scene session.
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
     
-
+    
     
     static var conversationMediaFolder: URL = {
         let cacheFolder = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
@@ -95,7 +101,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if !FileManager.default.fileExists(atPath: url.path) {
             do {
                 try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
-
+                
             } catch {
                 let errorMessage = "### \(#function): Failed to create conversation media folder URL: \(error)"
                 printAndLog(message: errorMessage, log: .ui, logType: .error)
@@ -113,7 +119,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if !FileManager.default.fileExists(atPath: url.path) {
             do {
                 try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
-
+                
             } catch {
                 let errorMessage = "### \(#function): Failed to create agent gallery media folder URL: \(error)"
                 printAndLog(message: errorMessage, log: .ui, logType: .error)
@@ -124,43 +130,43 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     
     /*
-    // [START receive_message]
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
-        // If you are receiving a notification message while your app is in the background,
-        // this callback will not be fired till the user taps on the notification launching the application.
-        // TODO: Handle data of notification
-        // With swizzling disabled you must let Messaging know about the message, for Analytics
-        // Messaging.messaging().appDidReceiveMessage(userInfo)
-        // Print message ID.
-        if let messageID = userInfo[gcmMessageIDKey] {
-            print("Message ID: \(messageID)")
-        }
-        
-        // Print full message.
-        print("Did Recieve Remote Notfication")
-        print(userInfo)
-    }
-    
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
-                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        // If you are receiving a notification message while your app is in the background,
-        // this callback will not be fired till the user taps on the notification launching the application.
-        // TODO: Handle data of notification
-        // With swizzling disabled you must let Messaging know about the message, for Analytics
-        // Messaging.messaging().appDidReceiveMessage(userInfo)
-        // Print message ID.
-        if let messageID = userInfo[gcmMessageIDKey] {
-            print("Message ID: \(messageID)")
-        }
-        
-        // Print full message.
-        print("Did Recieve Remote Notfication Background")
-        print(userInfo)
-        
-        completionHandler(UIBackgroundFetchResult.newData)
-    }
-    
-    */
+     // [START receive_message]
+     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
+     // If you are receiving a notification message while your app is in the background,
+     // this callback will not be fired till the user taps on the notification launching the application.
+     // TODO: Handle data of notification
+     // With swizzling disabled you must let Messaging know about the message, for Analytics
+     // Messaging.messaging().appDidReceiveMessage(userInfo)
+     // Print message ID.
+     if let messageID = userInfo[gcmMessageIDKey] {
+     print("Message ID: \(messageID)")
+     }
+     
+     // Print full message.
+     print("Did Recieve Remote Notfication")
+     print(userInfo)
+     }
+     
+     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+     // If you are receiving a notification message while your app is in the background,
+     // this callback will not be fired till the user taps on the notification launching the application.
+     // TODO: Handle data of notification
+     // With swizzling disabled you must let Messaging know about the message, for Analytics
+     // Messaging.messaging().appDidReceiveMessage(userInfo)
+     // Print message ID.
+     if let messageID = userInfo[gcmMessageIDKey] {
+     print("Message ID: \(messageID)")
+     }
+     
+     // Print full message.
+     print("Did Recieve Remote Notfication Background")
+     print(userInfo)
+     
+     completionHandler(UIBackgroundFetchResult.newData)
+     }
+     
+     */
     // [END receive_message]
     func applicationDidReceiveMemoryWarning(_ application: UIApplication) {
         print("### \(#function)")
@@ -179,13 +185,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let notificationCentre = UNUserNotificationCenter.current()
             let externalConversationId = userInfo["external_conversation_id"] as? String
             if let action = userInfo["action"] as? String,
-                action == "DELETE_CONVERSATION" {
+               action == "DELETE_CONVERSATION" {
                 var identifiers = [String]()
                 notificationCentre.getDeliveredNotifications { notifications in
                     notifications.forEach { notification in
                         let dictionary = notification.request.content.userInfo
                         if let conversationId = dictionary["external_conversation_id"] as? String,
-                            conversationId == externalConversationId {
+                           conversationId == externalConversationId {
                             identifiers.append(notification.request.identifier)
                         }
                     }
@@ -205,11 +211,77 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // If swizzling is disabled then this function must be implemented so that the APNs token can be paired to
     // the FCM registration token.
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        let token = deviceToken.map { String(format: "%02x", $0) }.joined()
+        print("UserNotifications -> deviceToken :\(token)")
         // With swizzling disabled you must set the APNs token here.
-         Messaging.messaging().apnsToken = deviceToken
+        Messaging.messaging().apnsToken = deviceToken
     }
- 
+    
 }
+
+
+
+
+extension AppDelegate: PKPushRegistryDelegate {
+    
+    // Handle updated push credentials
+    func pushRegistry(_ registry: PKPushRegistry, didUpdate credentials: PKPushCredentials, for type: PKPushType) {
+        print(credentials.token)
+        let deviceToken = credentials.token.map { String(format: "%02x", $0) }.joined()
+        print("pushRegistry -> deviceToken :\(deviceToken)")
+    }
+    
+    func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {
+        print("pushRegistry:didInvalidatePushTokenForType:")
+    }
+    
+    
+    
+    
+    
+    
+    
+    func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
+        print("\n\n++++++++++++ ---------- •••••••••••••••••••••••••••••••••••••••••••••• ---------- ++++++++++++")
+        print("\n\(#function) =>\n\n")
+        print(payload.dictionaryPayload)
+        print("\n\n++++++++++++ ---------- •••••••••••••••••••••••••••••••••••••••••••••• ---------- ++++++++++++\n\n")
+        
+        if type == .voIP {
+            
+             // Extract the call information from the push notification payload
+            if let handle = payload.dictionaryPayload["caller_info"] as? String {
+//                 let uuidString = payload.dictionaryPayload["callUUID"] as? String,
+                 let callUUID = UUID()
+                 
+                 // Configure the call information data structures.
+                 let callUpdate = CXCallUpdate()
+                 let phoneNumber = CXHandle(type: .phoneNumber, value: handle)
+                 callUpdate.remoteHandle = phoneNumber
+                 
+                 // Report the call to CallKit, and let it display the call UI.
+                 
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    AppDelegate.shared.displayIncomingCall(uuid: callUUID, handle: handle) { _ in
+                        completion()
+                        //                    UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+                    }
+                }
+                 
+                 // Asynchronously register with the telephony server and
+                 // process the call. Report updates to CallKit as needed.
+//                 establishConnection(for: callUUID)
+                // Linphone goes here
+                
+             }
+        }
+    }
+    
+    
+}
+
+
+
 
 
 
@@ -231,8 +303,8 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
             }
             if let node = payload.node, !node.isBlank {
                 if let tabBarController = rootViewController as? TabBarController,
-                    let selectedNavigationController = tabBarController.selectedViewController as? UINavigationController,
-                    let currentViewController = selectedNavigationController.viewControllers.last as? MessagesController {
+                   let selectedNavigationController = tabBarController.selectedViewController as? UINavigationController,
+                   let currentViewController = selectedNavigationController.viewControllers.last as? MessagesController {
                     let currentConversationNode = currentViewController.customer.node
                     if node == currentConversationNode {
                         return
@@ -256,11 +328,11 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
         let requestIdentifier = response.notification.request.identifier
         if let key = LocalNotificationService.NotificationKey(rawValue: requestIdentifier) {
             switch key {
-                case .imageSavedToLibrary:
-                    LocalNotificationItem.imageSavedToPhotosNotificationItem.tapHandler?()
-                    completionHandler()
-                    return
-                default: return
+            case .imageSavedToLibrary:
+                LocalNotificationItem.imageSavedToPhotosNotificationItem.tapHandler?()
+                completionHandler()
+                return
+            default: return
             }
         }
         
@@ -312,11 +384,11 @@ extension AppDelegate : MessagingDelegate {
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
         printAndLog(message: "FCM Token: \(fcmToken)", log: .notifications, logType: .info, isPrivate: true)
         /*
-        let dataDict:[String: String] = ["token": fcmToken]
-        NotificationCenter.default.post(name: Notification.Name("FCMToken"), object: nil, userInfo: dataDict)
-        // TODO: If necessary send token to application server.
-        // Note: This callback is fired at each app startup and whenever a new token is generated.
-        */
+         let dataDict:[String: String] = ["token": fcmToken]
+         NotificationCenter.default.post(name: Notification.Name("FCMToken"), object: nil, userInfo: dataDict)
+         // TODO: If necessary send token to application server.
+         // Note: This callback is fired at each app startup and whenever a new token is generated.
+         */
     }
 }
 
@@ -327,97 +399,97 @@ extension AppDelegate : MessagingDelegate {
 // MARK: - •••••••••••••••••• FCM curl request [BEGIN] ••••••••••••••••••••
 /// - tag: This is how you test firebase push notifications directly
 /*
-curl -X "POST" "https://fcm.googleapis.com/fcm/send" \
-    -H "Authorization: key=AAAAc9CnvIg:APA91bGbCZpLa90RaU9Le1SXK5doTiig6pPM_Ww17C3jsrW_yrXFSylnTb-kARfnjp7YWyR7fWjqYhCygtJipG-ALB8gTXGgeiIEBV7NfJuZ1oebvZZa1VKXrMWgAv50b2_5ENv6BBnO" \
-    -H "Content-Type: application/json" \
-    -d $'{
-        "notification": {
-        "body": "Testing with direct FCM API",
-        "title": "Test Message",
-        "badge": "0",
-        "sound": "default"
-    },
-    "registration_ids": [
-    "db8qjxl3CUVzoqKrT2gf6n:APA91bHYUW6zsfwpBW2L4FUfZQNFRM-7CDF_QkYFIVXHwY-hg8r7AuXAfiFCdYpun217Tia4JAT2gtl9uyDz1HO0P-w_nbMrBCvpb3uOnrwPWhJ3_GumwvqYozHqNeAhMRo4_XDMX6Wk"
-    ]
-}'
-*/
+ curl -X "POST" "https://fcm.googleapis.com/fcm/send" \
+ -H "Authorization: key=AAAAc9CnvIg:APA91bGbCZpLa90RaU9Le1SXK5doTiig6pPM_Ww17C3jsrW_yrXFSylnTb-kARfnjp7YWyR7fWjqYhCygtJipG-ALB8gTXGgeiIEBV7NfJuZ1oebvZZa1VKXrMWgAv50b2_5ENv6BBnO" \
+ -H "Content-Type: application/json" \
+ -d $'{
+ "notification": {
+ "body": "Testing with direct FCM API",
+ "title": "Test Message",
+ "badge": "0",
+ "sound": "default"
+ },
+ "registration_ids": [
+ "db8qjxl3CUVzoqKrT2gf6n:APA91bHYUW6zsfwpBW2L4FUfZQNFRM-7CDF_QkYFIVXHwY-hg8r7AuXAfiFCdYpun217Tia4JAT2gtl9uyDz1HO0P-w_nbMrBCvpb3uOnrwPWhJ3_GumwvqYozHqNeAhMRo4_XDMX6Wk"
+ ]
+ }'
+ */
 // MARK: - •••••••••••••••••• FCM curl request [End] ••••••••••••••••••••
 
 
 
 /*
-{
-    "id":"994",
-    "title":"Message for Esther Luna",
-    "body":"Esther 2!!!...",
-    "sound":"default",
-    "color":"#90CAF9",
-    "node":"144-631-Customer",
-    "group":"144-631-Customer",
-    "groupSummary":"Message for Esther Luna",
-    "notify":"1",
-    "external_conversation_id":"994",
-    "lines":"[{\"date\":1596037530636,\"message\":\"Esther 2!!!\"}]",
-    "sender_name":"Hilary Spencer",
-    "sender_number":"+18324101983",
-    "recipient_did":"+17162411222",
-    "recipient_id":"144",
-    "worker_name":"Esther Luna",
-    "worker_id":"144"
-}
-*/
+ {
+ "id":"994",
+ "title":"Message for Esther Luna",
+ "body":"Esther 2!!!...",
+ "sound":"default",
+ "color":"#90CAF9",
+ "node":"144-631-Customer",
+ "group":"144-631-Customer",
+ "groupSummary":"Message for Esther Luna",
+ "notify":"1",
+ "external_conversation_id":"994",
+ "lines":"[{\"date\":1596037530636,\"message\":\"Esther 2!!!\"}]",
+ "sender_name":"Hilary Spencer",
+ "sender_number":"+18324101983",
+ "recipient_did":"+17162411222",
+ "recipient_id":"144",
+ "worker_name":"Esther Luna",
+ "worker_id":"144"
+ }
+ */
 /*
-{
-  "lines" : "[{\"date\":1596040064206,\"message\":\"Bo\"}]",
-  "google.c.sender.id" : "497421892744",
-  "notify" : "1",
-  "node" : "282-626-Customer",
-  "external_conversation_id" : "1116",
-  "sender_name" : "Esther GLOBAL!!",
-  "sender_number" : "+17162411222",
-  "body" : "Bo...",
-  "group" : "282-626-Customer",
-  "aps" : {
-    "content-available" : 1
-  },
-  "groupSummary" : "Message for Christen Eaton",
-  "worker_name" : "Christen Eaton",
-  "title" : "Message for Christen Eaton",
-  "worker_id" : "282",
-  "recipient_did" : "+12536520616",
-  "gcm.message_id" : "1596040065610880",
-  "sound" : "default",
-  "color" : "#90CAF9",
-  "id" : "1116",
-  "recipient_id" : "282"
-}
-*/
+ {
+ "lines" : "[{\"date\":1596040064206,\"message\":\"Bo\"}]",
+ "google.c.sender.id" : "497421892744",
+ "notify" : "1",
+ "node" : "282-626-Customer",
+ "external_conversation_id" : "1116",
+ "sender_name" : "Esther GLOBAL!!",
+ "sender_number" : "+17162411222",
+ "body" : "Bo...",
+ "group" : "282-626-Customer",
+ "aps" : {
+ "content-available" : 1
+ },
+ "groupSummary" : "Message for Christen Eaton",
+ "worker_name" : "Christen Eaton",
+ "title" : "Message for Christen Eaton",
+ "worker_id" : "282",
+ "recipient_did" : "+12536520616",
+ "gcm.message_id" : "1596040065610880",
+ "sound" : "default",
+ "color" : "#90CAF9",
+ "id" : "1116",
+ "recipient_id" : "282"
+ }
+ */
 
 
 
 /*
  {
-   "key 1" : "value 1",
-   "key 5" : "value 5",
-   "google.c.a.ts" : "1596045265",
-   "key 4" : "value 4",
-   "google.c.a.udt" : "0",
-   "gcm.notification.sound2" : "default",
-   "google.c.sender.id" : "497421892744",
-   "gcm.n.e" : "1",
-   "google.c.a.e" : "1",
-   "aps" : {
-     "alert" : {
-       "title" : "Test O 143 #3",
-       "body" : "Test O 143 #3 iOS"
-     },
-     "sound" : "default"
-   },
-   "google.c.a.c_l" : "Test O 143 #3",
-   "key 2" : "value 2",
-   "key 3" : "value 3",
-   "google.c.a.c_id" : "5748676660012981423",
-   "gcm.message_id" : "1596045266032678"
+ "key 1" : "value 1",
+ "key 5" : "value 5",
+ "google.c.a.ts" : "1596045265",
+ "key 4" : "value 4",
+ "google.c.a.udt" : "0",
+ "gcm.notification.sound2" : "default",
+ "google.c.sender.id" : "497421892744",
+ "gcm.n.e" : "1",
+ "google.c.a.e" : "1",
+ "aps" : {
+ "alert" : {
+ "title" : "Test O 143 #3",
+ "body" : "Test O 143 #3 iOS"
+ },
+ "sound" : "default"
+ },
+ "google.c.a.c_l" : "Test O 143 #3",
+ "key 2" : "value 2",
+ "key 3" : "value 3",
+ "google.c.a.c_id" : "5748676660012981423",
+ "gcm.message_id" : "1596045266032678"
  }
  */

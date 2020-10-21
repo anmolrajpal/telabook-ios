@@ -16,7 +16,7 @@ import MenuController
 extension MessagesController: NormalDialerDelegate {
     func normalDialer(didEnteredNumberToDial number: String, controller: NormalDialerViewController) {
         controller.dismiss(animated: true) {
-            guard let workerPhoneNumber = self.customer.agent?.phoneNumber,
+            guard let workerPhoneNumber = self.customer.agent?.didNumber,
                 !workerPhoneNumber.isBlank else {
                     fatalError()
             }
@@ -60,8 +60,8 @@ extension MessagesController {
             DispatchQueue.main.async {
                 self.navigationItem.rightBarButtonItems = [self.phoneBarButtonItem]
             }
-            if let workerPhoneNumber = customer.agent?.phoneNumber,
-                let currentUserPhoneNumber = AppData.userInfo?.user?.phone,
+            if let workerPhoneNumber = customer.agent?.didNumber,
+               let currentUserPhoneNumber = AppData.userInfo?.did?.number,
                 !workerPhoneNumber.isBlank,
                 !currentUserPhoneNumber.isBlank {
                 self.phoneBarButtonItem.isEnabled = true
@@ -85,8 +85,8 @@ extension MessagesController {
     private func promptClick2CallMenu() {
         var menuItems = [UIControlMenuAction]()
         
-        guard let workerPhoneNumber = customer.agent?.phoneNumber,
-            let currentUserPhoneNumber = AppData.userInfo?.user?.phone,
+        guard let workerPhoneNumber = customer.agent?.didNumber,
+              let currentUserPhoneNumber = AppData.userInfo?.did?.number,
             !workerPhoneNumber.isBlank,
             !currentUserPhoneNumber.isBlank else {
                 printAndLog(message: "Invalid parameters", log: .ui, logType: .error)
