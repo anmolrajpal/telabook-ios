@@ -282,6 +282,13 @@
 		6FD8955D245ECDB40083D79A /* AgentDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD8955C245ECDB40083D79A /* AgentDetailsView.swift */; };
 		6FD8955F245EDAAB0083D79A /* ManageAgentsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD8955E245EDAAB0083D79A /* ManageAgentsHelpers.swift */; };
 		6FD89561245EDAD40083D79A /* AgentDetailsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD89560245EDAD40083D79A /* AgentDetailsHelpers.swift */; };
+		6FE24AAE25417F910043ACC7 /* CoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE24AAD25417F910043ACC7 /* CoreManager.swift */; };
+		6FE24ABA2541C68A0043ACC7 /* notes_of_the_optimistic.caf in Resources */ = {isa = PBXBuildFile; fileRef = 6FE24AB72541C68A0043ACC7 /* notes_of_the_optimistic.caf */; };
+		6FE24ABB2541C68A0043ACC7 /* hold.mkv in Resources */ = {isa = PBXBuildFile; fileRef = 6FE24AB82541C68A0043ACC7 /* hold.mkv */; };
+		6FE24ABC2541C68A0043ACC7 /* ringback.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6FE24AB92541C68A0043ACC7 /* ringback.wav */; };
+		6FE24AC425421D110043ACC7 /* ConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE24AC325421D110043ACC7 /* ConfigManager.swift */; };
+		6FE24AC825421D8A0043ACC7 /* AppManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE24AC725421D890043ACC7 /* AppManager.swift */; };
+		6FE24ACD25422F0D0043ACC7 /* AudioHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FE24ACC25422F0D0043ACC7 /* AudioHelper.m */; };
 		6FEC641324D48DCC0012B234 /* MessagePayloadJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEC641224D48DCB0012B234 /* MessagePayloadJSON.swift */; };
 		6FEC641524D80F270012B234 /* DisabledAccountsJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEC641424D80F270012B234 /* DisabledAccountsJSON.swift */; };
 		6FEC641C24D817480012B234 /* DisabledAccountsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEC641B24D817480012B234 /* DisabledAccountsController.swift */; };
@@ -614,6 +621,15 @@
 		6FD8955C245ECDB40083D79A /* AgentDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDetailsView.swift; sourceTree = "<group>"; };
 		6FD8955E245EDAAB0083D79A /* ManageAgentsHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsHelpers.swift; sourceTree = "<group>"; };
 		6FD89560245EDAD40083D79A /* AgentDetailsHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDetailsHelpers.swift; sourceTree = "<group>"; };
+		6FE24AAD25417F910043ACC7 /* CoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreManager.swift; sourceTree = "<group>"; };
+		6FE24AB72541C68A0043ACC7 /* notes_of_the_optimistic.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = notes_of_the_optimistic.caf; sourceTree = "<group>"; };
+		6FE24AB82541C68A0043ACC7 /* hold.mkv */ = {isa = PBXFileReference; lastKnownFileType = file; path = hold.mkv; sourceTree = "<group>"; };
+		6FE24AB92541C68A0043ACC7 /* ringback.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ringback.wav; sourceTree = "<group>"; };
+		6FE24ABE2541C6E60043ACC7 /* Telabook-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Telabook-Bridging-Header.h"; sourceTree = "<group>"; };
+		6FE24AC325421D110043ACC7 /* ConfigManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigManager.swift; sourceTree = "<group>"; };
+		6FE24AC725421D890043ACC7 /* AppManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppManager.swift; sourceTree = "<group>"; };
+		6FE24ACB25422F0C0043ACC7 /* AudioHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioHelper.h; sourceTree = "<group>"; };
+		6FE24ACC25422F0D0043ACC7 /* AudioHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioHelper.m; sourceTree = "<group>"; };
 		6FEC641124D19FE40012B234 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6FEC641224D48DCB0012B234 /* MessagePayloadJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePayloadJSON.swift; sourceTree = "<group>"; };
 		6FEC641424D80F270012B234 /* DisabledAccountsJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisabledAccountsJSON.swift; sourceTree = "<group>"; };
@@ -1709,11 +1725,18 @@
 				6FEE9A2C247F0D0300709E2D /* Config-Staging.xcconfig */,
 				6F6F9F89247FB76900C9114D /* Config-PreRelease.xcconfig */,
 				6FEE9A2D247F0D1200709E2D /* Config-Production.xcconfig */,
+				6FE24AB42541C68A0043ACC7 /* Resources */,
 				6FEE9A1C247EFE1D00709E2D /* Support Files */,
 				6FB11B4222A2A2E10098D050 /* Telabook.xcdatamodeld */,
 				6FB11AEA229BDDBE0098D050 /* Assets.xcassets */,
 				6FB11AE3229BDDBD0098D050 /* AppDelegate.swift */,
+				6FE24ABE2541C6E60043ACC7 /* Telabook-Bridging-Header.h */,
+				6FE24ACB25422F0C0043ACC7 /* AudioHelper.h */,
+				6FE24ACC25422F0D0043ACC7 /* AudioHelper.m */,
+				6FE24AAD25417F910043ACC7 /* CoreManager.swift */,
 				6F05C3362528B236001C7FD2 /* CallProviderDelegate.swift */,
+				6FE24AC325421D110043ACC7 /* ConfigManager.swift */,
+				6FE24AC725421D890043ACC7 /* AppManager.swift */,
 				6FAD46E9245066F10050F7F2 /* SceneDelegate.swift */,
 				6FB11AFA229BF0590098D050 /* TabBarController.swift */,
 				6FB11B0E229C236B0098D050 /* Utils */,
@@ -1797,6 +1820,7 @@
 		6FB11B0E229C236B0098D050 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				6FB11B24229E59F00098D050 /* Config.swift */,
 				6F05C32A2528B0EC001C7FD2 /* Audio.swift */,
 				6F97BA8924A90A8800F8DE72 /* TopLevelMethods.swift */,
 				6FB11B0F229C23840098D050 /* Extensions.swift */,
@@ -1808,7 +1832,6 @@
 				6F065356246741C400F857C1 /* Reachability+ViewHelpers.swift */,
 				6FB11B18229D06BB0098D050 /* CustomUtils.swift */,
 				6F02E9AB22DF45BF005708B0 /* AssertionModalController.swift */,
-				6FB11B24229E59F00098D050 /* Config.swift */,
 				6FEE9A2E247F118F00709E2D /* Configuration.swift */,
 				6F8A82FE249A91B7002ACDFE /* FirebaseConfiguration.swift */,
 				6F395C8F248015E90023255F /* Constants.swift */,
@@ -1974,6 +1997,32 @@
 				6FD4F7AF24AF527900BD2569 /* LocalNotificationService.swift */,
 			);
 			path = "Local Notifications Service";
+			sourceTree = "<group>";
+		};
+		6FE24AB42541C68A0043ACC7 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				6FE24AB52541C68A0043ACC7 /* sounds */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		6FE24AB52541C68A0043ACC7 /* sounds */ = {
+			isa = PBXGroup;
+			children = (
+				6FE24AB62541C68A0043ACC7 /* ringtones */,
+				6FE24AB82541C68A0043ACC7 /* hold.mkv */,
+				6FE24AB92541C68A0043ACC7 /* ringback.wav */,
+			);
+			path = sounds;
+			sourceTree = "<group>";
+		};
+		6FE24AB62541C68A0043ACC7 /* ringtones */ = {
+			isa = PBXGroup;
+			children = (
+				6FE24AB72541C68A0043ACC7 /* notes_of_the_optimistic.caf */,
+			);
+			path = ringtones;
 			sourceTree = "<group>";
 		};
 		6FEC641624D816BC0012B234 /* Disabled Accounts */ = {
@@ -2295,10 +2344,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6FE24ABC2541C68A0043ACC7 /* ringback.wav in Resources */,
+				6FE24ABA2541C68A0043ACC7 /* notes_of_the_optimistic.caf in Resources */,
 				6FB11AEB229BDDBE0098D050 /* Assets.xcassets in Resources */,
 				6FB11AF9229BE2400098D050 /* Gotham-Book.otf in Resources */,
 				6FB11AF8229BE2400098D050 /* Gotham-Medium.otf in Resources */,
 				6FB11AFD229BF36B0098D050 /* LaunchScreen.storyboard in Resources */,
+				6FE24ABB2541C68A0043ACC7 /* hold.mkv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2472,6 +2524,8 @@
 				6FC6023C2464497600C1BF6D /* Agents+SearchController.swift in Sources */,
 				6F1BD2F122C4B1510053D0CC /* FollowUpAPIProtocol.swift in Sources */,
 				6FB11B1F229D88510098D050 /* SectionItem.swift in Sources */,
+				6FE24AC425421D110043ACC7 /* ConfigManager.swift in Sources */,
+				6FE24ACD25422F0D0043ACC7 /* AudioHelper.m in Sources */,
 				6F087DCF22E0E40E00CAD840 /* OnlineUser.swift in Sources */,
 				6F46A8BD22D39E790042A667 /* Checkbox.swift in Sources */,
 				6F41014322DE13680038AA76 /* ToggleCallGroupHelpers.swift in Sources */,
@@ -2576,6 +2630,7 @@
 				6FC8230D2475AE5A002421F0 /* Blacklist+Helpers.swift in Sources */,
 				6F987A7A245C27B600C6046E /* AgentOperations.swift in Sources */,
 				6FEE9A0B247D396F00709E2D /* Messages+DataSource.swift in Sources */,
+				6FE24AC825421D8A0043ACC7 /* AppManager.swift in Sources */,
 				6FB11B19229D06BB0098D050 /* CustomUtils.swift in Sources */,
 				6FC60230246446F000C1BF6D /* Agents+CoreDataHelpers.swift in Sources */,
 				6FF2E6A5248FA4CE00502B99 /* Profile+Image.swift in Sources */,
@@ -2663,6 +2718,7 @@
 				6FB11B1B229D07050098D050 /* LoginViewController.swift in Sources */,
 				6F41013B22DDF8B50038AA76 /* CallGroupsCodable.swift in Sources */,
 				6F00F2D824A50DDA001E33D9 /* MessageDownloadItem.swift in Sources */,
+				6FE24AAE25417F910043ACC7 /* CoreManager.swift in Sources */,
 				6F9453C122DB4C1A00047C7F /* CustomerPickerDataProvider.swift in Sources */,
 				6F00F2E024A5356F001E33D9 /* FirebaseMediaMetadata.swift in Sources */,
 				6F8A82FD249A1E05002ACDFE /* Messages+Multimedia.swift in Sources */,
@@ -2769,6 +2825,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.telabook.web-prerelease";
 				PRODUCT_NAME = Telabook;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Telabook/Telabook-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = NO;
@@ -2917,6 +2974,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.telabook.web-debug";
 				PRODUCT_NAME = Telabook;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Telabook/Telabook-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -2943,6 +3001,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.telabook.web;
 				PRODUCT_NAME = Telabook;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Telabook/Telabook-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -3028,6 +3087,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.telabook.web-staging";
 				PRODUCT_NAME = Telabook;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Telabook/Telabook-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = NO;

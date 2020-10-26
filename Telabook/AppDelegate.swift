@@ -24,9 +24,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let gcmMessageIDKey = "gcm.message_id"
     var window = (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window
     
-    let callManager = CallManager()
+    
     var callProviderDelegate: CallProviderDelegate!
     var voipRegistry: PKPushRegistry!
+    
+    
+    var linphoneCore: Core!
+    var scheduler: Timer!
+    public var proxy_cfg: ProxyConfig!
+    let logManager = LinphoneLoggingServiceManager()
+    //liblinphone call delegate
+    var callDelegate: CallDelegate!
+    
+    var remoteNotificationToken:Data?
+    var pushKitToken:Data?
+    
+    
     
     func registerForVoIPNotifications() {
         self.voipRegistry = PKPushRegistry(queue: nil)
@@ -39,20 +52,262 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         Messaging.messaging().delegate = self
         
+        initializeLinphoneCore()
+        
         UNUserNotificationCenter.current().delegate = self
         registerForVoIPNotifications()
         
-        callProviderDelegate = CallProviderDelegate(callManager: callManager)
+//        callProviderDelegate = CallProviderDelegate(callManager: callManager)
+        
+        setupVoipAccount()
+        
         return true
     }
     
-    
-    func displayIncomingCall(uuid: UUID, handle: String, hasVideo: Bool = false, completion: ((Error?) -> Void)?) {
-        if callProviderDelegate == nil {
-            callProviderDelegate = CallProviderDelegate(callManager: callManager)
+    private func initializeLinphoneCore() {
+        do {
+            
+            LoggingService.Instance.addDelegate(delegate: logManager)
+            LoggingService.Instance.logLevel = LogLevel.Debug
+            Factory.Instance.enableLogCollection(state: LogCollectionState.Enabled)
+            /*
+            Instanciate a LinphoneCore object
+            */
+            linphoneCore = try Factory.Instance.createCore(configPath: "", factoryConfigPath: "", systemContext: nil)
+            linphoneCore.callkitEnabled = true
+            
+            CallManager.instance().setCore(core: linphoneCore.getCobject!)
+            CoreManager.instance().setCore(core: linphoneCore.getCobject!)
+            try linphoneCore.start()
+            
+            let transports = linphoneCore.transports!
+            transports.dtlsPort = 0
+            transports.tcpPort = 0
+            transports.tlsPort = 0
+            transports.udpPort = Int(LC_SIP_TRANSPORT_RANDOM)
+            
+            try linphoneCore.setTransports(newValue: transports)
+            
+            scheduler = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [self] timer in
+                /* main loop for receiving notifications and doing background linphonecore work: */
+                linphoneCore.iterate()
+            }
+        } catch {
+            print("### \(#function) - \(error)")
         }
-        callProviderDelegate.reportIncomingCall(uuid: uuid, handle: handle, hasVideo: hasVideo, completion: completion)
     }
+    private func setPushTokenToLinphone(remoteNotificationToken token: Data?) {
+        if remoteNotificationToken == token {
+            return
+        }
+        remoteNotificationToken = token
+        configurePushTokenForLinphoneProxyConfigs()
+    }
+    private func setPushTokenToLinphone(pushKitToken token: Data?) {
+        if pushKitToken == token {
+            return
+        }
+        pushKitToken = token
+        configurePushTokenForLinphoneProxyConfigs()
+    }
+    private func configurePushTokenForLinphoneProxyConfigs() {
+        let proxies = linphoneCore.proxyConfigList
+        proxies.forEach {
+            configurePushToken(forLinphoneProxyConfig: $0)
+        }
+    }
+    func configurePushToken(forLinphoneProxyConfig proxyConfig: ProxyConfig) {
+        proxyConfig.edit()
+        
+        let remoteTokenData = remoteNotificationToken
+        let pushKitTokenData = pushKitToken
+        
+        if (remoteTokenData != nil || pushKitTokenData != nil) {
+            var remoteTokenString:String?
+            var pushKitTokenString:String?
+            if let data = remoteTokenData {
+               remoteTokenString = data.map { String(format: "%02x", $0) }.joined()
+            }
+            if let data = pushKitTokenData {
+                pushKitTokenString = data.map { String(format: "%02x", $0) }.joined()
+            }
+            
+            let token:String
+            let service:String
+            
+            
+            if let remoteToken = remoteTokenString, let pkToken = pushKitTokenString {
+                token = String(format: "%@:voip&%@:remote", pkToken, remoteToken)
+                service = "voip&remote"
+            } else if let remoteToken = remoteTokenString {
+                token = String(format: "%@:remote", remoteToken)
+                service = "remote"
+            } else {
+                token = String(format: "%@:voip", pushKitTokenString!)
+                service = "voip"
+            }
+            
+            let bundleId = Bundle.main.bundleIdentifier!
+            let teamId = Config.teamID
+            
+            let params = String(format: "pn-provider=apns.dev;pn-prid=%@;pn-param=%@.%@.%@", token, teamId, bundleId, service)
+            
+            print("Proxy Config: \(String(describing: proxyConfig.identityAddress)) configured for push notifications with contact params: \(params)")
+            
+            proxyConfig.contactUriParameters = params
+//            proxyConfig.contactParameters = ""
+            
+        } else {
+            print("Proxy Config: \(String(describing: proxyConfig.identityAddress)) not configured for push notifications because of no token")
+            // no token
+            proxyConfig.contactUriParameters = ""
+            proxyConfig.contactParameters = ""
+        }
+        do {
+            try proxyConfig.done()
+        } catch {
+            print("### \(#function): Error configuring proxy: \(proxyConfig) \nError=>\(error)")
+        }
+    }
+    
+    
+    
+    
+    func setupVoipAccount() {
+        guard let credentials = AppData.userInfo?.extension,
+              let userName = credentials.number,
+              let password = credentials.password,
+              let domain = credentials.domain else {
+//            fatalError("### \(#function) - Extension credentials are unavailable in UserDefaults.")
+            printAndLog(message: "### \(#function) - Unable to setup Linphone VOIP account because Extension credentials are unavailable in UserDefaults.", log: .default, logType: .debug)
+            UIAlertController.showTelaAlert(title: "Error", message: "Can't set up your VOIP account because required credentials are missing.")
+            return
+        }
+     
+        
+        let sipAddress = "sip:" + userName + "@" + domain
+        let instance = Factory.Instance
+        
+        do {
+        
+            let address:Address = try instance.createAddress(addr: sipAddress)
+            
+            proxy_cfg = try linphoneCore.createProxyConfig()
+            try proxy_cfg.setIdentityaddress(newValue: address)
+            
+            let serverAddress = address.domain + ";transport=udp"
+            
+            try proxy_cfg.setRoute(newValue: serverAddress)
+            try proxy_cfg.setServeraddr(newValue: serverAddress)
+            
+            proxy_cfg.pushNotificationAllowed = true
+            proxy_cfg.publishEnabled = false
+            proxy_cfg.registerEnabled = true
+            
+            
+            let authInfo: AuthInfo = try instance.createAuthInfo(username: address.username, userid: "", passwd: password, ha1: "", realm: address.domain, domain: address.domain)
+            linphoneCore.addAuthInfo(info: authInfo)
+            
+            guard proxy_cfg != nil else {
+                printAndLog(message: "### \(#function) - Unable to setup Linphone VOIP account because proxy config is nil", log: .ui, logType: .debug)
+                UIAlertController.showTelaAlert(title: "Error", message: "Can't set up your VOIP account right now. Please try again later.")
+                return
+            }
+            try linphoneCore.addProxyConfig(config: proxy_cfg)
+            linphoneCore.defaultProxyConfig = proxy_cfg
+            
+        } catch {
+            printAndLog(message: "### \(#function) - Error setting up Linphone VOIP account: => \n\(error)", log: .default, logType: .error)
+            UIAlertController.showTelaAlert(title: "Error", message: "Failed to set up your VOIP account. Please try again later.")
+        }
+    }
+    
+    
+    
+    private func configureLinphoneProxy(withPushkitRegistrationToken token: String) {
+        guard let credentials = AppData.userInfo?.extension,
+              let userName = credentials.number,
+              let password = credentials.password,
+              let domain = credentials.domain else {
+            fatalError("### \(#function) - Extension credentials are unavailable in UserDefaults.")
+        }
+//        let userName = "161242"
+//        let password = "$2y$10$/Hh4hul1GZKxWyISyyzsdOIOtUW4/aw7dfGP6cWY25ZL31bm6bpbC"
+        let bundleId = Bundle.main.bundleIdentifier!
+        let teamId = Config.teamID
+        let params = String(format: "pn-provider=apns.dev;pn-prid=%@:voip;pn-param=%@.%@.voip", token, teamId, bundleId)
+        do {
+            linphoneCore.clearProxyConfig()
+            linphoneCore.clearAllAuthInfo()
+            
+            let sipAddress = "sip:" + userName + "@" + domain
+            let instance = Factory.Instance
+            let address:Address = try instance.createAddress(addr: sipAddress)
+            let authInfo: AuthInfo = try instance.createAuthInfo(username: address.username, userid: "", passwd: password, ha1: "", realm: address.domain, domain: address.domain)
+            linphoneCore.addAuthInfo(info: authInfo)
+            
+            
+            let transports = linphoneCore.transports!
+            transports.dtlsPort = 0
+            transports.tcpPort = 0
+            transports.tlsPort = 0
+            transports.udpPort = Int(LC_SIP_TRANSPORT_RANDOM)
+            
+            try linphoneCore.setTransports(newValue: transports)
+            
+            
+            
+            
+            /*
+             
+            let natPolicy = try linphoneCore.createNatPolicy()
+            natPolicy.stunEnabled = false
+            natPolicy.iceEnabled = false
+            natPolicy.turnEnabled = false
+            natPolicy.upnpEnabled = false
+             
+            */
+            
+            proxy_cfg = try linphoneCore.createProxyConfig()
+            try proxy_cfg.setIdentityaddress(newValue: address)
+            
+//            proxy_cfg.natPolicy = natPolicy
+            let server_addr = address.domain
+            
+//            let server_addr = "sip:" + address.domain + ";transport=udp" /*sip.linphone.org*/ /*extract domain address from identity*/
+//            try proxy_cfg.setRoute(newValue: address.domain)
+            
+            try proxy_cfg.setServeraddr(newValue: server_addr) /* we assume domain = proxy server address*/
+            
+//            proxy_cfg.expires = 60
+            
+            /*
+            proxy_cfg.registerEnabled = true /*activate registration for this proxy config*/
+            proxy_cfg.publishEnabled = false
+            proxy_cfg.pushNotificationAllowed = true
+            proxy_cfg.contactUriParameters = params
+            */
+//            proxy_cfg.publishEnabled = false
+            proxy_cfg.pushNotificationAllowed = true
+            proxy_cfg.contactUriParameters = params
+            
+            try linphoneCore.addProxyConfig(config: proxy_cfg) /*add proxy config to linphone core*/
+            linphoneCore.defaultProxyConfig = proxy_cfg /*set to default proxy*/
+                
+            
+
+            
+        } catch {
+            print("### \(#function) - \(error)")
+        }
+    }
+    
+//    func displayIncomingCall(uuid: UUID, handle: String, hasVideo: Bool = false, completion: ((Error?) -> Void)?) {
+//        if callProviderDelegate == nil {
+//            callProviderDelegate = CallProviderDelegate(callManager: callManager)
+//        }
+//        callProviderDelegate.reportIncomingCall(uuid: uuid, handle: handle, hasVideo: hasVideo, completion: completion)
+//    }
     
     
     
@@ -205,6 +460,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         print("Unable to register for remote notifications: \(error.localizedDescription)")
+        setPushTokenToLinphone(remoteNotificationToken: nil)
     }
     
     // This function is added here only for debugging purposes, and can be removed if swizzling is enabled.
@@ -213,6 +469,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         let token = deviceToken.map { String(format: "%02x", $0) }.joined()
         print("UserNotifications -> deviceToken :\(token)")
+        setPushTokenToLinphone(remoteNotificationToken: deviceToken)
         // With swizzling disabled you must set the APNs token here.
         Messaging.messaging().apnsToken = deviceToken
     }
@@ -229,10 +486,17 @@ extension AppDelegate: PKPushRegistryDelegate {
         print(credentials.token)
         let deviceToken = credentials.token.map { String(format: "%02x", $0) }.joined()
         print("pushRegistry -> deviceToken :\(deviceToken)")
+        guard AppData.isLoggedIn, AppData.userInfo?.extension != nil else {
+            printAndLog(message: "Either user not logged in or Extension unavailable in User Defaults", log: .notifications, logType: .error)
+            return
+        }
+//        configureLinphoneProxy(withPushkitRegistrationToken: deviceToken)
+        setPushTokenToLinphone(pushKitToken: credentials.token)
     }
     
     func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {
-        print("pushRegistry:didInvalidatePushTokenForType:")
+        print("### \(#function)")
+        setPushTokenToLinphone(pushKitToken: nil)
     }
     
     
@@ -250,30 +514,41 @@ extension AppDelegate: PKPushRegistryDelegate {
         if type == .voIP {
             
              // Extract the call information from the push notification payload
-            if let handle = payload.dictionaryPayload["caller_info"] as? String {
+            if let aps = payload.dictionaryPayload["aps"] as? [AnyHashable: Any],
+                let handle = aps["caller_id"] as? String {
 //                 let uuidString = payload.dictionaryPayload["callUUID"] as? String,
-                 let callUUID = UUID()
-                 
-                 // Configure the call information data structures.
-                 let callUpdate = CXCallUpdate()
-                 let phoneNumber = CXHandle(type: .phoneNumber, value: handle)
-                 callUpdate.remoteHandle = phoneNumber
+//                 let callUUID = UUID()
                  
                  // Report the call to CallKit, and let it display the call UI.
                  
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                    AppDelegate.shared.displayIncomingCall(uuid: callUUID, handle: handle) { _ in
-                        completion()
-                        //                    UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
-                    }
+                
+                CallManager.instance().displayIncomingCall(callId: handle)
+                
+                DispatchQueue.main.async {
+                    completion()
                 }
-                 
+                
+                /*
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+//                    AppDelegate.shared.displayIncomingCall(uuid: callUUID, handle: handle) { _ in
+//                        completion()
+//                        //                    UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+//                    }
+                    CallManager.instance().displayIncomingCall(callId: handle)
+                    
+                }
+                 */
+                linphoneCore.ensureRegistered()
                  // Asynchronously register with the telephony server and
                  // process the call. Report updates to CallKit as needed.
 //                 establishConnection(for: callUUID)
                 // Linphone goes here
                 
-             }
+            } else {
+                fatalError("Unhandled voip notification payload handle key where payload: \(payload.dictionaryPayload)")
+            }
+        } else {
+            fatalError("Unhandled PKPush Type Notification")
         }
     }
     
@@ -392,7 +667,39 @@ extension AppDelegate : MessagingDelegate {
     }
 }
 
-
+class LinphoneLoggingServiceManager: LoggingServiceDelegate {
+    override func onLogMessageWritten(logService: LoggingService, domain: String, lev: LogLevel, message: String) {
+        print("Linphone Log: \(message)\n")
+    }
+}
+class LinphoneCoreManager: CoreDelegate {
+    override func onRegistrationStateChanged(lc: Core, cfg: ProxyConfig, cstate: RegistrationState, message: String?) {
+        print("New registration state \(cstate) for user id \( String(describing: cfg.identityAddress?.asString()))\n")
+        if (cstate == RegistrationState.Ok) {
+            //running = false
+        }
+    }
+}
+class LinphoneCoreManager2: CoreDelegate {
+    override func onCallStateChanged(lc: Core, call: Call, cstate: Call.State, message: String) {
+        switch cstate {
+        case .OutgoingRinging:
+            print("It is now ringing remotely !\n")
+        case .OutgoingEarlyMedia:
+            print("Receiving some early media\n")
+        case .Connected:
+            print("We are connected !\n")
+        case .StreamsRunning:
+            print("Media streams established !\n")
+        case .End:
+            print("Call is terminated.\n")
+        case .Error:
+            print("Call failure !")
+        default:
+            print("Unhandled notification \(cstate)\n")
+        }
+    }
+}
 
 
 

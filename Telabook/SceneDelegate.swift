@@ -68,6 +68,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                                         printAndLog(message: "Successfully subscribed to topic: \(topic)", log: .notifications, logType: .info)
                                     }
                                 }
+//                                AppDelegate.shared.setupVoipAccount()
                             }
                         }
                     }

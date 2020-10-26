@@ -413,7 +413,7 @@ extension UIViewController {
     
     
     
-    // MARK: - Request Photo Library
+    // MARK: - Request Remote Notification Permissions
     func requestNotifications(_ actionHandler:(() -> Void)? = nil) {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             switch settings.authorizationStatus {

@@ -18,6 +18,8 @@ struct Config {
     
     static let environment:Environment = .Development
     
+    static let teamID:String = "J9GL83RFA4"
+    
     struct APIConfig {
         static var baseURL:String {
             return try! Configuration.value(for: .baseURL)
