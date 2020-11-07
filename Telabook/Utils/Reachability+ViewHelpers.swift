@@ -98,4 +98,6 @@ extension UIViewController {
             }, completion: { _ in networkStatusLabel.alpha = 0})
         }, completion: nil)
     }
+    
+    
 }

@@ -31,17 +31,17 @@ import linphonesw
 
     @objc func startIterateTimer() {
         if (mIterateTimer?.isValid ?? false) {
-            print("Iterate timer is already started, skipping ...")
+            lpLog.message(msg: "*** \(self) > Iterate timer is already started, skipping ...")
             return
         }
         mIterateTimer = Timer.scheduledTimer(timeInterval: 0.02, target: self, selector: #selector(self.iterate), userInfo: nil, repeats: true)
-        print("start iterate timer")
+        lpLog.message(msg: "*** \(self) > Iterate timer started...")
 
     }
 
     @objc func stopIterateTimer() {
         if let timer = mIterateTimer {
-            print("stop iterate timer")
+            lpLog.message(msg: "*** \(self) > Stopping iterate timer")
             timer.invalidate()
         }
     }
@@ -49,6 +49,7 @@ import linphonesw
     @objc func stopLinphoneCore() {
         if (lc?.callsNb == 0) {
             //stop iterate when core is off
+            lpLog.message(msg: "*** \(self) > Stopping Linphone Core Asynchronously")
             lc?.stopAsync()
         }
     }

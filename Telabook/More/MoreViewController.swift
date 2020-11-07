@@ -30,7 +30,10 @@ class MoreViewController: UITableViewController {
         super.viewDidLoad()
         commonInit()   
     }
-    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+//        show()
+    }
     
     
     

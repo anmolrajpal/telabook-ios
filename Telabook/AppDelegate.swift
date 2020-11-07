@@ -14,6 +14,10 @@ import PushKit
 import linphonesw
 import CallKit
 
+var linphoneCore: Core {
+    return LinphoneManager.getLc()
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
@@ -29,16 +33,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var voipRegistry: PKPushRegistry!
     
     
-    var linphoneCore: Core!
+    
     var scheduler: Timer!
     public var proxy_cfg: ProxyConfig!
-    let logManager = LinphoneLoggingServiceManager()
+//    let logManager = LinphoneLoggingServiceManager()
+    var startedInBackground = false
     //liblinphone call delegate
     var callDelegate: CallDelegate!
     
     var remoteNotificationToken:Data?
     var pushKitToken:Data?
     
+    var bgStartId:UIBackgroundTaskIdentifier?
     
     
     func registerForVoIPNotifications() {
@@ -52,24 +58,70 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         Messaging.messaging().delegate = self
         
-        initializeLinphoneCore()
+//        initializeLinphoneCore()
         
         UNUserNotificationCenter.current().delegate = self
-        registerForVoIPNotifications()
+        registerForVoIPNotifications() // Register for notifications must be done ASAP to give a chance for first SIP register to be done with right token. Specially true in case of remote provisionning or re-install with new type of signing certificate, like debug to release.
         
-//        callProviderDelegate = CallProviderDelegate(callManager: callManager)
+        let linphoneManager = LinphoneManager.instance()
+//        Factory.Instance.enableLogCollection(state: LogCollectionState(rawValue: ConfigManager.instance().lpConfigIntForKey(key: "debugenable_preference"))!)
+        let configManager = ConfigManager.instance()
+        configManager.setDb(db: linphoneManager.config.getCobject!)
         
-        setupVoipAccount()
+        configManager.lpConfigSetBool(value: true, key: "start_at_boot_preference")
         
+        let background_mode = configManager.lpConfigBoolForKey(key: "backgroundmode_preference")
+        let start_at_boot = configManager.lpConfigBoolForKey(key: "start_at_boot_preference")
+        print("BG Mode enabled: \(background_mode)")
+        print("start at boot: \(start_at_boot)")
+        if start_at_boot || background_mode {
+            print("(1) if any one condition is true")
+        }
+        if !start_at_boot || !background_mode {
+            print("(2) If any one condition is false")
+        }
+        if UIApplication.shared.applicationState == .background {
+            // we've been woken up directly to background;
+            if (!start_at_boot || !background_mode) {
+                // autoboot disabled or no background, and no push: do nothing and wait for a real launch
+                //output a log with NSLog, because the ortp logging system isn't activated yet at this time
+                print("Linphone launch doing nothing because start_at_boot or background_mode are not activated.")
+                return true
+            }
+            startedInBackground = true
+        }
+        bgStartId = UIApplication.shared.beginBackgroundTask {
+          print("Background task for application launching expired.")
+            UIApplication.shared.endBackgroundTask(self.bgStartId!)
+        }
+        
+        LinphoneManager.instance().launchLinphoneCore()
+        
+        if bgStartId != .invalid {
+            UIApplication.shared.endBackgroundTask(bgStartId!)
+        }
+        
+        //output what state the app is in. This will be used to see when the app is started in the background
+        lpLog.debug(msg: "app launched with state : \(application.applicationState)")
+        lpLog.debug(msg: "FINISH LAUNCHING WITH OPTION : \(String(describing: launchOptions?.description))")
+        
+        
+//        setupVoipAccount()
+        if AppData.isLoggedIn {
+            setupVoipAccount()
+        }
         return true
     }
     
+    
+
+    /*
     private func initializeLinphoneCore() {
         do {
             
-            LoggingService.Instance.addDelegate(delegate: logManager)
-            LoggingService.Instance.logLevel = LogLevel.Debug
-            Factory.Instance.enableLogCollection(state: LogCollectionState.Enabled)
+//            LoggingService.Instance.addDelegate(delegate: logManager)
+//            LoggingService.Instance.logLevel = LogLevel.Debug
+//            Factory.Instance.enableLogCollection(state: LogCollectionState.Enabled)
             /*
             Instanciate a LinphoneCore object
             */
@@ -80,6 +132,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             CoreManager.instance().setCore(core: linphoneCore.getCobject!)
             try linphoneCore.start()
             
+            linphoneCore.confi
+            
             let transports = linphoneCore.transports!
             transports.dtlsPort = 0
             transports.tcpPort = 0
@@ -88,7 +142,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             try linphoneCore.setTransports(newValue: transports)
             
-            scheduler = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [self] timer in
+            scheduler = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
                 /* main loop for receiving notifications and doing background linphonecore work: */
                 linphoneCore.iterate()
             }
@@ -96,6 +150,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("### \(#function) - \(error)")
         }
     }
+    
     private func setPushTokenToLinphone(remoteNotificationToken token: Data?) {
         if remoteNotificationToken == token {
             return
@@ -169,7 +224,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("### \(#function): Error configuring proxy: \(proxyConfig) \nError=>\(error)")
         }
     }
-    
+    */
     
     
     
@@ -183,7 +238,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             UIAlertController.showTelaAlert(title: "Error", message: "Can't set up your VOIP account because required credentials are missing.")
             return
         }
-     
+        print("VOIP Credentials: \nUsername => \(userName)\nPassword => \(password)\nDomain => \(domain)")
         
         let sipAddress = "sip:" + userName + "@" + domain
         let instance = Factory.Instance
@@ -192,8 +247,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
             let address:Address = try instance.createAddress(addr: sipAddress)
             
+            
+            let natPolicy = try linphoneCore.createNatPolicy()
+            natPolicy.stunEnabled = false
+            natPolicy.iceEnabled = false
+            natPolicy.turnEnabled = false
+            natPolicy.upnpEnabled = false
+            
+            
             proxy_cfg = try linphoneCore.createProxyConfig()
             try proxy_cfg.setIdentityaddress(newValue: address)
+            
+            proxy_cfg.natPolicy = natPolicy
             
             let serverAddress = address.domain + ";transport=udp"
             
@@ -205,7 +270,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             proxy_cfg.registerEnabled = true
             
             
-            let authInfo: AuthInfo = try instance.createAuthInfo(username: address.username, userid: "", passwd: password, ha1: "", realm: address.domain, domain: address.domain)
+            let authInfo: AuthInfo = try instance.createAuthInfo(username: address.username, userid: "", passwd: password, ha1: "", realm: "", domain: "")
             linphoneCore.addAuthInfo(info: authInfo)
             
             guard proxy_cfg != nil else {
@@ -223,7 +288,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     
-    
+    /*
     private func configureLinphoneProxy(withPushkitRegistrationToken token: String) {
         guard let credentials = AppData.userInfo?.extension,
               let userName = credentials.number,
@@ -243,7 +308,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let sipAddress = "sip:" + userName + "@" + domain
             let instance = Factory.Instance
             let address:Address = try instance.createAddress(addr: sipAddress)
-            let authInfo: AuthInfo = try instance.createAuthInfo(username: address.username, userid: "", passwd: password, ha1: "", realm: address.domain, domain: address.domain)
+            let authInfo: AuthInfo = try instance.createAuthInfo(username: address.username, userid: "", passwd: password, ha1: "", realm: "", domain: "")
             linphoneCore.addAuthInfo(info: authInfo)
             
             
@@ -279,7 +344,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             try proxy_cfg.setServeraddr(newValue: server_addr) /* we assume domain = proxy server address*/
             
-//            proxy_cfg.expires = 60
+            proxy_cfg.expires = 60
             
             /*
             proxy_cfg.registerEnabled = true /*activate registration for this proxy config*/
@@ -301,13 +366,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("### \(#function) - \(error)")
         }
     }
+    */
     
-//    func displayIncomingCall(uuid: UUID, handle: String, hasVideo: Bool = false, completion: ((Error?) -> Void)?) {
-//        if callProviderDelegate == nil {
-//            callProviderDelegate = CallProviderDelegate(callManager: callManager)
-//        }
-//        callProviderDelegate.reportIncomingCall(uuid: uuid, handle: handle, hasVideo: hasVideo, completion: completion)
-//    }
     
     
     
@@ -460,7 +520,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         print("Unable to register for remote notifications: \(error.localizedDescription)")
-        setPushTokenToLinphone(remoteNotificationToken: nil)
+        LinphoneManager.instance().setPushTokenToLinphone(remoteNotificationToken: nil)
     }
     
     // This function is added here only for debugging purposes, and can be removed if swizzling is enabled.
@@ -469,7 +529,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         let token = deviceToken.map { String(format: "%02x", $0) }.joined()
         print("UserNotifications -> deviceToken :\(token)")
-        setPushTokenToLinphone(remoteNotificationToken: deviceToken)
+        LinphoneManager.instance().setPushTokenToLinphone(remoteNotificationToken: deviceToken)
         // With swizzling disabled you must set the APNs token here.
         Messaging.messaging().apnsToken = deviceToken
     }
@@ -491,12 +551,12 @@ extension AppDelegate: PKPushRegistryDelegate {
             return
         }
 //        configureLinphoneProxy(withPushkitRegistrationToken: deviceToken)
-        setPushTokenToLinphone(pushKitToken: credentials.token)
+        LinphoneManager.instance().setPushTokenToLinphone(pushKitToken: credentials.token)
     }
     
     func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {
         print("### \(#function)")
-        setPushTokenToLinphone(pushKitToken: nil)
+        LinphoneManager.instance().setPushTokenToLinphone(pushKitToken: nil)
     }
     
     
@@ -667,11 +727,13 @@ extension AppDelegate : MessagingDelegate {
     }
 }
 
-class LinphoneLoggingServiceManager: LoggingServiceDelegate {
-    override func onLogMessageWritten(logService: LoggingService, domain: String, lev: LogLevel, message: String) {
-        print("Linphone Log: \(message)\n")
-    }
-}
+
+/*
+//class LinphoneLoggingServiceManager: LoggingServiceDelegate {
+//    override func onLogMessageWritten(logService: LoggingService, domain: String, lev: LogLevel, message: String) {
+//        print("Linphone Log: \(message)\n")
+//    }
+//}
 class LinphoneCoreManager: CoreDelegate {
     override func onRegistrationStateChanged(lc: Core, cfg: ProxyConfig, cstate: RegistrationState, message: String?) {
         print("New registration state \(cstate) for user id \( String(describing: cfg.identityAddress?.asString()))\n")
@@ -700,6 +762,7 @@ class LinphoneCoreManager2: CoreDelegate {
         }
     }
 }
+ */
 
 
 

@@ -63,6 +63,8 @@ class CallsTabAgentsViewController: UITableViewController {
         viewDidAppear = true
         synchronizeAgents()
 //        addFirebaseObservers()
+        
+//        show()
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)

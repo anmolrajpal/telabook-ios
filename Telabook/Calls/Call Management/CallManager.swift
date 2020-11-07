@@ -33,7 +33,7 @@ import AVFoundation
     @objc var alreadyRegisteredForNotification: Bool = false
     var referedFromCall: String?
     var referedToCall: String?
-
+    var endCallkit: Bool = false
 
     fileprivate override init() {
         providerDelegate = CallProviderDelegate()
@@ -98,12 +98,14 @@ import AVFoundation
     }
 
     @objc static func callKitEnabled() -> Bool {
-//        #if !targetEnvironment(simulator)
-//        if ConfigManager.instance().lpConfigBoolForKey(key: "use_callkit", section: "app") {
+        #if !targetEnvironment(simulator)
+        let shouldUseCallKit = ConfigManager.instance().lpConfigBoolForKey(key: "use_callkit", section: "app")
+        lpLog.message(msg: "*** \(self) > ### \(#function) => | Should use callKit preference from linphonerc enabled: \(shouldUseCallKit)")
+        if shouldUseCallKit {
             return true
-//        }
-//        #endif
-//        return false
+        }
+        #endif
+        return false
     }
 
     @objc func allowSpeaker() -> Bool {
@@ -116,7 +118,7 @@ import AVFoundation
         let newRoute = AVAudioSession.sharedInstance().currentRoute
         if (newRoute.outputs.count > 0) {
             let route = newRoute.outputs[0].portType
-            allow = !( route == .lineOut || route == .headphones || (AudioHelper.bluetoothRoutes() as Array).contains(where: {($0 as! AVAudioSession.Port) == route}))
+            allow = !( route == .lineOut || route == .headphones || (AudioHelper.bluetoothRoutes() as Array).contains(where: {$0 == route}))
         }
 
         return allow
@@ -131,49 +133,45 @@ import AVFoundation
                 bluetoothEnabled = false
             } else {
                 try AVAudioSession.sharedInstance().overrideOutputAudioPort(.none)
-                let buildinPort = AudioHelper.builtinAudioDevice()
+                let buildinPort = AudioHelper.builtInAudioDevice()
                 try AVAudioSession.sharedInstance().setPreferredInput(buildinPort)
                 UIDevice.current.isProximityMonitoringEnabled = (lc!.callsNb > 0)
             }
         } catch {
-            print("Failed to change audio route: err \(error)")
+            lpLog.error(msg: "*** \(self) > ### \(#function) => Failed to change audio route: err \(error)")
         }
     }
 
     func requestTransaction(_ transaction: CXTransaction, action: String) {
         callController.request(transaction) { error in
             if let error = error {
-                print("CallKit: Requested transaction \(action) failed because: \(error)")
+                lpLog.error(msg: "*** \(self) > ### \(#function) => CallKit: Requested transaction \(action) failed because: \(error)")
             } else {
-                print("CallKit: Requested transaction \(action) successfully")
+                lpLog.message(msg: "*** \(self) > ### \(#function) => CallKit: Requested transaction \(action) successfully")
             }
         }
     }
 
     // From ios13, display the callkit view when the notification is received.
     @objc func displayIncomingCall(callId: String) {
-        let uuid = CallManager.instance().providerDelegate.uuids["\(callId)"]
-        if (uuid != nil) {
-            let callInfo = providerDelegate.callInfos[uuid!]
-            print("### \(#function) => UUID not nil; Now checking if call is declined")
-            if (callInfo?.declined ?? false) {
+        if let uuid = CallManager.instance().providerDelegate.uuids["\(callId)"],
+           let callInfo = providerDelegate.callInfos[uuid] {
+            if callInfo.declined {
                 // This call was declined.
-                print("### \(#function) => Theis call was declined; Reporting new incoming call and ending it immediately.")
-                providerDelegate.reportIncomingCall(call:nil, uuid: uuid!, handle: "Calling", hasVideo: false)
-                providerDelegate.endCall(uuid: uuid!)
+                lpLog.message(msg: "*** \(self) > ### \(#function) => This call was declined; Reporting new incoming call and ending it immediately beause from > iOS 13 it's mandatory to report callkit call.")
+                providerDelegate.reportIncomingCall(call:nil, uuid: uuid, handle: "Calling", hasVideo: false)
+                providerDelegate.endCall(uuid: uuid)
             }
             return
         }
-        print("### \(#function) => UUID is nil; Now finding call object by callId")
-        let call = CallManager.instance().callByCallId(callId: callId)
-        if (call != nil) {
-            print("### \(#function) => Call is not nil; Getting display name and displaying incoming call now.")
+        if let call = CallManager.instance().callByCallId(callId: callId) {
+            lpLog.message(msg: "*** \(self) > ### \(#function) => Linphone Call Found for call-id: [\(callId)]. Getting display name and displaying incoming call now.")
 //            let addr = FastAddressBook.displayName(for: call?.remoteAddress?.getCobject) ?? "Unknow"
-            let addr = "Unknown"
-            let video = UIApplication.shared.applicationState == .active && (lc!.videoActivationPolicy?.automaticallyAccept ?? false) && (call!.remoteParams?.videoEnabled ?? false)
-            displayIncomingCall(call: call, handle: addr, hasVideo: video, callId: callId)
+            let addr = call.remoteAddress?.displayName ?? "Unknown"
+            let hasVideo = UIApplication.shared.applicationState == .active && (lc!.videoActivationPolicy?.automaticallyAccept ?? false) && (call.remoteParams?.videoEnabled ?? false)
+            displayIncomingCall(call: call, handle: addr, hasVideo: hasVideo, callId: callId)
         } else {
-            print("### \(#function) => Call is nil; Displaying incoming call with handle: Calling")
+            lpLog.message(msg: "*** \(self) > ### \(#function) => Linphone Call not found for call-id: [\(callId)]. Displaying incoming call with handle: Calling")
             displayIncomingCall(call: nil, handle: "Calling", hasVideo: true, callId: callId)
         }
     }
@@ -203,7 +201,7 @@ import AVFoundation
             if (ConfigManager.instance().lpConfigBoolForKey(key: "edge_opt_preference")) {
                 let low_bandwidth = (AppManager.network() == .network_2g)
                 if (low_bandwidth) {
-                    print("Low bandwidth mode")
+                    lpLog.message(msg: "*** \(self) > ### \(#function) > Linphone Low bandwidth mode")
                 }
                 callParams.lowBandwidthEnabled = low_bandwidth
             }
@@ -211,19 +209,20 @@ import AVFoundation
             //We set the record file name here because we can't do it after the call is started.
             let address = call.callLog?.fromAddress
             let writablePath = AppManager.recordingFilePathFromCall(address: address?.username ?? "")
-            print("Record file path: \(String(describing: writablePath))")
+            lpLog.message(msg: "*** \(self) > ### \(#function) > (Recording File) path: \(String(describing: writablePath))")
             callParams.recordFile = writablePath
 
             try call.acceptWithParams(params: callParams)
+            lpLog.message(msg: "*** \(self) > ### \(#function) > Linphone Call accepted successfully!")
         } catch {
-            print("accept call failed \(error)")
+            lpLog.error(msg: "*** \(self) > ### \(#function) > Linphone Failed to accept call because error: \(error)")
         }
     }
 
     // for outgoing call. There is not yet callId
     @objc func startCall(addr: OpaquePointer?, isSas: Bool) {
         if (addr == nil) {
-            print("Can not start a call with null address!")
+            lpLog.message(msg: "*** \(self) > ### \(#function) > Linphone Can not start a call with null address!")
             return
         }
 
@@ -303,7 +302,7 @@ import AVFoundation
 
             let currentUuid = CallManager.instance().providerDelegate.uuids["\(firstCall)"]
             if (currentUuid == nil) {
-                print("Can not find correspondant call to group.")
+                lpLog.message(msg: "*** \(self) > ### \(#function) > Linphone Can not find correspondant call to group.")
                 return
             }
 
@@ -334,21 +333,21 @@ import AVFoundation
             try audioSession.setPreferredSampleRate(48000.0)
             try AVAudioSession.sharedInstance().setActive(true, options: [])
         } catch {
-            print("CallKit: Unable to config audio session because : \(error)")
+            lpLog.error(msg: "*** \(self) > ### \(#function) > CallKit: Unable to config audio session because : \(error)")
         }
     }
 
     @objc func terminateCall(call: OpaquePointer?) {
         if (call == nil) {
-            print("Can not terminate null call!")
+            lpLog.message(msg: "*** \(self) > ### \(#function) > Can not terminate null call!")
             return
         }
         let call = Call.getSwiftObject(cObject: call!)
         do {
             try call.terminate()
-            print("Call terminated")
+            lpLog.message(msg: "*** \(self) > ### \(#function) > Call terminated succesfully!")
         } catch {
-            print("Failed to terminate call failed because \(error)")
+            lpLog.message(msg: "*** \(self) > ### \(#function) > Failed to terminate call because \(error)")
         }
         if (UIApplication.shared.applicationState == .background) {
             CoreManager.instance().stopLinphoneCore()
@@ -362,7 +361,7 @@ import AVFoundation
 
         let uuid = providerDelegate.uuids["\(callId)"]
         if (uuid == nil) {
-            print("Mark call \(callId) as declined.")
+            lpLog.message(msg: "*** \(self) > ### \(#function) > Marking call with callID: [\(callId)] as declined.")
             let uuid = UUID()
             providerDelegate.uuids.updateValue(uuid, forKey: callId)
             let callInfo = CallInfo.newIncomingCallInfo(callId: callId)
@@ -381,7 +380,7 @@ import AVFoundation
         let uuid = providerDelegate.uuids["\(callid)"]
 
         if (uuid == nil) {
-            print("Can not find correspondant call to group.")
+            lpLog.message(msg: "*** \(self) > ### \(#function) > Can not find correspondant call to group.")
             return
         }
         let setHeldAction = CXSetHeldCallAction(call: uuid!, onHold: hold)
@@ -394,6 +393,19 @@ import AVFoundation
 class CoreManagerDelegate: CoreDelegate {
     static var speaker_already_enabled : Bool = false
 
+    
+    override func onRegistrationStateChanged(lc: Core, cfg: ProxyConfig, cstate: RegistrationState, message: String) {
+        if lc.proxyConfigList.count == 1 && (cstate == .Failed || cstate == .Cleared){
+            // terminate callkit immediately when registration failed or cleared, supporting single proxy configuration
+            CallManager.instance().endCallkit = true
+            for call in CallManager.instance().providerDelegate.uuids {
+                CallManager.instance().providerDelegate.endCall(uuid: call.value)
+            }
+        } else {
+            CallManager.instance().endCallkit = false
+        }
+    }
+    
     override func onCallStateChanged(lc: Core, call: Call, cstate: Call.State, message: String) {
         let addr = call.remoteAddress;
 //        let address = FastAddressBook.displayName(for: addr?.getCobject) ?? "Unknow"
@@ -414,18 +426,26 @@ class CoreManagerDelegate: CoreDelegate {
         switch cstate {
             case .IncomingReceived:
                 if (CallManager.callKitEnabled()) {
-                    let uuid = CallManager.instance().providerDelegate.uuids["\(callId!)"]
-                    if (uuid != nil) {
+                    if let uuid = CallManager.instance().providerDelegate.uuids["\(callId!)"] {
                         // The app is now registered, updated the call already existed.
-                        print("### \(#function) - \(cstate) => UUID not nil: The app is now registered, updated the call already existed.\n About to update callkit call")
-                        CallManager.instance().providerDelegate.updateCall(uuid: uuid!, handle: address, hasVideo: video)
-                        let callInfo = CallManager.instance().providerDelegate.callInfos[uuid!]
-                        if (callInfo?.declined ?? false) {
-                            DispatchQueue.main.asyncAfter(deadline: .now()) {try? call.decline(reason: callInfo!.reason)}
-                        } else if (callInfo?.accepted ?? false) {
-                            // The call is already answered.
-                            print("### \(#function) - \(cstate) => The call is already answered. About to accept call; Doesn't make sense, right?")
-                            CallManager.instance().acceptCall(call: call, hasVideo: video)
+                        lpLog.message(msg: "*** \(self) > ### \(#function) > [\(cstate)] => UUID not nil: The app is now registered, updated the call already existed.\n Attempting to update callkit call")
+                        CallManager.instance().providerDelegate.updateCall(uuid: uuid, handle: address, hasVideo: video)
+                        
+                        if let callInfo = CallManager.instance().providerDelegate.callInfos[uuid] {
+                            if callInfo.declined {
+                                DispatchQueue.main.asyncAfter(deadline: .now()) {
+                                    do {
+                                        try call.decline(reason: callInfo.reason)
+                                        lpLog.message(msg: "*** \(self) > ### \(#function) > Call \(call) with uuid: [\(uuid)] declined successfully!")
+                                    } catch {
+                                        lpLog.error(msg: "*** \(self) > ### \(#function) > Failed to decline call because error: \(error.localizedDescription)")
+                                    }
+                                }
+                            } else if callInfo.accepted {
+                                // The call is already answered.
+                                lpLog.message(msg: "*** \(self) > ### \(#function) > [\(cstate)] => The call is already answered. About to accept call; Doesn't make sense, right?")
+                                CallManager.instance().acceptCall(call: call, hasVideo: video)
+                            }
                         }
                     } else {
                         print("### \(#function) - \(cstate) => About to display incoming call because UUID is nil")
@@ -449,7 +469,7 @@ class CoreManagerDelegate: CoreDelegate {
                     if (uuid != nil) {
                         let callInfo = CallManager.instance().providerDelegate.callInfos[uuid!]
                         if (callInfo != nil && callInfo!.isOutgoing && !callInfo!.connected) {
-                            print("CallKit: outgoing call connected with uuid \(uuid!) and callId \(callId!)")
+                            lpLog.message(msg: "*** \(self) > ### \(#function) > CallKit: outgoing call connected with uuid \(uuid!) and callId \(callId!)")
                             CallManager.instance().providerDelegate.reportOutgoingCallConnected(uuid: uuid!)
                             callInfo!.connected = true
                             CallManager.instance().providerDelegate.callInfos.updateValue(callInfo!, forKey: uuid!)
@@ -476,7 +496,7 @@ class CoreManagerDelegate: CoreDelegate {
                         CallManager.instance().providerDelegate.uuids.removeValue(forKey: "")
                         CallManager.instance().providerDelegate.uuids.updateValue(uuid!, forKey: callId!)
 
-                        print("CallKit: outgoing call started connecting with uuid \(uuid!) and callId \(callId!)")
+                        lpLog.message(msg: "*** \(self) > ### \(#function) > CallKit: outgoing call started connecting with uuid \(uuid!) and callId \(callId!)")
                         CallManager.instance().providerDelegate.reportOutgoingCallStartedConnecting(uuid: uuid!)
                     } else {
                         CallManager.instance().referedToCall = callId
@@ -505,8 +525,8 @@ class CoreManagerDelegate: CoreDelegate {
                     let request = UNNotificationRequest(identifier: "call_request", content: content, trigger: nil) // Schedule the notification.
                     let center = UNUserNotificationCenter.current()
                     center.add(request) { (error : Error?) in
-                        if error != nil {
-                            print("Error while adding notification request : \(error!.localizedDescription)")
+                        if let err = error {
+                            lpLog.error(msg: "*** \(self) > ### \(#function) > Error while adding notification request : \(err.localizedDescription)")
                         }
                     }
                 }
@@ -515,7 +535,7 @@ class CoreManagerDelegate: CoreDelegate {
                     var uuid = CallManager.instance().providerDelegate.uuids["\(callId!)"]
                     if (callId == CallManager.instance().referedToCall) {
                         // refered call ended before connecting
-                        print("Callkit: end refered to call :  \(String(describing: CallManager.instance().referedToCall))")
+                        lpLog.message(msg: "*** \(self) > ### \(#function) > Callkit: end refered to call :  \(String(describing: CallManager.instance().referedToCall))")
                         CallManager.instance().referedFromCall = nil
                         CallManager.instance().referedToCall = nil
                     }
@@ -525,7 +545,7 @@ class CoreManagerDelegate: CoreDelegate {
                     }
                     if (uuid != nil) {
                         if (callId == CallManager.instance().referedFromCall) {
-                            print("Callkit: end refered from call : \(String(describing: CallManager.instance().referedFromCall))")
+                            lpLog.message(msg: "*** \(self) > ### \(#function) > Callkit: end refered from call : \(String(describing: CallManager.instance().referedFromCall))")
                             CallManager.instance().referedFromCall = nil
                             let callInfo = CallManager.instance().providerDelegate.callInfos[uuid!]
                             callInfo!.callId = CallManager.instance().referedToCall ?? ""
@@ -560,9 +580,10 @@ class CoreManagerDelegate: CoreDelegate {
         }
 
         // post Notification kLinphoneCallUpdate
-        NotificationCenter.default.post(name: Notification.Name("LinphoneCallUpdate"), object: self, userInfo: [
-            AnyHashable("call"): NSValue.init(pointer:UnsafeRawPointer(call.getCobject)),
-            AnyHashable("state"): NSNumber(value: cstate.rawValue),
+        
+        NotificationCenter.default.post(name: .linphoneCallUpdate, object: self, userInfo: [
+            AnyHashable("call"): call,    // <<<< NSValue.init(pointer:UnsafeRawPointer(call.getCobject)) >>>> <<==== We can also use this. This will convert Opaque Pointer to UnsafeRawPointer and then to NSValue. This is what linphone developers did. But now I'm directly sending OpaquePointer as Value.
+            AnyHashable("state"): cstate.rawValue,
             AnyHashable("message"): message
         ])
     }

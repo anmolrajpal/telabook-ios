@@ -64,6 +64,18 @@ extension UIViewController {
     }
 }
 extension UIApplication {
+    
+    var statusBarHeight: CGFloat {
+       var statusBarHeight: CGFloat = 0
+       if #available(iOS 13.0, *) {
+           let window = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
+           statusBarHeight = window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
+       } else {
+           statusBarHeight = UIApplication.shared.statusBarFrame.height
+       }
+       return statusBarHeight
+   }
+    
     static func currentViewController() -> UIViewController? {
         guard let rootViewController = (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window?.rootViewController else {
             return nil
@@ -528,6 +540,10 @@ extension UIAlertController {
         self.view.tintColor = color
     }
 }
+
+
+
+
 
 extension UINavigationController {
     open override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -1450,6 +1466,20 @@ extension Date {
         }
         */
     }
+    
+    
+    static func getElapsedTimeFormattedString(fromSecondsPassed seconds: Int) -> String {
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.second, .minute, .hour]
+        formatter.zeroFormattingBehavior = .pad
+        let output = formatter.string(from: TimeInterval(seconds))!
+        let range = output.range(of: ":")!
+        let upperBound = range.upperBound
+        let pre = output.substring(from: upperBound)
+        print("OutPut: \(output)\tRange: \(range)\tUpperBound: \(upperBound)\tReseult: \(pre)")
+        return seconds < 3600 ? pre : output
+    }
+    
 }
 extension DateFormatter {
     static let standardT: DateFormatter = {
@@ -1500,6 +1530,13 @@ extension JSONDecoder.DateDecodingStrategy {
 
 
 extension String {
+    
+
+    func localized(withComment comment: String? = nil) -> String {
+        return NSLocalizedString(self, comment: comment ?? "")
+    }
+
+    
     var dateFromFormattedString:Date? {
         if self.contains("Z") && self.count >= 22 {
             return .getDate(fromMicrosecondsFormattedDateString: self)

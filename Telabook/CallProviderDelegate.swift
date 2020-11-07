@@ -58,8 +58,8 @@ class CallProviderDelegate: NSObject {
         providerConfiguration.iconTemplateImageData = UIImage(named: "callkit_logo")?.pngData()
         providerConfiguration.supportedHandleTypes = [.generic]
 
-        providerConfiguration.maximumCallsPerCallGroup = 1
-        providerConfiguration.maximumCallGroups = 1
+        providerConfiguration.maximumCallsPerCallGroup = 5 // default
+        providerConfiguration.maximumCallGroups = 2 // default
 
         //not show app's calls in tel's history
         //providerConfiguration.includesCallsInRecents = YES;
@@ -74,13 +74,19 @@ class CallProviderDelegate: NSObject {
 
         let callInfo = callInfos[uuid]
         let callId = callInfo?.callId
-        print("CallKit: report new incoming call with call-id: [\(String(describing: callId))] and UUID: [\(uuid.description)]")
+        lpLog.message(msg: "*** \(self) > ### \(#function) > CallKit: attempting to report new incoming call with call-id: [\(String(describing: callId))] and UUID: [\(uuid.description)]")
         provider.reportNewIncomingCall(with: uuid, update: update) { error in
             if error == nil {
-                print("About to call function: CallManager.instance().providerDelegate.endCallNotExist(uuid: uuid, timeout: .now() + 20)")
-                CallManager.instance().providerDelegate.endCallNotExist(uuid: uuid, timeout: .now() + 20)
+                let timeout: TimeInterval = 30
+                
+                if CallManager.instance().endCallkit {
+                    CallManager.instance().providerDelegate.endCall(uuid: uuid)
+                } else {
+                    lpLog.message(msg: "*** \(self) > ### \(#function) > CallKit: |* Voila! Displaying incoming call with call-id: [\(String(describing: callId))] and UUID: [\(uuid.description)] now. Setting up this call to end after timout: \(timeout) if not picked up. *|")
+                    CallManager.instance().providerDelegate.endCallNotExist(uuid: uuid, timeout: .now() + timeout)
+                }
             } else {
-                print("CallKit: cannot complete incoming call with call-id: [\(String(describing: callId))] and UUID: [\(uuid.description)] from [\(handle)] caused by [\(error!.localizedDescription)]")
+                lpLog.error(msg: "*** \(self) > ### \(#function) > CallKit: cannot complete incoming call with call-id: [\(String(describing: callId))] and UUID: [\(uuid.description)] from [\(handle)] caused by [\(error!.localizedDescription)]")
                 let code = (error as NSError?)?.code
                 switch code {
                 case CXErrorCodeIncomingCallError.filteredByDoNotDisturb.rawValue:
@@ -113,7 +119,7 @@ class CallProviderDelegate: NSObject {
     }
     
     func endCall(uuid: UUID) {
-        provider.reportCall(with: uuid, endedAt: .init(), reason: .declinedElsewhere)
+        provider.reportCall(with: uuid, endedAt: .init(), reason: .failed)
     }
 
     func endCallNotExist(uuid: UUID, timeout: DispatchTime) {
@@ -121,7 +127,7 @@ class CallProviderDelegate: NSObject {
             let callId = CallManager.instance().providerDelegate.callInfos[uuid]?.callId
             let call = CallManager.instance().callByCallId(callId: callId)
             if (call == nil) {
-                print("CallKit: terminate call with call-id: \(String(describing: callId)) and UUID: \(uuid) which does not exist.")
+                lpLog.message(msg: "*** \(self) > ### \(#function) > CallKit: ending call now with call-id: \(String(describing: callId)) and UUID: \(uuid) where call object does not exists.")
                 CallManager.instance().providerDelegate.endCall(uuid: uuid)
             }
         }
@@ -144,7 +150,7 @@ extension CallProviderDelegate: CXProviderDelegate {
         let call = CallManager.instance().callByCallId(callId: callId)
         if let call = call {
             CallManager.instance().terminateCall(call: call.getCobject);
-            print("CallKit: Call ended with call-id: \(String(describing: callId)) an UUID: \(uuid.description).")
+            lpLog.message(msg: "*** \(self) > ### \(#function) > CallKit: Call ended with call-id: \(String(describing: callId)) an UUID: \(uuid.description).")
         }
     }
 
@@ -156,15 +162,17 @@ extension CallProviderDelegate: CXProviderDelegate {
 
         let call = CallManager.instance().callByCallId(callId: callId)
         if (call == nil || call?.state != Call.State.IncomingReceived) {
+            let timeout: TimeInterval = 10
             // The application is not yet registered or the call is not yet received, mark the call as accepted. The audio session must be configured here.
-            print("### \(#function): The application is not yet registered or the call is not yet received, mark the call as accepted. The audio session must be configured here.")
+            lpLog.message(msg: "*** \(self) > ### \(#function) > The application is not yet registered or the call is not yet received, mark the call as accepted. The audio session must be configured here. Ringing callkit call with timout of \(timeout) seconds.")
             CallManager.configAudioSession(audioSession: AVAudioSession.sharedInstance())
             callInfo?.accepted = true
             callInfos.updateValue(callInfo!, forKey: uuid)
-            CallManager.instance().providerDelegate.endCallNotExist(uuid: uuid, timeout: .now() + 10)
+            CallManager.instance().providerDelegate.endCallNotExist(uuid: uuid, timeout: .now() + timeout)
         } else {
-            print("### \(#function) - About to accept call")
+            lpLog.message(msg: "*** \(self) > ### \(#function) > Accepting found call: \(call!)")
             CallManager.instance().acceptCall(call: call!, hasVideo: call!.params?.videoEnabled ?? false)
+            lpLog.message(msg: "*** \(self) > ### \(#function) > Call Accepted")
         }
         action.fulfill()
     }
@@ -181,29 +189,32 @@ extension CallProviderDelegate: CXProviderDelegate {
         do {
             if (CallManager.instance().lc?.isInConference ?? false && action.isOnHold) {
                 try CallManager.instance().lc?.leaveConference()
-                print("CallKit: Leaving conference")
-                NotificationCenter.default.post(name: Notification.Name("LinphoneCallUpdate"), object: self)
+                lpLog.message(msg: "*** \(self) > ### \(#function) > CallKit: Leaving conference")
+                NotificationCenter.default.post(name: .linphoneCallUpdate, object: self) // hmm wierd! Should include userInfo
                 return
             }
 
             let state = action.isOnHold ? "Paused" : "Resumed"
-            print("CallKit: Call  with call-id: [\(String(describing: callId))] and UUID: [\(uuid)] paused status changed to: [\(state)]")
+            lpLog.message(msg: "*** \(self) > ### \(#function) > CallKit: Call  with call-id: [\(String(describing: callId))] and UUID: [\(uuid)] paused status changed to: [\(state)]")
             if (action.isOnHold) {
                 if (call!.params?.localConferenceMode ?? false) {
                     return
                 }
                 CallManager.instance().speakerBeforePause = CallManager.instance().speakerEnabled
                 try call!.pause()
+                lpLog.message(msg: "*** \(self) > ### \(#function) > Call paused with call-id: [\(String(describing: callId))] and UUID: [\(uuid)]")
             } else {
                 if (CallManager.instance().lc?.conference != nil && CallManager.instance().lc?.callsNb ?? 0 > 1) {
                     try CallManager.instance().lc?.enterConference()
-                    NotificationCenter.default.post(name: Notification.Name("LinphoneCallUpdate"), object: self)
+                    lpLog.message(msg: "*** \(self) > ### \(#function) > Call entered in conference with call-id: [\(String(describing: callId))] and UUID: [\(uuid)]")
+                    NotificationCenter.default.post(name: .linphoneCallUpdate, object: self)
                 } else {
                     try call!.resume()
+                    lpLog.message(msg: "*** \(self) > ### \(#function) > Call resumed with call-id: [\(String(describing: callId))] and UUID: [\(uuid)]")
                 }
             }
         } catch {
-            print("CallKit: Call set held (paused or resumed) \(uuid) failed because \(error)")
+            lpLog.error(msg: "*** \(self) > ### \(#function) > CallKit: Call set held (paused or resumed) with UUID: [\(uuid)] failed because \(error)")
         }
     }
 
@@ -238,7 +249,7 @@ extension CallProviderDelegate: CXProviderDelegate {
     func provider(_ provider: CXProvider, perform action: CXSetMutedCallAction) {
         let uuid = action.callUUID
         let callId = callInfos[uuid]?.callId
-        print("CallKit: Call muted with call-id: \(String(describing: callId)) an UUID: \(uuid.description).")
+        lpLog.message(msg: "*** \(self) > ### \(#function) > CallKit: Call muted with call-id: \(String(describing: callId)) an UUID: \(uuid.description).")
         CallManager.instance().lc!.micEnabled = !CallManager.instance().lc!.micEnabled
         action.fulfill()
     }
@@ -246,14 +257,15 @@ extension CallProviderDelegate: CXProviderDelegate {
     func provider(_ provider: CXProvider, perform action: CXPlayDTMFCallAction) {
         let uuid = action.callUUID
         let callId = callInfos[uuid]?.callId
-        print("CallKit: Call send dtmf with call-id: \(String(describing: callId)) an UUID: \(uuid.description).")
+        lpLog.message(msg: "*** \(self) > ### \(#function) > CallKit: Call sending dtmf with call-id: \(String(describing: callId)) an UUID: \(uuid.description).")
         let call = CallManager.instance().callByCallId(callId: callId)
         if (call != nil) {
             let digit = (action.digits.cString(using: String.Encoding.utf8)?[0])!
             do {
                 try call!.sendDtmf(dtmf: digit)
+                lpLog.message(msg: "*** \(self) > ### \(#function) > CallKit: Call DTMF Sent with call-id: [\(String(describing: callId))] and UUID: [\(uuid)]")
             } catch {
-                print("CallKit: Call send dtmf \(uuid) failed because \(error)")
+                lpLog.error(msg: "*** \(self) > ### \(#function) > CallKit: Call send dtmf for UUID: [\(uuid)] failed because \(error)")
             }
         }
         action.fulfill()
@@ -262,21 +274,21 @@ extension CallProviderDelegate: CXProviderDelegate {
     func provider(_ provider: CXProvider, timedOutPerforming action: CXAction) {
         let uuid = action.uuid
         let callId = callInfos[uuid]?.callId
-        print("CallKit: Call time out with call-id: \(String(describing: callId)) an UUID: \(uuid.description).")
+        lpLog.message(msg: "*** \(self) > ### \(#function) > CallKit: Call time out with call-id: \(String(describing: callId)) an UUID: \(uuid.description).")
         action.fulfill()
     }
 
     func providerDidReset(_ provider: CXProvider) {
-        print("CallKit: did reset.")
+        lpLog.message(msg: "*** \(self) > ### \(#function) > CallKit: did reset.")
     }
 
     func provider(_ provider: CXProvider, didActivate audioSession: AVAudioSession) {
-        print("CallKit: audio session activated.")
+        lpLog.message(msg: "*** \(self) > ### \(#function) > CallKit: audio session activated.")
         CallManager.instance().lc?.activateAudioSession(actived: true)
     }
 
     func provider(_ provider: CXProvider, didDeactivate audioSession: AVAudioSession) {
-        print("CallKit: audio session deactivated.")
+        lpLog.message(msg: "*** \(self) > ### \(#function) > CallKit: audio session deactivated.")
         CallManager.instance().lc?.activateAudioSession(actived: false)
     }
 }
