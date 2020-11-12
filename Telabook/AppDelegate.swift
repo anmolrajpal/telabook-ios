@@ -719,9 +719,9 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
 
 extension AppDelegate : MessagingDelegate {
     
-    
-    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
-        printAndLog(message: "FCM Token: \(fcmToken)", log: .notifications, logType: .info, isPrivate: true)
+
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        printAndLog(message: "FCM Token: \(String(describing: fcmToken))", log: .notifications, logType: .info, isPrivate: true)
         /*
          let dataDict:[String: String] = ["token": fcmToken]
          NotificationCenter.default.post(name: Notification.Name("FCMToken"), object: nil, userInfo: dataDict)

@@ -36,14 +36,14 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSCameraUsageDescription</key>
-	<string>Used to send photos from the camera</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Used to send photos from the camera roll</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Microphone is used to make audio calls</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>Connect your BT Headset</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Used to send photos from the camera</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Microphone is used to make audio calls</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Used to send photos from the camera roll</string>
 	<key>NSVoIPUsageDescription</key>
 	<string>Make audio calls</string>
 	<key>SUBDOMAIN</key>

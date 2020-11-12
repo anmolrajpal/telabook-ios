@@ -225,7 +225,7 @@ final class FirebaseAuthService:NSObject {
             }
         })
     }
-    
+    /*
     func monitorAndSaveRemoteToken() {
         InstanceID.instanceID().instanceID { (result, error) in
             if let error = error {
@@ -237,7 +237,7 @@ final class FirebaseAuthService:NSObject {
             }
         }
     }
-    
+    */
     func removeObservers() {
         removeAuthenticationStateObserver()
         removeTokenStateObserver()

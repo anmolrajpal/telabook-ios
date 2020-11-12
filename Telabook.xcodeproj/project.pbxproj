@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		07EE2475CAADE7AD32CD00F9 /* Pods_Telabook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A24D2E2A3583492FDB7723EF /* Pods_Telabook.framework */; };
 		6F00F2D624A50D69001E33D9 /* MessageMediaManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F00F2D524A50D68001E33D9 /* MessageMediaManager.swift */; };
 		6F00F2D824A50DDA001E33D9 /* MessageDownloadItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F00F2D724A50DDA001E33D9 /* MessageDownloadItem.swift */; };
 		6F00F2DA24A50DED001E33D9 /* MessageUploadItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F00F2D924A50DED001E33D9 /* MessageUploadItem.swift */; };
@@ -345,11 +344,14 @@
 		6FFBCC5F24F9438F00C7E96C /* AgentCalls+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFBCC5E24F9438F00C7E96C /* AgentCalls+Helpers.swift */; };
 		6FFBCC6124F944A500C7E96C /* AgentCallsJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFBCC6024F944A500C7E96C /* AgentCallsJSON.swift */; };
 		6FFBCC6324F948F500C7E96C /* agentCallsMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFBCC6224F948F500C7E96C /* agentCallsMockData.swift */; };
+		E0040EAC93256506636B8DE1 /* Pods_Telabook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00F6128E3969BE17225C7C7D /* Pods_Telabook.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		18D4D0AF3685AEAA6D585A79 /* Pods-Telabook.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.release.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.release.xcconfig"; sourceTree = "<group>"; };
-		594AEB846DD88B412E481F44 /* Pods-Telabook.prerelease.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.prerelease.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.prerelease.xcconfig"; sourceTree = "<group>"; };
+		00F6128E3969BE17225C7C7D /* Pods_Telabook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Telabook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1092199FF62996FC89AA08A3 /* Pods-Telabook.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.debug.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.debug.xcconfig"; sourceTree = "<group>"; };
+		3B815F1CE2F9D37C2C220D00 /* Pods-Telabook.prerelease.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.prerelease.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.prerelease.xcconfig"; sourceTree = "<group>"; };
+		57F3A85608A94CC5EB995225 /* Pods-Telabook.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.release.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.release.xcconfig"; sourceTree = "<group>"; };
 		6F00F2D524A50D68001E33D9 /* MessageMediaManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageMediaManager.swift; sourceTree = "<group>"; };
 		6F00F2D724A50DDA001E33D9 /* MessageDownloadItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDownloadItem.swift; sourceTree = "<group>"; };
 		6F00F2D924A50DED001E33D9 /* MessageUploadItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageUploadItem.swift; sourceTree = "<group>"; };
@@ -696,9 +698,7 @@
 		6FFBCC5E24F9438F00C7E96C /* AgentCalls+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AgentCalls+Helpers.swift"; sourceTree = "<group>"; };
 		6FFBCC6024F944A500C7E96C /* AgentCallsJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AgentCallsJSON.swift; sourceTree = "<group>"; };
 		6FFBCC6224F948F500C7E96C /* agentCallsMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = agentCallsMockData.swift; sourceTree = "<group>"; };
-		7B80F0AE73DD0782D1289F23 /* Pods-Telabook.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.debug.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.debug.xcconfig"; sourceTree = "<group>"; };
-		A24D2E2A3583492FDB7723EF /* Pods_Telabook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Telabook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		E3D13E12DA10A4904B024B3C /* Pods-Telabook.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.staging.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.staging.xcconfig"; sourceTree = "<group>"; };
+		F3B1A0A2620F72CF524F9BF2 /* Pods-Telabook.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.staging.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.staging.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -706,10 +706,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				07EE2475CAADE7AD32CD00F9 /* Pods_Telabook.framework in Frameworks */,
 				6F010CAE246F81B600C20DC6 /* MenuController in Frameworks */,
 				6FF2E69C248F848C00502B99 /* TOCropViewController in Frameworks */,
 				6FF2E69A248F848C00502B99 /* CropViewController in Frameworks */,
+				E0040EAC93256506636B8DE1 /* Pods_Telabook.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1753,7 +1753,7 @@
 				6FB11AE2229BDDBD0098D050 /* Telabook */,
 				6FB11AE1229BDDBD0098D050 /* Products */,
 				9D78E82FCB5E6192D5C81890 /* Pods */,
-				A7DE20B2F4B9E774B2A89B74 /* Frameworks */,
+				AF7486D7D8259DA12A827688 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2307,18 +2307,18 @@
 		9D78E82FCB5E6192D5C81890 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				7B80F0AE73DD0782D1289F23 /* Pods-Telabook.debug.xcconfig */,
-				18D4D0AF3685AEAA6D585A79 /* Pods-Telabook.release.xcconfig */,
-				E3D13E12DA10A4904B024B3C /* Pods-Telabook.staging.xcconfig */,
-				594AEB846DD88B412E481F44 /* Pods-Telabook.prerelease.xcconfig */,
+				1092199FF62996FC89AA08A3 /* Pods-Telabook.debug.xcconfig */,
+				57F3A85608A94CC5EB995225 /* Pods-Telabook.release.xcconfig */,
+				F3B1A0A2620F72CF524F9BF2 /* Pods-Telabook.staging.xcconfig */,
+				3B815F1CE2F9D37C2C220D00 /* Pods-Telabook.prerelease.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		A7DE20B2F4B9E774B2A89B74 /* Frameworks */ = {
+		AF7486D7D8259DA12A827688 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A24D2E2A3583492FDB7723EF /* Pods_Telabook.framework */,
+				00F6128E3969BE17225C7C7D /* Pods_Telabook.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -2330,12 +2330,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6FB11AF2229BDDBE0098D050 /* Build configuration list for PBXNativeTarget "Telabook" */;
 			buildPhases = (
-				509F6DBAB8E92E189B376ABC /* [CP] Check Pods Manifest.lock */,
+				83AEEE2018CB49FC492B0824 /* [CP] Check Pods Manifest.lock */,
 				6FB11ADC229BDDBD0098D050 /* Sources */,
 				6FB11ADD229BDDBD0098D050 /* Frameworks */,
 				6FEE9A23247EFFDE00709E2D /* Setup Firebase Support Files */,
 				6FB11ADE229BDDBD0098D050 /* Resources */,
-				A0B9B358AB19358D241F9FE4 /* [CP] Embed Pods Frameworks */,
+				C02A7ED43DA0A597301692FD /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2417,7 +2417,25 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		509F6DBAB8E92E189B376ABC /* [CP] Check Pods Manifest.lock */ = {
+		6FEE9A23247EFFDE00709E2D /* Setup Firebase Support Files */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 12;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Setup Firebase Support Files";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Name of the resource we're selectively copying\nGOOGLESERVICE_INFO_PLIST=GoogleService-Info.plist\n\n# Get references to development, staging, pre-release and production versions of the GoogleService-Info.plist\n# NOTE: These should only live on the file system and should NOT be part of the target (since we'll be adding them to the target manually)\nGOOGLESERVICE_INFO_DEVELOPMENT=${PROJECT_DIR}/${TARGET_NAME}/Support\\ Files/Firebase/Development/${GOOGLESERVICE_INFO_PLIST}\nGOOGLESERVICE_INFO_PRODUCTION=${PROJECT_DIR}/${TARGET_NAME}/Support\\ Files/Firebase/Production/${GOOGLESERVICE_INFO_PLIST}\nGOOGLESERVICE_INFO_STAGING=${PROJECT_DIR}/${TARGET_NAME}/Support\\ Files/Firebase/Staging/${GOOGLESERVICE_INFO_PLIST}\nGOOGLESERVICE_INFO_PRE_RELEASE=${PROJECT_DIR}/${TARGET_NAME}/Support\\ Files/Firebase/PreRelease/${GOOGLESERVICE_INFO_PLIST}\n\n# Make sure the dev version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_DEVELOPMENT}\"\nif [ ! -f $GOOGLESERVICE_INFO_DEVELOPMENT ]\nthen\n    echo \"No Development GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\n    exit 1\nfi\n\n# Make sure the prod version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_PRODUCTION}\"\nif [ ! -f $GOOGLESERVICE_INFO_PRODUCTION ]\nthen\n    echo \"No Production GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\n    exit 1\nfi\n\n# Make sure the staging version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_STAGING}\"\nif [ ! -f $GOOGLESERVICE_INFO_STAGING ]\nthen\n    echo \"No Staging GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\n    exit 1\nfi\n\n# Make sure the pre release version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_PRE_RELEASE}\"\nif [ ! -f $GOOGLESERVICE_INFO_PRE_RELEASE ]\nthen\n    echo \"No Pre-Release GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\n    exit 1\nfi\n\n# Get a reference to the destination location for the GoogleService-Info.plist\nPLIST_DESTINATION=${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app\necho \"Will copy ${GOOGLESERVICE_INFO_PLIST} to final destination: ${PLIST_DESTINATION}\"\n\n# Copy over the prod GoogleService-Info.plist for Release builds\nif [ \"${CONFIGURATION}\" == \"Release\" ]\nthen\n    echo \"Using ${GOOGLESERVICE_INFO_PRODUCTION}\"\n    cp \"${GOOGLESERVICE_INFO_PRODUCTION}\" \"${PLIST_DESTINATION}\"\nelif [ \"${CONFIGURATION}\" == \"PreRelease\" ]\nthen\n    echo \"Using ${GOOGLESERVICE_INFO_PRE_RELEASE}\"\n    cp \"${GOOGLESERVICE_INFO_PRE_RELEASE}\" \"${PLIST_DESTINATION}\"\nelif [ \"${CONFIGURATION}\" == \"Staging\" ]\nthen\n    echo \"Using ${GOOGLESERVICE_INFO_STAGING}\"\n    cp \"${GOOGLESERVICE_INFO_STAGING}\" \"${PLIST_DESTINATION}\"\nelse\n    echo \"Using ${GOOGLESERVICE_INFO_DEVELOPMENT}\"\n    cp \"${GOOGLESERVICE_INFO_DEVELOPMENT}\" \"${PLIST_DESTINATION}\"\nfi\n";
+		};
+		83AEEE2018CB49FC492B0824 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2439,25 +2457,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		6FEE9A23247EFFDE00709E2D /* Setup Firebase Support Files */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 12;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Setup Firebase Support Files";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Name of the resource we're selectively copying\nGOOGLESERVICE_INFO_PLIST=GoogleService-Info.plist\n\n# Get references to development, staging, pre-release and production versions of the GoogleService-Info.plist\n# NOTE: These should only live on the file system and should NOT be part of the target (since we'll be adding them to the target manually)\nGOOGLESERVICE_INFO_DEVELOPMENT=${PROJECT_DIR}/${TARGET_NAME}/Support\\ Files/Firebase/Development/${GOOGLESERVICE_INFO_PLIST}\nGOOGLESERVICE_INFO_PRODUCTION=${PROJECT_DIR}/${TARGET_NAME}/Support\\ Files/Firebase/Production/${GOOGLESERVICE_INFO_PLIST}\nGOOGLESERVICE_INFO_STAGING=${PROJECT_DIR}/${TARGET_NAME}/Support\\ Files/Firebase/Staging/${GOOGLESERVICE_INFO_PLIST}\nGOOGLESERVICE_INFO_PRE_RELEASE=${PROJECT_DIR}/${TARGET_NAME}/Support\\ Files/Firebase/PreRelease/${GOOGLESERVICE_INFO_PLIST}\n\n# Make sure the dev version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_DEVELOPMENT}\"\nif [ ! -f $GOOGLESERVICE_INFO_DEVELOPMENT ]\nthen\n    echo \"No Development GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\n    exit 1\nfi\n\n# Make sure the prod version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_PRODUCTION}\"\nif [ ! -f $GOOGLESERVICE_INFO_PRODUCTION ]\nthen\n    echo \"No Production GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\n    exit 1\nfi\n\n# Make sure the staging version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_STAGING}\"\nif [ ! -f $GOOGLESERVICE_INFO_STAGING ]\nthen\n    echo \"No Staging GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\n    exit 1\nfi\n\n# Make sure the pre release version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_PRE_RELEASE}\"\nif [ ! -f $GOOGLESERVICE_INFO_PRE_RELEASE ]\nthen\n    echo \"No Pre-Release GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\n    exit 1\nfi\n\n# Get a reference to the destination location for the GoogleService-Info.plist\nPLIST_DESTINATION=${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app\necho \"Will copy ${GOOGLESERVICE_INFO_PLIST} to final destination: ${PLIST_DESTINATION}\"\n\n# Copy over the prod GoogleService-Info.plist for Release builds\nif [ \"${CONFIGURATION}\" == \"Release\" ]\nthen\n    echo \"Using ${GOOGLESERVICE_INFO_PRODUCTION}\"\n    cp \"${GOOGLESERVICE_INFO_PRODUCTION}\" \"${PLIST_DESTINATION}\"\nelif [ \"${CONFIGURATION}\" == \"PreRelease\" ]\nthen\n    echo \"Using ${GOOGLESERVICE_INFO_PRE_RELEASE}\"\n    cp \"${GOOGLESERVICE_INFO_PRE_RELEASE}\" \"${PLIST_DESTINATION}\"\nelif [ \"${CONFIGURATION}\" == \"Staging\" ]\nthen\n    echo \"Using ${GOOGLESERVICE_INFO_STAGING}\"\n    cp \"${GOOGLESERVICE_INFO_STAGING}\" \"${PLIST_DESTINATION}\"\nelse\n    echo \"Using ${GOOGLESERVICE_INFO_DEVELOPMENT}\"\n    cp \"${GOOGLESERVICE_INFO_DEVELOPMENT}\" \"${PLIST_DESTINATION}\"\nfi\n";
-		};
-		A0B9B358AB19358D241F9FE4 /* [CP] Embed Pods Frameworks */ = {
+		C02A7ED43DA0A597301692FD /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2877,7 +2877,7 @@
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 35;
+				CURRENT_PROJECT_VERSION = 36;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
@@ -3028,7 +3028,7 @@
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 35;
+				CURRENT_PROJECT_VERSION = 36;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -3054,7 +3054,7 @@
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 35;
+				CURRENT_PROJECT_VERSION = 36;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -3139,7 +3139,7 @@
 				CODE_SIGN_ENTITLEMENTS = Telabook/Telabook.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 35;
+				CURRENT_PROJECT_VERSION = 36;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = Telabook/Info.plist;

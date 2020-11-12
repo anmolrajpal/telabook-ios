@@ -131,7 +131,6 @@ class TabBarController: UITabBarController {
             if duration > 0 {
                 let elapsedTime = Date.getElapsedTimeFormattedString(fromSecondsPassed: duration)
                 setCallBanner(displayText: "\(callBannerPlaceholderText)\(elapsedTime)")
-                print("Call banner duration: \(duration)")
             }
         }
     }
