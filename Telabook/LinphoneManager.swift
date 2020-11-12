@@ -26,13 +26,50 @@ extension LinphoneManager {
     }
 
     static func preferenceFilePath(fileName: String) -> String {
-        let configPath = Factory.Instance.getConfigDir(context: UnsafeMutablePointer<Int8>(mutating: ("" as NSString).utf8String)) as NSString
+        let configPath = Factory.Instance.getConfigDir(context: UnsafeMutablePointer<Int8>(mutating: (Config.appGroupID as NSString).utf8String)) as NSString
         return configPath.appendingPathComponent(fileName)
     }
 
     static func dataFilePath(fileName: String) -> String {
-        let dataDir = Factory.Instance.getDataDir(context: UnsafeMutablePointer<Int8>(mutating: ("" as NSString).utf8String)) as NSString
+        let dataDir = Factory.Instance.getDataDir(context: UnsafeMutablePointer<Int8>(mutating: (Config.appGroupID as NSString).utf8String)) as NSString
         return dataDir.appendingPathComponent(fileName)
+    }
+    static var cacheDirectorys: String {
+        let cachePath = Factory.Instance.getDownloadDir(context: UnsafeMutablePointer<Int8>(mutating: (Config.appGroupID as NSString).utf8String))
+        
+        let cacheFolder = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        
+        let url = cacheFolder.appendingPathComponent(cachePath, isDirectory: false)
+        
+        // Create it if it doesn’t exist.
+        if !FileManager.default.fileExists(atPath: url.path) {
+            do {
+                try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false, attributes: nil)
+            } catch {
+                let errorMessage = "### \(#function) - Error creating file directory at url: \(url) & Error: \(error)"
+                printAndLog(message: errorMessage, log: .ui, logType: .error)
+            }
+        }
+        return cachePath
+    }
+    class func cacheDirectory() -> String {
+        let factory = linphone_factory_get()
+        guard let cachePath = String(utf8String: linphone_factory_get_download_dir(factory, UnsafeMutablePointer<Int8>(mutating: (Config.appGroupID as NSString).utf8String))) else {
+            fatalError()
+        }
+        var isDir = ObjCBool(false)
+        
+        // cache directory must be created if not existing
+        
+        if !FileManager.default.fileExists(atPath: cachePath, isDirectory: &isDir) && isDir.boolValue == false {
+            do {
+                try FileManager.default.createDirectory(atPath: cachePath, withIntermediateDirectories: false, attributes: nil)
+            } catch {
+                let errorMessage = "### \(#function) - Error creating file directory at path: \(cachePath) & Error: \(error)"
+                lpLog.error(msg: errorMessage)
+            }
+        }
+        return cachePath
     }
 }
 
@@ -62,7 +99,9 @@ class LinphoneManager: NSObject {
     var remoteNotificationToken:Data?
     var pushKitToken:Data?
     
+    @available(iOS, deprecated: 9.0)
     var callCenter:CTCallCenter?
+    
     var currentCallContextBeforeGoingBackground = CallContext()
     var logManager:LinphoneLoggingServiceManager!
     
@@ -139,12 +178,17 @@ class LinphoneManager: NSObject {
             }
         }
         
+        handleBackgroundState()
+    }
+    
+//    @available(iOS, deprecated: 9.0)
+    func handleBackgroundState() {
         if UIApplication.shared.applicationState == .background {
             // go directly to bg mode
+            
             _ = enterBackgroundMode()
         }
     }
-
     static func linphoneOnRegistrationStateChanged(lc: Core, cfg: ProxyConfig, state: RegistrationState, message: String) {
         lpLog.message(msg: "New registration state: \(state) | (message: \(message)")
         
@@ -348,14 +392,12 @@ class LinphoneManager: NSObject {
         }
         do {
 //            config = linphonesw.Config.newForSharedCore(appGroupId: "", configFilename: "linphonerc", factoryPath: "")
-            lpLog = LoggingService.Instance
             
-            logManager = try LinphoneLoggingServiceManager(config: config, log: lpLog, domain: "Telabook")
-
+            
             /*
             Instanciate a LinphoneCore object
             */
-            theLinphoneCore = try Factory.Instance.createSharedCoreWithConfig(config: config, systemContext: nil, appGroupId: "", mainCore: true)
+            theLinphoneCore = try Factory.Instance.createSharedCoreWithConfig(config: config, systemContext: nil, appGroupId: Config.appGroupID, mainCore: true)
             theLinphoneCore.callkitEnabled = true
             coreDelegate = LinphoneCoreManagerDelegate()
             theLinphoneCore.addDelegate(delegate: coreDelegate)
@@ -384,7 +426,7 @@ class LinphoneManager: NSObject {
 
             /* Use the rootca from framework, which is already set*/
             //linphone_core_set_root_ca(theLinphoneCore, [LinphoneManager bundleFile:@"rootca.pem"].UTF8String);
-            theLinphoneCore.userCertificatesPath = LinphoneManager.cacheDirectory
+            theLinphoneCore.userCertificatesPath = LinphoneManager.cacheDirectory()
 
             /* The core will call the linphone_iphone_configuring_status_changed callback when the remote provisioning is loaded
                (or skipped).
@@ -534,24 +576,7 @@ class LinphoneManager: NSObject {
             print(errorMessage)
         }
     }
-    static var cacheDirectory: String {
-        let cachePath = Factory.Instance.getDownloadDir(context: UnsafeMutablePointer<Int8>(mutating: ("" as NSString).utf8String))
-        
-        let cacheFolder = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-        
-        let url = cacheFolder.appendingPathComponent(cachePath, isDirectory: false)
-        
-        // Create it if it doesn’t exist.
-        if !FileManager.default.fileExists(atPath: url.path) {
-            do {
-                try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false, attributes: nil)
-            } catch {
-                let errorMessage = "### \(#function) - Error creating file directory at url: \(url) & Error: \(error)"
-                printAndLog(message: errorMessage, log: .ui, logType: .error)
-            }
-        }
-        return cachePath
-    }
+    
     
     
     @objc
@@ -686,6 +711,7 @@ class LinphoneManager: NSObject {
 
         enableProxyPublish(enabled: true)
     }
+//    @available(iOS, deprecated: 9.0)
     func enterBackgroundMode() -> Bool {
         linphoneCore.enterBackground()
         
@@ -756,10 +782,11 @@ class LinphoneManager: NSObject {
         return true
         
     }
-    
+    @available(iOS, deprecated: 9.0)
     var isCTCallCenterExists: Bool {
         return callCenter != nil
     }
+    @available(iOS, deprecated: 9.0)
     func removeCTCallCenterCb() {
         if callCenter != nil {
             lpLog.message(msg: "Removing CT call center listener \(String(describing: callCenter))")
@@ -767,18 +794,19 @@ class LinphoneManager: NSObject {
         }
         callCenter = nil
     }
+    @available(iOS, deprecated: 9.0)
     func setupGSMInteraction() {
         removeCTCallCenterCb()
         callCenter = CTCallCenter()
-        lpLog.message(msg: "Adding CT call center listener \(callCenter!)")
+//        lpLog.message(msg: "Adding CT call center listener \(callCenter!)") // Causing crash
         
         callCenter?.callEventHandler = { [weak self] call in
-            DispatchQueue.main.async {
-                self?.handleGSMCallInteration(cCenter: self?.callCenter)
-            }
+            guard let self = self else { return }
+            self.performSelector(onMainThread: #selector(self.handleGSMCallInteration(cCenter:)), with: self.callCenter, waitUntilDone: true)
         }
     }
-
+    @available(iOS, deprecated: 9.0)
+    @objc
     func handleGSMCallInteration(cCenter: CTCallCenter?) {
         if (Int32(floor(NSFoundationVersionNumber)) <= NSFoundationVersionNumber_iOS_9_x_Max),
            let ct = cCenter {
@@ -807,7 +835,13 @@ class LinphoneManager: NSObject {
             } // else nop, keep call in paused state
         }
     }
-    
+    private func startCallPausedLongRunningTask() {
+        pausedCallBgTask = UIApplication.shared.beginBackgroundTask(expirationHandler: {
+            print("Call cannot be paused any more, too late")
+            UIApplication.shared.endBackgroundTask(self.pausedCallBgTask!)
+        })
+        print("Long running task started, remaining \(Date.intervalToString(interval: UIApplication.shared.backgroundTimeRemaining)) because at least one call is paused")
+    }
     
     
 
@@ -875,10 +909,10 @@ class LinphoneManager: NSObject {
         if let path = factoryIpad,
            UIDevice.current.userInterfaceIdiom == .pad,
            FileManager.default.fileExists(atPath: path) {
-            self.config = linphonesw.Config.newForSharedCore(appGroupId: "", configFilename: "linphonerc", factoryPath: path)!
+            self.config = linphonesw.Config.newForSharedCore(appGroupId: Config.appGroupID, configFilename: "linphonerc", factoryPath: path)!
             return
         }
-        config = linphonesw.Config.newForSharedCore(appGroupId: "", configFilename: "linphonerc", factoryPath: factoryPath)!
+        config = linphonesw.Config.newForSharedCore(appGroupId: Config.appGroupID, configFilename: "linphonerc", factoryPath: factoryPath)!
         config.cleanEntry(section: "misc", key: "max_calls")
     }
     
@@ -913,13 +947,7 @@ class LinphoneManager: NSObject {
         return true
     }
     
-    func startCallPausedLongRunningTask() {
-        pausedCallBgTask = UIApplication.shared.beginBackgroundTask(expirationHandler: {
-            print("Call cannot be paused any more, too late")
-            UIApplication.shared.endBackgroundTask(self.pausedCallBgTask!)
-        })
-        print("Long running task started, remaining \(Date.intervalToString(interval: UIApplication.shared.backgroundTimeRemaining)) because at least one call is paused")
-    }
+    
     func enableProxyPublish(enabled: Bool) {
         if linphone_core_get_global_state(linphoneCore.getCobject) != LinphoneGlobalOn {
             print("### \(#function) -> Not changing presence configuration because linphone core not ready yet")

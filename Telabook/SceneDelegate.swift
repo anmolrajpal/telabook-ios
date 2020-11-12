@@ -74,12 +74,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                         } catch {
                             print("### \(#function) = Error accepting call. Error: \(error)")
                         }
-                    let vc = CallViewController()
-                        vc.modalPresentationStyle = .overFullScreen
-                        
-                        DispatchQueue.main.async {
-                            tbc.present(vc, animated: false)
-                        }
+                        tbc.showCallView(withCall: currentCall)
                   } else {
                     tbc.displayIncomingCall(call: currentCall)
                   }

@@ -403,6 +403,7 @@
 		6F23BD1022DA0D7A0001A888 /* ScheduleNewMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleNewMessageViewController.swift; sourceTree = "<group>"; };
 		6F26516E246AC0C7003D582F /* FirebaseCustomer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseCustomer.swift; sourceTree = "<group>"; };
 		6F265170246C3610003D582F /* SFSymbol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFSymbol.swift; sourceTree = "<group>"; };
+		6F2850072559950600FA2946 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6F29FD4E22B7E28700BCA2AB /* OverlaySpinner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySpinner.swift; sourceTree = "<group>"; };
 		6F29FD5022B8B36400BCA2AB /* FollowUpCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUpCell.swift; sourceTree = "<group>"; };
 		6F29FD5622BBB1C100BCA2AB /* CustomerDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerDetailsViewController.swift; sourceTree = "<group>"; };
@@ -562,7 +563,6 @@
 		6F987A7F245CC1B500C6046E /* FirebaseOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseOperations.swift; sourceTree = "<group>"; };
 		6F987A81245CCA9000C6046E /* APIOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIOperations.swift; sourceTree = "<group>"; };
 		6F9E6EB9248AD81B0001950E /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		6F9E6EBB248AD8420001950E /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6F9E6EBC248E442E0001950E /* Messages+DataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Messages+DataProvider.swift"; sourceTree = "<group>"; };
 		6FA3DFEE2475BFDE0083AB13 /* Blacklist+SearchHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Blacklist+SearchHelpers.swift"; sourceTree = "<group>"; };
 		6FA3DFF02475C2D60083AB13 /* BlacklistOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlacklistOperations.swift; sourceTree = "<group>"; };
@@ -2163,7 +2163,7 @@
 		6FEE9A20247EFE4B00709E2D /* Production */ = {
 			isa = PBXGroup;
 			children = (
-				6F9E6EBB248AD8420001950E /* GoogleService-Info.plist */,
+				6F2850072559950600FA2946 /* GoogleService-Info.plist */,
 			);
 			path = Production;
 			sourceTree = "<group>";
@@ -2887,7 +2887,7 @@
 					"@executable_path/Frameworks",
 				);
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -Xfrontend -warn-long-function-bodies=300 -Xfrontend -warn-long-expression-type-checking=300 -Xfrontend -debug-time-function-bodies";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -Xfrontend -warn-long-function-bodies=5000 -Xfrontend -warn-long-expression-type-checking=5000 -Xfrontend -debug-time-function-bodies";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.telabook.web-prerelease";
 				PRODUCT_NAME = Telabook;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3036,7 +3036,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -Xfrontend -warn-long-function-bodies=300 -Xfrontend -warn-long-expression-type-checking=300 -Xfrontend -debug-time-function-bodies";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -Xfrontend -warn-long-function-bodies=5000 -Xfrontend -warn-long-expression-type-checking=5000 -Xfrontend -debug-time-function-bodies";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.telabook.web-debug";
 				PRODUCT_NAME = Telabook;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3063,7 +3063,7 @@
 					"@executable_path/Frameworks",
 				);
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -Xfrontend -warn-long-function-bodies=300 -Xfrontend -warn-long-expression-type-checking=300 -Xfrontend -debug-time-function-bodies";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -Xfrontend -warn-long-function-bodies=5000 -Xfrontend -warn-long-expression-type-checking=5000 -Xfrontend -debug-time-function-bodies";
 				PRODUCT_BUNDLE_IDENTIFIER = com.telabook.web;
 				PRODUCT_NAME = Telabook;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3149,7 +3149,7 @@
 					"@executable_path/Frameworks",
 				);
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -Xfrontend -warn-long-function-bodies=300 -Xfrontend -warn-long-expression-type-checking=300 -Xfrontend -debug-time-function-bodies";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -Xfrontend -warn-long-function-bodies=5000 -Xfrontend -warn-long-expression-type-checking=5000 -Xfrontend -debug-time-function-bodies";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.telabook.web-staging";
 				PRODUCT_NAME = Telabook;
 				PROVISIONING_PROFILE_SPECIFIER = "";

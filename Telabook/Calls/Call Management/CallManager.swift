@@ -198,6 +198,7 @@ import AVFoundation
         do {
             let callParams = try lc!.createCallParams(call: call)
             callParams.videoEnabled = hasVideo
+            /*
             if (ConfigManager.instance().lpConfigBoolForKey(key: "edge_opt_preference")) {
                 let low_bandwidth = (AppManager.network() == .network_2g)
                 if (low_bandwidth) {
@@ -205,7 +206,7 @@ import AVFoundation
                 }
                 callParams.lowBandwidthEnabled = low_bandwidth
             }
-
+            */
             //We set the record file name here because we can't do it after the call is started.
             let address = call.callLog?.fromAddress
             let writablePath = AppManager.recordingFilePathFromCall(address: address?.username ?? "")
@@ -218,7 +219,38 @@ import AVFoundation
             lpLog.error(msg: "*** \(self) > ### \(#function) > Linphone Failed to accept call because error: \(error)")
         }
     }
-
+    
+    func acceptCallKitCall(call: Call) {
+        if let callLog = call.callLog {
+            let callId = callLog.callId
+            if let uuid = CallManager.instance().providerDelegate.uuids[callId] {
+                let answerCallAction = CXAnswerCallAction(call: uuid)
+                let transaction = CXTransaction(action: answerCallAction)
+                CallManager.instance().requestTransaction(transaction, action: "answerCall")
+            } else {
+                fatalError()
+            }
+        } else {
+            fatalError()
+        }
+    }
+    
+    func endCallKitCall(call: Call) {
+        if let callLog = call.callLog {
+            let callId = callLog.callId
+            if let uuid = CallManager.instance().providerDelegate.uuids[callId] {
+                let answerCallAction = CXEndCallAction(call: uuid)
+                let transaction = CXTransaction(action: answerCallAction)
+                CallManager.instance().requestTransaction(transaction, action: "endCall")
+            } else {
+                fatalError()
+            }
+        } else {
+            fatalError()
+        }
+    }
+    
+    
     // for outgoing call. There is not yet callId
     @objc func startCall(addr: OpaquePointer?, isSas: Bool) {
         if (addr == nil) {
@@ -238,7 +270,6 @@ import AVFoundation
             let callInfo = CallInfo.newOutgoingCallInfo(addr: sAddr, isSas: isSas)
             providerDelegate.callInfos.updateValue(callInfo, forKey: uuid)
             providerDelegate.uuids.updateValue(uuid, forKey: "")
-
             requestTransaction(transaction, action: "startCall")
         }else {
             try? doCall(addr: sAddr, isSas: isSas)
@@ -249,11 +280,14 @@ import AVFoundation
 //        let displayName = FastAddressBook.displayName(for: addr.getCobject)
         let displayName:String? = addr.displayName
         let lcallParams = try CallManager.instance().lc!.createCallParams(call: nil)
+        
+        /*
         if ConfigManager.instance().lpConfigBoolForKey(key: "edge_opt_preference") && AppManager.network() == .network_2g {
             print("Enabling low bandwidth mode")
             lcallParams.lowBandwidthEnabled = true
         }
-
+        */
+        
         if (displayName != nil) {
             try addr.setDisplayname(newValue: displayName!)
         }
@@ -555,9 +589,7 @@ class CoreManagerDelegate: CoreDelegate {
                             CallManager.instance().referedToCall = nil
                             break
                         }
-
-                        let transaction = CXTransaction(action:
-                        CXEndCallAction(call: uuid!))
+                        let transaction = CXTransaction(action: CXEndCallAction(call: uuid!))
                         CallManager.instance().requestTransaction(transaction, action: "endCall")
                     }
                 }

@@ -20,19 +20,34 @@ import linphonesw
 
 protocol CallViewDelegate {
     func didDeclineIncomingCall(call: Call)
-    func didAcceptIncomingCall(call: Call)
     func callAborted(call: Call)
 }
 
 class CallViewController: UIViewController {
     
     // MARK: - Declarations
-    var call: Call!
+    let call: Call
     var isVideoHidden = true
     var isCallRecordingEnabled = false
     var center: CGPoint! //center of the CS
 //    var shouldDismiss = false // Not in use anymore
 //    var maxLengthToCenter: CGFloat! //maximum distance from the center of the CS to the furthest point in the CS => // Not in use anymore
+    
+    var delegate: CallViewDelegate?
+    
+    // MARK: - Init / deinit
+    
+    init(call: Call) {
+        self.call = call
+        super.init(nibName: nil, bundle: nil)
+    }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    deinit {
+        print("### \(self) - Deinitialized")
+        NotificationCenter.default.removeObserver(self)
+    }
     
     // MARK: - Lifecycle
     
@@ -41,22 +56,39 @@ class CallViewController: UIViewController {
         commonInit()
         let appName:String = try! Configuration.value(for: .bundleDisplayName)
         callDescriptionLabel.text = "\(appName) Audio..."
-        showIncomingCallViews()
+        callerIdLabel.text = call.remoteAddress?.displayName ?? "Unknown"
+//        showIncomingCallViews(animated: false)
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         layoutButtons()
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        CallManager.instance().nextCallIsTransfer = false
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdateCallNotification(_:)), name: .linphoneCallUpdate, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleBluetoothAvailabilityNotification(_:)), name: .linphoneBluetoothAvailabilityUpdate, object: nil)
+        Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateCallDuration), userInfo: nil, repeats: true)
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         UIApplication.shared.isIdleTimerDisabled = true
         UIDevice.current.isProximityMonitoringEnabled = true
         
+        let state = call.state
+        didUpdateCall(call: call, state: state, animated: false)
+        /*
         // we must wait didAppear to reset fullscreen mode because we cannot change it in viewwillappear
-        if let call = linphoneCore.currentCall {
+        if let call = linphoneCore.currentCall,
+           call.getCobject == self.call.getCobject {
             let state = call.state
             didUpdateCall(call: call, state: state, animated: false)
+        } else {
+            fatalError("Current call and displayed call not same. It means unhandled case.")
         }
+        */
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -74,19 +106,8 @@ class CallViewController: UIViewController {
         }
         
     }
-    deinit {
-        print("### \(self) - Deinitialized")
-        NotificationCenter.default.removeObserver(self)
-    }
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        CallManager.instance().nextCallIsTransfer = false
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdateCallNotification(_:)), name: .linphoneCallUpdate, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleBluetoothAvailabilityNotification(_:)), name: .linphoneBluetoothAvailabilityUpdate, object: nil)
-        Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateCallDuration), userInfo: nil, repeats: true)
-    }
+    
+    
     
     @objc
     func handleBluetoothAvailabilityNotification(_ notification: Notification) {
@@ -117,7 +138,7 @@ class CallViewController: UIViewController {
     }
     
     
-    func updateCallView(call: Call, state: Call.State) {
+    func updateCallView(call: Call, state: Call.State, animated: Bool) {
 //        optionsButton.enabled = !linphoneCore.soundResourcesLocked()
 //        optionsTransferButton.enabled = !linphoneCore.soundResourcesLocked()
         
@@ -134,21 +155,66 @@ class CallViewController: UIViewController {
         
         
         switch state {
-        case .End,
-             .Error,
-             .IncomingReceived,
-             .OutgoingInit:
-//            [self hidePad:TRUE animated:TRUE];
-//            [self hideOptions:TRUE animated:TRUE];
-//            [self hideRoutes:TRUE animated:TRUE];
-        break
-        default: break
+        case .IncomingReceived:
+            showIncomingCallViews(animated: animated)
+            hideConnectedCallViews(animated: animated)
+        case .IncomingEarlyMedia:
+            if linphoneCore.callsNb > 1 {
+                print("Linphone Core Calls NB: \(linphoneCore.callsNb); Should display new call")
+            }
+        case .Connected, .StreamsRunning:
+            print("Seems good; Call State: \(state)\tHiding Incoming Call View and Showing Connected Call Views")
+            hideIncomingCallViews(animated: animated)
+            showConnectedCallViews(animated: animated)
+        case .End:
+            dismissAnimated {
+                self.delegate?.callAborted(call: call)
+            }
+        case .Error:
+            delegate?.callAborted(call: call)
+            break
+        case .Released:
+            if UIApplication.shared.applicationState == .background {
+                dismissAnimated(animated: false) {
+                    self.delegate?.callAborted(call: call)
+                }
+                CoreManager.instance().stopLinphoneCore()
+            }
+        case .Pausing, .Paused:
+            print("Unhandled state : \(state)")
+        case .PausedByRemote:
+            fatalError("Paused by remote. > Unhandled case: \(state)")
+        
+        case .EarlyUpdatedByRemote, .UpdatedByRemote:
+            fatalError("Call Updated by remote. Wondering what to do with this.")
+        case .Idle:
+            fatalError("No idea what to do with this state: \(state)")
+        case .OutgoingInit:
+            fatalError("Outgoing calls not supported.")
+        case .OutgoingProgress:
+            fatalError("Outgoing calls not supported.")
+        case .OutgoingRinging:
+            fatalError("Outgoing calls not supported.")
+        case .OutgoingEarlyMedia:
+            fatalError("Outgoing calls not supported.")
+        case .Resuming:
+            fatalError("No idea what to do with this state: \(state)")
+        case .Referred:
+            fatalError("No idea what to do with this state: \(state)")
+        case .Updating:
+            fatalError("No idea what to do with this state: \(state)")
+        case .EarlyUpdating:
+            fatalError("No idea what to do with this state: \(state)")
         }
         
     }
     
+    
+    
+    
+    
     func didUpdateCall(call: Call, state: Call.State, animated:Bool) {
-        updateCallView(call: call, state: state)
+        updateCallView(call: call, state: state, animated: animated)
         let currentCall = linphoneCore.currentCall
         // call onCurrentCallChange()
         
@@ -289,7 +355,6 @@ class CallViewController: UIViewController {
     
     lazy var callerIdLabel:UILabel = {
         let label = UILabel()
-        label.text = "+161239"
         label.textColor = UIColor.white
         label.font = UIFont.boldSystemFont(ofSize: 26)
         label.numberOfLines = 1

@@ -1475,9 +1475,10 @@ extension Date {
         let output = formatter.string(from: TimeInterval(seconds))!
         let range = output.range(of: ":")!
         let upperBound = range.upperBound
-        let pre = output.substring(from: upperBound)
-        print("OutPut: \(output)\tRange: \(range)\tUpperBound: \(upperBound)\tReseult: \(pre)")
-        return seconds < 3600 ? pre : output
+//        let pre = output.substring(from: upperBound)
+        let suffix = String(output.suffix(from: upperBound))
+//        print("OutPut: \(output)\tRange: \(range)\tUpperBound: \(upperBound)\tResult: \(suffix)")
+        return seconds < 3600 ? suffix : output
     }
     
 }

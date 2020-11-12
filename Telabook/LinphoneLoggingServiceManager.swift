@@ -26,7 +26,7 @@ class LinphoneLoggingServiceManager: LoggingServiceDelegate {
             let debugEnabled = (debugLevel >= LogLevel.Debug.rawValue && debugLevel < LogLevel.Error.rawValue)
 
             if (debugEnabled) {
-                Factory.Instance.logCollectionPath = Factory.Instance.getDownloadDir(context: UnsafeMutablePointer<Int8>(mutating: ("" as NSString).utf8String)) // GroupAppID to enter in context
+                Factory.Instance.logCollectionPath = Factory.Instance.getDownloadDir(context: UnsafeMutablePointer<Int8>(mutating: (Config.appGroupID as NSString).utf8String)) // GroupAppID to enter in context
                 Factory.Instance.enableLogCollection(state: LogCollectionState.Enabled)
                 log.domain = domain
                 log.logLevel = LogLevel(rawValue: debugLevel)

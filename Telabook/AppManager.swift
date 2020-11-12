@@ -13,8 +13,8 @@ enum NetworkType: Int {
     case network_none = 0
     case network_2g = 1
     case network_3g = 2
-    case network_4g = 3
-    case network_lte = 4
+    case network_lte = 3
+    case network_5g = 4
     case network_wifi = 5
 }
 
@@ -22,15 +22,49 @@ enum NetworkType: Int {
 * AppManager is a class that includes some useful functions.
 */
 @objc class AppManager: NSObject {
+    /*
+    @available(iOS, deprecated: 12.0)
     static func network() -> NetworkType {
         let info = CTTelephonyNetworkInfo()
         let currentRadio = info.currentRadioAccessTechnology
         if (currentRadio == CTRadioAccessTechnologyEdge) {
             return NetworkType.network_2g
         } else if (currentRadio == CTRadioAccessTechnologyLTE) {
-            return NetworkType.network_4g
+            return NetworkType.network_lte
         }
         return NetworkType.network_3g
+    }
+    */
+    func network() -> NetworkType {
+        let info = CTTelephonyNetworkInfo()
+        if let radioServices = info.serviceCurrentRadioAccessTechnology, !radioServices.isEmpty {
+            let currentRadio = radioServices.values.first!
+            if #available(iOS 14.0, *) {
+                if currentRadio == CTRadioAccessTechnologyNRNSA || currentRadio == CTRadioAccessTechnologyNR {
+                    // TODO: Handle 5G
+                    return .network_5g
+                }
+            }
+            switch currentRadio {
+            case CTRadioAccessTechnologyGPRS,
+                 CTRadioAccessTechnologyEdge,
+                 CTRadioAccessTechnologyCDMA1x:
+                return .network_2g
+            case CTRadioAccessTechnologyWCDMA,
+                 CTRadioAccessTechnologyHSDPA,
+                 CTRadioAccessTechnologyHSUPA,
+                 CTRadioAccessTechnologyCDMAEVDORev0,
+                 CTRadioAccessTechnologyCDMAEVDORevA,
+                 CTRadioAccessTechnologyCDMAEVDORevB,
+                 CTRadioAccessTechnologyeHRPD:
+                return .network_3g
+            case CTRadioAccessTechnologyLTE:
+                return .network_lte
+            default: fatalError()
+            }
+        } else {
+            return .network_none
+        }
     }
 
     @objc static func recordingFilePathFromCall(address: String) -> String {

@@ -31,12 +31,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var callProviderDelegate: CallProviderDelegate!
     var voipRegistry: PKPushRegistry!
-    
+    let isVOIPEnabled = false
     
     
     var scheduler: Timer!
     public var proxy_cfg: ProxyConfig!
-//    let logManager = LinphoneLoggingServiceManager()
+    private var linphoneLogManager: LinphoneLoggingServiceManager! = nil
     var startedInBackground = false
     //liblinphone call delegate
     var callDelegate: CallDelegate!
@@ -64,22 +64,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         registerForVoIPNotifications() // Register for notifications must be done ASAP to give a chance for first SIP register to be done with right token. Specially true in case of remote provisionning or re-install with new type of signing certificate, like debug to release.
         
         let linphoneManager = LinphoneManager.instance()
-//        Factory.Instance.enableLogCollection(state: LogCollectionState(rawValue: ConfigManager.instance().lpConfigIntForKey(key: "debugenable_preference"))!)
         let configManager = ConfigManager.instance()
         configManager.setDb(db: linphoneManager.config.getCobject!)
+        
+        // Set 0 to disable logs. 1 for debug enabled.
+        configManager.lpConfigSetInt(value: 0, key: "debugenable_preference")
+        
+        // Instatntiating Logs
+        lpLog = LoggingService.Instance
+        linphoneLogManager = try! LinphoneLoggingServiceManager(config: linphoneManager.config, log: lpLog, domain: "Telabook")
+        
         
         configManager.lpConfigSetBool(value: true, key: "start_at_boot_preference")
         
         let background_mode = configManager.lpConfigBoolForKey(key: "backgroundmode_preference")
         let start_at_boot = configManager.lpConfigBoolForKey(key: "start_at_boot_preference")
-        print("BG Mode enabled: \(background_mode)")
-        print("start at boot: \(start_at_boot)")
-        if start_at_boot || background_mode {
-            print("(1) if any one condition is true")
-        }
-        if !start_at_boot || !background_mode {
-            print("(2) If any one condition is false")
-        }
+        
         if UIApplication.shared.applicationState == .background {
             // we've been woken up directly to background;
             if (!start_at_boot || !background_mode) {
@@ -106,9 +106,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         lpLog.debug(msg: "FINISH LAUNCHING WITH OPTION : \(String(describing: launchOptions?.description))")
         
         
-//        setupVoipAccount()
-        if AppData.isLoggedIn {
-            setupVoipAccount()
+        if isVOIPEnabled {
+            if AppData.isLoggedIn {
+                setupVoipAccount()
+            }
+        } else {
+            linphoneCore.clearAllAuthInfo()
+            linphoneCore.clearProxyConfig()
         }
         return true
     }
@@ -520,7 +524,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         print("Unable to register for remote notifications: \(error.localizedDescription)")
-        LinphoneManager.instance().setPushTokenToLinphone(remoteNotificationToken: nil)
+//        LinphoneManager.instance().setPushTokenToLinphone(remoteNotificationToken: nil)
     }
     
     // This function is added here only for debugging purposes, and can be removed if swizzling is enabled.
@@ -529,7 +533,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         let token = deviceToken.map { String(format: "%02x", $0) }.joined()
         print("UserNotifications -> deviceToken :\(token)")
-        LinphoneManager.instance().setPushTokenToLinphone(remoteNotificationToken: deviceToken)
+//        LinphoneManager.instance().setPushTokenToLinphone(remoteNotificationToken: deviceToken)
         // With swizzling disabled you must set the APNs token here.
         Messaging.messaging().apnsToken = deviceToken
     }
@@ -551,12 +555,12 @@ extension AppDelegate: PKPushRegistryDelegate {
             return
         }
 //        configureLinphoneProxy(withPushkitRegistrationToken: deviceToken)
-        LinphoneManager.instance().setPushTokenToLinphone(pushKitToken: credentials.token)
+//        LinphoneManager.instance().setPushTokenToLinphone(pushKitToken: credentials.token)
     }
     
     func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {
         print("### \(#function)")
-        LinphoneManager.instance().setPushTokenToLinphone(pushKitToken: nil)
+//        LinphoneManager.instance().setPushTokenToLinphone(pushKitToken: nil)
     }
     
     

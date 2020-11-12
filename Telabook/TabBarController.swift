@@ -10,7 +10,7 @@ import UIKit
 import Firebase
 import linphonesw
 import AVFoundation
-
+import CoreTelephony
 
 
 fileprivate extension UILabel {
@@ -33,11 +33,33 @@ class TabBarController: UITabBarController {
     // MARK: - Declarations / Computed Properties
     
     var doubleHeightStatusBarHeightConstraint:NSLayoutConstraint!
-    
+    var currentCall: Call? = nil {
+        didSet {
+            updateCallBannerViewState()
+        }
+    }
     var isCallBannerActivated:Bool {
         guard doubleHeightStatusBarHeightConstraint != nil else { return false }
         return doubleHeightStatusBarHeightConstraint.constant > 0
     }
+    var shouldShowCallBanner: Bool {
+        return currentCall != nil
+    }
+    
+    let callBannerPlaceholderText = "Touch to return to call • "
+    
+    
+    func updateCallBannerViewState() {
+        if currentCall != nil {
+            if !isCallBannerActivated {
+                enableCallBanner(animated: true)
+            }
+        } else {
+                disableCallBanner(animated: true)
+                resetCallBannerDisplayText()
+            }
+    }
+    
     
     
     enum Tabs: Int, Codable {
@@ -82,10 +104,15 @@ class TabBarController: UITabBarController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         addNotificationObservers()
+        Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateCallDuration), userInfo: nil, repeats: true)
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         removeNotificationObservers()
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        doubleHeightStatusBarTextLabel.stopFlashing()
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -97,21 +124,43 @@ class TabBarController: UITabBarController {
     }
     
     
+    @objc
+    func updateCallDuration() {
+        if let call = currentCall {
+            let duration = call.duration
+            if duration > 0 {
+                let elapsedTime = Date.getElapsedTimeFormattedString(fromSecondsPassed: duration)
+                setCallBanner(displayText: "\(callBannerPlaceholderText)\(elapsedTime)")
+                print("Call banner duration: \(duration)")
+            }
+        }
+    }
+    func resetCallBannerDisplayText() {
+        setCallBanner(displayText: "\(callBannerPlaceholderText)0:00")
+    }
     
     
     private func addNotificationObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(handleOnCallUpdateNotification(_:)), name: .linphoneCallUpdate, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleRegistrationUpdateNotification(_:)), name: .linphoneRegistrationUpdate, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleOnGlobalStateChangedNotification(_:)), name: .linphoneGlobalStateUpdate, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleEnterForegroundNotification(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
         UIDevice.current.isBatteryMonitoringEnabled = true
         NotificationCenter.default.addObserver(self, selector: #selector(handleBatteryLevelChangedNotification(_:)), name: UIDevice.batteryLevelDidChangeNotification, object: nil)
     }
     private func removeNotificationObservers() {
+//        NotificationCenter.default.removeObserver(self, name: UIApplication.willEnterForegroundNotification, object: nil)
         NotificationCenter.default.removeObserver(self)
         NotificationCenter.default.removeObserver(self, name: UIDevice.batteryLevelDidChangeNotification, object: nil)
         UIDevice.current.isBatteryMonitoringEnabled = false
     }
-    
+    @objc
+    func handleEnterForegroundNotification(_ notification: Notification) {
+        doubleHeightStatusBarTextLabel.alpha = 1
+        if isCallBannerActivated && currentCall != nil {
+            doubleHeightStatusBarTextLabel.startFlashing()
+        }
+    }
     
     
     
@@ -177,16 +226,7 @@ class TabBarController: UITabBarController {
     
     @objc
     func handleOnCallUpdateNotification(_ notification: Notification) {
-        print("Bazzinga **********************")
-//        guard let userInfo = notification.userInfo else {
-//            fatalError()
-//        }
-//        let callObject = (userInfo["call"] as! NSValue).pointerValue!
-//        let stateValue = userInfo["state"] as! Int
-//        let state = Call.State(rawValue: stateValue)!
-//        let message = userInfo["message"] as! String
-        
-        
+
         guard let userInfo = notification.userInfo,
               let callObject = userInfo["call"] as? Call,
               let stateValue = userInfo["state"] as? Int,
@@ -198,12 +238,18 @@ class TabBarController: UITabBarController {
 //        let call = Call.getSwiftObject(cObject: OpaquePointer(callObject))
 //        let call = Call.getSwiftObject(cObject: callObject)
         let call = callObject
-    
+
+        
         switch state {
         case .IncomingReceived:
+            currentCall = call
+            displayIncomingCall(call: call)
+            // We can use below in case we don't want to show in app call UI when app is in active state and, just use call kit notifications.
+            /*
                 if !CallManager.callKitEnabled() {
                     displayIncomingCall(call: call)
                 }
+            */
         case .IncomingEarlyMedia:
             if linphoneCore.callsNb > 1 {
                 displayIncomingCall(call: call)
@@ -213,14 +259,18 @@ class TabBarController: UITabBarController {
             
         case .PausedByRemote,
              .Connected:
+            /*
                 if !LinphoneManager.instance().isCTCallCenterExists {
                     /*only register CT call center CB for connected call*/
                     LinphoneManager.instance().setupGSMInteraction()
                     UIDevice.current.isProximityMonitoringEnabled = !(CallManager.instance().speakerEnabled || CallManager.instance().bluetoothEnabled)
                 }
+             */
+            currentCall = call
                 
         case .StreamsRunning:
             showCallView(withCall: call)
+            currentCall = call
             
         case .UpdatedByRemote:
             if let currentParams = call.currentParams,
@@ -232,8 +282,9 @@ class TabBarController: UITabBarController {
                 
         case .Error:
             displayCallError(forCall: call, message: message)
-            
         case .End:
+            break
+            /*
             let calls = linphoneCore.calls
             if calls.isEmpty {
                 if presentedViewController is CallViewController {
@@ -244,11 +295,9 @@ class TabBarController: UITabBarController {
                 if presentedViewController is CallViewController {
                     return
                 }
-                DispatchQueue.main.async {
-                    self.present(CallViewController(), animated: false)
-                }
+                showCallView(withCall: call)
             }
-                
+            */
         case .Released:
             if UIApplication.shared.applicationState == .background {
                 DispatchQueue.main.async { [self] in
@@ -273,6 +322,7 @@ class TabBarController: UITabBarController {
         }
         if state == .End || state == .Error || Int32(floor(NSFoundationVersionNumber)) <= NSFoundationVersionNumber_iOS_9_x_Max {
             updateApplicationBadgeNumber()
+            currentCall = nil
         }
     }
     
@@ -282,7 +332,7 @@ class TabBarController: UITabBarController {
 //        count += LinphoneManager.unreadMessageCount // Since not using Linphone Chat messaging
         count += linphoneCore.callsNb
         UIApplication.shared.applicationIconBadgeNumber = count
-        tabBar.items![Tabs.tab2.rawValue].badgeValue = "\(count)"
+        tabBar.items![Tabs.tab2.rawValue].badgeValue = count > 0 ? "\(count)" : nil
     }
     
     
@@ -325,11 +375,6 @@ class TabBarController: UITabBarController {
 //        configureDoubleHeightStatusBarViewHierarchy()
         configureDoubleHeightStatusBar()
         authenticate()
-        
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-            self.enableCallBanner()
-        }
     }
     
     
@@ -346,7 +391,7 @@ class TabBarController: UITabBarController {
     }()
     lazy var doubleHeightStatusBarTextLabel:UILabel = {
         let label = UILabel()
-        label.text = "Touch to return to call • 0:00"
+        label.text = "\(callBannerPlaceholderText)0:00"
         label.textAlignment = .center
         label.font = UIFont.preferredFont(forTextStyle: .footnote)
         label.textColor = .white
@@ -377,10 +422,7 @@ class TabBarController: UITabBarController {
     
     @objc
     private func didTapDoubleHeightStatusBar() {
-        print("### \(#function)")
-        let vc = CallViewController()
-        vc.modalPresentationStyle = .overFullScreen
-        self.present(vc, animated: false)
+        showCallView(withCall: currentCall!)
     }
     @objc
     private func timerFunction() {
@@ -392,32 +434,42 @@ class TabBarController: UITabBarController {
         }
     }
     
-    func enableCallBanner() {
+    func enableCallBanner(animated: Bool) {
         guard doubleHeightStatusBarHeightConstraint != nil else {
             fatalError()
         }
         let height = UIApplication.shared.statusBarHeight * 2
         doubleHeightStatusBarHeightConstraint.constant = height
+        view.frame = CGRect(x: 0, y: height, width: view.bounds.width, height: view.bounds.height - height)
 //        view.frame = CGRect(x: 0, y: height, width: view.bounds.width, height: view.bounds.height - height)
-        UIView.animate(withDuration: 0.7, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: [.curveEaseIn], animations: { [self] in
-            view.frame = CGRect(x: 0, y: height, width: view.bounds.width, height: view.bounds.height - height)
+        if animated {
+            UIView.animate(withDuration: 0.7, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: [.curveEaseIn], animations: { [self] in
+                view.superview?.layoutIfNeeded()
+                view.layoutIfNeeded()
+            }, completion: nil)
+        } else {
             view.superview?.layoutIfNeeded()
             view.layoutIfNeeded()
-        }, completion: nil)
+        }
         doubleHeightStatusBarTextLabel.startFlashing()
     }
-    func disableCallBanner() {
+    func disableCallBanner(animated: Bool) {
         guard doubleHeightStatusBarHeightConstraint != nil else {
             fatalError()
         }
         doubleHeightStatusBarHeightConstraint.constant = 0
         let bounds = UIScreen.main.bounds
-//        view.frame = bounds
-        UIView.animate(withDuration: 0.7, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: [.curveEaseOut], animations: { [self] in
-            view.frame = bounds
+        view.frame = bounds
+        if animated {
+            UIView.animate(withDuration: 0.7, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: [.curveEaseOut], animations: { [self] in
+    //            view.frame = bounds
+                view.superview?.layoutIfNeeded()
+                view.layoutIfNeeded()
+            }, completion: nil)
+        } else {
             view.superview?.layoutIfNeeded()
             view.layoutIfNeeded()
-        }, completion: nil)
+        }
         doubleHeightStatusBarTextLabel.stopFlashing()
     }
     
@@ -529,9 +581,9 @@ class TabBarController: UITabBarController {
     
     
     func showCallView(withCall call: Call) {
-        let vc = CallViewController()
+        let vc = CallViewController(call: call)
+        vc.delegate = self
         vc.modalPresentationStyle = .overFullScreen
-        vc.call = call
         DispatchQueue.main.async { [self] in
             present(vc, animated: false)
         }
@@ -550,15 +602,28 @@ extension TabBarController: LoginDelegate {
     func didLoginIWithSuccess() {
         configureTabBarController()
         configureNotifications()
-        
+        AppDelegate.shared.setupVoipAccount()
     }
 }
 extension TabBarController: LogoutDelegate {
     func presentLogin() {
+        linphoneCore.clearProxyConfig()
+        linphoneCore.clearAllAuthInfo()
         AppData.isLoggedIn = false
         authenticate(animated: true)
     }
 }
 protocol LogoutDelegate: class {
     func presentLogin()
+}
+extension TabBarController: CallViewDelegate {
+    func didDeclineIncomingCall(call: Call) {
+        fatalError()
+    }
+    
+    func callAborted(call: Call) {
+        currentCall = nil
+    }
+    
+    
 }

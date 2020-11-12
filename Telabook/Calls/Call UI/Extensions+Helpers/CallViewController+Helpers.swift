@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import linphonesw
+import CallKit
 
 extension CallViewController {
     
@@ -54,7 +56,11 @@ extension CallViewController {
     @objc
     private func didTapHangupButton(_ sender: UIButton) {
         print("### \(#function)")
-        CallManager.instance().terminateCall(call: call.getCobject)
+        callDescriptionLabel.text = "Ending..."
+        setConnectedCallButtons(enabled: false)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [self] in
+            CallManager.instance().terminateCall(call: call.getCobject)
+        }
 //        DispatchQueue.main.async { [self] in
 //            dismiss(animated: false) {
 //
@@ -64,25 +70,30 @@ extension CallViewController {
     @objc
     private func didTapAcceptButton(_ sender: UIButton) {
         print("### \(#function)")
-        CallManager.instance().acceptCall(call: call, hasVideo: false)
-        // i think i should disable incoming view buttons and show connecting label here.
-//        hideIncomingCallViews()
-//        showConnectedCallViews()
+        callDescriptionLabel.text = "Connecting..."
+        setIncomingCallButtons(enabled: false)
+        
+        CallManager.instance().acceptCallKitCall(call: call)
+        
+//        CallManager.instance().acceptCall(call: call, hasVideo: false)
+        
     }
     @objc
     private func didTapDeclineButton(_ sender: UIButton) {
         print("### \(#function)")
-        CallManager.instance().terminateCall(call: call.getCobject)
-//        DispatchQueue.main.async { [self] in
-//            dismiss(animated: false) {
-//
-//            }
+        callDescriptionLabel.text = "Ending..."
+        setIncomingCallButtons(enabled: false)
+        
+        CallManager.instance().endCallKitCall(call: call)
+        
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [self] in
+//            CallManager.instance().terminateCall(call: call.getCobject)
 //        }
     }
     @objc
     private func didTapBackButton(_ sender: UIButton) {
         print("### \(#function)")
-        dismissAnimated { _ in self.dismiss(animated: false, completion: nil) }
+        dismissAnimated()
     }
     /*
     // MARK: - Linphone methods to move view preview converted from obj-c to swift. Not using these anymore because it's ugly and I found something a lot better.
@@ -205,12 +216,23 @@ extension CallViewController {
                         gestureView.layer.cornerRadius = 0
                     })
             } else {
-                dismissAnimated { _ in self.dismiss(animated: false, completion: nil) }
+                dismissAnimated()
             }
         }
         
     }
-    func dismissAnimated(callback: ((Bool) -> Void)? = nil) {
+    func dismissAnimated(animated: Bool = true, dismissCompletionHandler: (() -> Void)? = nil) {
+        if animated {
+            runDismissAnimation { [self] _ in
+                dismiss(animated: false, completion: dismissCompletionHandler)
+            }
+        } else {
+            DispatchQueue.main.async {
+                self.dismiss(animated: false, completion: dismissCompletionHandler)
+            }
+        }
+    }
+    func runDismissAnimation(callback: ((Bool) -> Void)? = nil) {
         DispatchQueue.main.async { [self] in
             UIView.animate(withDuration: 0.2, animations: {
                 UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
@@ -224,20 +246,16 @@ extension CallViewController {
             }, completion: nil)
         }
     }
-    func showIncomingCallViews() {
-        acceptButton.isEnabled = true
-        declineButton.isEnabled = true
+    func showIncomingCallViews(animated: Bool) {
+        setIncomingCallButtons(enabled: true)
         DispatchQueue.main.async {
             UIView.animate(withDuration: 0.3, delay: 0, options: UIView.AnimationOptions.showHideTransitionViews) { [self] in
                 incomingCallStackView.alpha = 1
             }
         }
     }
-    func showConnectedCallViews() {
-        muteButton.isEnabled = true
-        keypadButton.isEnabled = true
-        audioSourceButton.isEnabled = true
-        hangupButton.isEnabled = true
+    func showConnectedCallViews(animated: Bool) {
+        setConnectedCallButtons(enabled: true)
         DispatchQueue.main.async {
             UIView.animate(withDuration: 0.3, delay: 0, options: UIView.AnimationOptions.showHideTransitionViews) { [self] in
                 connectedCallStackView.alpha = 1
@@ -245,20 +263,16 @@ extension CallViewController {
             }
         }
     }
-    func hideIncomingCallViews() {
-        acceptButton.isEnabled = false
-        declineButton.isEnabled = false
+    func hideIncomingCallViews(animated: Bool) {
+        setIncomingCallButtons(enabled: false)
         DispatchQueue.main.async {
             UIView.animate(withDuration: 0.3, delay: 0, options: UIView.AnimationOptions.showHideTransitionViews) { [self] in
                 incomingCallStackView.alpha = 0
             }
         }
     }
-    func hideConnectedCallViews() {
-        muteButton.isEnabled = false
-        keypadButton.isEnabled = false
-        audioSourceButton.isEnabled = false
-        hangupButton.isEnabled = false
+    func hideConnectedCallViews(animated: Bool) {
+        setConnectedCallButtons(enabled: false)
         DispatchQueue.main.async {
             UIView.animate(withDuration: 0.3, delay: 0, options: UIView.AnimationOptions.showHideTransitionViews) { [self] in
                 connectedCallStackView.alpha = 0
@@ -267,7 +281,16 @@ extension CallViewController {
         }
     }
     
-    
+    func setIncomingCallButtons(enabled: Bool) {
+        acceptButton.isEnabled = enabled
+        declineButton.isEnabled = enabled
+    }
+    func setConnectedCallButtons(enabled: Bool) {
+        muteButton.isEnabled = enabled
+        keypadButton.isEnabled = enabled
+        audioSourceButton.isEnabled = enabled
+        hangupButton.isEnabled = enabled
+    }
     
     
     @objc
