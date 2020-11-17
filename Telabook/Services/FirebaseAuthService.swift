@@ -215,6 +215,7 @@ final class FirebaseAuthService:NSObject {
         print("Token check: \(String(describing: firebaseAuthToken))")
         return firebaseAuthToken
     }
+    /*
     func monitorAndSaveToken() {
         Auth.auth().currentUser?.getIDToken(completion: { (token, error) in
             if let err = error {
@@ -225,6 +226,7 @@ final class FirebaseAuthService:NSObject {
             }
         })
     }
+    */
     /*
     func monitorAndSaveRemoteToken() {
         InstanceID.instanceID().instanceID { (result, error) in

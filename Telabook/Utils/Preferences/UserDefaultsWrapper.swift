@@ -11,6 +11,7 @@ import CryptoKit
 
 @propertyWrapper
 struct UserDefaultsWrapper<T: Codable> {
+    private let userDefaults = UserDefaults(suiteName: "group.com.telabook.app")! // App Group ID
     private let key: AppDataKey
     private let defaultValue: T
     
@@ -22,7 +23,7 @@ struct UserDefaultsWrapper<T: Codable> {
     var wrappedValue: T {
         get {
             // Read value from UserDefaults
-            guard let data = UserDefaults.standard.object(forKey: key.rawValue) as? Data else {
+            guard let data = userDefaults.object(forKey: key.rawValue) as? Data else {
                 // Return defaultValue when no data in UserDefaults
                 return defaultValue
             }
@@ -36,7 +37,7 @@ struct UserDefaultsWrapper<T: Codable> {
             let data = try? JSONEncoder().encode(newValue)
             
             // Set value to UserDefaults
-            UserDefaults.standard.set(data, forKey: key.rawValue)
+            userDefaults.set(data, forKey: key.rawValue)
         }
     }
 }
@@ -45,7 +46,7 @@ struct UserDefaultsWrapper<T: Codable> {
 
 @propertyWrapper
 struct UserDefaultsEncryptionWrapper {
-    
+    private let userDefaults = UserDefaults(suiteName: "group.com.telabook.app")! // App Group ID
     private let key: AppDataKey
     init(key: AppDataKey) {
         self.key = key
@@ -54,14 +55,14 @@ struct UserDefaultsEncryptionWrapper {
     var wrappedValue: String {
         get {
             // Get encrypted string from UserDefaults
-            let encryptedData = UserDefaults.standard.object(forKey: key.rawValue) as! Data
+            let encryptedData = userDefaults.object(forKey: key.rawValue) as! Data
             let decryptedString = decrypt(cipher: encryptedData)
             return decryptedString
         }
         set {
             // Encrypt newValue before set to UserDefaults
             let encryptedData = encrypt(value: newValue)
-            UserDefaults.standard.set(encryptedData, forKey: key.rawValue)
+            userDefaults.set(encryptedData, forKey: key.rawValue)
         }
     }
 

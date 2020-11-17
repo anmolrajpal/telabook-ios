@@ -188,7 +188,7 @@ extension CustomersViewController {
         guard pickerDelegate == nil && messageForwardingDelegate == nil else { return nil }
         let index = indexPath.row
         let customer = customers[index]
-        guard let conversation = firebaseCustomers.first(where: { $0.conversationID == customer.externalConversationID }) else { return nil }
+//        guard let conversation = firebaseCustomers.first(where: { $0.conversationID == customer.externalConversationID }) else { return nil }
         
         // 2
         let identifier = "\(index)" as NSString
@@ -225,16 +225,20 @@ extension CustomersViewController {
             // MARK: - Send Color Action
             
             let yellowAction = UIAction(title: "Yellow", image: SFSymbol.circleSwitch.image.withTintColor(.telaYellow, renderingMode: .alwaysOriginal)) { _ in
-                self.updateColorOnFirebase(forConversation: conversation, color: .Yellow)
+                self.handleChatColorSequence(color: .Yellow, indexPath: indexPath)
+//                self.updateColorOnFirebase(forConversation: conversation, color: .Yellow)
             }
             let blueAction = UIAction(title: "Blue", image: SFSymbol.circleSwitch.image.withTintColor(.telaBlue, renderingMode: .alwaysOriginal)) { _ in
-                self.updateColorOnFirebase(forConversation: conversation, color: .Blue)
+                self.handleChatColorSequence(color: .Blue, indexPath: indexPath)
+//                self.updateColorOnFirebase(forConversation: conversation, color: .Blue)
             }
             let greenAction = UIAction(title: "Green", image: SFSymbol.circleSwitch.image.withTintColor(.telaGreen, renderingMode: .alwaysOriginal)) { _ in
-                self.updateColorOnFirebase(forConversation: conversation, color: .Green)
+                self.handleChatColorSequence(color: .Green, indexPath: indexPath)
+//                self.updateColorOnFirebase(forConversation: conversation, color: .Green)
             }
             let whiteAction = UIAction(title: "White", image: SFSymbol.circleSwitch.image.withTintColor(.telaWhite, renderingMode: .alwaysOriginal)) { _ in
-                self.updateColorOnFirebase(forConversation: conversation, color: .White)
+                self.handleChatColorSequence(color: .White, indexPath: indexPath)
+//                self.updateColorOnFirebase(forConversation: conversation, color: .White)
             }
             let setColorMenu = UIMenu(title: "Set Color", image: #imageLiteral(resourceName: "set_color").withInsets(UIEdgeInsets(top: 1, left: 1, bottom: 1, right: 1)), children: [
                 yellowAction, blueAction, greenAction, whiteAction

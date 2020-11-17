@@ -386,10 +386,12 @@ class UpsertAgentEntriesInStoreOperation: Operation {
             _ = serverEntries.map { serverEntry -> Agent in
                 let existingAgent = fetchedEntries?.first(where: { Int($0.workerID) == serverEntry.workerId })
                 let count = existingAgent?.externalPendingMessagesCount ?? 0
+                let allConversationsFetchedAt = existingAgent?.allConversationsFetchedAt
                 let autoResponseServerObject = existingAgent?.autoResponse?.serverObject
                 let agent = Agent(context: context, agentEntryFromServer: serverEntry)
                 agent.isDisabled = showOnlyDisabledAccounts
                 agent.externalPendingMessagesCount = count
+                agent.allConversationsFetchedAt = allConversationsFetchedAt
                 if let autoResponse = autoResponseServerObject {
                     _ = AutoResponse(context: context, autoResponseEntry: autoResponse, agent: agent, synced: true)
                 }

@@ -294,6 +294,51 @@ class AddCustomerEntriesFromServerToStore_Operation: Operation {
             #endif
             return
         }
+        
+        // Process records in batches to avoid a high memory footprint.
+        let batchSize = 100
+        let count = serverEntries.count
+        
+        // Determine the total number of batches.
+        var numBatches = count / batchSize
+        numBatches += count % batchSize > 0 ? 1 : 0
+        
+        for batchNumber in 0 ..< numBatches {
+            
+            // Determine the range for this batch.
+            let batchStart = batchNumber * batchSize
+            let batchEnd = batchStart + min(batchSize, count - batchNumber * batchSize)
+            let range = batchStart..<batchEnd
+            
+            // Create a batch for this range from the decoded JSON.
+            let batch = Array(serverEntries[range])
+            
+            context.performAndWait {
+                
+                _ = batch.map { serverEntry -> Customer in
+                    let existingConversation = fetchedEntries?.first(where: { $0.externalConversationID == serverEntry.conversationID })
+                    let isPinned = existingConversation?.isPinned ?? false
+                    let customerDetails = existingConversation?.customerDetails?.serverObject
+                    let conversation = Customer(context: context, conversationEntryFromFirebase: serverEntry, agent: agent)
+                    conversation.isPinned = isPinned
+                    if let existingCustomerDetails = customerDetails {
+                        _ = CustomerDetails(context: context, customerDetailsEntryFromServer: existingCustomerDetails, conversationWithCustomer: conversation)
+                    }
+                    return conversation
+                }
+                if context.hasChanges {
+                    do {
+                        try context.save()
+                    } catch {
+                        print("Error upserting firebase conversations to core data: \(error)\nCould not save Core Data context.")
+                        self.error = .coreDataError(error: error)
+                        return
+                    }
+//                    context.reset()
+                }
+            }
+        }
+        /*
         context.performAndWait {
             _ = serverEntries.map { serverEntry -> Customer in
                 let existingConversation = fetchedEntries?.first(where: { $0.externalConversationID == serverEntry.conversationID })
@@ -314,7 +359,7 @@ class AddCustomerEntriesFromServerToStore_Operation: Operation {
             }
             context.reset()
         }
-        
+        */
     }
 }
 

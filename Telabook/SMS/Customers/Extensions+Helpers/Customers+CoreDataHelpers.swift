@@ -16,7 +16,7 @@ extension CustomersViewController {
         }
         let fetchRequest:NSFetchRequest<Customer> = Customer.fetchRequest()
         fetchRequest.fetchBatchSize = 20
-        fetchRequest.propertiesToFetch = ["\(#keyPath(Customer.customerID))", "\(#keyPath(Customer.phoneNumber))", "\(#keyPath(Customer.addressBookName))", "\(#keyPath(Customer.colorCode))", "\(#keyPath(Customer.isPinned))", "\(#keyPath(Customer.lastMessageDateTime))"]
+        fetchRequest.propertiesToFetch = ["\(#keyPath(Customer.customerID))", "\(#keyPath(Customer.phoneNumber))", "\(#keyPath(Customer.addressBookName))", "\(#keyPath(Customer.colorCode))", "\(#keyPath(Customer.isPinned))", "\(#keyPath(Customer.lastMessageDateTime))", "\(#keyPath(Customer.messageType))"]
         
         let objectID = agent.objectID
         let contextAgent = context.object(with: objectID) as! Agent
@@ -48,7 +48,9 @@ extension CustomersViewController {
             fetchedResultsController.delegate = self
         }
         fetchedResultsController.fetchRequest.predicate = selectedSegment == .Inbox ? inboxCompoundPredicate : archivedCompoundPredicate
-        performFetch()
+        
+        self.performFetch()
+        
     }
     internal func performFetch() {
         do {
@@ -59,10 +61,120 @@ extension CustomersViewController {
         }
     }
 }
+
+
+extension Customer {
+    convenience init(context: NSManagedObjectContext, conversationToUpdate conversation: Customer) {
+        self.init(context: context)
+        self.lastMessageSeenDate = conversation.lastMessageSeenDate
+        self.lastMessageText = conversation.lastMessageText
+        self.isArchived = conversation.isArchived
+        self.blacklistReason = conversation.blacklistReason
+        self.colorCode = Int16(conversation.colorCode)
+        self.customerID = Int32(conversation.customerID)
+        self.name = conversation.name
+        self.phoneNumber = conversation.phoneNumber
+        self.isCustomerDeleted = conversation.isCustomerDeleted
+        self.deliveredByProviderAt = conversation.deliveredByProviderAt
+        self.isBlacklisted = conversation.isBlacklisted
+        self.externalConversationID = Int32(conversation.externalConversationID)
+        self.isIncoming = conversation.isIncoming
+        self.addressBookID = Int32(conversation.addressBookID)
+        self.isAddressBookNameActive = conversation.isAddressBookNameActive
+        self.addressBookName = conversation.addressBookName
+        self.lastMessageDate = conversation.lastMessageDate
+        self.lastMessageDateTime = conversation.lastMessageDateTime
+        self.lastMessageKey = conversation.lastMessageKey
+        self.messageType = conversation.messageType
+        self.node = conversation.node
+        self.priority = Int16(conversation.priority)
+        self.senderID = Int32(conversation.senderID)
+        self.sentByApiAt = conversation.sentByApiAt
+        self.sentByAppAt = conversation.sentByAppAt
+        self.sentByProviderAt = conversation.sentByProviderAt
+        self.unreadMessagesCount = Int16(conversation.unreadMessagesCount)
+        self.updatedAt = conversation.updatedAt
+        self.workerPersonName = conversation.workerPersonName
+        self.workerPhoneNumber = conversation.workerPhoneNumber
+        self.agent = conversation.agent
+        self.lastRefreshedAt = Date()
+    }
+}
 extension CustomersViewController: NSFetchedResultsControllerDelegate {
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
+        /*
+        // Cast the snapshot reference to a snapshot
+            let snapshot = snapshot as NSDiffableDataSourceSnapshot<String, NSManagedObjectID>
+
+            // Create a new snapshot with the value object as item identifier
+            var mySnapshot = NSDiffableDataSourceSnapshot<String, Customer>()
+
+            // Copy the sections from the fetched results controller's snapshot
+            mySnapshot.appendSections(snapshot.sectionIdentifiers)
+
+            // For each section, map the item identifiers (NSManagedObjectID) from the
+            // fetched result controller's snapshot to managed objects (Task) and
+            // then to value objects (TaskItem), before adding to the new snapshot
+            mySnapshot.sectionIdentifiers.forEach { section in
+                let itemIdentifiers = snapshot.itemIdentifiers(inSection: section)
+                    .map { context.object(with: $0) as! Customer }
+//                    .map { Customer(context: context, conversationToUpdate: $0) }
+
+                mySnapshot.appendItems(itemIdentifiers, toSection: section)
+            }
+
+            // Apply the snapshot, animating differences unless not in a window
         DispatchQueue.main.async {
-            self.updateUI(animating: false, reloadingData: false)
+            self.dataSource.apply(mySnapshot, animatingDifferences: self.view.window != nil)
         }
+            */
+        
+        /*
+        guard let dataSource = tableView.dataSource as? CustomerDataSource else {
+                fatalError("The data source has not implemented snapshot support while it should")
+            }
+        dataSource.apply(snapshot as NSDiffableDataSourceSnapshot<String, NSManagedObjectID>, animatingDifferences: tableView.numberOfSections != 0)
+        dataSource.applySnapshot(snapshot, animatingDifferences: true)
+        */
+        /*
+        guard let dataSource = tableView.dataSource as? UITableViewDiffableDataSource<Int, NSManagedObjectID> else {
+                assertionFailure("The data source has not implemented snapshot support while it should")
+                return
+            }
+            var snapshot = snapshot as NSDiffableDataSourceSnapshot<Int, NSManagedObjectID>
+            let currentSnapshot = dataSource.snapshot() as NSDiffableDataSourceSnapshot<Int, NSManagedObjectID>
+
+            let reloadIdentifiers: [NSManagedObjectID] = snapshot.itemIdentifiers.compactMap { itemIdentifier in
+                guard let currentIndex = currentSnapshot.indexOfItem(itemIdentifier),
+                      let index = snapshot.indexOfItem(itemIdentifier),
+                      index == currentIndex else {
+                    return nil
+                }
+                guard let existingObject = try? controller.managedObjectContext.existingObject(with: itemIdentifier), existingObject.isUpdated else { return nil }
+                return itemIdentifier
+            }
+            snapshot.reloadItems(reloadIdentifiers)
+
+            let shouldAnimate = tableView.numberOfSections != 0
+            dataSource.apply(snapshot as NSDiffableDataSourceSnapshot<Int, NSManagedObjectID>, animatingDifferences: shouldAnimate)
+        */
+        DispatchQueue.main.async {
+            self.updateUI(animating: true, reloadingData: true)
+        }
+//        DispatchQueue.main.async {
+//        dataSource.apply(snapshot as NSDiffableDataSourceSnapshot<Section, NSManagedObjectID>, animatingDifferences: true) {
+//            self.dataSource.apply(snapshot as NSDiffableDataSourceSnapshot<Section, NSManagedObjectID>, animatingDifferences: false)
+//        }
+//        }
+        
+        
+//        guard let snapshot = currentSnapshot(), dataSource != nil else { return }
+//        dataSource.apply(snapshot, animatingDifferences: true, completion: { [weak self] in
+//            guard let self = self else { return }
+//            self.dataSource.apply(snapshot, animatingDifferences: false)
+//            self.handleState()
+//        })
+        
+        
     }
 }

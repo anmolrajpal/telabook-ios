@@ -15,20 +15,14 @@ extension CustomersViewController: StartNewConversationDelegate {
         if let conversation = customers.first(where: { $0.externalConversationID == id }),
             let indexPath = self.fetchedResultsController.indexPath(forObject: conversation) {
             self.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .top)
-            self.openChat(forSelectedCustomer: conversation, at: indexPath)
+//            self.openChat(forSelectedCustomer: conversation, at: indexPath)
+            self.showMessagesController(forConversation: conversation, animated: true)
         } else {
-            print("pushing view controller from delegate (with node) as new firebase entry not yet loaded into core data store")
-            let fetchRequest: NSFetchRequest<Customer> = Customer.fetchRequest()
-            fetchRequest.predicate = NSPredicate(format: "\(#keyPath(Customer.agent)) == %@ AND \(#keyPath(Customer.externalConversationID)) = %d", agent, id)
-            fetchRequest.fetchLimit = 1
-            context.performAndWait {
-                if let conversation = try? fetchRequest.execute().first {
-                    let vc = MessagesController(customer: conversation)
-                    DispatchQueue.main.async { [weak self] in
-                        self?.navigationController?.pushViewController(vc, animated: true)
-                        self?.viewDidAppear = false
-                    }
-                }
+            print("Maybe conversation object isn't available yet in selected tab. Now searching in all conversations.")
+            if let conversation = getConversationFromStore(conversationID: id, agent: agent) {
+                showMessagesController(forConversation: conversation, animated: true)
+            } else {
+                // wait for firebase observers to upsert conversation in store and then user should select manually.
             }
         }
     }
@@ -42,8 +36,10 @@ extension CustomersViewController {
         view.backgroundColor = .telaGray1
         configureNavigationBarAppearance()
         configureHierarchy()
-        configureTableView()
+        
         configureDataSource()
+        configureTableView()
+        
         configureFetchedResultsController()
         configureNavigationBarItems()
         configureTargetActions()
@@ -75,9 +71,9 @@ extension CustomersViewController {
     }
     
     
-    func removeFirebaseObservers() {
-        if handle != nil { reference.removeObserver(withHandle: handle) }
-    }
+//    func removeFirebaseObservers() {
+//        if handle != nil { reference.removeObserver(withHandle: handle) }
+//    }
     
     internal func configureNavigationBarItems() {
         let addButton = UIBarButtonItem(image: #imageLiteral(resourceName: "add").withRenderingMode(.alwaysOriginal), style: UIBarButtonItem.Style.done, target: self, action: #selector(addButtonTapped))
@@ -233,18 +229,28 @@ extension CustomersViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
-    fileprivate func handleChatColorSequence(color:CustomerConversationColor, indexPath:IndexPath) {
-        guard let customers = fetchedResultsController.fetchedObjects else { return }
+    func handleChatColorSequence(color:CustomerConversationColor, indexPath:IndexPath) {
+//        guard let customers = fetchedResultsController.fetchedObjects else { return }
         let customer = customers[indexPath.row]
-        guard let conversation = firebaseCustomers.first(where: { $0.conversationID == customer.externalConversationID }) else { return }
-        updateColorOnFirebase(forConversation: conversation, color: color)
+//        guard let conversation = firebaseCustomers.first(where: { $0.conversationID == customer.externalConversationID }) else { return }
+//        updateColorOnFirebase(forConversation: conversation, color: color)
+        self.getFirebaseConversation(forConversationID: Int(customer.externalConversationID), completion: { conversation in
+            guard let conversation = conversation else {
+                print("### \(#function) > Failed to fetch firebase conversation from firebase for conversation ID: \(customer.externalConversationID)")
+                return
+            }
+            self.updateColorOnFirebase(forConversation: conversation, color: color)
+        })
     }
     internal func updateColorOnFirebase(forConversation conversation: FirebaseCustomer, color:CustomerConversationColor) {
         conversation.ref?.updateChildValues([
-            "colour" : color.code
+            "colour" : color.code,
+            "updated_at": Date().milliSecondsSince1970
             ], withCompletionBlock: { (error, reference) in
                 if let error = error {
                     print("Error: unable to update color on Firebase: \(error)")
+                } else {
+//                    print("Succesfully updated conversation color on Firebase to color: \(color)")
                 }
         })
     }

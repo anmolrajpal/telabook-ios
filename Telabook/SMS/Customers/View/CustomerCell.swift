@@ -43,7 +43,10 @@ class CustomerCell: UITableViewCell {
         let phoneNumber = customer.phoneNumber ?? ""
         let number = phoneNumber.getE164FormattedNumber(shouldPrefixCountryCode: false) ?? phoneNumber
         let name = customer.addressBookName
-        let messageType = MessageCategory(stringValue: customer.messageType ?? "")
+        guard let type = customer.messageType, !type.isEmpty else {
+            fatalError("Message type isn't available for conversation: \(customer.description)")
+        }
+        let messageType = MessageCategory(stringValue: type)
         let lastMessage = customer.lastMessageText
         let lastMessageDate = customer.lastMessageDateTime
         let conversationColor = CustomerConversationColor.colorCase(from: Int(customer.colorCode)).color

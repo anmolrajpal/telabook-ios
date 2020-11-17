@@ -240,7 +240,6 @@
 		6FB11B10229C23840098D050 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B0F229C23840098D050 /* Extensions.swift */; };
 		6FB11B12229C31DF0098D050 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B11229C31DF0098D050 /* Enums.swift */; };
 		6FB11B14229C3FCA0098D050 /* BadgeBarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B13229C3FCA0098D050 /* BadgeBarItem.swift */; };
-		6FB11B16229D05E00098D050 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B15229D05E00098D050 /* UserDefaults.swift */; };
 		6FB11B19229D06BB0098D050 /* CustomUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B18229D06BB0098D050 /* CustomUtils.swift */; };
 		6FB11B1B229D07050098D050 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B1A229D07050098D050 /* LoginViewController.swift */; };
 		6FB11B1D229D19E10098D050 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B1C229D19E10098D050 /* NetworkManager.swift */; };
@@ -590,7 +589,6 @@
 		6FB11B0F229C23840098D050 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		6FB11B11229C31DF0098D050 /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
 		6FB11B13229C3FCA0098D050 /* BadgeBarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeBarItem.swift; sourceTree = "<group>"; };
-		6FB11B15229D05E00098D050 /* UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
 		6FB11B18229D06BB0098D050 /* CustomUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomUtils.swift; sourceTree = "<group>"; };
 		6FB11B1A229D07050098D050 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		6FB11B1C229D19E10098D050 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
@@ -1893,7 +1891,6 @@
 				6F987A71245B159400C6046E /* TapticEngine.swift */,
 				6FB11B13229C3FCA0098D050 /* BadgeBarItem.swift */,
 				6F46A8BC22D39E790042A667 /* Checkbox.swift */,
-				6FB11B15229D05E00098D050 /* UserDefaults.swift */,
 				6FB11B11229C31DF0098D050 /* Enums.swift */,
 				6F1BD2EE22C4B0ED0053D0CC /* Protocols.swift */,
 				6F265170246C3610003D582F /* SFSymbol.swift */,
@@ -2611,7 +2608,6 @@
 				6F05C3342528B182001C7FD2 /* CallManager.swift in Sources */,
 				6F97BA9024A922B500F8DE72 /* ScheduledMessageCellView.swift in Sources */,
 				6FB11B4422A2A2E10098D050 /* Telabook.xcdatamodeld in Sources */,
-				6FB11B16229D05E00098D050 /* UserDefaults.swift in Sources */,
 				6F8A832D249F8673002ACDFE /* AgentGallery+ImageHelpers.swift in Sources */,
 				6F8A830E249DE05A002ACDFE /* AppSettingsViewController.swift in Sources */,
 				6F0653532464892800F857C1 /* Customers+CoreDataHelpers.swift in Sources */,
