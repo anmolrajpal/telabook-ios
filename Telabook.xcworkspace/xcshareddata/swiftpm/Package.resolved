@@ -1,0 +1,34 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "InteractiveModal",
+        "repositoryURL": "https://github.com/anmolrajpal/InteractiveModal",
+        "state": {
+          "branch": null,
+          "revision": "22484e15708ac8d3f719f73424d5247561d5df46",
+          "version": "1.0.2"
+        }
+      },
+      {
+        "package": "MenuController",
+        "repositoryURL": "https://github.com/anmolrajpal/MenuController.git",
+        "state": {
+          "branch": null,
+          "revision": "b2f1b2a508f3c090e31596aa4a64a72e0b4b2f0d",
+          "version": "1.0.2"
+        }
+      },
+      {
+        "package": "TOCropViewController",
+        "repositoryURL": "https://github.com/TimOliver/TOCropViewController.git",
+        "state": {
+          "branch": "master",
+          "revision": "18d51cf856b56e0eb16977751e07c16c54239dce",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}
