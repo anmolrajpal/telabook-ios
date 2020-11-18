@@ -11,12 +11,12 @@
 
 #include "Pods/Target Support Files/Pods-Telabook/Pods-Telabook.debug.xcconfig"
 
-BASE_URL              = https:\/\/aries.aimservices.tech
-API_HOST              = aries.aimservices.tech
-URL_SCHEME            = https
-SUBDOMAIN             = /api
-TIMEOUT_INTERVAL      = 15
-APP_NAME              = Telabook-Debug
-BUNDLE_ID             = com.telabook.web-debug
-APP_VERSION           = 1.0
-APP_BUILD_NUMBER      = 38
+BASE_URL              = // e.g,=> https:\/\/api.debug-url.com
+API_HOST              = // e.g,=> api.debug-url.com
+URL_SCHEME            = // e.g,=> https
+SUBDOMAIN             = // e.g,=> /subdomain
+TIMEOUT_INTERVAL      = // e.g,=> 15
+APP_NAME              = // e.g,=> AppName-Debug
+BUNDLE_ID             = // e.g,=> com.example.app-debug
+APP_VERSION           = // e.g,=> 1.0.0
+APP_BUILD_NUMBER      = // e.g,=> 10

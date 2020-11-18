@@ -11,12 +11,12 @@
 
 #include "Pods/Target Support Files/Pods-Telabook/Pods-Telabook.release.xcconfig"
 
-BASE_URL              = https:\/\/api.telabook.com
-API_HOST              = api.telabook.com
-URL_SCHEME            = https
-SUBDOMAIN             = /api
-TIMEOUT_INTERVAL      = 15
-APP_NAME              = Telabook
-BUNDLE_ID             = com.telabook.web
-APP_VERSION           = 1.0.0
-APP_BUILD_NUMBER      = 38
+BASE_URL              = // e.g,=> https:\/\/api.release-url.com
+API_HOST              = // e.g,=> api.release-url.com
+URL_SCHEME            = // e.g,=> https
+SUBDOMAIN             = // e.g,=> /subdomain
+TIMEOUT_INTERVAL      = // e.g,=> 15
+APP_NAME              = // e.g,=> AppName
+BUNDLE_ID             = // e.g,=> com.example.app
+APP_VERSION           = // e.g,=> 1.0.0
+APP_BUILD_NUMBER      = // e.g,=> 10
