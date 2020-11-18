@@ -601,7 +601,9 @@ extension TabBarController: LoginDelegate {
     func didLoginIWithSuccess() {
         configureTabBarController()
         configureNotifications()
-        AppDelegate.shared.setupVoipAccount()
+        if AppDelegate.shared.isVOIPEnabled {
+            AppDelegate.shared.setupVoipAccount()
+        }
     }
 }
 extension TabBarController: LogoutDelegate {

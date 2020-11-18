@@ -11,10 +11,12 @@
 
 #include "Pods/Target Support Files/Pods-Telabook/Pods-Telabook.staging.xcconfig"
 
-BASE_URL              = https://api.noandosaldo.com
+BASE_URL              = https:\/\/api.noandosaldo.com
 API_HOST              = api.noandosaldo.com
 URL_SCHEME            = https
 SUBDOMAIN             = /api
 TIMEOUT_INTERVAL      = 15
 APP_NAME              = Telabook-QA
 BUNDLE_ID             = com.telabook.web-staging
+APP_VERSION           = 1.0
+APP_BUILD_NUMBER      = 38
