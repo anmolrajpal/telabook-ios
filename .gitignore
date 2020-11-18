@@ -2,7 +2,7 @@
 /Keys
 
 /Telabook/Support\ Files/Config/*.xcconfig
-/Telabook/Support\ Files/Firebase/**/*.plist
+Telabook/Support\ Files/Firebase/**/*.plist
 
 # Xcode Project
 **/*.xcodeproj/xcuserdata/
