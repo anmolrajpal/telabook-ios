@@ -405,6 +405,7 @@
 		6F29FD4E22B7E28700BCA2AB /* OverlaySpinner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaySpinner.swift; sourceTree = "<group>"; };
 		6F29FD5022B8B36400BCA2AB /* FollowUpCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUpCell.swift; sourceTree = "<group>"; };
 		6F29FD5622BBB1C100BCA2AB /* CustomerDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerDetailsViewController.swift; sourceTree = "<group>"; };
+		6F3131D525657D32008020DC /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		6F32793424D99E110078A652 /* CustomerDetailsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerDetailsController.swift; sourceTree = "<group>"; };
 		6F32793624D9D9000078A652 /* CustomerDetails+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CustomerDetails+Helpers.swift"; sourceTree = "<group>"; };
 		6F32793824D9DB0D0078A652 /* CustomerDetails+TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CustomerDetails+TableView.swift"; sourceTree = "<group>"; };
@@ -1806,6 +1807,7 @@
 		6FB11AD7229BDDBD0098D050 = {
 			isa = PBXGroup;
 			children = (
+				6F3131D525657D32008020DC /* README.md */,
 				6FB11AE2229BDDBD0098D050 /* Telabook */,
 				6FB11AE1229BDDBD0098D050 /* Products */,
 				9D78E82FCB5E6192D5C81890 /* Pods */,
