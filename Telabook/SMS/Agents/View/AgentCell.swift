@@ -10,7 +10,7 @@ import UIKit
 import PINCache
 
 class AgentCell: UITableViewCell {
-    static let cellHeight:CGFloat = 80.0
+    static let cellHeight:CGFloat = 70.0
     var shouldShowBadgeCount = true
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -39,6 +39,10 @@ class AgentCell: UITableViewCell {
         
         agentNameLabel.text = name
         
+        if let phoneNumber = agent.didNumber, !phoneNumber.isBlank {
+            phoneNumberLabel.text = phoneNumber.getE164FormattedNumber(shouldPrefixCountryCode: false)
+        }
+        
         let count = Int(agent.externalPendingMessagesCount)
         updateBadgeCount(count: count)
         
@@ -46,7 +50,7 @@ class AgentCell: UITableViewCell {
         let urlString = agent.profileImageURL?.absoluteString
         let profileImageURLString = CustomUtils.shared.getSlashEncodedURL(from: urlString) ?? ""
         let url = URL(string: profileImageURLString)
-        profileImageView.pin_setImage(from: url, placeholderImage: UIImage(initials: initialsText))
+        profileImageView.pin_setImage(from: url, placeholderImage: UIImage(initials: initialsText, font: UIFont.systemFont(ofSize: 21)))
         
         
         
@@ -94,18 +98,28 @@ class AgentCell: UITableViewCell {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.layer.cornerRadius = 30
+        imageView.layer.cornerRadius = 27
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.telaBlue.cgColor
         imageView.clipsToBounds = true
         return imageView
     }()
-    lazy var agentNameLabel:UILabel = {
+    lazy var agentNameLabel: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.preferredFont(forTextStyle: .headline)
+        label.adjustsFontForContentSizeCategory = true
+        label.textColor = UIColor.white
         label.numberOfLines = 1
-        label.textColor = UIColor.telaWhite
-        label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 16.0)
+        label.sizeToFit()
+        return label
+    }()
+    lazy var phoneNumberLabel:UILabel = {
+        let label = UILabel()
+        label.font = UIFont.preferredFont(forTextStyle: .subheadline)
+        label.adjustsFontForContentSizeCategory = true
+        label.textColor = UIColor.telaGray7
+        label.numberOfLines = 1
+        label.sizeToFit()
         return label
     }()
     lazy var agentDesignationLabel:UILabel = {
@@ -177,6 +191,7 @@ class AgentCell: UITableViewCell {
         contentView.addSubview(profileImageView)
         contentView.addSubview(containerView)
         containerView.addSubview(agentNameLabel)
+        containerView.addSubview(phoneNumberLabel)
         contentView.addSubview(badgeCountLabel)
         
         layoutConstraints()
@@ -188,15 +203,17 @@ class AgentCell: UITableViewCell {
     // MARK: - Layout Constraints
     
     private func layoutConstraints() {
-        let imageViewHeight:CGFloat = 60
+        let imageViewHeight:CGFloat = 54
         profileImageView.anchor(top: nil, left: contentView.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 0, widthConstant: imageViewHeight, heightConstant: imageViewHeight)
         profileImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).activate()
         
         containerView.anchor(top: contentView.topAnchor, left: profileImageView.rightAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor, topConstant: 0, leftConstant: 15, bottomConstant: 0, rightConstant: 10)
         
         
-        agentNameLabel.anchor(top: nil, left: containerView.leftAnchor, bottom: nil, right: containerView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
-        agentNameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).activate()
+        agentNameLabel.anchor(top: nil, left: containerView.leftAnchor, bottom: nil, right: containerView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 3, rightConstant: 0)
+//        agentNameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).activate()
+        agentNameLabel.lastBaselineAnchor.constraint(equalTo: containerView.centerYAnchor, constant: -6).activate()
+        phoneNumberLabel.anchor(top: containerView.centerYAnchor, left: containerView.leftAnchor, bottom: nil, right: containerView.rightAnchor, topConstant: 1, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
         
         
         badgeCountLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -5).activate()

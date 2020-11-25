@@ -19,6 +19,7 @@ extension CustomersViewController {
         override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool { return true }
     }
     func configureTableView() {
+//        tableView.contentInset.top = 40 /* In case we add segmented control in self.view instead of tableview section header view. */
         tableView.tableFooterView = UIView(frame: CGRect.zero)
         tableView.delegate = self
         tableView.register(SubtitleTableViewCell.self)
@@ -27,98 +28,103 @@ extension CustomersViewController {
     }
     
     func configureDataSource() {
-        dataSource = CustomerDataSource(tableView: tableView, cellProvider: { [weak self] (tableView, indexPath, customer) -> UITableViewCell? in
+        dataSource = CustomerDataSource(tableView: tableView, cellProvider: { [weak self] (tableView, indexPath, conversation) -> UITableViewCell? in
             guard let self = self else { return nil }
-            let reusableCell:UITableViewCell
             switch true {
                 case self.pickerDelegate != nil:
-                    let phoneNumber = customer.phoneNumber ?? ""
-                    let number:String
-                    if let formattedPhoneNumber = phoneNumber.getE164FormattedNumber() {
-                        number = formattedPhoneNumber
-                    } else {
-                        number = phoneNumber
-                    }
-                    let name = customer.addressBookName
-                    
-                    let conversationColor = CustomerConversationColor.colorCase(from: Int(customer.colorCode)).color
-                    
-                    
-                    let cell:UITableViewCell
-                    if name == nil || name?.isBlank == true {
-                        cell = tableView.dequeueReusableCell(UITableViewCell.self, for: indexPath)
-                        cell.textLabel?.text = phoneNumber
-                    } else {
-                        cell = tableView.dequeueReusableCell(SubtitleTableViewCell.self, for: indexPath)
-                        cell.textLabel?.text = name
-                        cell.detailTextLabel?.text = number
-                    }
-                    
-                    cell.tintColor = .telaBlue
-                    cell.backgroundColor = .clear
-                    cell.textLabel?.textColor = conversationColor
-                    cell.textLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 16)
-                    cell.detailTextLabel?.textColor = UIColor.telaGray7
-                    cell.detailTextLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 12)
-                    
-                    if customer.customerID == self.selectedCustomer?.customerID,
-                        self.selectedCustomer != nil {
-                        cell.accessoryType = .checkmark
-                    } else {
-                        cell.accessoryType = .none
-                    }
-                    reusableCell = cell
-                
+                    return self.conversationCellForPicker(tableView: tableView, indexPath: indexPath, conversation: conversation)
                 case self.messageForwardingDelegate != nil:
-                    let phoneNumber = customer.phoneNumber ?? ""
-                    let number:String
-                    if let formattedPhoneNumber = phoneNumber.getE164FormattedNumber() {
-                        number = formattedPhoneNumber
-                    } else {
-                        number = phoneNumber
-                    }
-                    let name = customer.addressBookName
-                    
-                    let conversationColor = CustomerConversationColor.colorCase(from: Int(customer.colorCode)).color
-                    
-                    
-                    let cell:UITableViewCell
-
-                    if name == nil || name?.isBlank == true {
-                        cell = tableView.dequeueReusableCell(UITableViewCell.self, for: indexPath)
-                        cell.textLabel?.text = phoneNumber
-                    } else {
-                        cell = tableView.dequeueReusableCell(SubtitleTableViewCell.self, for: indexPath)
-                        cell.textLabel?.text = name
-                        cell.detailTextLabel?.text = number
-                    }
-                    
-                    cell.tintColor = .telaBlue
-                    cell.backgroundColor = .clear
-                    cell.selectionStyle = .none
-                    cell.textLabel?.textColor = conversationColor
-                    cell.textLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 16)
-                    cell.detailTextLabel?.textColor = UIColor.telaGray7
-                    cell.detailTextLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 12)
-                    
-                    if self.selectedConversationsToForwardMessage.contains(where: { $0.customerID == customer.customerID }) {
-                        cell.accessoryType = .checkmark
-                    } else {
-                        cell.accessoryType = .none
-                    }
-                    reusableCell = cell
-                
+                    return self.conversationCellForMessageForwarding(tableView: tableView, indexPath: indexPath, conversation: conversation)
                 default:
-                    let cell = tableView.dequeueReusableCell(CustomerCell.self, for: indexPath)
-                    cell.configureCell(with: customer)
-                    cell.backgroundColor = .clear
-                    cell.accessoryType = .disclosureIndicator
-                    reusableCell = cell
+                    return self.conversationCell(tableView: tableView, indexPath: indexPath, conversation: conversation)
             }
-            return reusableCell
         })
     }
     
+    private func conversationCellForMessageForwarding(tableView: UITableView, indexPath: IndexPath, conversation: Customer) -> UITableViewCell {
+        let phoneNumber = conversation.phoneNumber ?? ""
+        let number:String
+        if let formattedPhoneNumber = phoneNumber.getE164FormattedNumber() {
+            number = formattedPhoneNumber
+        } else {
+            number = phoneNumber
+        }
+        let name = conversation.addressBookName
+        
+        let conversationColor = CustomerConversationColor.colorCase(from: Int(conversation.colorCode)).color
+        
+        
+        let cell:UITableViewCell
+
+        if name == nil || name?.isBlank == true {
+            cell = tableView.dequeueReusableCell(UITableViewCell.self, for: indexPath)
+            cell.textLabel?.text = phoneNumber
+        } else {
+            cell = tableView.dequeueReusableCell(SubtitleTableViewCell.self, for: indexPath)
+            cell.textLabel?.text = name
+            cell.detailTextLabel?.text = number
+        }
+        
+        cell.tintColor = .telaBlue
+        cell.backgroundColor = .clear
+        cell.selectionStyle = .none
+        cell.textLabel?.textColor = conversationColor
+        cell.textLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 16)
+        cell.detailTextLabel?.textColor = UIColor.telaGray7
+        cell.detailTextLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 12)
+        
+        if self.selectedConversationsToForwardMessage.contains(where: { $0.customerID == conversation.customerID }) {
+            cell.accessoryType = .checkmark
+        } else {
+            cell.accessoryType = .none
+        }
+        return cell
+    }
+    private func conversationCellForPicker(tableView: UITableView, indexPath: IndexPath, conversation: Customer) -> UITableViewCell {
+        let phoneNumber = conversation.phoneNumber ?? ""
+        let number:String
+        if let formattedPhoneNumber = phoneNumber.getE164FormattedNumber() {
+            number = formattedPhoneNumber
+        } else {
+            number = phoneNumber
+        }
+        let name = conversation.addressBookName
+        
+        let conversationColor = CustomerConversationColor.colorCase(from: Int(conversation.colorCode)).color
+        
+        
+        let cell:UITableViewCell
+        if name == nil || name?.isBlank == true {
+            cell = tableView.dequeueReusableCell(UITableViewCell.self, for: indexPath)
+            cell.textLabel?.text = phoneNumber
+        } else {
+            cell = tableView.dequeueReusableCell(SubtitleTableViewCell.self, for: indexPath)
+            cell.textLabel?.text = name
+            cell.detailTextLabel?.text = number
+        }
+        
+        cell.tintColor = .telaBlue
+        cell.backgroundColor = .clear
+        cell.textLabel?.textColor = conversationColor
+        cell.textLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 16)
+        cell.detailTextLabel?.textColor = UIColor.telaGray7
+        cell.detailTextLabel?.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 12)
+        
+        if conversation.customerID == self.selectedCustomer?.customerID,
+            self.selectedCustomer != nil {
+            cell.accessoryType = .checkmark
+        } else {
+            cell.accessoryType = .none
+        }
+        return cell
+    }
+    private func conversationCell(tableView: UITableView, indexPath: IndexPath, conversation: Customer) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(CustomerCell.self, for: indexPath)
+        cell.configureCell(with: conversation)
+        cell.backgroundColor = .clear
+        cell.accessoryType = .disclosureIndicator
+        return cell
+    }
     
     func currentSnapshot() -> NSDiffableDataSourceSnapshot<Section, Customer>? {
         guard fetchedResultsController != nil else { return nil }
@@ -133,7 +139,10 @@ extension CustomersViewController {
         dataSource.apply(snapshot, animatingDifferences: animating, completion: { [weak self] in
             guard let self = self else { return }
             if reloadingData && self.viewDidAppear { self.tableView.reloadData() }
-            self.handleState()
+            if !self.isDownloading {
+                self.handleState()
+                self.stopRefreshers()
+            }
         })
     }
     
@@ -520,7 +529,7 @@ extension CustomersViewController {
         guard
             id != 0,
             customer.node != nil else { return }
-        printAndLog(message: "Conversation ID: \(customer.externalConversationID)\nNode: \(customer.node ?? "--")", log: .ui, logType: .info)
+        printAndLog(message: "*************** \nConversation ID: \(customer.externalConversationID)\nNode: \(customer.node ?? "--") | \nConversation object:-\n\(customer)\n*************", log: .ui, logType: .info)
         let vc = MessagesController(customer: customer)
         navigationController?.pushViewController(vc, animated: true)
         viewDidAppear = false

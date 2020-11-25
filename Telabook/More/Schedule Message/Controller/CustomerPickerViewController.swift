@@ -34,7 +34,7 @@ class CustomerPickerViewController: UIViewController {
             if let customers = customers {
                 if customers.isEmpty {
                     self.placeholderLabel.isHidden = false
-                    self.placeholderLabel.text = "No Customers"
+                    self.placeholderLabel.text = "No conversations"
                     self.tableView.isHidden = true
                 }
             }
@@ -42,7 +42,7 @@ class CustomerPickerViewController: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationItem.title = "Select Customer"
+        navigationItem.title = "Select Conversation"
     }
     override func loadView() {
         super.loadView()

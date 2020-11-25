@@ -10,7 +10,44 @@ import UIKit
 import CoreData
 
 extension CustomersViewController {
+    
+    func inboxPredicate() -> NSPredicate  {
+        // Predicates
+        let agentPredicate = NSPredicate(format: "\(#keyPath(Customer.agent)) == %@", agent)
+        let isDeletedPredicate = NSPredicate(format: "\(#keyPath(Customer.isCustomerDeleted)) = %d", false)
+        let isBlacklistedPredicate = NSPredicate(format: "\(#keyPath(Customer.isBlacklisted)) = %d", false)
+        
+        let aWeek = Date().subtract(days: 7)! as NSDate
+        
+        let inboxDatePredicate = NSPredicate(format: "\(#keyPath(Customer.lastMessageDateTime)) >= %@", aWeek)
+        let unarchivedPredicate = NSPredicate(format: "\(#keyPath(Customer.isArchived)) = %d", false)
+        
+        
+        let inboxCompoundPredicate = NSCompoundPredicate(type: .and, subpredicates: [agentPredicate, inboxDatePredicate,  unarchivedPredicate, isBlacklistedPredicate, isDeletedPredicate])
+
+        
+        return inboxCompoundPredicate
+    }
+    func archivedPredicate() -> NSPredicate  {
+
+        // Predicates
+        let agentPredicate = NSPredicate(format: "\(#keyPath(Customer.agent)) == %@", agent)
+        let isDeletedPredicate = NSPredicate(format: "\(#keyPath(Customer.isCustomerDeleted)) = %d", false)
+        let isBlacklistedPredicate = NSPredicate(format: "\(#keyPath(Customer.isBlacklisted)) = %d", false)
+        
+        let aWeek = Date().subtract(days: 7)! as NSDate
+        
+        let archivedPredicate = NSPredicate(format: "\(#keyPath(Customer.lastMessageDateTime)) < %@ OR \(#keyPath(Customer.isArchived)) = %d", aWeek, true)
+        let archivedCompoundPredicate = NSCompoundPredicate(type: .and, subpredicates: [agentPredicate, archivedPredicate, isBlacklistedPredicate, isDeletedPredicate])
+        
+        
+        return archivedCompoundPredicate
+    }
     internal func configureFetchedResultsController() {
+        guard let context = agent.managedObjectContext else {
+            fatalError("### \(#function) : Unable to retrieve managed object context from agent object:\n\(agent)")
+        }
+        /*
         guard let context = agent.managedObjectContext else {
             fatalError("### \(#function) : Unable to retrieve managed object context from agent object:\n\(agent)")
         }
@@ -18,11 +55,11 @@ extension CustomersViewController {
         fetchRequest.fetchBatchSize = 20
         fetchRequest.propertiesToFetch = ["\(#keyPath(Customer.customerID))", "\(#keyPath(Customer.phoneNumber))", "\(#keyPath(Customer.addressBookName))", "\(#keyPath(Customer.colorCode))", "\(#keyPath(Customer.isPinned))", "\(#keyPath(Customer.lastMessageDateTime))", "\(#keyPath(Customer.messageType))"]
         
-        let objectID = agent.objectID
-        let contextAgent = context.object(with: objectID) as! Agent
+//        let objectID = agent.objectID
+//        let contextAgent = context.object(with: objectID) as! Agent
         
         // Predicates
-        let agentPredicate = NSPredicate(format: "\(#keyPath(Customer.agent)) == %@", contextAgent)
+        let agentPredicate = NSPredicate(format: "\(#keyPath(Customer.agent)) == %@", agent)
         let isDeletedPredicate = NSPredicate(format: "\(#keyPath(Customer.isCustomerDeleted)) = %d", false)
         let isBlacklistedPredicate = NSPredicate(format: "\(#keyPath(Customer.isBlacklisted)) = %d", false)
         
@@ -42,14 +79,15 @@ extension CustomersViewController {
             NSSortDescriptor(key: #keyPath(Customer.isPinned), ascending: false),
             NSSortDescriptor(key: #keyPath(Customer.lastMessageDateTime), ascending: false)
         ]
+        */
         
         if fetchedResultsController == nil {
             fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
             fetchedResultsController.delegate = self
         }
-        fetchedResultsController.fetchRequest.predicate = selectedSegment == .Inbox ? inboxCompoundPredicate : archivedCompoundPredicate
+        fetchedResultsController.fetchRequest.predicate = selectedSegment == .Inbox ? inboxPredicate() : archivedPredicate()
         
-        self.performFetch()
+        performFetch()
         
     }
     internal func performFetch() {
@@ -63,43 +101,6 @@ extension CustomersViewController {
 }
 
 
-extension Customer {
-    convenience init(context: NSManagedObjectContext, conversationToUpdate conversation: Customer) {
-        self.init(context: context)
-        self.lastMessageSeenDate = conversation.lastMessageSeenDate
-        self.lastMessageText = conversation.lastMessageText
-        self.isArchived = conversation.isArchived
-        self.blacklistReason = conversation.blacklistReason
-        self.colorCode = Int16(conversation.colorCode)
-        self.customerID = Int32(conversation.customerID)
-        self.name = conversation.name
-        self.phoneNumber = conversation.phoneNumber
-        self.isCustomerDeleted = conversation.isCustomerDeleted
-        self.deliveredByProviderAt = conversation.deliveredByProviderAt
-        self.isBlacklisted = conversation.isBlacklisted
-        self.externalConversationID = Int32(conversation.externalConversationID)
-        self.isIncoming = conversation.isIncoming
-        self.addressBookID = Int32(conversation.addressBookID)
-        self.isAddressBookNameActive = conversation.isAddressBookNameActive
-        self.addressBookName = conversation.addressBookName
-        self.lastMessageDate = conversation.lastMessageDate
-        self.lastMessageDateTime = conversation.lastMessageDateTime
-        self.lastMessageKey = conversation.lastMessageKey
-        self.messageType = conversation.messageType
-        self.node = conversation.node
-        self.priority = Int16(conversation.priority)
-        self.senderID = Int32(conversation.senderID)
-        self.sentByApiAt = conversation.sentByApiAt
-        self.sentByAppAt = conversation.sentByAppAt
-        self.sentByProviderAt = conversation.sentByProviderAt
-        self.unreadMessagesCount = Int16(conversation.unreadMessagesCount)
-        self.updatedAt = conversation.updatedAt
-        self.workerPersonName = conversation.workerPersonName
-        self.workerPhoneNumber = conversation.workerPhoneNumber
-        self.agent = conversation.agent
-        self.lastRefreshedAt = Date()
-    }
-}
 extension CustomersViewController: NSFetchedResultsControllerDelegate {
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
         /*

@@ -59,9 +59,12 @@ extension MessagesController {
         //        print("Loading Initial Messages from Firebase")
 //        print("### \(#function) called")
         if messages.isEmpty { self.startSpinner() }
+        let limit = self.limit
         reference.queryLimited(toLast: UInt(limit)).observeSingleEvent(of: .value, with: { [weak self] snapshot in
             guard let self = self else { return }
             guard snapshot.exists() else {
+                self.messages = []
+                self.shouldFetchMore = false
 //                printAndLog(message: "### \(#function) Snapshot does not exists. Return()", log: .firebase, logType: .info)
                 return
             }
@@ -73,6 +76,9 @@ extension MessagesController {
                         messages.append(message)
                     }
                 }
+            }
+            if messages.count < limit {
+                self.shouldFetchMore = false
             }
 //            print("----------------\n\n### \(#function) - inserting initial messages: \n\n\(messages)\n\n----------------\n\n")
             self.persistInitialFirebaseMessagesInStore(entries: messages, fetchedEntries: nil)
@@ -90,10 +96,12 @@ extension MessagesController {
 //        print("### \(#function) called")
         let initialMessage = fetchedMessages.last!
         let initialMessageKey = initialMessage.messageId
+        let limit = self.limit
 //        print("### \(#function) Initial Message: \(initialMessage) where fetched Messages count = \(fetchedMessages.count)")
         reference.queryOrderedByKey().queryEnding(atValue: initialMessageKey).queryLimited(toLast: UInt(limit)).observeSingleEvent(of: .value, with: { [weak self] snapshot in
             guard let self = self else { return }
             guard snapshot.exists() else {
+                
 //                printAndLog(message: "### \(#function) Snapshot does not exists. Return()", log: .firebase, logType: .info)
                 return
             }
@@ -105,6 +113,9 @@ extension MessagesController {
                         messages.append(message)
                     }
                 }
+            }
+            if messages.count < limit {
+                self.shouldFetchMore = false
             }
 //            print("---------------------\n\n### \(#function) Upserting Firebase messages with count: \(messages.count) ; messages: \n\(messages)\n\n---------------------")
             self.persistInitialFirebaseMessagesInStore(entries: Array(messages), fetchedEntries: fetchedMessages)
@@ -332,7 +343,7 @@ extension MessagesController {
         fetchRequest.fetchLimit = limit
         fetchRequest.fetchOffset = offset
         
-        DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 1) {
+        DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
             self.fetchMessagesFromStore(fetchRequest: fetchRequest) { [weak self] messages in
                 guard let self = self else { return }
 //                print("Fetched \(messages.count) messages which are: \(messages)")
@@ -412,6 +423,7 @@ extension MessagesController {
             self.fetchMessagesFromStore(fetchRequest: fetchRequest) { [weak self] messages in
                 guard let self = self else { return }
                 if messages.isEmpty {
+                    /**** There ain't any seen initial messages in store. Now fetching all messages from store.   **/
 //                    print("### \(#function) Messages empty; now changing predicate to conversation only predicate")
                     fetchRequest.predicate = conversationPredicate
                     self.fetchMessagesFromStore(fetchRequest: fetchRequest) { messages in

@@ -32,21 +32,23 @@ extension CustomersViewController {
     
     // MARK: - Common init
     internal func commonInit() {
-        title = agent.personName ?? agent.didNumber ?? "Customers"
+        title = agent.personName ?? agent.didNumber ?? "Conversations"
         view.backgroundColor = .telaGray1
         configureNavigationBarAppearance()
         configureHierarchy()
         
         configureDataSource()
         configureTableView()
-        
-        configureFetchedResultsController()
+        if fetchedResultsController == nil {
+            configureFetchedResultsController()
+        }
         configureNavigationBarItems()
         configureTargetActions()
     }
     
     
     private func configureHierarchy() {
+//        view.addSubview(segmentedControl)
         view.addSubview(inboxSpinner)
         view.addSubview(archivedSpinner)
         view.addSubview(inboxPlaceholderLabel)
@@ -55,6 +57,9 @@ extension CustomersViewController {
         layoutConstraints()
     }
     private func layoutConstraints() {
+//        let guide = view.safeAreaLayoutGuide
+//        segmentedControl.anchor(top: guide.topAnchor, left: guide.leftAnchor, bottom: nil, right: guide.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 40)
+        
         inboxSpinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).activate()
         inboxSpinner.centerYAnchor.constraint(equalTo: view.centerYAnchor).activate()
         archivedSpinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).activate()
@@ -93,7 +98,7 @@ extension CustomersViewController {
     func updateNavigationBarItems() {
         let count = selectedConversationsToForwardMessage.count
         let isEnabled = count > 0
-        title = isEnabled ? "\(count) Selected" : agent.personName ?? agent.didNumber ?? "Customers"
+        title = isEnabled ? "\(count) Selected" : agent.personName ?? agent.didNumber ?? "Conversations"
         sendButton.isEnabled = isEnabled
     }
     
@@ -119,10 +124,18 @@ extension CustomersViewController {
         default: fatalError("Invalid Segment")
         }
     }
-    internal func handleEvents(for segment:Segment) {
-        configureFetchedResultsController()
-    }
-    
+//    internal func handleEvents(for segment:Segment) {
+//
+//        if fetchedResultsController != nil {
+//            fetchedResultsController.fetchRequest.predicate = nil
+//            performFetch()
+//        }
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//            self.configureFetchedResultsController()
+//        }
+//
+//    }
+//
     
     /// Manages the UI state based on the fetched results available
     internal func handleState() {
@@ -130,7 +143,7 @@ extension CustomersViewController {
             case .Inbox:
                 if !isFetchedResultsAvailable {
                     DispatchQueue.main.async {
-                        self.inboxPlaceholderLabel.text = "No Customer"
+                        self.inboxPlaceholderLabel.text = "No active conversations"
                         self.archivedPlaceholderLabel.isHidden = true
                         self.inboxPlaceholderLabel.isHidden = false
                     }
@@ -142,7 +155,7 @@ extension CustomersViewController {
                 }
             case .Archived:
                 if !isFetchedResultsAvailable {
-                    self.archivedPlaceholderLabel.text = "No Archived Conversation"
+                    self.archivedPlaceholderLabel.text = "No archived conversations"
                     DispatchQueue.main.async {
                         self.inboxPlaceholderLabel.isHidden = true
                         self.archivedPlaceholderLabel.isHidden = false

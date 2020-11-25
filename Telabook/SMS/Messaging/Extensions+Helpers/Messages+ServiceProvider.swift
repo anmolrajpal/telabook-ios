@@ -116,7 +116,9 @@ extension MessagesController {
             if let error = operation.error {
                 printAndLog(message: error.localizedDescription, log: .coredata, logType: .error)
             } else {
-                if operation.serverEntries?.isEmpty == true { self.shouldFetchMore = false }
+                if operation.serverEntries?.isEmpty == true {
+                    self.shouldFetchMore = false
+                }
                 self.messages.isEmpty ?
                     self.loadInitialMessages(animated: true, fetchFromFirebase: false, shouldLoadUnseenMessages: false) :
                     self.loadInitialMessages(animated: false, fetchFromFirebase: false, shouldLoadUnseenMessages: false)
@@ -144,7 +146,9 @@ extension MessagesController {
                 print(error.localizedDescription)
                 self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
             } else {
-                if operation.serverEntries?.isEmpty == true { self.shouldFetchMore = false }
+                if operation.serverEntries?.isEmpty == true {
+                    self.shouldFetchMore = false
+                }
                 self.loadMoreMessages(offsetMessage: offsetMessage, fetchFromFirebase: false)
             }
         }
@@ -185,10 +189,13 @@ extension MessagesController {
         queue.qualityOfService = .userInitiated
         queue.maxConcurrentOperationCount = 1
         
+        let workerID = Int(customer.agent?.workerID ?? 0)
+        let allConversationsReference = Config.FirebaseConfig.Node.conversations(companyID: AppData.companyId, workerID: workerID).reference
+        
         let context = PersistentContainer.shared.newBackgroundContext()
         let objectID = customer.objectID
         let referenceCustomer = context.object(with: objectID) as! Customer
-        let operations = MessageOperations.getOperationsToSend(newTextMessage: newMessage, using: context, forConversationWithCustomer: referenceCustomer, messageReference: self.reference, conversationReference: self.conversationReference)
+        let operations = MessageOperations.getOperationsToSend(newTextMessage: newMessage, using: context, forConversationWithCustomer: referenceCustomer, messageReference: self.reference, conversationReference: allConversationsReference)
         handleViewsStateForOperations(operations: operations, onOperationQueue: queue, completion: {_ in })
         
         queue.addOperations(operations, waitUntilFinished: false)
@@ -300,7 +307,7 @@ extension MessagesController {
     /* ------------------------------------------------------------------------------------------------------------ */
     
     
-    
+    /*
     /* ------------------------------------------------------------------------------------------------------------ */
     internal func clearUnreadMessagesCount() {
         
@@ -320,10 +327,45 @@ extension MessagesController {
         queue.addOperations(operations, waitUntilFinished: false)
     }
     /* ------------------------------------------------------------------------------------------------------------ */
+    */
     
-    
-    
-    
+    func clearUnreadMessagesCount() {
+        let conversationID = String(customer.externalConversationID)
+        let workerID = Int(customer.agent?.workerID ?? 0)
+        let allConversationsReference = Config.FirebaseConfig.Node.conversations(companyID: AppData.companyId, workerID: workerID).reference
+        let wasNotSeenNodeReference = Config.FirebaseConfig.Node.unreadMessages(conversationID: Int(customer.externalConversationID)).reference
+//        MessageOperations.clearUnreadMessagesCountOnFirebase(conversationID: String(customer.externalConversationID), unreadMessagesCountNodeReference: wasNotSeenNodeReference, allConversationsReference: allConversationsReference, updatedAt: screenEntryTime, completion: clearUnreadMessagesCountOperationCompletion)
+        let count = 0
+        let updatedAt = screenEntryTime
+        let context = customer.managedObjectContext!
+        context.performAndWait {
+            customer.unreadMessagesCount = Int16(count)
+            customer.updatedAt = updatedAt
+            customer.agent?.externalPendingMessagesCount = Int16(count)
+            do {
+                if context.hasChanges { try context.save() }
+            } catch {
+                printAndLog(message: "### \(#function) > Failed to clear unread messages count values in core data store because error: \(error.localizedDescription)", log: .coredata, logType: .error)
+            }
+        }
+        
+        
+        wasNotSeenNodeReference.removeValue { (error, _) in
+            if let error = error {
+                printAndLog(message: "### \(#function) - Failed to remove pending message 'wasNotSeenNode' value from Firebase where conversationID: \(conversationID), and error: \(error.localizedDescription)", log: .firebase, logType: .error)
+            } else {
+                printAndLog(message: "### \(#function) - Successfully removed child from wasnotseen node to clear agent's pending messages count where conversationID: \(conversationID)", log: .firebase, logType: .info)
+                allConversationsReference.child(conversationID).child("unread_messages").setValue(0)
+                allConversationsReference.child(conversationID).child("updated_at").setValue(updatedAt.milliSecondsSince1970)
+            }
+        }
+    }
+    func clearUnreadMessagesCountOperationCompletion(result: Result<Bool, FirebaseAuthService.FirebaseError>) {
+        switch result {
+        case .success: print("Clear Unread messages count on Firebase operation successfully completed.")
+        case .failure(let error): print("Clear unread messages count on Firebase operation failed with error: \(error.localizedDescription)")
+        }
+    }
     
     
     /* ------------------------------------------------------------------------------------------------------------ */
@@ -460,23 +502,23 @@ extension MessagesController {
     
     
     
-    
-    internal func updateNewMessageToFirebase(message:UserMessage) {
-        self.reference.child(message.messageId).setValue(message.toFirebaseObject()) { (error, _) in
-            if let error = error {
-                print(error.localizedDescription)
-            } else {
-                self.conversationReference.updateChildValues(FirebaseCustomer.getUpdatedConversationObject(fromLastMessage: message)) { (error, _) in
-                    if let error = error {
-                        print(error.localizedDescription)
-                    } else {
-                        print("Safe to update on server")
-                    }
-                }
-            }
-        }
-    }
-    
+//
+//    internal func updateNewMessageToFirebase(message:UserMessage) {
+//        self.reference.child(message.messageId).setValue(message.toFirebaseObject()) { (error, _) in
+//            if let error = error {
+//                print(error.localizedDescription)
+//            } else {
+//                self.conversationReference.updateChildValues(FirebaseCustomer.getUpdatedConversationObject(fromLastMessage: message)) { (error, _) in
+//                    if let error = error {
+//                        print(error.localizedDescription)
+//                    } else {
+//                        print("Safe to update on server")
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
     
     
     

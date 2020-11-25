@@ -51,13 +51,10 @@ class MessagesController: MessagesViewController {
     let viewContext:NSManagedObjectContext = PersistentContainer.shared.viewContext
     var thisSender:MessageSender
     let reference:DatabaseReference
-    let conversationReference:DatabaseReference
     
     
     init(customer: Customer) {
         self.customer = customer
-        let conversationsNode: Config.FirebaseConfig.Node = .conversations(companyID: AppData.companyId, workerID: Int(customer.agent?.workerID ?? 0))
-        self.conversationReference = conversationsNode.reference
         self.node = .messages(companyID: AppData.companyId, node: customer.node!)
         self.reference = node.reference
         self.conversationID = Int(customer.externalConversationID)
@@ -103,7 +100,7 @@ class MessagesController: MessagesViewController {
     
     var isLoading = false
     
-    var limit: Int = 20
+    var limit: Int = 40
     
     var offset:Int = 0
     
@@ -151,8 +148,11 @@ class MessagesController: MessagesViewController {
     
     var messages:[UserMessage] = [] {
         didSet {
+            self.stopSpinner()
             if !messages.isEmpty {
-                self.stopSpinner()
+                self.placeholderLabel.isHidden = true
+            } else {
+                self.placeholderLabel.isHidden = false
             }
         }
     }
@@ -162,7 +162,7 @@ class MessagesController: MessagesViewController {
         messages.filter({ $0.messageType == .multimedia && $0.getImage() != nil })
     }
     
-    
+    var previewItem:PreviewItem!
     
     
    // MARK: - Constructors
@@ -181,6 +181,7 @@ class MessagesController: MessagesViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         markAllMessagesAsSeen()
+        clearUnreadMessagesCount()
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
@@ -198,12 +199,20 @@ class MessagesController: MessagesViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         addFirebaseObservers()
+        clearUnreadMessagesCount()
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         asyncFetcher.clearAllCache()
     }
     
+    
+    override var inputAccessoryView: UIView? {
+        if customer.isBlacklisted {
+            return nil
+        }
+        return super.inputAccessoryView
+    }
     
     
     // MARK: - Methods
@@ -480,7 +489,18 @@ class MessagesController: MessagesViewController {
         return textView
     }()
     
-    
+    lazy var placeholderLabel:UILabel = {
+        let label = UILabel()
+        label.text = "Nothing here😕, start a conversation by sending a message."
+        label.font = UIFont.preferredFont(forTextStyle: .callout)
+        label.textColor = UIColor.telaGray6
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.adjustsFontForContentSizeCategory = true
+        label.sizeToFit()
+        label.isHidden = true
+        return label
+    }()
 
     
 }

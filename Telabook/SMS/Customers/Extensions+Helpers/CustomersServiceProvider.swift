@@ -7,8 +7,255 @@
 //
 
 import UIKit
-import os
+import Firebase
+import CoreData
+
 extension CustomersViewController {
+    
+    
+    func fetchConversations() {
+        isDownloading = true
+        if !isFetchedResultsAvailable {
+            showLoadingPlaceholers()
+            selectedSegment == .Inbox ? startInboxSpinner() : startArchivedSpinner()
+        }
+        printAndLog(message: "Previous firebase conversations fetched at: \(String(describing: agent.allConversationsFetchedAt))", log: .ui, logType: .info)
+        if !allConversations.isEmpty && agent.allConversationsFetchedAt != nil {
+            print("Fetching recent conversations")
+            fetchRecentConversations()
+        } else {
+            print("Fetching all conversations")
+            fetchAllConversations()
+        }
+    }
+    
+    
+    /* -------------------------------------------------- Firebase ---------------------------------------------------------- */
+    func addFirebaseObservers() {
+        childAddedHandle = observeConversationAdded()
+        childUpdatedHandle = observeConversationUpdated()
+        childDeletedHandle = observeConversationDeleted()
+    }
+    func removeFirebaseObservers() {
+        if childAddedHandle != nil { reference.removeObserver(withHandle: childAddedHandle)}
+        if childUpdatedHandle != nil { reference.removeObserver(withHandle: childUpdatedHandle) }
+        if childDeletedHandle != nil { reference.removeObserver(withHandle: childDeletedHandle) }
+    }
+    
+    func getFirebaseConversation(forConversationID conversationID: Int, completion: @escaping (_ firebaseConversation: FirebaseCustomer?) -> Void) {
+        let workerIDstring = String(agent.workerID)
+        
+        reference.child("\(conversationID)").observeSingleEvent(of: .value) { snapshot in
+            if snapshot.exists() {
+                if let firebaseConversation = FirebaseCustomer(snapshot: snapshot, workerID: workerIDstring) {
+                    completion(firebaseConversation)
+                } else {
+                    completion(nil)
+                }
+            } else {
+                completion(nil)
+            }
+        } withCancel: { error in
+            let errorMessage = "*** \(self) > ### \(#function) > Error fetching conversation for conversationID: \(conversationID) | Error: \(error.localizedDescription)"
+            printAndLog(message: errorMessage, log: .firebase, logType: .error)
+            completion(nil)
+        }
+    }
+    
+    private func fetchAllConversations() {
+        let workerIDstring = String(agent.workerID)
+        reference.observeSingleEvent(of: .value) { [weak self] snapshot in
+            guard let self = self else { return }
+            self.isDownloading = false
+            self.saveConversationsFetchTime()
+            printAndLog(message: "All firebase conversations fetched at: \(String(describing: self.agent.allConversationsFetchedAt))", log: .ui, logType: .info)
+            
+            guard snapshot.exists() else {
+                self.stopRefreshers()
+                self.handleState()
+                return
+            }
+            var conversations = [FirebaseCustomer]()
+            for child in snapshot.children {
+                if let snapshot = child as? DataSnapshot {
+                    if let conversation = FirebaseCustomer(snapshot: snapshot, workerID: workerIDstring) {
+                        conversations.append(conversation)
+                    }
+                }
+            }
+            self.persistFirebaseEntriesToCoreDataStore(entries: conversations)
+        } withCancel: { error in
+            let errorMessage = "*** \(self) > ### \(#function) > Error fetching all conversations from Firebase <single event value observer> | Error: \(error.localizedDescription)"
+            printAndLog(message: errorMessage, log: .firebase, logType: .error)
+        }
+    }
+    
+    private func fetchRecentConversations() {
+        let workerIDstring = String(agent.workerID)
+        reference.queryOrdered(byChild: "updated_at").queryStarting(atValue: agent.allConversationsFetchedAt!.milliSecondsSince1970).observeSingleEvent(of: .value) { [weak self] snapshot in
+            guard let self = self else { return }
+            self.isDownloading = false
+            self.saveConversationsFetchTime()
+            printAndLog(message: "Recent firebase conversations fetched at: \(String(describing: self.agent.allConversationsFetchedAt))", log: .ui, logType: .info)
+            
+            guard snapshot.exists() else {
+                self.stopRefreshers()
+                self.handleState()
+                return
+            }
+            var conversations = [FirebaseCustomer]()
+            for child in snapshot.children {
+                if let snapshot = child as? DataSnapshot {
+                    if let conversation = FirebaseCustomer(snapshot: snapshot, workerID: workerIDstring) {
+                        conversations.append(conversation)
+                    }
+                }
+            }
+            
+            self.upsertRecentFirebaseConversationsInStore(entries: conversations)
+        } withCancel: { error in
+            let errorMessage = "*** \(self) > ### \(#function) > Error fetching all conversations from Firebase <single event value observer> | Error: \(error.localizedDescription)"
+            printAndLog(message: errorMessage, log: .firebase, logType: .error)
+        }
+    }
+    
+    private func observeConversationAdded() -> UInt {
+        let workerID = String(agent.workerID)
+        return reference.queryOrdered(byChild: "updated_at").queryStarting(atValue: screenEnteredAt.milliSecondsSince1970).observe(.childAdded, with: { [weak self] snapshot in
+            guard let self = self else { return }
+            if snapshot.exists() {
+                guard let firebaseConversation = FirebaseCustomer(snapshot: snapshot, workerID: workerID) else {
+                    return
+                }
+                self.persistFirebaseConversationInStore(entry: firebaseConversation)
+            }
+        }) { error in
+            printAndLog(message: "*** \(self) > ### \(#function) > Firebase Child Added Observer Event Error while observing new conversation: \(error)", log: .firebase, logType: .error)
+        }
+    }
+    private func observeConversationUpdated() -> UInt {
+        let workerID = String(agent.workerID)
+        return reference.queryOrdered(byChild: "updated_at").queryStarting(atValue: screenEnteredAt.milliSecondsSince1970).observe(.childChanged, with: { [weak self] snapshot in
+            guard let self = self else { return }
+            if snapshot.exists() {
+                guard let firebaseConversation = FirebaseCustomer(snapshot: snapshot, workerID: workerID) else {
+                    return
+                }
+                self.persistFirebaseConversationInStore(entry: firebaseConversation)
+            }
+        }) { error in
+            printAndLog(message: "*** \(self) > ### \(#function) > Firebase Child Added Observer Event Error while observing new conversation: \(error)", log: .firebase, logType: .error)
+        }
+    }
+    private func observeConversationDeleted() -> UInt {
+        let workerID = String(agent.workerID)
+        return reference.queryOrdered(byChild: "updated_at").queryStarting(atValue: screenEnteredAt.milliSecondsSince1970).observe(.childRemoved, with: { [weak self] snapshot in
+            guard let self = self else { return }
+            if snapshot.exists() {
+                guard let firebaseConversation = FirebaseCustomer(snapshot: snapshot, workerID: workerID) else {
+                    return
+                }
+                let conversationID = firebaseConversation.conversationID
+                guard let conversationToDelete = self.getConversationFromStore(conversationID: conversationID, agent: self.agent) else {
+                    print("Cannot find conversation to delete in core data store. | Conversation ID: \(conversationID)")
+                    return
+                }
+                self.context.performAndWait {
+                    self.agent.removeFromCustomers(conversationToDelete)
+                    self.context.delete(conversationToDelete)
+                    do {
+                        if self.context.hasChanges { try self.context.save() }
+                    } catch {
+                        print(error)
+                    }
+                }
+//                self.persistFirebaseConversationInStore(entry: firebaseConversation)
+            }
+        }) { error in
+            printAndLog(message: "*** \(self) > ### \(#function) > Firebase Child Added Observer Event Error while observing new conversation: \(error)", log: .firebase, logType: .error)
+        }
+    }
+    /* ------------------------------------------------------------------------------------------------------------ */
+    
+    
+    
+    
+    
+    /* -------------------------------------------------- Core Data ---------------------------------------------------------- */
+    func saveConversationsFetchTime() {
+        agent.allConversationsFetchedAt = Date()
+        let context = agent.managedObjectContext!
+        context.perform {
+            do {
+                if context.hasChanges { try context.save() }
+            } catch {
+                printAndLog(message: "*** \(self) > ### \(#function) > Error saving context after setting allConversationsFetchedAt value. Error: \(error.localizedDescription)", log: .coredata, logType: .error)
+                fatalError()
+            }
+        }
+    }
+    
+    func getConversationFromStore(conversationID: Int, agent: Agent) -> Customer? {
+        var conversation: Customer? = nil
+        let fetchRequest:NSFetchRequest = Customer.fetchRequest()
+        let predicate = NSPredicate(format: "\(#keyPath(Customer.agent)) == %@ AND \(#keyPath(Customer.externalConversationID)) = %d", agent, Int32(conversationID))
+        fetchRequest.predicate = predicate
+        fetchRequest.fetchLimit = 1
+        context.performAndWait {
+            do {
+                conversation = try fetchRequest.execute().first
+            } catch {
+                print("*** \(self) > ### \(#function) > Error fetching conversation from store for conversation id: \(conversationID). | Error: \(error.localizedDescription)")
+            }
+        }
+        return conversation
+    }
+    
+    internal func persistFirebaseConversationInStore(entry: FirebaseCustomer) {
+        let existingConversation = getConversationFromStore(conversationID: entry.conversationID, agent: agent)
+        let isPinned = existingConversation?.isPinned ?? false
+        let customerDetails = existingConversation?.customerDetails?.serverObject
+        
+        context.performAndWait {
+            let conversation = Customer(context: context, conversationEntryFromFirebase: entry, agent: agent)
+            conversation.isPinned = isPinned
+            if let existingCustomerDetails = customerDetails {
+                _ = CustomerDetails(context: context, customerDetailsEntryFromServer: existingCustomerDetails, conversationWithCustomer: conversation)
+            }
+            do {
+                if context.hasChanges { try context.save() }
+            } catch let error {
+                printAndLog(message: "Error persisting observed message: \(error)", log: .coredata, logType: .error)
+            }
+        }
+        handleMessagePayload()
+    }
+    
+    internal func upsertRecentFirebaseConversationsInStore(entries: [FirebaseCustomer]) {
+        context.performAndWait {
+            _ = entries.map { entry -> Customer in
+                let existingConversation = self.getConversationFromStore(conversationID: entry.conversationID, agent: agent)
+                let isPinned = existingConversation?.isPinned ?? false
+                let customerDetails = existingConversation?.customerDetails?.serverObject
+                let conversation = Customer(context: context, conversationEntryFromFirebase: entry, agent: agent)
+                conversation.isPinned = isPinned
+                if let existingCustomerDetails = customerDetails {
+                    _ = CustomerDetails(context: context, customerDetailsEntryFromServer: existingCustomerDetails, conversationWithCustomer: conversation)
+                }
+                return conversation
+            }
+            do {
+                if context.hasChanges { try context.save() }
+            } catch {
+                printAndLog(message: "### \(#function) > Error upserting conversations in core data: \(error.localizedDescription)", log: .coredata, logType: .error)
+            }
+        }
+        handleMessagePayload()
+    }
+    /* ------------------------------------------------------------------------------------------------------------ */
+    
+    
+    
     
     
     

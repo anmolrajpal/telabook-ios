@@ -36,7 +36,7 @@ extension MessagesController {
         loadInitialMessages(fetchFromFirebase: true, shouldLoadUnseenMessages: true)
         setupTargetActions()
         reloadQuickResponses()
-        clearUnreadMessagesCount()
+//        clearUnreadMessagesCount()
     }
     
     func configureNavigationBarItems() {
@@ -146,6 +146,7 @@ extension MessagesController {
     }
     private func configureHierarchy() {
         messagesCollectionView.addSubview(spinner)
+        messagesCollectionView.addSubview(placeholderLabel)
         downIndicatorContainerView.addSubview(scrollToBottomButton)
         downIndicatorContainerView.addSubview(newMessagesCountLabel)
         view.addSubview(downIndicatorContainerView)
@@ -155,7 +156,7 @@ extension MessagesController {
         spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).activate()
         spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor).activate()
         
-        
+        placeholderLabel.anchor(top: nil, left: view.leftAnchor, bottom: spinner.topAnchor, right: view.rightAnchor, topConstant: 0, leftConstant: 24, bottomConstant: 30, rightConstant: 24)
         
         scrollToBottomButton.anchor(top: downIndicatorContainerView.topAnchor, left: nil, bottom: nil, right: nil, topConstant: 6, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 30, heightConstant: 30)
         scrollToBottomButton.centerXAnchor.constraint(equalTo: downIndicatorContainerView.centerXAnchor).activate()

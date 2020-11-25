@@ -33,11 +33,16 @@ extension MessagesController: MessageCellDelegate {
             guard $0.getImage() != nil else { return false }
             return $0.imageLocalURL() == cachedImageURL
         }) else { return }
-        let controller = QLPreviewController()
-        controller.dataSource = self
-        controller.delegate = self
-        controller.currentPreviewItemIndex = index
-        self.present(controller, animated: true)
+        previewItem = PreviewItem()
+        previewItem.previewItemURL = mediaMessages[index].imageLocalURL()
+        previewItem.previewItemTitle = "IMG_\(index)"
+        if QLPreviewController.canPreview(previewItem) {
+            let controller = QLPreviewController()
+            controller.dataSource = self
+            controller.delegate = self
+            controller.currentPreviewItemIndex = index
+            present(controller, animated: true)
+        }
     }
     func didTapImage(in cell: MessageCollectionViewCell) {
         guard let cell  = cell as? MessageContentCell else { return }
@@ -171,21 +176,22 @@ extension MessagesController: QLPreviewControllerDataSource {
     
     
     func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
-        mediaMessages.count
+//        mediaMessages.count
+        return 1
     }
     
     func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
-        let item = PreviewItem()
-        item.previewItemURL = mediaMessages[index].imageLocalURL()
-        item.previewItemTitle = "IMG_\(index)"
-        return item
+//        let item = PreviewItem()
+//        item.previewItemURL = mediaMessages[index].imageLocalURL()
+//        item.previewItemTitle = "IMG_\(index)"
+//        return item
+        return previewItem
     }
+    
 }
 
 
 extension MessagesController: QLPreviewControllerDelegate {
-    
-    
     
     func previewController(_ controller: QLPreviewController, transitionViewFor item: QLPreviewItem) -> UIView? {
         guard let url = item.previewItemURL,
