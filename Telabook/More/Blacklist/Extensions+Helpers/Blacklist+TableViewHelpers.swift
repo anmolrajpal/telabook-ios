@@ -10,34 +10,41 @@ import UIKit
 import InteractiveModal
 
 extension BlacklistViewController {
-    internal class BlacklistDataSource: UITableViewDiffableDataSource<Section, BlockedUser> {
+    internal class DataSource: UITableViewDiffableDataSource<Section, BlockedUser> {
         override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool { return true }
     }
     internal func setupTableView() {
         subview.tableView.register(BlacklistCell.self)
         subview.tableView.delegate = self
         
-        self.diffableDataSource = BlacklistDataSource(tableView: self.subview.tableView, cellProvider: { [weak self] (tableView, indexPath, blockedUser) -> UITableViewCell? in
+        dataSource = DataSource(tableView: self.subview.tableView, cellProvider: { [weak self] (tableView, indexPath, blockedUser) -> UITableViewCell? in
             guard self != nil else { return nil }
             let cell = tableView.dequeueReusableCell(BlacklistCell.self, for: indexPath)
             cell.blockedUser = blockedUser
             cell.backgroundColor = .clear
             cell.accessoryType = .disclosureIndicator
-            let backgroundView = UIView()
-            backgroundView.backgroundColor = UIColor.telaGray7.withAlphaComponent(0.2)
-            cell.selectedBackgroundView  = backgroundView
             return cell
         })
-        updateSnapshot()
     }
+    
     /// Create a `NSDiffableDataSourceSnapshot` with the table view data
-    internal func updateSnapshot(animated: Bool = false) {
-        snapshot = NSDiffableDataSourceSnapshot<Section, BlockedUser>()
+    func currentSnapshot() -> NSDiffableDataSourceSnapshot<Section, BlockedUser>? {
+        guard fetchedResultsController != nil else { return nil }
+        var snapshot = NSDiffableDataSourceSnapshot<Section, BlockedUser>()
         snapshot.appendSections([.main])
-        let objects = fetchedResultsController.fetchedObjects ?? []
-        snapshot.appendItems(objects)
-        self.diffableDataSource?.apply(self.snapshot, animatingDifferences: animated, completion: {
-            self.handleState()
+        snapshot.appendItems(blacklist)
+        return snapshot
+    }
+    
+    func updateUI(animating:Bool = true, reloadingData:Bool = false) {
+        guard let snapshot = currentSnapshot(), dataSource != nil else { return }
+        dataSource.apply(snapshot, animatingDifferences: animating, completion: { [weak self] in
+            guard let self = self else { return }
+            if reloadingData { self.subview.tableView.reloadData() }
+            if !self.isDownloading {
+                self.handleState()
+                self.stopRefreshers()
+            }
         })
     }
 }
@@ -107,17 +114,19 @@ extension BlacklistViewController: UITableViewDelegate {
         showDetails(at: indexPath)
     }
     internal func showDetails(at indexPath:IndexPath) {
-        if let selectedBlockedUser = self.diffableDataSource?.itemIdentifier(for: indexPath) {
+        if let selectedBlockedUser = dataSource.itemIdentifier(for: indexPath) {
             let vc = BlacklistedDetailsViewController(selectedBlockedUser: selectedBlockedUser)
             vc.delegate = self
             let presenter = InteractiveModalViewController(controller: vc)
-            self.present(presenter, animated: true, completion: nil)
+            DispatchQueue.main.async {
+                self.present(presenter, animated: true)
+            }
         }
     }
 }
 
 extension BlacklistViewController: BlacklistedDetailsDelegate {
     func unblockButton(didTapFor blockedUser: BlockedUser) {
-        self.unblockConversation(for: blockedUser, completion: {_ in})
+        unblockConversation(for: blockedUser, completion: {_ in})
     }
 }

@@ -64,6 +64,9 @@ extension BlacklistViewController {
                     operation.completionBlock = {
                         if case let .failure(error) = operation.result {
                             print(error.localizedDescription)
+                            self.isDownloading = false
+                            self.stopRefreshers()
+                            self.handleState()
                             self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
                         }
                 }
@@ -71,23 +74,33 @@ extension BlacklistViewController {
                     operation.completionBlock = {
                         guard case let .failure(error) = operation.result else { return }
                         print(error.localizedDescription)
+                        self.isDownloading = false
+                        self.stopRefreshers()
+                        self.handleState()
                         self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
                 }
                 case let operation as DeleteRedundantBlacklistEntries_Operation:
                     operation.completionBlock = {
                         if let error = operation.error {
                             print(error.localizedDescription)
+                            self.isDownloading = false
+                            self.stopRefreshers()
+                            self.handleState()
                             self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
                         }
                 }
                 case let operation as AddBlacklistEntriesFromServerToStore_Operation:
                     operation.completionBlock = {
+                        self.isDownloading = false
                         if let error = operation.error {
                             print(error.localizedDescription)
+                            self.stopRefreshers()
+                            self.handleState()
                             self.showAlert(withErrorMessage: error.localizedDescription, cancellingOperationQueue: queue)
                         } else {
                             DispatchQueue.main.async {
                                 self.stopRefreshers()
+                                self.handleState()
                             }
                         }
                 }

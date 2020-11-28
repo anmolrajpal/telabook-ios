@@ -296,10 +296,6 @@
 		6FE24AC825421D8A0043ACC7 /* AppManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE24AC725421D890043ACC7 /* AppManager.swift */; };
 		6FEC641324D48DCC0012B234 /* MessagePayloadJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEC641224D48DCB0012B234 /* MessagePayloadJSON.swift */; };
 		6FEC641524D80F270012B234 /* DisabledAccountsJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEC641424D80F270012B234 /* DisabledAccountsJSON.swift */; };
-		6FEC641C24D817480012B234 /* DisabledAccountsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEC641B24D817480012B234 /* DisabledAccountsController.swift */; };
-		6FEC641E24D817AE0012B234 /* DisabledAccountCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEC641D24D817AE0012B234 /* DisabledAccountCell.swift */; };
-		6FEC642024D820A30012B234 /* DisabledAccounts+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEC641F24D820A30012B234 /* DisabledAccounts+Helpers.swift */; };
-		6FEC642224D821330012B234 /* DisabledAccounts+TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEC642124D821320012B234 /* DisabledAccounts+TableView.swift */; };
 		6FEC642424D836A10012B234 /* CustomerDetailsJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEC642324D836A10012B234 /* CustomerDetailsJSON.swift */; };
 		6FEE99FF247BB8E900709E2D /* UserMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE99FE247BB8E900709E2D /* UserMessage.swift */; };
 		6FEE9A01247BF69C00709E2D /* FirebaseMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE9A00247BF69C00709E2D /* FirebaseMessage.swift */; };
@@ -647,10 +643,6 @@
 		6FEC641124D19FE40012B234 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6FEC641224D48DCB0012B234 /* MessagePayloadJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePayloadJSON.swift; sourceTree = "<group>"; };
 		6FEC641424D80F270012B234 /* DisabledAccountsJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisabledAccountsJSON.swift; sourceTree = "<group>"; };
-		6FEC641B24D817480012B234 /* DisabledAccountsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisabledAccountsController.swift; sourceTree = "<group>"; };
-		6FEC641D24D817AE0012B234 /* DisabledAccountCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisabledAccountCell.swift; sourceTree = "<group>"; };
-		6FEC641F24D820A30012B234 /* DisabledAccounts+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DisabledAccounts+Helpers.swift"; sourceTree = "<group>"; };
-		6FEC642124D821320012B234 /* DisabledAccounts+TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DisabledAccounts+TableView.swift"; sourceTree = "<group>"; };
 		6FEC642324D836A10012B234 /* CustomerDetailsJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerDetailsJSON.swift; sourceTree = "<group>"; };
 		6FEE99FE247BB8E900709E2D /* UserMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserMessage.swift; sourceTree = "<group>"; };
 		6FEE9A00247BF69C00709E2D /* FirebaseMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseMessage.swift; sourceTree = "<group>"; };
@@ -1900,7 +1892,6 @@
 				6F987A5024570E8D00C6046E /* Select Company */,
 				6FC822FF2475ADA5002421F0 /* Blacklist */,
 				6F23BCF822D723E30001A888 /* Schedule Message */,
-				6FEC641624D816BC0012B234 /* Disabled Accounts */,
 				6F8A8309249DE02A002ACDFE /* App Settings */,
 				6F987A6224587F6700C6046E /* App Info */,
 				6F69BE6F22D46CF900F8903F /* Manage Agents */,
@@ -1917,6 +1908,7 @@
 				6F05C32A2528B0EC001C7FD2 /* Audio.swift */,
 				6F97BA8924A90A8800F8DE72 /* TopLevelMethods.swift */,
 				6FB11B0F229C23840098D050 /* Extensions.swift */,
+				6FB11B11229C31DF0098D050 /* Enums.swift */,
 				6FEE9A02247C841A00709E2D /* ExponentOperator.swift */,
 				6F6457D82462DCE400CECF03 /* Log.swift */,
 				6F29FD4E22B7E28700BCA2AB /* OverlaySpinner.swift */,
@@ -1932,7 +1924,6 @@
 				6F987A71245B159400C6046E /* TapticEngine.swift */,
 				6FB11B13229C3FCA0098D050 /* BadgeBarItem.swift */,
 				6F46A8BC22D39E790042A667 /* Checkbox.swift */,
-				6FB11B11229C31DF0098D050 /* Enums.swift */,
 				6F1BD2EE22C4B0ED0053D0CC /* Protocols.swift */,
 				6F265170246C3610003D582F /* SFSymbol.swift */,
 				6FAD46E2245054020050F7F2 /* Preferences */,
@@ -2120,49 +2111,6 @@
 				6FE24AB72541C68A0043ACC7 /* notes_of_the_optimistic.caf */,
 			);
 			path = ringtones;
-			sourceTree = "<group>";
-		};
-		6FEC641624D816BC0012B234 /* Disabled Accounts */ = {
-			isa = PBXGroup;
-			children = (
-				6FEC641A24D816F60012B234 /* Operations */,
-				6FEC641924D816EB0012B234 /* Views */,
-				6FEC641824D816E70012B234 /* Controllers */,
-				6FEC641724D816D40012B234 /* Extensions+Helpers */,
-			);
-			path = "Disabled Accounts";
-			sourceTree = "<group>";
-		};
-		6FEC641724D816D40012B234 /* Extensions+Helpers */ = {
-			isa = PBXGroup;
-			children = (
-				6FEC641F24D820A30012B234 /* DisabledAccounts+Helpers.swift */,
-				6FEC642124D821320012B234 /* DisabledAccounts+TableView.swift */,
-			);
-			path = "Extensions+Helpers";
-			sourceTree = "<group>";
-		};
-		6FEC641824D816E70012B234 /* Controllers */ = {
-			isa = PBXGroup;
-			children = (
-				6FEC641B24D817480012B234 /* DisabledAccountsController.swift */,
-			);
-			path = Controllers;
-			sourceTree = "<group>";
-		};
-		6FEC641924D816EB0012B234 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				6FEC641D24D817AE0012B234 /* DisabledAccountCell.swift */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		6FEC641A24D816F60012B234 /* Operations */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Operations;
 			sourceTree = "<group>";
 		};
 		6FEE9A1C247EFE1D00709E2D /* Support Files */ = {
@@ -2547,7 +2495,6 @@
 				6F6F06A82555B9AD003B3AB2 /* NotificationCenter.swift in Sources */,
 				6F0653452464880100F857C1 /* CustomersView.swift in Sources */,
 				6F0653492464882000F857C1 /* CustomerCellView.swift in Sources */,
-				6FEC641C24D817480012B234 /* DisabledAccountsController.swift in Sources */,
 				6F5064AF24A0D012003CAC2E /* ConversationGalleryController.swift in Sources */,
 				6F8A8303249B7C2F002ACDFE /* MMSCellView.swift in Sources */,
 				6F37E2482460A8D7003E9126 /* QuickResponsesViewController.swift in Sources */,
@@ -2571,7 +2518,6 @@
 				6F21377A24742DD2002AB150 /* NewConversationCodable.swift in Sources */,
 				6F087DD122E0EFFD00CAD840 /* OnlineUsersAPI.swift in Sources */,
 				6F7A382F24FF7A3C00759922 /* AgentCalls+TableView.swift in Sources */,
-				6FEC641E24D817AE0012B234 /* DisabledAccountCell.swift in Sources */,
 				6FCF7F7624DF0C4200A7AB0B /* NormalDialerView.swift in Sources */,
 				6F8927FB24A8A82E0025DF64 /* ScheduledMessageJSON.swift in Sources */,
 				6F8A831C249E13B6002ACDFE /* ListItem.swift in Sources */,
@@ -2663,7 +2609,6 @@
 				6FFBCC4E24F938DB00C7E96C /* CallsTabAgents+CoreData.swift in Sources */,
 				6F7BF52824D00C28009B9D5E /* UserMessage+MessageType.swift in Sources */,
 				6F46A8BB22D062750042A667 /* FollowUpAPI.swift in Sources */,
-				6FEC642224D821330012B234 /* DisabledAccounts+TableView.swift in Sources */,
 				6F58C33B22D61FAE0091C785 /* AutoResponseDataProvider.swift in Sources */,
 				6FC822FB24757E63002421F0 /* NewConversation+ServiceProvider.swift in Sources */,
 				6FF842162482EACD0069A789 /* QuickResponsePickerController.swift in Sources */,
@@ -2723,7 +2668,6 @@
 				6FFBCC6124F944A500C7E96C /* AgentCallsJSON.swift in Sources */,
 				6F7BF51724C2C760009B9D5E /* MultimediaMessageCell.swift in Sources */,
 				6FB11B0D229BFA430098D050 /* MoreViewController.swift in Sources */,
-				6FEC642024D820A30012B234 /* DisabledAccounts+Helpers.swift in Sources */,
 				6F6B44D424BC7A2600AD2649 /* MessageDetailsController+Layout.swift in Sources */,
 				6F97B1642503D3B0006D5A61 /* CallDetailsViewController.swift in Sources */,
 				6FD4F7AE24AF526B00BD2569 /* LocalNotificationItem.swift in Sources */,

@@ -160,11 +160,14 @@ extension CustomersViewController {
                     print("Cannot find conversation to delete in core data store. | Conversation ID: \(conversationID)")
                     return
                 }
-                self.context.performAndWait {
+                guard let context = self.agent.managedObjectContext else {
+                    fatalError()
+                }
+                context.performAndWait {
                     self.agent.removeFromCustomers(conversationToDelete)
-                    self.context.delete(conversationToDelete)
+                    context.delete(conversationToDelete)
                     do {
-                        if self.context.hasChanges { try self.context.save() }
+                        if context.hasChanges { try context.save() }
                     } catch {
                         print(error)
                     }
@@ -184,7 +187,9 @@ extension CustomersViewController {
     /* -------------------------------------------------- Core Data ---------------------------------------------------------- */
     func saveConversationsFetchTime() {
         agent.allConversationsFetchedAt = Date()
-        let context = agent.managedObjectContext!
+        guard let context = agent.managedObjectContext else {
+            fatalError()
+        }
         context.perform {
             do {
                 if context.hasChanges { try context.save() }
@@ -201,6 +206,9 @@ extension CustomersViewController {
         let predicate = NSPredicate(format: "\(#keyPath(Customer.agent)) == %@ AND \(#keyPath(Customer.externalConversationID)) = %d", agent, Int32(conversationID))
         fetchRequest.predicate = predicate
         fetchRequest.fetchLimit = 1
+        guard let context = agent.managedObjectContext else {
+            fatalError()
+        }
         context.performAndWait {
             do {
                 conversation = try fetchRequest.execute().first
@@ -215,7 +223,9 @@ extension CustomersViewController {
         let existingConversation = getConversationFromStore(conversationID: entry.conversationID, agent: agent)
         let isPinned = existingConversation?.isPinned ?? false
         let customerDetails = existingConversation?.customerDetails?.serverObject
-        
+        guard let context = agent.managedObjectContext else {
+            fatalError()
+        }
         context.performAndWait {
             let conversation = Customer(context: context, conversationEntryFromFirebase: entry, agent: agent)
             conversation.isPinned = isPinned
@@ -232,6 +242,9 @@ extension CustomersViewController {
     }
     
     internal func upsertRecentFirebaseConversationsInStore(entries: [FirebaseCustomer]) {
+        guard let context = agent.managedObjectContext else {
+            fatalError()
+        }
         context.performAndWait {
             _ = entries.map { entry -> Customer in
                 let existingConversation = self.getConversationFromStore(conversationID: entry.conversationID, agent: agent)

@@ -47,11 +47,16 @@ class CallsTabAgentsCell: UITableViewCell {
 //        updateBadgeCount(count: count)
         
         
-        let urlString = agent.profileImageURL?.absoluteString
-        let profileImageURLString = CustomUtils.shared.getSlashEncodedURL(from: urlString) ?? ""
-        let url = URL(string: profileImageURLString)
-        profileImageView.pin_setImage(from: url, placeholderImage: UIImage(initials: initialsText, font: UIFont.systemFont(ofSize: 21)))
-        
+        if let profileImageURL = agent.profileImageURL {
+            /*
+            let urlString = profileImageURL.absoluteString
+            let profileImageURLString = CustomUtils.shared.getSlashEncodedURL(from: urlString) ?? ""
+            let url = URL(string: profileImageURLString)
+            */
+            profileImageView.pin_setImage(from: profileImageURL, placeholderImage: UIImage(initials: initialsText, font: UIFont.systemFont(ofSize: 21)))
+        } else {
+            profileImageView.image = UIImage(initials: initialsText, font: UIFont.systemFont(ofSize: 21))
+        }
         
         
         guard !animated else {

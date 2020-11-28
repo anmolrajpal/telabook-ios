@@ -136,7 +136,6 @@ class CustomerDetailsController: UIViewController {
     }()
     lazy var phoneNumberLabel:UILabel = {
         let label = UILabel()
-        label.text = "+1 (234) 567-8910"
         label.font = UIFont.gothamMedium(forTextStyle: .body)
         label.adjustsFontForContentSizeCategory = true
         label.textColor = UIColor.white

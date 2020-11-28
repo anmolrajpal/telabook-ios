@@ -70,7 +70,7 @@ extension UserMessage: MessageType {
             .font : UIFont.preferredFont(forTextStyle: .footnote),
             .foregroundColor: UIColor.telaYellow
         ])
-        let dateAttributedString = NSAttributedString(string: "\nTelabook 🤖 @ \(Date.getStringFromDate(date: self.date!, dateFormat: .ddMMyyyy·hmma))", attributes: [
+        let dateAttributedString = NSAttributedString(string: "\nTelabook 🤖 @ \(Date.getStringFromDate(date: self.date!, dateFormat: .MMddyyyy·hmma))", attributes: [
             .font : UIFont.preferredFont(forTextStyle: .caption1),
             .foregroundColor: UIColor.telaYellow
         ])
@@ -88,7 +88,7 @@ extension UserMessage: MessageType {
             .font : UIFont.preferredFont(forTextStyle: .body),
             .foregroundColor: UIColor.telaWhite
         ])
-        let dateAttributedString = NSAttributedString(string: "\nTelabook 🤖 @ \(Date.getStringFromDate(date: self.date!, dateFormat: .ddMMyyyy·hmma))", attributes: [
+        let dateAttributedString = NSAttributedString(string: "\nTelabook 🤖 @ \(Date.getStringFromDate(date: self.date!, dateFormat: .MMddyyyy·hmma))", attributes: [
             .font : UIFont.preferredFont(forTextStyle: .footnote),
             .foregroundColor: UIColor.telaGray5
         ])

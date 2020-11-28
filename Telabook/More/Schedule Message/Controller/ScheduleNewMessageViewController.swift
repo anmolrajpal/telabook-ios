@@ -72,6 +72,13 @@ class ScheduleNewMessageViewController: UIViewController {
     // MARK: - Views
     
     let datePicker:UIDatePicker = UIDatePicker()
+    lazy var invalidDateImageView:UIImageView = {
+        let view = UIImageView()
+        view.image = #imageLiteral(resourceName: "error").withTintColor(.systemRed, renderingMode: .alwaysTemplate)
+        view.tintColor = UIColor.systemRed
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     let agentTextField = createTextField(placeholder: "Select Agent")
     let customerTextField = createTextField(placeholder: "Select Customer")
     let dateTimeTextField = createTextField(placeholder: "Set Time")
@@ -79,6 +86,7 @@ class ScheduleNewMessageViewController: UIViewController {
     lazy var agentContainerView = createTextFieldContainerView(labelTitle: "Agent", agentTextField)
     lazy var customerContainerView = createTextFieldContainerView(labelTitle: "Customer", customerTextField)
     lazy var dateTimeContainerView = createTextFieldContainerView(labelTitle: "Time", dateTimeTextField)
+    lazy var dateTimePickerContainerView = createDatePickerContainerView(labelTitle: "Time")
 //    lazy var messageContainerView = createTextFieldContainerView(labelTitle: "Text Message", messageTextField)
     
     lazy var scheduleButton:UIButton = {
@@ -108,7 +116,7 @@ class ScheduleNewMessageViewController: UIViewController {
         textView.isSelectable = true
         textView.backgroundColor = UIColor.telaGray4
         textView.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 16)
-        textView.textColor = UIColor.telaGray7
+        textView.textColor = UIColor.white
         textView.textContainerInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         textView.sizeToFit()
         textView.isScrollEnabled = true

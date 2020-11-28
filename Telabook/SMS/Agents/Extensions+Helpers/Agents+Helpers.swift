@@ -78,7 +78,7 @@ extension AgentsViewController {
     internal func handleState() {
         if agents.isEmpty {
             DispatchQueue.main.async {
-                self.placeholderLabel.text = self.isFiltering ? "No Results" : "Loading..."
+                self.placeholderLabel.text = "No Results"
                 self.placeholderLabel.isHidden = false
             }
         } else {
@@ -88,8 +88,10 @@ extension AgentsViewController {
         }
     }
     internal func stopRefreshers() {
-        spinner.stopAnimating()
-        tableView.refreshControl?.endRefreshing()
+        DispatchQueue.main.async {
+            self.spinner.stopAnimating()
+            self.tableView.refreshControl?.endRefreshing()
+        }
     }
     private func configureTargetActions() {
         tableViewRefreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
@@ -114,6 +116,8 @@ extension AgentsViewController {
     }
     
     internal func initiateFetchAgentsSequence(withRefreshMode refreshMode: RefreshMode) {
+        isDownloading = true
+        placeholderLabel.text = "Loading..."
         switch refreshMode {
             case .spinner:
                     DispatchQueue.main.async {

@@ -74,7 +74,10 @@ extension AgentsViewController {
         dataSource.apply(snapshot, animatingDifferences: animating, completion: { [weak self] in
             guard let self = self else { return }
             if reloadingData && self.viewDidAppear { self.tableView.reloadData() }
-            self.handleState()
+            if !self.isDownloading {
+                self.handleState()
+                self.stopRefreshers()
+            }
         })
     }
 }

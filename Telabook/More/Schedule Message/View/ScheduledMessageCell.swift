@@ -11,17 +11,31 @@ import UIKit
 class ScheduledMessageCell: UITableViewCell {
 
     func configureCell(with message:ScheduledMessage, animated:Bool = true) {
-        configureAgentLabel(message.workerName)
-        configureCustomerLabel(message.customerName)
+        let agentName = message.workerName ?? ""
+        let agentNumber = message.workerPhoneNumber
+        let agentText:String = agentNumber != nil ? agentName + " • \(agentNumber!.getE164FormattedNumber(shouldPrefixCountryCode: false) ?? agentNumber!)" : agentName
+        
+        let customerText:String
+        let customerName = message.customerName ?? ""
+        if let customerNumber = message.customerPhoneNumber, !customerNumber.isBlank {
+            let number = customerNumber.getE164FormattedNumber(shouldPrefixCountryCode: false) ?? customerNumber
+            customerText = customerName.isBlank ? number : customerName + " • " + number
+        } else {
+            customerText = customerName
+        }
+        
+        
+        configureAgentLabel(agentText)
+        configureCustomerLabel(customerText)
         messageLabel.text = message.textMessage
         configureTimeLabel(message.deliveryTime)
         
         switch message.deliveryStatus {
             case .pending:
-                statusLabel.text = "Pending"
+//                statusLabel.text = "Pending"
                 statusImageView.tintColor = UIColor.systemOrange
             case .delivered:
-                statusLabel.text = "Delivered"
+//                statusLabel.text = "Delivered"
                 statusImageView.tintColor = UIColor.systemGreen
         }
         

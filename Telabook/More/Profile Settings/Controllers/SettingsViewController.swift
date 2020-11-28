@@ -336,7 +336,10 @@ class SettingsViewController: UIViewController {
         return imageView
     }()
     @objc fileprivate func camerIconTapped() {
-        print("Camera Icon Tapped")
+        guard isDataValid() else {
+            UIAlertController.showTelaAlert(title: "Missing Data", message: "Please fill up the required fields first.")
+            return
+        }
         promptPhotosPickerMenu()
     }
     lazy var userNameLabel:UILabel = {

@@ -33,17 +33,22 @@ extension BlacklistViewController {
                                                                   cacheName: nil)
         }
         fetchedResultsController.delegate = self
+        performFetch()
+    }
+    internal func performFetch() {
         do {
             try fetchedResultsController.performFetch()
-            self.updateSnapshot(animated: true)
         } catch {
-            print("Error fetching results: \(error)")
+            printAndLog(message: error.localizedDescription, log: .coredata, logType: .error)
+            fatalError("\(error.localizedDescription)")
         }
     }
 }
 extension BlacklistViewController: NSFetchedResultsControllerDelegate {
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
-        self.updateSnapshot(animated: true)
+        DispatchQueue.main.async {
+            self.updateUI(animating: true, reloadingData: true)
+        }
     }
 }
 

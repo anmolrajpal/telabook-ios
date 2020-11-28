@@ -46,10 +46,13 @@ extension MessagesController {
         let downloadState = fetchedEntry?.downloadState ?? .new
         let uploadState = fetchedEntry?.uploadState ?? .none
         var message:UserMessage?
-        viewContext.performAndWait {
-            _ = UserMessage(context: viewContext, messageEntryFromFirebase: entry, forConversationWithCustomer: customer, imageUUID: cachedImageUUID, isSeen: isSeen, downloadState: downloadState, uploadState: uploadState)
+        guard let context = customer.managedObjectContext else {
+            fatalError()
+        }
+        context.performAndWait {
+            _ = UserMessage(context: context, messageEntryFromFirebase: entry, forConversationWithCustomer: customer, imageUUID: cachedImageUUID, isSeen: isSeen, downloadState: downloadState, uploadState: uploadState)
             do {
-                if viewContext.hasChanges { try viewContext.save() }
+                if context.hasChanges { try context.save() }
             } catch let error {
                 printAndLog(message: "Error persisting observed message: \(error)", log: .coredata, logType: .error)
             }

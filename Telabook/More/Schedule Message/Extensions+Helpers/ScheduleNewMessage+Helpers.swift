@@ -14,6 +14,7 @@ extension ScheduleNewMessageViewController {
         configureNavigationBarAppearance()
         configureHierarchy()
         configureTextFields()
+        configureDateTimePicker()
         configureMessageTextView()
         configureTargetActions()
         fireTimerForValidation()
@@ -22,7 +23,12 @@ extension ScheduleNewMessageViewController {
         view.backgroundColor = .telaGray1
         view.addSubview(agentContainerView)
         view.addSubview(customerContainerView)
-        view.addSubview(dateTimeContainerView)
+        if #available(iOS 14.0, *) {
+            dateTimePickerContainerView.addSubview(invalidDateImageView)
+            view.addSubview(dateTimePickerContainerView)
+        } else {
+            view.addSubview(dateTimeContainerView)
+        }
         messageTextView.addSubview(placeholderLabel)
         view.addSubview(messageTextView)
         view.addSubview(characterCountLabel)
@@ -37,10 +43,25 @@ extension ScheduleNewMessageViewController {
         
         customerContainerView.anchor(top: agentContainerView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, heightConstant: height)
         
-        dateTimeContainerView.anchor(top: customerContainerView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, heightConstant: height)
+        if #available(iOS 14.0, *) {
+            dateTimePickerContainerView.anchor(top: customerContainerView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, heightConstant: height)
+            NSLayoutConstraint.activate([
+                invalidDateImageView.widthAnchor.constraint(equalToConstant: height / 2),
+                invalidDateImageView.heightAnchor.constraint(equalToConstant: height / 2),
+                invalidDateImageView.centerYAnchor.constraint(equalTo: dateTimePickerContainerView.centerYAnchor),
+                invalidDateImageView.rightAnchor.constraint(equalTo: dateTimePickerContainerView.rightAnchor, constant: -20)
+            ])
+            
+            messageTextView.anchor(top: dateTimePickerContainerView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 20, leftConstant: 20, bottomConstant: 0, rightConstant: 20, heightConstant: 100)
+
+        } else {
+            dateTimeContainerView.anchor(top: customerContainerView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, heightConstant: height)
+            messageTextView.anchor(top: dateTimeContainerView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 20, leftConstant: 20, bottomConstant: 0, rightConstant: 20, heightConstant: 100)
+
+        }
         
-        messageTextView.anchor(top: dateTimeContainerView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, topConstant: 20, leftConstant: 20, bottomConstant: 0, rightConstant: 20, heightConstant: 100)
         
+                
         characterCountLabel.anchor(top: messageTextView.bottomAnchor, left: nil, bottom: nil, right: messageTextView.rightAnchor, topConstant: 6, leftConstant: 0, bottomConstant: 0, rightConstant: 0)
         
         scheduleButton.topAnchor.constraint(equalTo: messageTextView.bottomAnchor, constant: 40).activate()
@@ -79,6 +100,7 @@ extension ScheduleNewMessageViewController {
         customerContainerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(customerFieldDidTap)))
         
         configureDateTimePickerTextField()
+        
     }
 //    fileprivate func setupMessageTextField() {
 //        messageTextField.addTarget(self, action: #selector(didChangeMessageTextField), for: .editingChanged)
@@ -148,6 +170,7 @@ extension ScheduleNewMessageViewController {
         }
         guard isDatePickerDateValid else {
             dateTimeTextField.shake(withFeedbackTypeOf: .Heavy)
+            datePicker.shake(withFeedbackTypeOf: .Heavy)
             return
         }
         guard let text = messageTextView.text, !text.isBlank else {
@@ -163,13 +186,8 @@ extension ScheduleNewMessageViewController {
     
     
     func configureDateTimePickerTextField() {
-        setupDatePickerRange()
-        setupDefaultDate()
         dateTimeTextField.setIcon(#imageLiteral(resourceName: "error").withRenderingMode(.alwaysTemplate), frame: CGRect(x: 0, y: 0, width: 20, height: 20), position: .Right, tintColor: UIColor.telaRed)
         dateTimeTextField.keyboardAppearance = .default
-        datePicker.datePickerMode = UIDatePicker.Mode.dateAndTime
-        datePicker.setValue(UIColor.white, forKey: "textColor")
-        datePicker.backgroundColor = UIColor.clear
         
         
         let toolbar = UIToolbar();
@@ -192,6 +210,17 @@ extension ScheduleNewMessageViewController {
         dateTimeTextField.inputAccessoryView = toolbar
         dateTimeTextField.inputView = datePicker
         dateTimeTextField.inputView?.backgroundColor = UIColor.telaGray4
+    }
+    func configureDateTimePicker() {
+        setupDatePickerRange()
+        setupDefaultDate()
+        
+        datePicker.datePickerMode = UIDatePicker.Mode.dateAndTime
+        datePicker.setValue(UIColor.white, forKey: "textColor")
+        datePicker.backgroundColor = UIColor.clear
+//        if #available(iOS 13.4, *) {
+//            datePicker.preferredDatePickerStyle = .wheels
+//        }
         datePicker.addTarget(self, action: #selector(datePickerValueChanged(sender:)), for: .valueChanged)
     }
     @objc func datePickerDidTapDone(){
@@ -233,6 +262,7 @@ extension ScheduleNewMessageViewController {
     @objc
     private func validateDatePicker() {
         dateTimeTextField.rightView?.isHidden = isDatePickerDateValid
+        invalidDateImageView.isHidden = isDatePickerDateValid
     }
     
     
@@ -256,7 +286,7 @@ extension ScheduleNewMessageViewController {
         if let placeholderText = placeholder {
             textField.attributedPlaceholder = NSAttributedString(string: placeholderText, attributes: [.foregroundColor: UIColor.telaGray5])
         }
-        textField.textColor = UIColor.telaGray7
+        textField.textColor = UIColor.white
         textField.textAlignment = .left
         textField.keyboardAppearance = .dark
         textField.borderStyle = .none
@@ -272,13 +302,13 @@ extension ScheduleNewMessageViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = labelTitle
-        label.textColor = UIColor.telaWhite
+        label.textColor = UIColor.telaGray7
         label.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 13.0)
         label.textAlignment = .left
         label.numberOfLines = 1
         
         let expectedTextSize = ("Customer" as NSString).size(withAttributes: [.font: label.font!])
-        let width = expectedTextSize.width + 10
+        let width = expectedTextSize.width + 8
         
         let separator = Line()
         
@@ -290,6 +320,34 @@ extension ScheduleNewMessageViewController {
         label.centerYAnchor.constraint(equalTo: textField.centerYAnchor).activate()
         textField.anchor(top: container.topAnchor, left: label.rightAnchor, bottom: separator.topAnchor, right: container.rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
         separator.anchor(top: nil, left: textField.leftAnchor, bottom: container.bottomAnchor, right: textField.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 1)
+        return container
+    }
+    func createDatePickerContainerView(labelTitle:String) -> UIView {
+        let container = UIView(frame: CGRect.zero)
+        container.translatesAutoresizingMaskIntoConstraints = false
+        container.backgroundColor = UIColor.telaGray4.withAlphaComponent(0.5)
+        
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = labelTitle
+        label.textColor = UIColor.telaGray7
+        label.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 13.0)
+        label.textAlignment = .left
+        label.numberOfLines = 1
+        
+        let expectedTextSize = ("Customer" as NSString).size(withAttributes: [.font: label.font!])
+        let width = expectedTextSize.width + 8
+        
+        let separator = Line()
+        
+        container.addSubview(label)
+        container.addSubview(datePicker)
+        container.addSubview(separator)
+        
+        label.anchor(top: nil, left: container.leftAnchor, bottom: nil, right: nil, topConstant: 0, leftConstant: 20, bottomConstant: 0, rightConstant: 0, widthConstant: width, heightConstant: 0)
+        label.centerYAnchor.constraint(equalTo: datePicker.centerYAnchor).activate()
+        datePicker.anchor(top: container.topAnchor, left: label.rightAnchor, bottom: separator.topAnchor, right: container.rightAnchor, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 20, widthConstant: 0, heightConstant: 0)
+        separator.anchor(top: nil, left: datePicker.leftAnchor, bottom: container.bottomAnchor, right: datePicker.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 1)
         return container
     }
     static func createHeaderView(title:String) -> UIView {

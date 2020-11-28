@@ -136,7 +136,8 @@ public enum CustomDateFormat: String {
     case dateWithTime = "yyyy-MM-dd HH:mm:ss"
     case dateWithTimeType1 = "dd/MM/yyyy hh:mm:ss"
     case dateTimeType2 = "MMMM d, h:mm a"
-    case ddMMyyyy·hmma = "dd/MM/yyyy, h:mm a"
+//    case ddMMyyyy·hmma = "dd/MM/yyyy, h:mm a"
+    case MMddyyyy·hmma = "MM/dd/yyyy, h:mm a"
 //    case telaDateTim = CustomDateFormat.telaDateTime()
     /// Date
     case chatHeaderDate = "EEEE, MMM d, yyyy"

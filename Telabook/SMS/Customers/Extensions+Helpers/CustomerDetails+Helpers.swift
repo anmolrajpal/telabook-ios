@@ -28,17 +28,19 @@ extension CustomerDetailsController {
     }
     func setupCustomerDetails() {
         let phoneNumber = conversation.phoneNumber ?? ""
-        let number:String
+        let number:String = phoneNumber.getE164FormattedNumber(shouldPrefixCountryCode: false) ?? phoneNumber
+        /*
         if let formattedPhoneNumber = phoneNumber.getE164FormattedNumber() {
             number = formattedPhoneNumber
         } else {
             number = phoneNumber
         }
-        self.phoneNumberLabel.text = number
+        */
+        phoneNumberLabel.text = number
         
-        self.agentOnlyNameTextField.text = conversation.customerDetails?.agentOnlyName
+        agentOnlyNameTextField.text = conversation.customerDetails?.agentOnlyName
         
-        self.globalNameTextField.text = conversation.customerDetails?.globalName
+        globalNameTextField.text = conversation.customerDetails?.globalName
         
         /*
 //        let context = PersistentContainer.shared.viewContext

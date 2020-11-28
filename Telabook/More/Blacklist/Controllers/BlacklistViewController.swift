@@ -19,17 +19,20 @@ class BlacklistViewController: UIViewController {
     internal var fetchedResultsController: NSFetchedResultsController<BlockedUser>!
     
     
-    var diffableDataSource: BlacklistDataSource?
-    var snapshot: NSDiffableDataSourceSnapshot<Section, BlockedUser>!
+    var dataSource: DataSource! = nil
     
     internal var currentSearchText = ""
     
-    
+    var isDownloading = false
     var viewContext:NSManagedObjectContext!
     
-    internal var isFetchedResultsAvailable:Bool {
-        return fetchedResultsController.sections?.first?.numberOfObjects == 0 ? false : true
+    var isFetchedResultsAvailable:Bool {
+        return !blacklist.isEmpty
     }
+    var blacklist:[BlockedUser] {
+        fetchedResultsController.fetchedObjects ?? []
+    }
+    
     let searchController = UISearchController(searchResultsController: nil)
     var isSearchBarEmpty: Bool {
         return searchController.searchBar.text?.isEmpty ?? true

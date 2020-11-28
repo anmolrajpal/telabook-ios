@@ -38,6 +38,7 @@ class AgentsViewController: UITableViewController {
     let searchController = UISearchController(searchResultsController: nil)
     var currentSearchText = ""
     
+    var isDownloading = false
     
     var messageNotificationPayload: MessagePayloadJSON? {
         didSet {

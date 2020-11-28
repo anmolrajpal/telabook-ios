@@ -24,13 +24,14 @@ class BlacklistCell: UITableViewCell {
         guard let details = blockedUser else { return }
         let phoneNumber = details.phoneNumber ?? ""
         
-        let number:String
-        
+        let number:String = phoneNumber.getE164FormattedNumber(shouldPrefixCountryCode: false) ?? phoneNumber
+        /*
         if let formattedPhoneNumber = phoneNumber.getE164FormattedNumber() {
             number = formattedPhoneNumber
         } else {
             number = phoneNumber
         }
+        */
         let date = details.updatedAt != nil ? Date.getStringFromDate(date: details.updatedAt!, dateFormat: "MMMM d, yyyy | h:mm a") : ""
         cellView.parameters = BlacklistCellView.Parameters(phoneNumber: number,
                                                            date: date)

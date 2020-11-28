@@ -24,12 +24,14 @@ class BlacklistedDetailsViewController: UIViewController {
         self.blockedUser = selectedBlockedUser
         super.init(nibName: nil, bundle: nil)
         let phoneNumber = blockedUser.phoneNumber ?? ""
-        let number:String
+        let number:String = phoneNumber.getE164FormattedNumber(shouldPrefixCountryCode: false) ?? phoneNumber
+        /*
         if let formattedPhoneNumber = phoneNumber.getE164FormattedNumber() {
             number = formattedPhoneNumber
         } else {
             number = phoneNumber
         }
+        */
         let parameters = BlacklistedDetailsView.Parameters(phoneNumber: number,
                                                            blockingReason: blockedUser.blockingReason ?? "",
                                                            blocker: blockedUser.blockedBy ?? "",

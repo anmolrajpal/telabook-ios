@@ -205,11 +205,14 @@
         <attribute name="companyID" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="customerName" optional="YES" attributeType="String"/>
+        <attribute name="customerPhoneNumber" optional="YES" attributeType="String"/>
         <attribute name="deliveryTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="statusValue" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="textMessage" optional="YES" attributeType="String"/>
+        <attribute name="workerID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="workerName" optional="YES" attributeType="String"/>
+        <attribute name="workerPhoneNumber" optional="YES" attributeType="String"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="id"/>
@@ -268,7 +271,7 @@
         <element name="Customer" positionX="-939.34375" positionY="152.140625" width="128" height="583"/>
         <element name="CustomerDetails" positionX="-924.04296875" positionY="815.85546875" width="128" height="179"/>
         <element name="QuickResponse" positionX="-1465.515625" positionY="706.03515625" width="128" height="178"/>
-        <element name="ScheduledMessage" positionX="-1102.84765625" positionY="102.38671875" width="128" height="163"/>
+        <element name="ScheduledMessage" positionX="-1102.84765625" positionY="102.38671875" width="128" height="208"/>
         <element name="UserMessage" positionX="-525.5546875" positionY="217.13671875" width="128" height="568"/>
     </elements>
 </model>

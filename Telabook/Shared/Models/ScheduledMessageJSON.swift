@@ -20,15 +20,18 @@ import CoreData
      "data": {
          "schedule_messages": [
              {
-                 "id": 226,
-                 "worker": "Esther Luna (+17162411222)",
-                 "customer": "(+17866344866)",
-                 "text": "This Message should be delivered on 27/06/2020 - 12:22 AM IST",
-                 "status": 1,
-                 "wait_time": "2020-06-26 12:52:00",
-                 "wait_timestamp": 1593197520,
-                 "company_id": 13,
-                 "created_at": "2020-06-26T18:51:30.000000Z"
+               "id" : 6730,
+               "workerId" : 95,
+               "wait_time" : "2020-01-27 09:02:55",
+               "customer" : "Rama Joseph Pierre",
+               "worker_phone" : "+15032288760",
+               "worker" : "Chanel Haynes",
+               "company_id" : 1,
+               "wait_timestamp" : 1580137375,
+               "created_at" : "2020-01-27T15:02:25.000000Z",
+               "text" : "you want to see me. My rates are $500 an hour.",
+               "customer_phone" : "+14073946615",
+               "status" : 1
              },
          ],
          "schedule_messages_pages": 1
@@ -68,15 +71,18 @@ struct ScheduledMessageJSON:Decodable {
     }
 }
 struct ScheduledMessageProperties: Decodable {
-    let companyId:Int?      // 13
-    let createdAt:Date?     // `"2020-06-26T18:51:30.000000Z"` decoded to `2020-06-26 18:51:30 +0000`
-    let customer:String?    // "(+17866344866)"
-    let id:Int?             // 226
-    let status:Int?         // 1
-    let text:String?        // "This Message should be delivered on 27/06/2020 - 12:22 AM IST"
-    let waitTime:Date?      // `"2020-06-26 12:52:00"` decoded to `2020-06-26 07:22:00 +0000` Note: - This seems to be wrong. Use `waitTimestamp` property instead
-    let waitTimestamp:Date? // `1593197520` decoded to `2020-06-26 18:52:00 +0000`
-    let worker:String?      // "Esther Luna (+17162411222)"
+    let companyId:Int?          // 13
+    let createdAt:Date?         // `"2020-06-26T18:51:30.000000Z"` decoded to `2020-06-26 18:51:30 +0000`
+    let customer:String?        // "Rama Joseph Pierre"
+    let customerPhone:String?   // "+14073946615"
+    let id:Int?                 // 226
+    let status:Int?             // 1
+    let text:String?            // "This Message should be delivered on 27/06/2020 - 12:22 AM IST"
+    let waitTime:Date?          // `"2020-06-26 12:52:00"` decoded to `2020-06-26 07:22:00 +0000` Note: - This seems to be wrong. Use `waitTimestamp` property instead
+    let waitTimestamp:Date?     // `1593197520` decoded to `2020-06-26 18:52:00 +0000`
+    let worker:String?          // "Esther Luna"
+    let workerId:Int?           // 95
+    let workerPhone:String?     // "+15032288760"
 }
 
 
@@ -104,8 +110,11 @@ extension ScheduledMessage {
         self.init(context: context)
         self.id = Int64(entry.id ?? 0)
         self.textMessage = entry.text
+        self.workerID = Int64(entry.workerId ?? 0)
         self.workerName = entry.worker
+        self.workerPhoneNumber = entry.workerPhone
         self.customerName = entry.customer
+        self.customerPhoneNumber = entry.customerPhone
         self.companyID = Int64(entry.companyId ?? 0)
         self.statusValue = Int64(entry.status ?? 0)
         self.deliveryTime = entry.waitTimestamp

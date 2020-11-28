@@ -97,6 +97,9 @@ extension AgentsViewController {
                     operation.completionBlock = {
                         if case let .failure(error) = operation.result {
                             printAndLog(message: error.localizedDescription, log: .coredata, logType: .error)
+                            self.isDownloading = false
+                            self.stopRefreshers()
+                            self.handleState()
                         } else {
                             
                         }
@@ -105,11 +108,17 @@ extension AgentsViewController {
                     operation.completionBlock = {
                         guard case let .failure(error) = operation.result else { return }
                         printAndLog(message: error.localizedDescription, log: .coredata, logType: .error)
+                        self.isDownloading = false
+                        self.stopRefreshers()
+                        self.handleState()
                         self.showAlert(withErrorMessage: error.publicDescription, cancellingOperationQueue: queue)
                 }
                 case let operation as DeleteRedundantAgentEntriesOperation:
                     operation.completionBlock = {
                         if let error = operation.error {
+                            self.isDownloading = false
+                            self.stopRefreshers()
+                            self.handleState()
                             printAndLog(message: error.localizedDescription, log: .coredata, logType: .error)
                         }
                 }
@@ -124,11 +133,17 @@ extension AgentsViewController {
                 */
                 case let operation as UpsertAgentEntriesInStoreOperation:
                     operation.completionBlock = {
+                        
                         if let error = operation.error {
+                            self.isDownloading = false
+                            self.stopRefreshers()
+                            self.handleState()
                             printAndLog(message: error.localizedDescription, log: .coredata, logType: .error)
                         } else {
                             DispatchQueue.main.async {
+                                self.isDownloading = false
                                 self.stopRefreshers()
+                                self.handleState()
                                 self.handleMessagePayload()
                             }
                         }

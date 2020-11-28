@@ -363,8 +363,12 @@ extension UIViewController {
     
     func configureNavigationBarAppearance() {
         let backButtonImage = #imageLiteral(resourceName: "back_arrow").withRenderingMode(.alwaysOriginal)
-        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-        
+//        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        if #available(iOS 14.0, *) {
+            navigationItem.backButtonDisplayMode = .minimal
+        } else {
+            navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        }
         if let navigationBar = navigationController?.navigationBar {
             
             let transparentAppearance = UINavigationBarAppearance()

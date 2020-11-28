@@ -22,9 +22,9 @@ extension BlacklistViewController {
     
     /// Manages the UI state based on the fetched results available
     internal func handleState() {
-        if self.fetchedResultsController.sections?.first?.numberOfObjects == 0 {
+        if !isFetchedResultsAvailable {
             DispatchQueue.main.async {
-                self.subview.placeholderLabel.text = self.isFiltering ? "No Blocked User" : "Loading..."
+                self.subview.placeholderLabel.text = "No Blocked User"
                 self.subview.placeholderLabel.isHidden = false
             }
         } else {
@@ -34,8 +34,10 @@ extension BlacklistViewController {
         }
     }
     internal func stopRefreshers() {
-        self.subview.spinner.stopAnimating()
-        self.subview.tableView.refreshControl?.endRefreshing()
+        DispatchQueue.main.async {
+            self.subview.spinner.stopAnimating()
+            self.subview.tableView.refreshControl?.endRefreshing()
+        }
     }
     internal func setupTargetActions() {
         subview.refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
@@ -61,6 +63,8 @@ extension BlacklistViewController {
         }
     }
     internal func initiateFetchBlacklistSequence(withRefreshMode refreshMode: RefreshMode) {
+        isDownloading = true
+        subview.placeholderLabel.text = "Loading..."
         if refreshMode == .spinner {
             DispatchQueue.main.async {
                 self.subview.spinner.startAnimating()
