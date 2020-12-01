@@ -38,7 +38,7 @@ let isVOIPEnabled = true
 ## Requirements
 
 - iOS 13.0+ 
-- Xcode 11+
+- Xcode 12
 
 ## Installation
 
