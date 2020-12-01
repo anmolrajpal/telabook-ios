@@ -13,7 +13,7 @@ An application to communicate with clients via SMS and receive calls
 <img src="Public/Screenshots/ScreenShot3.PNG", width=225, height=401>
 <img src="Public/Screenshots/ScreenShot4.PNG", width=225, height=401>
 <img src="Public/Screenshots/ScreenShot5.PNG", width=225, height=401>
-<img src="Public/Screenshots/ScreenShot5.PNG", width=225, height=401>
+<img src="Public/Screenshots/ScreenShot6.PNG", width=225, height=401>
 </p>
 
 
