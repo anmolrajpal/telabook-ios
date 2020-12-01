@@ -32,7 +32,8 @@ extension CustomersViewController {
     
     // MARK: - Common init
     internal func commonInit() {
-        title = agent.personName ?? agent.didNumber ?? "Conversations"
+        let agentDIDNumber = agent.didNumber
+        title = agent.personName ?? agentDIDNumber?.getE164FormattedNumber(shouldPrefixCountryCode: false) ?? agentDIDNumber ?? "Conversations"
         view.backgroundColor = .telaGray1
         configureNavigationBarAppearance()
         configureHierarchy()
@@ -98,7 +99,8 @@ extension CustomersViewController {
     func updateNavigationBarItems() {
         let count = selectedConversationsToForwardMessage.count
         let isEnabled = count > 0
-        title = isEnabled ? "\(count) Selected" : agent.personName ?? agent.didNumber ?? "Conversations"
+        let agentDIDNumber = agent.didNumber
+        title = isEnabled ? "\(count) Selected" : agent.personName ?? agentDIDNumber?.getE164FormattedNumber(shouldPrefixCountryCode: false) ?? agentDIDNumber ?? "Conversations"
         sendButton.isEnabled = isEnabled
     }
     

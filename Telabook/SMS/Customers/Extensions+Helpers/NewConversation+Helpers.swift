@@ -29,6 +29,7 @@ extension NewConversationController {
             subview.numberTextField.shake(withFeedbackTypeOf: .Heavy)
             return
         }
+        TapticEngine.generateFeedback(ofType: .Medium)
         let phoneNumber = "+1\(purePhoneNumber)"
         self.startNewConversation(with: phoneNumber)
     }

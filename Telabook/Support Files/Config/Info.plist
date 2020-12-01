@@ -105,5 +105,7 @@
 	<true/>
 	<key>URL_SCHEME</key>
 	<string>$(URL_SCHEME)</string>
+	<key>APP_GROUP_ID</key>
+	<string>$(APP_GROUP_ID)</string>
 </dict>
 </plist>

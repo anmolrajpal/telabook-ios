@@ -20,7 +20,9 @@ struct Config {
     
     static let teamID:String = "J9GL83RFA4"
     
-    static let appGroupID = "group.com.telabook.app"
+    static var appGroupID:String {
+        return try! Configuration.value(for: .appGroupID)
+    }
     
     struct APIConfig {
         static var baseURL:String {

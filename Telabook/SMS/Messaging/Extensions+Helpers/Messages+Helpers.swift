@@ -27,7 +27,7 @@ extension MessagesController: NormalDialerDelegate {
 
 extension MessagesController {
     internal func commonInit() {
-        title = customer.addressBookName?.isEmpty ?? true ? customer.phoneNumber : customer.addressBookName
+        title = customer.addressBookName?.isEmpty ?? true ? customer.phoneNumber?.getE164FormattedNumber(shouldPrefixCountryCode: false) ?? customer.phoneNumber : customer.addressBookName
         configureNavigationBarAppearance()
 //        configureNavigationBarItems()
         configureHierarchy()
@@ -93,8 +93,8 @@ extension MessagesController {
                 fatalError()
         }
         
-        let formattedCurrentUserPhoneNumber = currentUserPhoneNumber.getE164FormattedNumber() ?? currentUserPhoneNumber
-        let formattedWorkerPhoneNumber = workerPhoneNumber.getE164FormattedNumber() ?? workerPhoneNumber
+        let formattedCurrentUserPhoneNumber = currentUserPhoneNumber.getE164FormattedNumber(shouldPrefixCountryCode: false) ?? currentUserPhoneNumber
+        let formattedWorkerPhoneNumber = workerPhoneNumber.getE164FormattedNumber(shouldPrefixCountryCode: false) ?? workerPhoneNumber
         
         
         // MARK: - Call Me Action

@@ -11,7 +11,7 @@ import Combine
 
 
 struct AppData {
-    static let userDefaults = UserDefaults(suiteName: "group.com.telabook.app")! // App Group ID
+    static let userDefaults = UserDefaults(suiteName: Config.appGroupID)! // App Group ID
     
     @UserDefaultsWrapper(key: .isLoggedIn, defaultValue: false)
     static var isLoggedIn:Bool

@@ -14,9 +14,12 @@ import PushKit
 import linphonesw
 import CallKit
 
+
+
 var linphoneCore: Core {
     return LinphoneManager.getLc()
 }
+
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

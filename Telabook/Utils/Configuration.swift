@@ -19,6 +19,7 @@ enum Configuration {
         case timoutInterval = "TIMEOUT_INTERVAL"
         case bundleID = "CFBundleIdentifier"
         case bundleDisplayName = "CFBundleDisplayName"
+        case appGroupID = "APP_GROUP_ID"
     }
     static func value<T>(for key: String) throws -> T where T: LosslessStringConvertible {
         guard let object = Bundle.main.object(forInfoDictionaryKey:key) else {

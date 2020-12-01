@@ -11,7 +11,7 @@ import CryptoKit
 
 @propertyWrapper
 struct UserDefaultsWrapper<T: Codable> {
-    private let userDefaults = UserDefaults(suiteName: "group.com.telabook.app")! // App Group ID
+    private let userDefaults = UserDefaults(suiteName: Config.appGroupID)! // App Group ID
     private let key: AppDataKey
     private let defaultValue: T
     
@@ -46,7 +46,7 @@ struct UserDefaultsWrapper<T: Codable> {
 
 @propertyWrapper
 struct UserDefaultsEncryptionWrapper {
-    private let userDefaults = UserDefaults(suiteName: "group.com.telabook.app")! // App Group ID
+    private let userDefaults = UserDefaults(suiteName: Config.appGroupID)! // App Group ID
     private let key: AppDataKey
     init(key: AppDataKey) {
         self.key = key
