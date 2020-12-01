@@ -21,10 +21,12 @@ class SettingsViewController: UIViewController {
 //            } else {
 //                fatalError("Fail to unwrap user details")
 //            }
+            /*
             if let did = profile.did {
 //                let arr = dids.map { $0.number }.compactMap { $0 }
                 assignedDIDs = did.number
             }
+             */
 //            if let dids = profile.user?.did {
 //                let arr = dids.map { $0.number }.compactMap { $0 }
 //                #if !RELEASE
@@ -71,6 +73,7 @@ class SettingsViewController: UIViewController {
             }
         }
     }
+    /*
     internal var assignedDIDs:String? {
         didSet {
             if let text = assignedDIDs {
@@ -78,10 +81,11 @@ class SettingsViewController: UIViewController {
             }
         }
     }
+    */
     internal var phoneNumber:String? {
         didSet {
             if let text = phoneNumber {
-                self.phoneNumberTextField.text = text
+                self.phoneNumberTextField.text = text.getE164FormattedNumber(shouldPrefixCountryCode: false) ?? text
             }
         }
     }
@@ -181,7 +185,7 @@ class SettingsViewController: UIViewController {
         lastName = last_name
         email = details.email
         phoneNumber = details.phone
-        contactEmail = details.contactEmail
+        contactEmail = details.contactEmail ?? ""
         address = details.address
     }
     
@@ -415,10 +419,12 @@ class SettingsViewController: UIViewController {
         emailTextField.isEnabled = false
         emailTextField.textColor = .telaGray6
         
+        /*
         assignDIDsTextField.keyboardType = .phonePad
         assignDIDsTextField.textContentType = .telephoneNumber
         assignDIDsTextField.isEnabled = false
         assignDIDsTextField.textColor = .telaGray6
+        */
         
         phoneNumberTextField.keyboardType = .phonePad
         phoneNumberTextField.textContentType = .telephoneNumber
@@ -426,13 +432,15 @@ class SettingsViewController: UIViewController {
         contactEmailTextField.keyboardType = .emailAddress
         contactEmailTextField.textContentType = .emailAddress
         
+        /*
         firstNameTextField.addTarget(self, action: #selector(didChangeTextField), for: .editingChanged)
         lastNameTextField.addTarget(self, action: #selector(didChangeTextField), for: .editingChanged)
         phoneNumberTextField.addTarget(self, action: #selector(didChangeTextField), for: .editingChanged)
         contactEmailTextField.addTarget(self, action: #selector(didChangeTextField), for: .editingChanged)
         addressTextField.addTarget(self, action: #selector(didChangeTextField), for: .editingChanged)
+        */
     }
-    
+    /*
     @objc fileprivate func didChangeTextField(textField:UITextField) {
         if let text = textField.text {
             if text.isEmpty {
@@ -442,18 +450,23 @@ class SettingsViewController: UIViewController {
             }
         } else { self.disableUpdateButton() }
     }
-    fileprivate func isDataValid() -> Bool {
+    */
+    func isDataValid() -> Bool {
         guard let first_name = self.firstNameTextField.text,
             let last_name = self.lastNameTextField.text,
-            let user_email = self.emailTextField.text,
             let phone_number = self.phoneNumberTextField.text,
             let backup_email = self.contactEmailTextField.text,
             let user_address = self.addressTextField.text,
-            !first_name.isEmpty, !last_name.isEmpty, !user_email.isEmpty, !phone_number.isEmpty, !backup_email.isEmpty, !user_address.isEmpty else {
+            !first_name.isBlank,
+            !last_name.isBlank,
+            phone_number.extractNumbers.isPhoneNumberLengthValid(),
+            backup_email.isValidEmailAddress(),
+            !user_address.isBlank else {
                 return false
             }
         return true
     }
+    /*
     fileprivate func validateFields() {
         if isDataValid() {
             enableUpdateButton()
@@ -461,6 +474,7 @@ class SettingsViewController: UIViewController {
             disableUpdateButton()
         }
     }
+    
     internal func enableUpdateButton() {
         updateButton.isEnabled = true
         UIView.animate(withDuration: 0.4) {
@@ -473,11 +487,12 @@ class SettingsViewController: UIViewController {
             self.updateButton.backgroundColor = UIColor.telaGray6
         }
     }
+ */
     fileprivate func setupTextFieldsDelegates() {
         firstNameTextField.delegate = self
         lastNameTextField.delegate = self
         emailTextField.delegate = self
-        assignDIDsTextField.delegate = self
+//        assignDIDsTextField.delegate = self
         phoneNumberTextField.delegate = self
         contactEmailTextField.delegate = self
         addressTextField.delegate = self
@@ -486,15 +501,36 @@ class SettingsViewController: UIViewController {
     lazy var firstNameTextField = createTextField(placeholder: "First Name")
     lazy var lastNameTextField = createTextField(placeholder: "Last Name")
     lazy var emailTextField = createTextField(placeholder: "Email")
-    lazy var assignDIDsTextField = createTextField(placeholder: "Assign DIDs")
-    lazy var phoneNumberTextField = createTextField(placeholder: "Phone Number")
+//    lazy var assignDIDsTextField = createTextField(placeholder: "Assign DIDs")
+//    lazy var phoneNumberTextField = createTextField(placeholder: "Phone Number")
+    lazy var phoneNumberTextField:UITextField = {
+        let textField = UITextField()
+        let font = UIFont.systemFont(ofSize: 14)
+        let spacing:Double = 1.5
+        textField.attributedPlaceholder = NSAttributedString(string: "(123) 456-7890", attributes: [
+            .font: font,
+            .foregroundColor: UIColor.telaGray7,
+            .kern: spacing
+        ])
+        textField.defaultTextAttributes = [
+            .font: font,
+            .kern: spacing,
+            .foregroundColor: UIColor.white
+        ]
+        textField.tintColor = .white
+        textField.setDefault(string: "+1", withFont: font, characterSpacing: spacing, at: .Left, withRightSpacing: 6)
+        textField.keyboardType = UIKeyboardType.numberPad
+        textField.keyboardAppearance = UIKeyboardAppearance.dark
+        textField.textContentType = UITextContentType.telephoneNumber
+        return textField
+    }()
     lazy var contactEmailTextField = createTextField(placeholder: "Contact Email")
     lazy var addressTextField = createTextField(placeholder: "Address")
     
     lazy var firstNameTextFieldContainerView = createTextFieldContainerView(labelTitle: "First Name", firstNameTextField)
     lazy var lastNameTextFieldContainerView = createTextFieldContainerView(labelTitle: "Last Name", lastNameTextField)
     lazy var emailTextFieldContainerView = createTextFieldContainerView(labelTitle: "Email", emailTextField)
-    lazy var assignDIDsTextFieldContainerView = createTextFieldContainerView(labelTitle: "Assign DIDs", assignDIDsTextField)
+//    lazy var assignDIDsTextFieldContainerView = createTextFieldContainerView(labelTitle: "Assign DIDs", assignDIDsTextField)
     lazy var phoneNumberTextFieldContainerView = createTextFieldContainerView(labelTitle: "Phone Number", phoneNumberTextField)
     lazy var contactEmailTextFieldContainerView = createTextFieldContainerView(labelTitle: "Contact Email", contactEmailTextField)
     lazy var addressTextFieldContainerView = createTextFieldContainerView(labelTitle: "Address", addressTextField)
@@ -506,7 +542,7 @@ class SettingsViewController: UIViewController {
         scrollView.addSubview(firstNameTextFieldContainerView)
         scrollView.addSubview(lastNameTextFieldContainerView)
         scrollView.addSubview(emailTextFieldContainerView)
-        scrollView.addSubview(assignDIDsTextFieldContainerView)
+//        scrollView.addSubview(assignDIDsTextFieldContainerView)
         scrollView.addSubview(phoneNumberTextFieldContainerView)
         scrollView.addSubview(contactEmailTextFieldContainerView)
         scrollView.addSubview(addressTextFieldContainerView)
@@ -517,8 +553,8 @@ class SettingsViewController: UIViewController {
         firstNameTextFieldContainerView.anchor(top: profileHeaderView.bottomAnchor, left: scrollView.leftAnchor, bottom: nil, right: scrollView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: width, heightConstant: height)
         lastNameTextFieldContainerView.anchor(top: firstNameTextFieldContainerView.bottomAnchor, left: scrollView.leftAnchor, bottom: nil, right: scrollView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: width, heightConstant: height)
         emailTextFieldContainerView.anchor(top: lastNameTextFieldContainerView.bottomAnchor, left: scrollView.leftAnchor, bottom: nil, right: scrollView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: width, heightConstant: height)
-        assignDIDsTextFieldContainerView.anchor(top: emailTextFieldContainerView.bottomAnchor, left: scrollView.leftAnchor, bottom: nil, right: scrollView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: width, heightConstant: height)
-        phoneNumberTextFieldContainerView.anchor(top: assignDIDsTextFieldContainerView.bottomAnchor, left: scrollView.leftAnchor, bottom: nil, right: scrollView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: width, heightConstant: height)
+//        assignDIDsTextFieldContainerView.anchor(top: emailTextFieldContainerView.bottomAnchor, left: scrollView.leftAnchor, bottom: nil, right: scrollView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: width, heightConstant: height)
+        phoneNumberTextFieldContainerView.anchor(top: emailTextFieldContainerView.bottomAnchor, left: scrollView.leftAnchor, bottom: nil, right: scrollView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: width, heightConstant: height)
         contactEmailTextFieldContainerView.anchor(top: phoneNumberTextFieldContainerView.bottomAnchor, left: scrollView.leftAnchor, bottom: nil, right: scrollView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: width, heightConstant: height)
         addressTextFieldContainerView.anchor(top: contactEmailTextFieldContainerView.bottomAnchor, left: scrollView.leftAnchor, bottom: nil, right: scrollView.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: width, heightConstant: height)
     }
@@ -530,14 +566,39 @@ class SettingsViewController: UIViewController {
         button.setTitleColor(.telaGray5, for: UIControl.State.normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 60, bottom: 8, right: 60)
-        button.isEnabled = false
         button.layer.cornerRadius = 7
-        button.backgroundColor = UIColor.telaGray6
+        button.backgroundColor = UIColor.telaBlue
         button.clipsToBounds = true
         button.addTarget(self, action: #selector(updateButtonTapped), for: .touchUpInside)
         return button
     }()
     @objc fileprivate func updateButtonTapped() {
+        guard let first_name = self.firstNameTextField.text,
+              !first_name.isBlank else {
+            firstNameTextField.shake(withFeedbackTypeOf: .Heavy)
+            return
+        }
+        guard let last_name = self.lastNameTextField.text,
+              !last_name.isBlank else {
+            lastNameTextField.shake(withFeedbackTypeOf: .Heavy)
+            return
+        }
+        guard let phone_number = self.phoneNumberTextField.text,
+              phone_number.extractNumbers.isPhoneNumberLengthValid() else {
+            phoneNumberTextField.shake(withFeedbackTypeOf: .Heavy)
+            return
+        }
+        guard let contact_email = self.contactEmailTextField.text,
+              contact_email.isValidEmailAddress() else {
+            contactEmailTextField.shake(withFeedbackTypeOf: .Heavy)
+            return
+        }
+        guard let user_address = self.addressTextField.text,
+              !user_address.isBlank else {
+            addressTextField.shake(withFeedbackTypeOf: .Heavy)
+            return
+        }
+        
         TapticEngine.generateFeedback(ofType: .Medium)
         self.updateUserProfile()
 //        initiateUpdateUserProfileSequence()
@@ -545,11 +606,12 @@ class SettingsViewController: UIViewController {
     func createTextField(placeholder:String? = nil) -> UITextField {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 16)
+        textField.font = UIFont.systemFont(ofSize: 14)
         if let placeholderText = placeholder {
-            textField.attributedPlaceholder = NSAttributedString(string: placeholderText, attributes: [.foregroundColor: UIColor.telaGray5])
+            textField.attributedPlaceholder = NSAttributedString(string: placeholderText, attributes: [.foregroundColor: UIColor.telaGray7])
         }
-        textField.textColor = UIColor.secondaryLabel
+        textField.textColor = UIColor.white
+        textField.tintColor = .white
         textField.textAlignment = .left
         textField.keyboardAppearance = .dark
         textField.borderStyle = .none
@@ -565,13 +627,13 @@ class SettingsViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = labelTitle
-        label.textColor = UIColor.telaWhite
-        label.font = UIFont(name: CustomFonts.gothamBook.rawValue, size: 13.0)
+        label.textColor = UIColor.secondaryLabel
+        label.font = UIFont.systemFont(ofSize: 11)
         label.textAlignment = .left
         label.numberOfLines = 1
         
         let expectedTextSize = ("Phone Number" as NSString).size(withAttributes: [.font: label.font!])
-        let width = expectedTextSize.width + 10
+        let width = expectedTextSize.width + 5
     
         let separator = Line()
         
@@ -639,6 +701,12 @@ extension SettingsViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        guard textField == phoneNumberTextField, let text = textField.text else { return true }
+        let newString = (text as NSString).replacingCharacters(in: range, with: string)
+        textField.text = newString.replacingOccurrences(of: "+1", with: "").extractNumbers.formatNumber()
+        return false
     }
 }
 

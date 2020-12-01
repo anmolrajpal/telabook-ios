@@ -28,14 +28,20 @@ extension SettingsViewController {
             let phone_number = self.phoneNumberTextField.text,
             let backup_email = self.contactEmailTextField.text,
             let user_address = self.addressTextField.text,
-            !first_name.isBlank, !last_name.isBlank, !user_email.isBlank, !phone_number.isBlank, !backup_email.isBlank, !user_address.isBlank else {
+            !first_name.isBlank,
+            !last_name.isBlank,
+            phone_number.extractNumbers.isPhoneNumberLengthValid(),
+            backup_email.isValidEmailAddress(),
+            !user_address.isBlank else {
                 DispatchQueue.main.async {
                     self.updateButton.isHidden = false
                     self.spinner.stopAnimating()
+                    TapticEngine.generateFeedback(ofType: .Error)
                     UIAlertController.showTelaAlert(title: "Error", message: "Missing Data", controller: self)
                 }
                 return
         }
+        let purePhoneNumber = "+1\(phone_number.extractNumbers)"
         let profile_image = self.profileImage ?? ""
         let profile_image_url = self.profileImageUrl ?? ""
         
@@ -44,7 +50,7 @@ extension SettingsViewController {
                                                             email: user_email,
                                                             firstName: first_name,
                                                             lastName: last_name,
-                                                            phoneNumber: phone_number,
+                                                            phoneNumber: purePhoneNumber,
                                                             profileImage: profile_image,
                                                             profileImageUrl: profile_image_url)
         
@@ -89,7 +95,6 @@ extension SettingsViewController {
             self.updateButton.isHidden = false
             self.spinner.stopAnimating()
             self.fetchUserProfile()
-            self.disableUpdateButton()
             TapticEngine.generateFeedback(ofType: .Success)
             AssertionModalController(title: "Updated").show()
         }

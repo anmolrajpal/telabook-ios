@@ -61,7 +61,7 @@ extension MessagesController {
                 self.navigationItem.rightBarButtonItems = [self.phoneBarButtonItem]
             }
             if let workerPhoneNumber = customer.agent?.didNumber,
-               let currentUserPhoneNumber = AppData.userInfo?.did?.number,
+               let currentUserPhoneNumber = AppData.userInfo?.phone,
                 !workerPhoneNumber.isBlank,
                 !currentUserPhoneNumber.isBlank {
                 self.phoneBarButtonItem.isEnabled = true
@@ -86,7 +86,7 @@ extension MessagesController {
         var menuItems = [UIControlMenuAction]()
         
         guard let workerPhoneNumber = customer.agent?.didNumber,
-              let currentUserPhoneNumber = AppData.userInfo?.did?.number,
+              let currentUserPhoneNumber = AppData.userInfo?.phone,
             !workerPhoneNumber.isBlank,
             !currentUserPhoneNumber.isBlank else {
                 printAndLog(message: "Invalid parameters", log: .ui, logType: .error)
