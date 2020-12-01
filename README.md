@@ -8,11 +8,12 @@ An application to communicate with clients via SMS and receive calls
 
 
 <p align="center">
-<img src="Public/Screenshots/ScreenShot1.PNG", width=248, height=441>
-<img src="Public/Screenshots/ScreenShot2.PNG", width=248, height=441>
-<img src="Public/Screenshots/ScreenShot3.PNG", width=248, height=441>
-<img src="Public/Screenshots/ScreenShot4.PNG", width=248, height=441>
-<img src="Public/Screenshots/ScreenShot5.PNG", width=248, height=441>
+<img src="Public/Screenshots/ScreenShot1.PNG", width=225, height=401>
+<img src="Public/Screenshots/ScreenShot2.PNG", width=225, height=401>
+<img src="Public/Screenshots/ScreenShot3.PNG", width=225, height=401>
+<img src="Public/Screenshots/ScreenShot4.PNG", width=225, height=401>
+<img src="Public/Screenshots/ScreenShot5.PNG", width=225, height=401>
+<img src="Public/Screenshots/ScreenShot5.PNG", width=225, height=401>
 </p>
 
 
