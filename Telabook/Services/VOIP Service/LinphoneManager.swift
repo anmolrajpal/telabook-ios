@@ -692,10 +692,11 @@ class LinphoneManager: NSObject {
 
         /*IOS specific*/
         theLinphoneCore?.startDtmfStream()
+        /*
         AVCaptureDevice.requestAccess(for: AVMediaType.video) { granted in
             
         }
-
+        */
         /*start the video preview in case we are in the main view*/
         if (theLinphoneCore?.videoDisplayEnabled ?? false) && ConfigManager.instance().lpConfigBoolForKey(key: "preview_preference") {
             theLinphoneCore?.videoPreviewEnabled = true
