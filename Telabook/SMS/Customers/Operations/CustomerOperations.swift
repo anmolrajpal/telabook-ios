@@ -124,7 +124,7 @@ class FetchSavedCustomersEntries_Operation: Operation {
 }
 
 
-
+/*
 /// Downloads Customers entries from the server.
 class DownloadCustomrersEntriesFromServer_Operation: Operation {
     var result: Result<[CustomerCodable.Datum.Conversation], APIService.APIError>?
@@ -194,7 +194,7 @@ class DownloadCustomrersEntriesFromServer_Operation: Operation {
 //        APIServer<CustomerCodable>(apiVersion: .v2).hitEndpoint(endpoint: .FetchCustomers, httpMethod: .POST, params: params, completion: finish)
     }
 }
-
+*/
 
 /// Deletes the redundant Customer entries from core data store.
 class DeleteRedundantCustomerEntries_Operation: Operation {

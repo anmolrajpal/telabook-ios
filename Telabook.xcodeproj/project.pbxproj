@@ -256,6 +256,7 @@
 		6FB11B41229F7A290098D050 /* ManageAgentsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B40229F7A290098D050 /* ManageAgentsCell.swift */; };
 		6FB11B4422A2A2E10098D050 /* Telabook.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B4222A2A2E10098D050 /* Telabook.xcdatamodeld */; };
 		6FB11B4622A2A5110098D050 /* PersistenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB11B4522A2A5110098D050 /* PersistenceService.swift */; };
+		6FB25D9125835D3A007644F7 /* APIServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB25D9025835D3A007644F7 /* APIServer.swift */; };
 		6FC6022C2464462400C1BF6D /* AgentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC6022B2464462400C1BF6D /* AgentsViewController.swift */; };
 		6FC6022E2464464D00C1BF6D /* AgentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC6022D2464464D00C1BF6D /* AgentsView.swift */; };
 		6FC60230246446F000C1BF6D /* Agents+CoreDataHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC6022F246446F000C1BF6D /* Agents+CoreDataHelpers.swift */; };
@@ -604,6 +605,7 @@
 		6FB11B4322A2A2E10098D050 /* Telabook.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Telabook.xcdatamodel; sourceTree = "<group>"; };
 		6FB11B4522A2A5110098D050 /* PersistenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceService.swift; sourceTree = "<group>"; };
 		6FB11B4722A462340098D050 /* Telabook.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Telabook.entitlements; sourceTree = "<group>"; };
+		6FB25D9025835D3A007644F7 /* APIServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIServer.swift; sourceTree = "<group>"; };
 		6FC6022B2464462400C1BF6D /* AgentsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentsViewController.swift; sourceTree = "<group>"; };
 		6FC6022D2464464D00C1BF6D /* AgentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentsView.swift; sourceTree = "<group>"; };
 		6FC6022F246446F000C1BF6D /* Agents+CoreDataHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Agents+CoreDataHelpers.swift"; sourceTree = "<group>"; };
@@ -1674,6 +1676,7 @@
 				6F987A4B2456C99100C6046E /* APIService+Errors.swift */,
 				6F987A492456C8FA00C6046E /* APIServiceMethods.swift */,
 				6F987A472456C8B900C6046E /* APIServiceProtocol.swift */,
+				6FB25D9025835D3A007644F7 /* APIServer.swift */,
 				6F987A81245CCA9000C6046E /* APIOperations.swift */,
 			);
 			path = "API Service";
@@ -2627,6 +2630,7 @@
 				6FC822FB24757E63002421F0 /* NewConversation+ServiceProvider.swift in Sources */,
 				6FF842162482EACD0069A789 /* QuickResponsePickerController.swift in Sources */,
 				6F37E24A2460A8E7003E9126 /* QuickResponsesView.swift in Sources */,
+				6FB25D9125835D3A007644F7 /* APIServer.swift in Sources */,
 				6F987A462454AB5D00C6046E /* LoginServiceProvider.swift in Sources */,
 				6FD89561245EDAD40083D79A /* AgentDetailsHelpers.swift in Sources */,
 				6F05C3372528B236001C7FD2 /* CallProviderDelegate.swift in Sources */,

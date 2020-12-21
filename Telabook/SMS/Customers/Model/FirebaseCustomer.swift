@@ -33,6 +33,7 @@ struct FirebaseCustomer {
     let lastMessageDateTime:Int
     let lastMessageKey:String?
     let lastMessageType:String
+    let lastReadTime:Int
     let node:String
     let priority:Int
     let senderID:Int
@@ -83,6 +84,7 @@ struct FirebaseCustomer {
         let internal_address_book_names = value["internal_address_book_names"] as? String
         let last_message_date = mapToInt(value: value["last_message_date"])
         let last_message_datetime = mapToInt(value: value["last_message_datetime"])
+        let last_read_time = mapToInt(value: value["last_read_time"])
         let last_message_key = value["last_message_key"] as? String
         let message_type = value["message_type"] as? String ?? MessageCategory.text.rawValue
         let node = value["node"] as? String
@@ -120,6 +122,7 @@ struct FirebaseCustomer {
         self.addressBookName = internal_address_book_names
         self.lastMessageDate = last_message_date
         self.lastMessageDateTime = last_message_datetime
+        self.lastReadTime = last_read_time
         self.lastMessageKey = last_message_key
         self.lastMessageType = message_type
         self.node = node ?? ""
@@ -174,6 +177,7 @@ struct FirebaseCustomer {
         let internal_address_book_names = value["internal_address_book_names"] as? String
         let last_message_date = mapToInt(value: value["last_message_date"])
         let last_message_datetime = mapToInt(value: value["last_message_datetime"])
+        let last_read_time = mapToInt(value: value["last_read_time"])
         let last_message_key = value["last_message_key"] as? String
         let message_type = value["message_type"] as? String ?? MessageCategory.text.rawValue
         let node = value["node"] as? String ?? explicitNode
@@ -211,6 +215,7 @@ struct FirebaseCustomer {
         self.addressBookName = internal_address_book_names
         self.lastMessageDate = last_message_date
         self.lastMessageDateTime = last_message_datetime
+        self.lastReadTime = last_read_time
         self.lastMessageKey = last_message_key
         self.lastMessageType = message_type
         self.node = node

@@ -48,6 +48,7 @@ extension AgentsViewController {
                 for child in snapshot.children {
                     if let snapshot = child as? DataSnapshot,
                         let value = snapshot.value as? [String: AnyObject] {
+                        print(snapshot)
                         let workerID = mapToInt(value: value["worker_id"])
                         if workerID == agent.workerID {
                             count += 1

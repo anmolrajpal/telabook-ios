@@ -114,7 +114,7 @@ struct CustomerCodable : Codable {
     }
 }
 */
-
+/*
 struct CustomerCodable : Codable {
     
     let data : Datum?
@@ -284,8 +284,8 @@ struct CustomerCodable : Codable {
         }
     }
 }
-
-
+*/
+/*
 // MARK: An extension to create Customer Object Core Data Entity from CustomerCodable Server Response Data
 extension Customer {
     convenience init(context: NSManagedObjectContext, customerEntryFromServer customerEntry: CustomerCodable.Datum.Conversation) {
@@ -323,6 +323,7 @@ extension Customer {
         self.lastRefreshedAt = Date()
     }
 }
+*/
 
 
 // MARK: An extension to create Customer Object Core Data Entity from Firebase External Conversation Response Data
@@ -357,6 +358,7 @@ extension Customer {
         self.addressBookName = entry.addressBookName
         self.lastMessageDate = entry.lastMessageDate != 0 ? Date.getDate(fromSecondsOrMilliseconds: entry.lastMessageDate) : nil
         self.lastMessageDateTime = entry.lastMessageDateTime != 0 ? Date.getDate(fromSecondsOrMilliseconds: entry.lastMessageDateTime) : nil
+        self.lastReadTime = entry.lastReadTime != 0 ? Date.getDate(fromSecondsOrMilliseconds: entry.lastReadTime) : nil
         self.lastMessageKey = entry.lastMessageKey
         self.messageType = entry.lastMessageType
         self.node = entry.node

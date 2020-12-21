@@ -360,6 +360,7 @@ extension MessagesController {
                 printAndLog(message: "### \(#function) - Successfully removed child from wasnotseen node to clear agent's pending messages count where conversationID: \(conversationID)", log: .firebase, logType: .info)
                 allConversationsReference.child(conversationID).child("unread_messages").setValue(0)
                 allConversationsReference.child(conversationID).child("updated_at").setValue(updatedAt.milliSecondsSince1970)
+                allConversationsReference.child(conversationID).child("last_read_time").setValue(updatedAt.milliSecondsSince1970)
             }
         }
     }
