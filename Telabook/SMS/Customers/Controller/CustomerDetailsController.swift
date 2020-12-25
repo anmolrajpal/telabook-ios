@@ -7,13 +7,18 @@
 //
 
 import UIKit
-
+import CoreData
+/*
+protocol CustomerDetailsDelegate: class {
+    func customerDetailsController(controller: CustomerDetailsController, didDismissAnimated animated: Bool)
+}
+*/
 class CustomerDetailsController: UIViewController {
     
     enum Segment:Int, CaseIterable { case Details, History ; var stringValue:String { String(describing: self).uppercased() } }
     
     // MARK: - Properties
-    
+//    weak var delegate: CustomerDetailsDelegate?
     var dataSource: DataSource! = nil
     var lookupConversations = [LookupConversationProperties]()
     var currentPageIndex = 0
@@ -26,6 +31,12 @@ class CustomerDetailsController: UIViewController {
         }
     }
     
+    var customerDetails: CustomerDetailsProperties? {
+        didSet {
+            guard let details = customerDetails else { return }
+            setupCustomerDetailsFromServerResults(details: details)
+        }
+    }
     
     // MARK: - Computed Properties
     
@@ -52,11 +63,15 @@ class CustomerDetailsController: UIViewController {
     let conversation: Customer
     let conversationID: Int
     let workerID: Int
+    let customerID: Int
+    let phoneNumber: String?
     
     init(conversation: Customer) {
         self.conversation = conversation
         self.conversationID = Int(conversation.externalConversationID)
+        self.customerID = Int(conversation.customerID)
         self.workerID = Int(conversation.agent?.workerID ?? 0)
+        self.phoneNumber = conversation.phoneNumber
         super.init(nibName: nil, bundle: nil)
     }
     required init?(coder: NSCoder) {
@@ -65,8 +80,29 @@ class CustomerDetailsController: UIViewController {
     deinit {
         print("\(self) : Deinitialized")
     }
-    
-    
+    /*
+    var conversation: Customer? {
+        return getConversationFromStore(conversationID: conversationID, agent: worker) 
+    }
+    */
+    func getConversationFromStore(conversationID: Int, agent: Agent) -> Customer? {
+        var conversation: Customer? = nil
+        let fetchRequest:NSFetchRequest = Customer.fetchRequest()
+        let predicate = NSPredicate(format: "\(#keyPath(Customer.agent)) == %@ AND \(#keyPath(Customer.externalConversationID)) = %d", agent, Int32(conversationID))
+        fetchRequest.predicate = predicate
+        fetchRequest.fetchLimit = 1
+        guard let context = agent.managedObjectContext else {
+            fatalError()
+        }
+        context.performAndWait {
+            do {
+                conversation = try fetchRequest.execute().first
+            } catch {
+                print("*** \(self) > ### \(#function) > Error fetching conversation from store for conversation id: \(conversationID). | Error: \(error.localizedDescription)")
+            }
+        }
+        return conversation
+    }
     // MARK: - Lifecycle
     
     override func viewDidLoad() {

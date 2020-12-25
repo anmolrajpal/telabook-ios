@@ -13,9 +13,9 @@ import CoreData
 extension CustomersViewController: StartNewConversationDelegate {
     func conversation(didStartNewConversationWithID id: Int, node:String) {
         if let conversation = customers.first(where: { $0.externalConversationID == id }),
-            let indexPath = self.fetchedResultsController.indexPath(forObject: conversation) {
+           let indexPath = self.fetchedResultsController.indexPath(forObject: conversation) {
             self.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .top)
-//            self.openChat(forSelectedCustomer: conversation, at: indexPath)
+            //            self.openChat(forSelectedCustomer: conversation, at: indexPath)
             self.showMessagesController(forConversation: conversation, animated: true)
         } else {
             print("Maybe conversation object isn't available yet in selected tab. Now searching in all conversations.")
@@ -23,6 +23,12 @@ extension CustomersViewController: StartNewConversationDelegate {
                 showMessagesController(forConversation: conversation, animated: true)
             } else {
                 // wait for firebase observers to upsert conversation in store and then user should select manually.
+                getFirebaseConversation(forConversationID: id) { (firebaseConversation) in
+                    guard let firebaseConversation = firebaseConversation else { return }
+                    if let conversation = self.persistFirebaseConversationInStore(entry: firebaseConversation) {
+                        self.showMessagesController(forConversation: conversation, animated: true)
+                    }
+                }
             }
         }
     }

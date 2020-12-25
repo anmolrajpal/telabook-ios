@@ -42,7 +42,7 @@ class CustomerCell: UITableViewCell {
     func configureCell(with customer: Customer, animated: Bool = false) {
         let phoneNumber = customer.phoneNumber ?? ""
         let number = phoneNumber.getE164FormattedNumber(shouldPrefixCountryCode: false) ?? phoneNumber
-        let name = customer.addressBookName
+        let name = customer.addressBookName ?? customer.name
 //        guard let type = customer.messageType, !type.isEmpty else {
 //            fatalError("Message type isn't available for conversation: \(customer.description)")
 //        }

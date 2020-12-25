@@ -62,6 +62,9 @@ struct Config {
                 case .Production: return nil
             }
         }
+        static var apiTimeoutInterval:TimeInterval {
+            try! Configuration.value(for: .timoutInterval)
+        }
         static var urlPrefix:String {
             return try! Configuration.value(for: .subdomain)
                 /*

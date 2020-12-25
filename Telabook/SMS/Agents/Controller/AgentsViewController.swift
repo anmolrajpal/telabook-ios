@@ -94,7 +94,7 @@ class AgentsViewController: UITableViewController {
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        removeFirebaseObservers()
+//        removeFirebaseObservers()
 //        stopObservingReachability()
         messageNotificationPayload = nil
     }

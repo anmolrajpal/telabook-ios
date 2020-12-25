@@ -12,7 +12,7 @@ extension CustomerDetailsController {
     
     
     func fetchInitialConversationsHistory() {
-        guard let phoneNumber = conversation.phoneNumber, !phoneNumber.isBlank else {
+        guard let phoneNumber = phoneNumber, !phoneNumber.isBlank else {
             showAlert(withErrorMessage: "Error: Customer phone number is missing.")
             return
         }
@@ -69,14 +69,7 @@ extension CustomerDetailsController {
     
     
     func fetchCustomerDetails() {
-        let customerID = Int(conversation.customerID)
-        let conversationID = String(conversation.externalConversationID)
-        guard let worker = conversation.agent else {
-            fatalError("### \(#function) - Failed to retrieve agent from conversation: \(conversation)")
-        }
-        let workerID = String(worker.workerID)
-        
-        fetchCustomerDetails(customerId: customerID, conversationId: conversationID, workerId: workerID)
+        fetchCustomerDetails(customerId: customerID, conversationId: String(conversationID), workerId: String(workerID))
     }
     
     
@@ -124,27 +117,12 @@ extension CustomerDetailsController {
                             }
                             return
                         }
-                        guard let context = conversation.managedObjectContext else {
-                            fatalError("### \(#function) - Failed to retrieve managed object context of conversation: \(conversation)")
-                        }
-                        //                    let context = PersistentContainer.shared.viewContext
-                        context.performAndWait {
-                            if conversation.customerDetails == nil {
-                                _ = CustomerDetails(context: context, customerDetailsEntryFromServer: customerDetails, conversationWithCustomer: conversation)
-                            } else {
-                                conversation.customerDetails?.updateData(fromCustomerDetailsEntryFromServer: customerDetails)
-                            }
-                            do {
-                                if context.hasChanges { try context.save() }
-                            } catch {
-                                printAndLog(message: "### \(#function) \(error.localizedDescription)", log: .coredata, logType: .error)
-                                fatalError(error.localizedDescription)
-                            }
-                        }
+                        persistCustomerDetails(details: customerDetails)
                         DispatchQueue.main.async {
                             self.stopDetailsSpinner()
                             self.updateButton.isHidden = false
-                            self.setupCustomerDetails()
+//                            self.customerDetails = customerDetails /* Use in case core data fails */
+                            self.setupCustomerDetailsFromStore()
                     }
             }
         }
@@ -152,18 +130,31 @@ extension CustomerDetailsController {
     
     
     
-    
+    private func persistCustomerDetails(details: CustomerDetailsProperties) {
+        guard let context = conversation.managedObjectContext else {
+            fatalError("### \(#function) - Failed to retrieve managed object context of conversation: \(String(describing: conversation))")
+        }
+        context.performAndWait {
+            if conversation.customerDetails == nil {
+                _ = CustomerDetails(context: context, customerDetailsEntryFromServer: details, conversationWithCustomer: conversation)
+            } else {
+                conversation.customerDetails?.updateData(fromCustomerDetailsEntryFromServer: details)
+            }
+            do {
+                if context.hasChanges { try context.save() }
+            } catch {
+                printAndLog(message: "### \(#function) \(error.localizedDescription)", log: .coredata, logType: .error)
+                fatalError(error.localizedDescription)
+            }
+        }
+    }
     
     
     func updateCustomerDetails() {
-        guard let worker = conversation.agent else {
-            fatalError("### \(#function) - Failed to retrieve agent from conversation: \(conversation)")
-        }
-        let customerID = Int(conversation.customerID)
-        let workerID = String(worker.workerID)
+        view.endEditing(true)
         let agentOnlyName = agentOnlyNameTextField.text ?? ""
         let globalName = globalNameTextField.text ?? ""
-        updateCustomerDetails(customerId: customerID, conversationId: conversationID, workerId: workerID, agentOnlyName: agentOnlyName, globalName: globalName)
+        updateCustomerDetails(customerId: customerID, conversationId: conversationID, workerId: String(workerID), agentOnlyName: agentOnlyName, globalName: globalName)
     }
     
     

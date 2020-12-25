@@ -34,12 +34,12 @@ extension CustomersViewController {
     func addFirebaseObservers() {
         childAddedHandle = observeConversationAdded()
         childUpdatedHandle = observeConversationUpdated()
-        childDeletedHandle = observeConversationDeleted()
+//        childDeletedHandle = observeConversationDeleted()
     }
     func removeFirebaseObservers() {
         if childAddedHandle != nil { reference.removeObserver(withHandle: childAddedHandle)}
         if childUpdatedHandle != nil { reference.removeObserver(withHandle: childUpdatedHandle) }
-        if childDeletedHandle != nil { reference.removeObserver(withHandle: childDeletedHandle) }
+//        if childDeletedHandle != nil { reference.removeObserver(withHandle: childDeletedHandle) }
     }
     
     func getFirebaseConversation(forConversationID conversationID: Int, completion: @escaping (_ firebaseConversation: FirebaseCustomer?) -> Void) {
@@ -152,6 +152,7 @@ extension CustomersViewController {
         return reference.queryOrdered(byChild: "updated_at").queryStarting(atValue: screenEnteredAt.milliSecondsSince1970).observe(.childRemoved, with: { [weak self] snapshot in
             guard let self = self else { return }
             if snapshot.exists() {
+                print("Conversation child removed from Firebase with snapshot: \(snapshot)")
                 guard let firebaseConversation = FirebaseCustomer(snapshot: snapshot, workerID: workerID) else {
                     return
                 }
@@ -218,27 +219,31 @@ extension CustomersViewController {
         }
         return conversation
     }
-    
-    internal func persistFirebaseConversationInStore(entry: FirebaseCustomer) {
+    @discardableResult
+    internal func persistFirebaseConversationInStore(entry: FirebaseCustomer) -> Customer? {
         let existingConversation = getConversationFromStore(conversationID: entry.conversationID, agent: agent)
         let isPinned = existingConversation?.isPinned ?? false
         let customerDetails = existingConversation?.customerDetails?.serverObject
         guard let context = agent.managedObjectContext else {
             fatalError()
         }
+        var result: Customer?
         context.performAndWait {
             let conversation = Customer(context: context, conversationEntryFromFirebase: entry, agent: agent)
             conversation.isPinned = isPinned
             if let existingCustomerDetails = customerDetails {
-                _ = CustomerDetails(context: context, customerDetailsEntryFromServer: existingCustomerDetails, conversationWithCustomer: conversation)
+//                _ = CustomerDetails(context: context, customerDetailsEntryFromServer: existingCustomerDetails, conversationWithCustomer: conversation)
+                conversation.customerDetails?.updateData(fromCustomerDetailsEntryFromServer: existingCustomerDetails)
             }
             do {
                 if context.hasChanges { try context.save() }
             } catch let error {
                 printAndLog(message: "Error persisting observed message: \(error)", log: .coredata, logType: .error)
             }
+            result = conversation
         }
         handleMessagePayload()
+        return result
     }
     
     internal func upsertRecentFirebaseConversationsInStore(entries: [FirebaseCustomer]) {

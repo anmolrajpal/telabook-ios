@@ -217,6 +217,7 @@
 		6F987A80245CC1B500C6046E /* FirebaseOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A7F245CC1B500C6046E /* FirebaseOperations.swift */; };
 		6F987A82245CCA9100C6046E /* APIOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F987A81245CCA9000C6046E /* APIOperations.swift */; };
 		6F9E6EBD248E442E0001950E /* Messages+DataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9E6EBC248E442E0001950E /* Messages+DataProvider.swift */; };
+		6FA389D72590D7C3007D7A14 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA389D62590D7C0007D7A14 /* Device.swift */; };
 		6FA3DFEF2475BFDE0083AB13 /* Blacklist+SearchHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA3DFEE2475BFDE0083AB13 /* Blacklist+SearchHelpers.swift */; };
 		6FA3DFF12475C2D60083AB13 /* BlacklistOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA3DFF02475C2D60083AB13 /* BlacklistOperations.swift */; };
 		6FA9537824606963006DAF53 /* QuickResponseCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA9537724606963006DAF53 /* QuickResponseCodable.swift */; };
@@ -563,6 +564,7 @@
 		6F987A81245CCA9000C6046E /* APIOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIOperations.swift; sourceTree = "<group>"; };
 		6F9E6EB9248AD81B0001950E /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6F9E6EBC248E442E0001950E /* Messages+DataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Messages+DataProvider.swift"; sourceTree = "<group>"; };
+		6FA389D62590D7C0007D7A14 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		6FA3DFEE2475BFDE0083AB13 /* Blacklist+SearchHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Blacklist+SearchHelpers.swift"; sourceTree = "<group>"; };
 		6FA3DFF02475C2D60083AB13 /* BlacklistOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlacklistOperations.swift; sourceTree = "<group>"; };
 		6FA9537724606963006DAF53 /* QuickResponseCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickResponseCodable.swift; sourceTree = "<group>"; };
@@ -1942,6 +1944,7 @@
 				6F46A8BC22D39E790042A667 /* Checkbox.swift */,
 				6F1BD2EE22C4B0ED0053D0CC /* Protocols.swift */,
 				6F265170246C3610003D582F /* SFSymbol.swift */,
+				6FA389D62590D7C0007D7A14 /* Device.swift */,
 				6FAD46E2245054020050F7F2 /* Preferences */,
 			);
 			path = Utils;
@@ -2729,6 +2732,7 @@
 				6FFBCC5624F93D3900C7E96C /* CallsTabAgentsCell.swift in Sources */,
 				6F6B44CC24BC77F700AD2649 /* MessageDetailsController+DataSource.swift in Sources */,
 				6F29FD5122B8B36400BCA2AB /* FollowUpCell.swift in Sources */,
+				6FA389D72590D7C3007D7A14 /* Device.swift in Sources */,
 				6F02B2DB2461C47300FFB34E /* AutoResponseView.swift in Sources */,
 				6F6F0699255334EC003B3AB2 /* AudioHelper.swift in Sources */,
 				6F02B2E42461EF3800FFB34E /* AutoResponseServiceProvider.swift in Sources */,

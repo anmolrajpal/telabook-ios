@@ -21,56 +21,29 @@ extension CustomerDetailsController {
         configureTargetActions()
         configureTableView()
         configureDataSource()
+        setupCustomerPhoneNumber()
 //        hideKeyboardWhenTappedAround()
-        setupCustomerDetails()
+        setupCustomerDetailsFromStore()
         fetchCustomerDetails()
         fetchInitialConversationsHistory()
     }
-    func setupCustomerDetails() {
-        let phoneNumber = conversation.phoneNumber ?? ""
-        let number:String = phoneNumber.getE164FormattedNumber(shouldPrefixCountryCode: false) ?? phoneNumber
-        /*
-        if let formattedPhoneNumber = phoneNumber.getE164FormattedNumber() {
-            number = formattedPhoneNumber
-        } else {
-            number = phoneNumber
-        }
-        */
-        phoneNumberLabel.text = number
-        
+    
+    func setupCustomerDetailsFromStore() {
         agentOnlyNameTextField.text = conversation.customerDetails?.agentOnlyName
         
         globalNameTextField.text = conversation.customerDetails?.globalName
+    }
+    
+    func setupCustomerPhoneNumber() {
+        let phoneNumber = self.phoneNumber ?? ""
+        let number:String = phoneNumber.getE164FormattedNumber(shouldPrefixCountryCode: false) ?? phoneNumber
+      
+        phoneNumberLabel.text = number
+    }
+    func setupCustomerDetailsFromServerResults(details: CustomerDetailsProperties) {
+        agentOnlyNameTextField.text = details.agentOnlyName
         
-        /*
-//        let context = PersistentContainer.shared.viewContext
-        guard let context = conversation.agent?.managedObjectContext else {
-            fatalError()
-        }
-        let conversationObjectID = conversation.objectID
-        let conversation = context.object(with: conversationObjectID) as! Customer
-        let fetchRequest: NSFetchRequest<CustomerDetails> = CustomerDetails.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "\(#keyPath(CustomerDetails.conversation)) == %@", conversation)
-        
-        context.perform { [weak self] in
-            guard let self = self else { return }
-            if let customerDetails = try? fetchRequest.execute().first {
-                let phoneNumber = customerDetails.conversation?.phoneNumber ?? ""
-                let number:String
-                if let formattedPhoneNumber = phoneNumber.getE164FormattedNumber() {
-                    number = formattedPhoneNumber
-                } else {
-                    number = phoneNumber
-                }
-                self.phoneNumberLabel.text = number
-                
-                self.agentOnlyNameTextField.text = customerDetails.agentOnlyName
-                
-                self.globalNameTextField.text = customerDetails.globalName
-            }
-        }
-        */
-        
+        globalNameTextField.text = details.names
     }
     private func configureNavigationBarItems() {
         let cancelButtonImage = SFSymbol.cancel.image(withSymbolConfiguration: .init(textStyle: .largeTitle)).image(scaledTo: .init(width: 28, height: 28))
@@ -82,6 +55,7 @@ extension CustomerDetailsController {
     @objc
     private func cancelButtonDidTapped(_ button: UIBarButtonItem) {
         dismiss(animated: true)
+//        delegate?.customerDetailsController(controller: self, didDismissAnimated: true)
     }
     
     private func configureTargetActions() {

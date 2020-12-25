@@ -51,6 +51,7 @@ extension MoreViewController {
                 UIAlertController.showTelaAlert(title: "Signout Failed", message: error?.localizedDescription ?? "Try again", controller: self)
                 return
             }
+            /*
             let topic = "operator_ios_\(AppData.workerId)"
             Messaging.messaging().unsubscribe(fromTopic: topic) { error in
                 if let error = error {
@@ -59,6 +60,7 @@ extension MoreViewController {
                     printAndLog(message: "Successfully unsubscribed from topic: \(topic)", log: .notifications, logType: .info)
                 }
             }
+            */
             if AppData.isRememberMeChecked {
                 DispatchQueue.main.async {
                     self.delegate?.presentLogin()

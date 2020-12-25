@@ -26,6 +26,7 @@ extension AgentsViewController {
         configureFetchedResultsController()
         configureTargetActions()
         configureSearchController()
+        setInitialPendingMessagesCount()
     }
     
     

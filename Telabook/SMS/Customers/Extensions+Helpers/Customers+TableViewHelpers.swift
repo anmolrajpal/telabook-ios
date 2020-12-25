@@ -49,7 +49,7 @@ extension CustomersViewController {
         } else {
             number = phoneNumber
         }
-        let name = conversation.addressBookName
+        let name = conversation.addressBookName ?? conversation.name
         
         let conversationColor = CustomerConversationColor.colorCase(from: Int(conversation.colorCode)).color
         
@@ -88,7 +88,7 @@ extension CustomersViewController {
         } else {
             number = phoneNumber
         }
-        let name = conversation.addressBookName
+        let name = conversation.addressBookName ?? conversation.name
         
         let conversationColor = CustomerConversationColor.colorCase(from: Int(conversation.colorCode)).color
         
@@ -262,6 +262,7 @@ extension CustomersViewController {
             
             let detailsAction = UIAction(title: "Details", image: SFSymbol.person.image.withTintColor(.telaBlue, renderingMode: .alwaysOriginal)) { _ in
                 let vc = CustomerDetailsController(conversation: customer)
+//                vc.delegate = self
                 let navController = UINavigationController(rootViewController: vc)
                 DispatchQueue.main.async {
                     self.present(navController, animated: true)
@@ -427,6 +428,7 @@ extension CustomersViewController {
             
             let detailsAction = UIControlMenuAction(title: "Details", image: SFSymbol.person.image.withTintColor(.telaBlue, renderingMode: .alwaysOriginal)) { _ in
                 let vc = CustomerDetailsController(conversation: customer)
+//                vc.delegate = self
                 let navController = UINavigationController(rootViewController: vc)
                 DispatchQueue.main.async {
                     self.present(navController, animated: true)
@@ -511,6 +513,7 @@ extension CustomersViewController {
         
         let detailsAction =  UIContextualAction(style: .normal, title: "Details", handler: { (action,view,completionHandler ) in
             let vc = CustomerDetailsController(conversation: customer)
+//            vc.delegate = self
             let navController = UINavigationController(rootViewController: vc)
             DispatchQueue.main.async {
                 self.present(navController, animated: true)
@@ -536,4 +539,12 @@ extension CustomersViewController {
     }
 }
 
-
+/*
+extension CustomersViewController: CustomerDetailsDelegate {
+    func customerDetailsController(controller: CustomerDetailsController, didDismissAnimated animated: Bool) {
+        controller.dismiss(animated: animated) {
+            self.addFirebaseObservers()
+        }
+    }
+}
+*/

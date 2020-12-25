@@ -27,7 +27,7 @@ public struct APIService: APIServiceProtocol {
         let apiCommonPath:String
 //        static let apiVersion: APIVersion = Config.APIConfig.apiVersion
         
-        init(timeOutInterval: TimeInterval = 15.0, apiURLScheme: String = Config.APIConfig.urlScheme, baseURL: String = Config.APIConfig.baseURL, apiHost: String = Config.APIConfig.apiHost, port: Int? = Config.APIConfig.port, apiCommonPath: String = Config.APIConfig.urlPrefix) {
+        init(timeOutInterval: TimeInterval = Config.APIConfig.apiTimeoutInterval, apiURLScheme: String = Config.APIConfig.urlScheme, baseURL: String = Config.APIConfig.baseURL, apiHost: String = Config.APIConfig.apiHost, port: Int? = Config.APIConfig.port, apiCommonPath: String = Config.APIConfig.urlPrefix) {
             self.timeOutInterval = timeOutInterval
             self.apiURLScheme = apiURLScheme
             self.baseURL = baseURL
@@ -137,6 +137,11 @@ public struct APIService: APIServiceProtocol {
         /// Endpoint to fetch calls by worker
         case FetchAgentCalls(workerID: Int)
         
+        /// Endpoint to fetch calls by worker
+        case RegisterFCMToken
+        
+        
+        
         /**
         Returns the path of a specified Endpoint.
         ## Example Usage ##
@@ -177,6 +182,7 @@ public struct APIService: APIServiceProtocol {
                 case .UpdateCustomerDetails(let customerID): return "/customers/\(customerID)/update"
                 case .FetchDisabledAccounts: return "/disabledaccount"
                 case .FetchAgentCalls(let workerID): return "/worker/\(workerID)/calls"
+                case .RegisterFCMToken: return "/registration/token"
             }
         }
     }

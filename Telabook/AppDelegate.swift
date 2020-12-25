@@ -490,9 +490,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
      
      */
     // [END receive_message]
-    func applicationDidReceiveMemoryWarning(_ application: UIApplication) {
-        print("### \(#function)")
-    }
+   
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
         print("### \(#function) - User Info:\n\n \(userInfo)")
     }
@@ -538,7 +536,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("UserNotifications -> deviceToken :\(token)")
 //        LinphoneManager.instance().setPushTokenToLinphone(remoteNotificationToken: deviceToken)
         // With swizzling disabled you must set the APNs token here.
-        Messaging.messaging().apnsToken = deviceToken
+//        Messaging.messaging().apnsToken = deviceToken
     }
     
 }
@@ -722,15 +720,56 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
 
 extension AppDelegate : MessagingDelegate {
     
-
+    
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        printAndLog(message: "FCM Token: \(String(describing: fcmToken))", log: .notifications, logType: .info, isPrivate: true)
-        /*
+        guard let fcmToken = fcmToken else { return }
+        printAndLog(message: "FCM Token: \(fcmToken)", log: .notifications, logType: .debug, isPrivate: true)
+        
          let dataDict:[String: String] = ["token": fcmToken]
          NotificationCenter.default.post(name: Notification.Name("FCMToken"), object: nil, userInfo: dataDict)
          // TODO: If necessary send token to application server.
          // Note: This callback is fired at each app startup and whenever a new token is generated.
-         */
+         registerFcmTokenOnServer(token: fcmToken)
+    }
+    
+    /* ------------------------------------------------------------------------------------------------------------ */
+    func registerFcmTokenOnServer(token: String) {
+        let headers:[HTTPHeader] = [
+            HTTPHeader(key: .contentType, value: Header.contentType.json.rawValue)
+        ]
+        
+        struct Body: Encodable {
+            let user_id: Int
+            let platform: String
+            let device_id: String
+            let device_name: String
+            let fcm_token: String
+        }
+        let body = Body(user_id: AppData.userId,
+                        platform: "iOS",
+                        device_id: UIDevice.current.identifierForVendor?.uuidString ?? "",
+                        device_name: "\(UIDevice.modelName)•\(UIDevice.current.name)",
+                        fcm_token: token)
+        let httpBody = try! JSONEncoder().encode(body)
+        
+        APIServer<APIService.RecurrentResult>(apiVersion: .v2).hitEndpoint(endpoint: .RegisterFCMToken,
+                                                                           httpMethod: .POST,
+                                                                           httpBody: httpBody,
+                                                                           headers: headers,
+                                                                           completion: fcmTokenRegistrationCompletion)
+    }
+    /* ------------------------------------------------------------------------------------------------------------ */
+    
+    
+    private func fcmTokenRegistrationCompletion(result: Result<APIService.RecurrentResult, APIService.APIError>) {
+        switch result {
+        case .failure(let error):
+            print("Failed to register FCM TOken on server. Should retry at some point. Error: \(error.localizedDescription)")
+        case .success(let resultData):
+            let serverResult = resultData.result ?? ""
+            let message = resultData.message ?? ""
+            print("Successfully registered FCM Token on server with server result: \(serverResult) | and message: \(message)")
+        }
     }
 }
 

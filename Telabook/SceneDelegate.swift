@@ -144,6 +144,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                         currentViewController.requestNotifications {
                             DispatchQueue.main.async {
                                 UIApplication.shared.registerForRemoteNotifications()
+                                Messaging.messaging().token { (token, error) in
+                                    if let error = error {
+                                        printAndLog(message: "### \(#function) Error retrieving fcmToken from Firebase sdk | Error: \n\(error)", log: .notifications, logType: .error)
+                                    } else if let token = token {
+                                        AppDelegate.shared.registerFcmTokenOnServer(token: token)
+                                    }
+                                }
+                                /*
                                 let topic = "operator_ios_\(AppData.workerId)"
                                 Messaging.messaging().subscribe(toTopic: topic) { error in
                                     if let error = error {
@@ -152,6 +160,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                                         printAndLog(message: "Successfully subscribed to topic: \(topic)", log: .notifications, logType: .info)
                                     }
                                 }
+                                */
 //                                AppDelegate.shared.setupVoipAccount()
                             }
                         }

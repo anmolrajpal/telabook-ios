@@ -181,7 +181,7 @@ class MessagesController: MessagesViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         markAllMessagesAsSeen()
-        clearUnreadMessagesCount()
+//        clearUnreadMessagesCount()
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)

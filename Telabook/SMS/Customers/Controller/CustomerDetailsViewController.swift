@@ -9,7 +9,7 @@
 import UIKit
 
 class CustomerDetailsViewController: UIViewController {
-    var delegate:CustomerDetailsDelegate?
+//    var delegate:CustomerDetailsDelegate?
     var customerId = Int()
     var workerId = Int()
     var internalBook:InternalBookCodable.InternalBook? {
@@ -667,10 +667,11 @@ extension CustomerDetailsViewController: CustomerDescriptionInputDelegate {
         self.customerDescription = text
     }
 }
+/*
 protocol CustomerDetailsDelegate {
     func triggerUpdate()
 }
-
+*/
 
 
 class TextViewInputController:UIViewController {

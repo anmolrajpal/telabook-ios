@@ -849,6 +849,10 @@ extension String {
 }
 
 
+extension Sequence where Element: AdditiveArithmetic {
+    func sum() -> Element { reduce(.zero, +) }
+}
+
 
 extension Character {
     var isSimpleEmoji: Bool {

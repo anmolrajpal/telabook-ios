@@ -548,7 +548,22 @@ class TabBarController: UITabBarController {
             }
         }
     }
-    
+    fileprivate func registerNotifications() {
+        if AppData.isLoggedIn && AppData.workerId != 0 {
+            requestNotifications {
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                    Messaging.messaging().token { (token, error) in
+                        if let error = error {
+                            printAndLog(message: "### \(#function) Error retrieving fcmToken from Firebase sdk | Error: \n\(error)", log: .notifications, logType: .error)
+                        } else if let token = token {
+                            AppDelegate.shared.registerFcmTokenOnServer(token: token)
+                        }
+                    }
+                }
+            }
+        }
+    }
     
     
     
@@ -600,7 +615,8 @@ extension TabBarController: UITabBarControllerDelegate {
 extension TabBarController: LoginDelegate {
     func didLoginIWithSuccess() {
         configureTabBarController()
-        configureNotifications()
+//        configureNotifications()
+        registerNotifications()
         if AppDelegate.shared.isVOIPEnabled {
             AppDelegate.shared.setupVoipAccount()
         }

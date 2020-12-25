@@ -17,6 +17,18 @@ struct PendingMessage {
     let count:Int
     let lastMessageDate:Date?
 }
+private extension Int {
+    var formattedBadgeValue:String? {
+        if self > 99 {
+            return "99+"
+        } else if self > 0 {
+            return String(self)
+        } else {
+            return nil
+        }
+    }
+}
+
 extension AgentsViewController {
     
     func observePendingMessagesCount() -> UInt {
@@ -38,9 +50,10 @@ extension AgentsViewController {
         }
         return reference.observe(.value, with: { snapshot in
             guard !self.agents.isEmpty else { return }
-            //                print("Wasnotseen snapshot: \(snapshot)")
+//            print("Wasnotseen snapshot: \(snapshot)")
             let context = PersistentContainer.shared.newBackgroundContext()
             let agents = self.agents.compactMap { context.object(with: $0.objectID) as? Agent }
+            var totalCount = 0
             var pendingMessages:[PendingMessage] = []
             for agent in agents {
                 var count = 0
@@ -48,16 +61,17 @@ extension AgentsViewController {
                 for child in snapshot.children {
                     if let snapshot = child as? DataSnapshot,
                         let value = snapshot.value as? [String: AnyObject] {
-                        print(snapshot)
-                        let workerID = mapToInt(value: value["worker_id"])
+                        let workerID = mapToInt(value: value["sender_id"])
                         if workerID == agent.workerID {
-                            count += 1
+                            count = mapToInt(value: value["unread_messages"])
                             lastMessageDate = mapToDate(value: value["date"])
                         }
                     }
                 }
+                totalCount += count
                 pendingMessages.append(.init(agent: agent, count: count, lastMessageDate: lastMessageDate))
             }
+            self.updateTabBarBadge(withCount: totalCount)
             self.updateAgents(with: pendingMessages, context: context)
         }) { error in
             let message = "### \(#function) - Error observing wasnotseen reference node: \(error.localizedDescription)"
@@ -65,6 +79,18 @@ extension AgentsViewController {
         }
     }
     
+    func setInitialPendingMessagesCount() {
+        let count = Int(agents.map({ $0.externalPendingMessagesCount }).sum())
+        updateTabBarBadge(withCount: count)
+    }
+    private func updateTabBarBadge(withCount count: Int) {
+        guard let tbc = tabBarController as? TabBarController,
+              let items = tbc.tabBar.items,
+              items.count == 3 else {
+            return
+        }
+        items[TabBarController.Tabs.tab1.rawValue].badgeValue = count.formattedBadgeValue
+    }
     
     
     private func updateAgents(with pendingMessages: [PendingMessage], context:NSManagedObjectContext) {
