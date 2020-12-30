@@ -13,7 +13,6 @@
 		6F00F2DC24A50E37001E33D9 /* MessageUploadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F00F2DB24A50E37001E33D9 /* MessageUploadService.swift */; };
 		6F00F2DE24A50E46001E33D9 /* MessageDownloadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F00F2DD24A50E46001E33D9 /* MessageDownloadService.swift */; };
 		6F00F2E024A5356F001E33D9 /* FirebaseMediaMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F00F2DF24A5356F001E33D9 /* FirebaseMediaMetadata.swift */; };
-		6F010CAE246F81B600C20DC6 /* MenuController in Frameworks */ = {isa = PBXBuildFile; productRef = 6F010CAD246F81B600C20DC6 /* MenuController */; };
 		6F02B2D92461C03F00FFB34E /* AutoResponseCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F02B2D82461C03F00FFB34E /* AutoResponseCodable.swift */; };
 		6F02B2DB2461C47300FFB34E /* AutoResponseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F02B2DA2461C47300FFB34E /* AutoResponseView.swift */; };
 		6F02B2DD2461C6A000FFB34E /* AutoResponseHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F02B2DC2461C6A000FFB34E /* AutoResponseHelpers.swift */; };
@@ -296,6 +295,9 @@
 		6FE24ABC2541C68A0043ACC7 /* ringback.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6FE24AB92541C68A0043ACC7 /* ringback.wav */; };
 		6FE24AC425421D110043ACC7 /* ConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE24AC325421D110043ACC7 /* ConfigManager.swift */; };
 		6FE24AC825421D8A0043ACC7 /* AppManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE24AC725421D890043ACC7 /* AppManager.swift */; };
+		6FEA102D259A772D00F09C79 /* MenuController in Frameworks */ = {isa = PBXBuildFile; productRef = 6FEA102C259A772D00F09C79 /* MenuController */; };
+		6FEA105C259A78D500F09C79 /* CropViewController in Frameworks */ = {isa = PBXBuildFile; productRef = 6FEA105B259A78D500F09C79 /* CropViewController */; };
+		6FEA105E259A78D500F09C79 /* TOCropViewController in Frameworks */ = {isa = PBXBuildFile; productRef = 6FEA105D259A78D500F09C79 /* TOCropViewController */; };
 		6FEC641324D48DCC0012B234 /* MessagePayloadJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEC641224D48DCB0012B234 /* MessagePayloadJSON.swift */; };
 		6FEC641524D80F270012B234 /* DisabledAccountsJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEC641424D80F270012B234 /* DisabledAccountsJSON.swift */; };
 		6FEC642424D836A10012B234 /* CustomerDetailsJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEC642324D836A10012B234 /* CustomerDetailsJSON.swift */; };
@@ -314,8 +316,6 @@
 		6FEE9A17247E696000709E2D /* Messages+Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE9A16247E696000709E2D /* Messages+Cell.swift */; };
 		6FEE9A19247ED6A400709E2D /* BotMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE9A18247ED6A300709E2D /* BotMessageCell.swift */; };
 		6FEE9A2F247F118F00709E2D /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEE9A2E247F118F00709E2D /* Configuration.swift */; };
-		6FF2E69A248F848C00502B99 /* CropViewController in Frameworks */ = {isa = PBXBuildFile; productRef = 6FF2E699248F848B00502B99 /* CropViewController */; };
-		6FF2E69C248F848C00502B99 /* TOCropViewController in Frameworks */ = {isa = PBXBuildFile; productRef = 6FF2E69B248F848C00502B99 /* TOCropViewController */; };
 		6FF2E6A3248FA4B300502B99 /* Profile+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF2E6A2248FA4B300502B99 /* Profile+Helpers.swift */; };
 		6FF2E6A5248FA4CE00502B99 /* Profile+Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF2E6A4248FA4CE00502B99 /* Profile+Image.swift */; };
 		6FF2E6A7248FA4E500502B99 /* Profile+ServicePorvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF2E6A6248FA4E500502B99 /* Profile+ServicePorvider.swift */; };
@@ -700,10 +700,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6F010CAE246F81B600C20DC6 /* MenuController in Frameworks */,
-				6FF2E69C248F848C00502B99 /* TOCropViewController in Frameworks */,
-				6FF2E69A248F848C00502B99 /* CropViewController in Frameworks */,
 				E0040EAC93256506636B8DE1 /* Pods_Telabook.framework in Frameworks */,
+				6FEA102D259A772D00F09C79 /* MenuController in Frameworks */,
+				6FEA105E259A78D500F09C79 /* TOCropViewController in Frameworks */,
+				6FEA105C259A78D500F09C79 /* CropViewController in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2352,9 +2352,9 @@
 			);
 			name = Telabook;
 			packageProductDependencies = (
-				6F010CAD246F81B600C20DC6 /* MenuController */,
-				6FF2E699248F848B00502B99 /* CropViewController */,
-				6FF2E69B248F848C00502B99 /* TOCropViewController */,
+				6FEA102C259A772D00F09C79 /* MenuController */,
+				6FEA105B259A78D500F09C79 /* CropViewController */,
+				6FEA105D259A78D500F09C79 /* TOCropViewController */,
 			);
 			productName = Telabook;
 			productReference = 6FB11AE0229BDDBD0098D050 /* Telabook.app */;
@@ -2393,8 +2393,8 @@
 			);
 			mainGroup = 6FB11AD7229BDDBD0098D050;
 			packageReferences = (
-				6F010CAC246F81B600C20DC6 /* XCRemoteSwiftPackageReference "MenuController" */,
-				6FF2E698248F848B00502B99 /* XCRemoteSwiftPackageReference "TOCropViewController" */,
+				6FEA102B259A772D00F09C79 /* XCRemoteSwiftPackageReference "MenuController" */,
+				6FEA105A259A78D500F09C79 /* XCRemoteSwiftPackageReference "TOCropViewController" */,
 			);
 			productRefGroup = 6FB11AE1229BDDBD0098D050 /* Products */;
 			projectDirPath = "";
@@ -2884,6 +2884,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = "${TARGET_NAME}/Support Files/Config/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3192,38 +3193,38 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		6F010CAC246F81B600C20DC6 /* XCRemoteSwiftPackageReference "MenuController" */ = {
+		6FEA102B259A772D00F09C79 /* XCRemoteSwiftPackageReference "MenuController" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/anmolrajpal/MenuController.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				minimumVersion = 1.0.2;
 			};
 		};
-		6FF2E698248F848B00502B99 /* XCRemoteSwiftPackageReference "TOCropViewController" */ = {
+		6FEA105A259A78D500F09C79 /* XCRemoteSwiftPackageReference "TOCropViewController" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/TimOliver/TOCropViewController.git";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.5;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		6F010CAD246F81B600C20DC6 /* MenuController */ = {
+		6FEA102C259A772D00F09C79 /* MenuController */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6F010CAC246F81B600C20DC6 /* XCRemoteSwiftPackageReference "MenuController" */;
+			package = 6FEA102B259A772D00F09C79 /* XCRemoteSwiftPackageReference "MenuController" */;
 			productName = MenuController;
 		};
-		6FF2E699248F848B00502B99 /* CropViewController */ = {
+		6FEA105B259A78D500F09C79 /* CropViewController */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6FF2E698248F848B00502B99 /* XCRemoteSwiftPackageReference "TOCropViewController" */;
+			package = 6FEA105A259A78D500F09C79 /* XCRemoteSwiftPackageReference "TOCropViewController" */;
 			productName = CropViewController;
 		};
-		6FF2E69B248F848C00502B99 /* TOCropViewController */ = {
+		6FEA105D259A78D500F09C79 /* TOCropViewController */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6FF2E698248F848B00502B99 /* XCRemoteSwiftPackageReference "TOCropViewController" */;
+			package = 6FEA105A259A78D500F09C79 /* XCRemoteSwiftPackageReference "TOCropViewController" */;
 			productName = TOCropViewController;
 		};
 /* End XCSwiftPackageProductDependency section */

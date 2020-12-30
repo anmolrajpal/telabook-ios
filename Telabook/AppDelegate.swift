@@ -725,11 +725,10 @@ extension AppDelegate : MessagingDelegate {
         guard let fcmToken = fcmToken else { return }
         printAndLog(message: "FCM Token: \(fcmToken)", log: .notifications, logType: .debug, isPrivate: true)
         
-         let dataDict:[String: String] = ["token": fcmToken]
-         NotificationCenter.default.post(name: Notification.Name("FCMToken"), object: nil, userInfo: dataDict)
-         // TODO: If necessary send token to application server.
-         // Note: This callback is fired at each app startup and whenever a new token is generated.
-         registerFcmTokenOnServer(token: fcmToken)
+        guard AppData.isLoggedIn else { return }
+        let dataDict:[String: String] = ["token": fcmToken]
+        NotificationCenter.default.post(name: Notification.Name("FCMToken"), object: nil, userInfo: dataDict)
+        registerFcmTokenOnServer(token: fcmToken)
     }
     
     /* ------------------------------------------------------------------------------------------------------------ */

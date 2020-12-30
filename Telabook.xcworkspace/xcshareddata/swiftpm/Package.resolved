@@ -23,9 +23,9 @@
         "package": "TOCropViewController",
         "repositoryURL": "https://github.com/TimOliver/TOCropViewController.git",
         "state": {
-          "branch": "master",
-          "revision": "18d51cf856b56e0eb16977751e07c16c54239dce",
-          "version": null
+          "branch": null,
+          "revision": "182aa17bfb598c7ff6879c985ef85bb21eb51542",
+          "version": "2.5.5"
         }
       }
     ]

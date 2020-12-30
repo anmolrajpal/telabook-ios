@@ -51,6 +51,7 @@ extension MoreViewController {
                 UIAlertController.showTelaAlert(title: "Signout Failed", message: error?.localizedDescription ?? "Try again", controller: self)
                 return
             }
+            UIApplication.shared.unregisterForRemoteNotifications()
             /*
             let topic = "operator_ios_\(AppData.workerId)"
             Messaging.messaging().unsubscribe(fromTopic: topic) { error in
