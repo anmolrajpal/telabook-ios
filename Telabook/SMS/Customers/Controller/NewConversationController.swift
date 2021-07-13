@@ -9,7 +9,7 @@
 import UIKit
 
 
-protocol StartNewConversationDelegate: class {
+protocol StartNewConversationDelegate: AnyObject {
     func conversation(didStartNewConversationWithID id: Int, node:String)
 }
 

@@ -26,7 +26,7 @@ class CallDetailsMetaDetailsCell: UITableViewCell {
         
         callStatusLabel.text = callDetails.callStatus.displayValue
         
-        durationLabel.text = (callDetails.duration ?? "--") + " seconds"
+        durationLabel.text = "\(callDetails.duration ?? 0) seconds"
     }
     
     

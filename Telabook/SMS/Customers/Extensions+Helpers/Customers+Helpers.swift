@@ -42,6 +42,7 @@ extension CustomersViewController {
         title = agent.personName ?? agentDIDNumber?.getE164FormattedNumber(shouldPrefixCountryCode: false) ?? agentDIDNumber ?? "Conversations"
         view.backgroundColor = .telaGray1
         configureNavigationBarAppearance()
+//        navigationItem.backButtonTitle = title
         configureHierarchy()
         
         configureDataSource()

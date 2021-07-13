@@ -11,10 +11,10 @@ import CoreData
 import Firebase
 import FirebaseStorage
 
-protocol CustomerPickerDelegate: class {
+protocol CustomerPickerDelegate: AnyObject {
     func customersController(didPick customer:Customer, at indexPath:IndexPath, controller:UIViewController)
 }
-protocol MessageForwardingDelegate: class {
+protocol MessageForwardingDelegate: AnyObject {
     func forwardMessage(to selectedConversations: [Customer], controller: CustomersViewController)
 }
 

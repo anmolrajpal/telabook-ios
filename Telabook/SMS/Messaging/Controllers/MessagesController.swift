@@ -396,7 +396,21 @@ class MessagesController: MessagesViewController {
     
     
     // MARK: - Views
-    
+    lazy var titleStackView: UIStackView = {
+        let titleLabel = UILabel()
+//        titleLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
+        titleLabel.textAlignment = .center
+        titleLabel.text = "> \(getNavBarTitle())"
+        let subtitleLabel = UILabel()
+        subtitleLabel.textColor = UIColor.telaBlue
+        subtitleLabel.textAlignment = .center
+        subtitleLabel.text = getNavBarSubtitle()
+        let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
+        stackView.alignment = .center
+//        stackView.distribution = .fillProportionally
+        stackView.axis = .vertical
+        return stackView
+    }()
     var headerSpinnerView:SpinnerReusableView?
     var phoneBarButtonItem: UIBarButtonItem = {
         let phoneButtonImage = SFSymbol.phone·fill.image

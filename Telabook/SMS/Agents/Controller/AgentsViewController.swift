@@ -10,10 +10,10 @@ import UIKit
 import CoreData
 import Firebase
 
-protocol AgentPickerDelegate: class {
+protocol AgentPickerDelegate: AnyObject {
     func agentsController(didPick agent: Agent, at indexPath: IndexPath, controller: AgentsViewController)
 }
-protocol MessageForwardingAgentSelectionDelegate: class {
+protocol MessageForwardingAgentSelectionDelegate: AnyObject {
     func agentsController(didSelect agent: Agent, workerID: Int, at indexPath: IndexPath, controller: AgentsViewController)
 }
 class AgentsViewController: UITableViewController {
@@ -76,12 +76,14 @@ class AgentsViewController: UITableViewController {
     
     
     //MARK: - Lifecycle
-    
+   override func loadView() {
+      super.loadView()
+      view.frame = UIScreen.main.bounds
+   }
     override func viewDidLoad() {
         super.viewDidLoad()
         commonInit()
     }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 //        observeReachability()

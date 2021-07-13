@@ -26,10 +26,120 @@ extension MessagesController: NormalDialerDelegate {
 }
 
 extension MessagesController {
+    func getNavBarSubtitle() -> String {
+        let name = customer.addressBookName ?? customer.name
+        let phoneNumber = customer.phoneNumber ?? ""
+        let number = phoneNumber.getE164FormattedNumber(shouldPrefixCountryCode: false) ?? phoneNumber
+        if let name = name, !name.isBlank {
+            return name
+        } else {
+            return number
+        }
+    }
+    func getNavBarTitle() -> String {
+        let agentName = customer.workerPersonName
+        let agentDIDNumber = customer.workerPhoneNumber ?? ""
+        let number = agentDIDNumber.getE164FormattedNumber(shouldPrefixCountryCode: false) ?? agentDIDNumber
+        if let name = agentName, !name.isBlank {
+            return name
+        } else {
+            return number
+        }
+    }
+    func navBarDisplayText() -> NSAttributedString {
+        let attributedText = NSMutableAttributedString(string: "")
+        let agentAttributedString = NSAttributedString(
+            string: getNavBarTitle() + "  >  ",
+            attributes: [
+                .font: UIFont.preferredFont(forTextStyle: .body),
+                .foregroundColor: UIColor.white
+            ]
+        )
+        let conversationAttributedString = NSAttributedString(
+            string: getNavBarSubtitle(),
+            attributes: [
+                .font: UIFont.preferredFont(forTextStyle: .headline),
+                .foregroundColor: UIColor.telaBlue
+            ]
+        )
+        attributedText.append(agentAttributedString)
+        attributedText.append(conversationAttributedString)
+        return attributedText
+    }
+    private func configureNavBarTitleView() {
+        let label = UILabel()
+        let conversationAttributedString = NSAttributedString(
+            string: getNavBarSubtitle(),
+            attributes: [
+                .font: UIFont.preferredFont(forTextStyle: .headline),
+                .foregroundColor: UIColor.telaBlue
+            ]
+        )
+        label.attributedText = conversationAttributedString
+        
+        let spacer = UIView()
+        let constraint = spacer.widthAnchor.constraint(greaterThanOrEqualToConstant: 500)
+        constraint.isActive = true
+        constraint.priority = .defaultLow
+
+        let stack = UIStackView(arrangedSubviews: [label, spacer])
+        stack.axis = .horizontal
+
+        navigationItem.titleView = stack
+    }
+    
+    private func configureNavBarBackButtonAppearance() {
+        let backButtonImage = #imageLiteral(resourceName: "back_arrow").withRenderingMode(.alwaysOriginal)
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithDefaultBackground()
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.telaBlue]
+        appearance.setBackIndicatorImage(backButtonImage, transitionMaskImage: backButtonImage)
+        navigationItem.standardAppearance = appearance
+        navigationItem.scrollEdgeAppearance = appearance
+        navigationItem.compactAppearance = appearance
+        
+        let buttonAppearance = UIBarButtonItemAppearance()
+        buttonAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.white]
+        navigationItem.scrollEdgeAppearance?.backButtonAppearance = buttonAppearance
+        navigationItem.standardAppearance?.backButtonAppearance = buttonAppearance
+        navigationItem.compactAppearance?.backButtonAppearance = buttonAppearance
+    }
     internal func commonInit() {
-        title = customer.addressBookName?.isEmpty ?? true ? customer.phoneNumber?.getE164FormattedNumber(shouldPrefixCountryCode: false) ?? customer.phoneNumber : customer.addressBookName
+//        configureNavBarTitleView()
         configureNavigationBarAppearance()
+        
+//        navigationItem.prompt = " "
+        
+        let navController = navigationController!
+        let navBarWidth = navController.navigationBar.frame.size.width
+        let navBarHeight = navController.navigationBar.frame.size.height
+        
+        
+        
+        let titleView = UIView(frame: CGRect(x: 0, y: 0, width: navBarWidth, height: navBarHeight))
+        print(titleStackView.frame)
+//        titleStackView.frame = CGRect(x: 0, y: 0, width: titleView.frame.width, height: titleView.frame.height)
+        titleView.addSubview(titleStackView)
+        navigationItem.titleView = titleStackView
+        for subview in (self.navigationController?.navigationBar.subviews)! {
+            if NSStringFromClass(subview.classForCoder).contains("BarBackground") {
+                var subViewFrame: CGRect = subview.frame
+                // subViewFrame.origin.y = -20;
+                subViewFrame.size.height = 160
+                subview.frame = subViewFrame
+            }
+        }
+//        navigationItem.prompt = getNavBarTitle()
+//        title = getNavBarSubtitle()
+        
+//        configureNavBarBackButtonAppearance()
+        
+        
+        
 //        configureNavigationBarItems()
+        
+        
         configureHierarchy()
         configureMessageCollectionView()
         configureMessageInputBar()
@@ -182,7 +292,7 @@ extension MessagesController {
     @objc
     private func downButtonDidTap(_ button:UIButton) {
         print("down button tapped")
-        messagesCollectionView.scrollToBottom(animated: true)
+      messagesCollectionView.scrollToLastItem(animated: true)
     }
     internal func startSpinner() {
         DispatchQueue.main.async {
@@ -275,7 +385,7 @@ extension MessagesController {
         }, completion: { [weak self] _ in
             //            self?.messagesCollectionView.scrollToBottom(animated: true)
             if self?.isLastSectionVisible() == true {
-                self?.messagesCollectionView.scrollToBottom(animated: true)
+              self?.messagesCollectionView.scrollToLastItem(animated: true)
             }
         })
     }
@@ -325,7 +435,7 @@ extension MessagesController {
                 }
             }) { _ in
                 if self.isLastSectionVisible() {
-                    self.messagesCollectionView.scrollToBottom(animated: true)
+                  self.messagesCollectionView.scrollToLastItem(animated: true)
                 }
             }
         }

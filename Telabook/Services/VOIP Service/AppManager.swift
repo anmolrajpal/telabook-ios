@@ -39,7 +39,7 @@ enum NetworkType: Int {
         let info = CTTelephonyNetworkInfo()
         if let radioServices = info.serviceCurrentRadioAccessTechnology, !radioServices.isEmpty {
             let currentRadio = radioServices.values.first!
-            if #available(iOS 14.0, *) {
+            if #available(iOS 14.1, *) {
                 if currentRadio == CTRadioAccessTechnologyNRNSA || currentRadio == CTRadioAccessTechnologyNR {
                     // TODO: Handle 5G
                     return .network_5g

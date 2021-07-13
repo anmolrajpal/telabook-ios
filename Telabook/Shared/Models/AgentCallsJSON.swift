@@ -96,7 +96,7 @@ struct AgentCallProperties: Decodable {
     let customerName: String?       // "Someone"
     let date: Date?                 // "20-04-01 16:40:18" => to Date object
     let direction: String?          // "INBOUND"
-    let duration: String?           // "9"
+    let duration: Int?              // 9
     let humanDate: String?          // "April 1st 2020, 4:40:18 pm"
     let recordingfile: String?      // "https://file-examples.com/wp-content/uploads/2017/11/file_example_WAV_1MG.wav"
     let status: String?             // "ANSWERED"
@@ -173,7 +173,7 @@ extension AgentCall {
         self.customerID = Int64(entry.customerId ?? 0)
         self.customerName = entry.customerName
         self.callDirection = .init(entry.direction!)
-        self.duration = Int64(entry.duration ?? "0") ?? 0
+        self.duration = Int64(entry.duration ?? 0)
         if let urlString = entry.recordingfile,
             let url = URL(string: urlString) {
             self.recordingFileURL = url

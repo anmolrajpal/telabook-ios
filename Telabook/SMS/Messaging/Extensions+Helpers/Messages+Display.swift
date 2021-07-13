@@ -20,7 +20,7 @@ extension MessagesController: MessagesDisplayDelegate {
         case .custom, .emoji:
             return .clear
         default:
-            return isFromCurrentSender(message: message) ? .telaBlue : .tertiarySystemBackground
+            return isFromCurrentSender(message: message) ? .systemBlue : .tertiarySystemBackground
         }
         
     }
@@ -48,9 +48,9 @@ extension MessagesController: MessagesDisplayDelegate {
             }
             case .url, .phoneNumber:
                 return [
-                    .foregroundColor: UIColor.link,
+                    .foregroundColor: UIColor.whiteSmoke,
                     .underlineStyle: NSUnderlineStyle.single.rawValue,
-                    .underlineColor: UIColor.link
+                    .underlineColor: UIColor.whiteSmoke
             ]
             case .date:
                 return isFromCurrentSender(message: message) ? [

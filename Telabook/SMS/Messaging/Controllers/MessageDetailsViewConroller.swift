@@ -10,7 +10,7 @@ import UIKit
 import MessageKit
 import AVFoundation
 
-protocol MessageDetailsControllerDelegate: class {
+protocol MessageDetailsControllerDelegate: AnyObject {
     func deleteMessage(message: UserMessage, controller:MessageDetailsViewController)
 }
 
@@ -77,7 +77,7 @@ class MessageDetailsViewController: UIViewController {
         messagesCollectionView.performBatchUpdates({
             messagesCollectionView.reloadSections([0])
         }, completion: { [weak self] _ in
-            self?.messagesCollectionView.scrollToBottom(animated: true)
+          self?.messagesCollectionView.scrollToLastItem(animated: true)
         })
     }
     

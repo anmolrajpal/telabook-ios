@@ -48,7 +48,7 @@ extension MessagesController {
         
         scrollsToLastItemOnKeyboardBeginsEditing = false
         maintainPositionOnKeyboardFrameChanged = true
-        messagesCollectionView.scrollToBottom(animated: false)
+      messagesCollectionView.scrollToLastItem(animated: false)
         
 //        messagesCollectionView.scrollToLastItem()
     }

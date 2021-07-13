@@ -1,26 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17511" systemVersion="20B50" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="AddressBook" representedClassName="AddressBook" syncable="YES" codeGenerationType="class">
-        <attribute name="addressOne" optional="YES" attributeType="String"/>
-        <attribute name="addressTwo" optional="YES" attributeType="String"/>
-        <attribute name="classificationStar" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="customerDescription" optional="YES" attributeType="String"/>
-        <attribute name="customerID" optional="YES" attributeType="Integer 64" usesScalarValueType="YES"/>
-        <attribute name="firstName" optional="YES" attributeType="String"/>
-        <attribute name="id" optional="YES" attributeType="Integer 64" usesScalarValueType="YES"/>
-        <attribute name="internalNames" optional="YES" attributeType="String"/>
-        <attribute name="lastName" optional="YES" attributeType="String"/>
-        <attribute name="lastRefreshedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="makeInternal" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="ownerID" optional="YES" attributeType="Integer 64" usesScalarValueType="YES"/>
-        <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="customer" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Customer" inverseName="addressBook" inverseEntity="Customer"/>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="18154" systemVersion="20F71" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="AddressBookContact" representedClassName="AddressBookContact" syncable="YES" codeGenerationType="class">
+        <attribute name="addressBookId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="addressBookName" optional="YES" attributeType="String"/>
+        <attribute name="companyId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="companyName" optional="YES" attributeType="String"/>
+        <attribute name="contactConversationId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="contactConversationNode" optional="YES" attributeType="String"/>
+        <attribute name="contactGlobalName" optional="YES" attributeType="String"/>
+        <attribute name="contactId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="contactName" optional="YES" attributeType="String"/>
+        <attribute name="contactPhoneNumber" optional="YES" attributeType="String"/>
+        <attribute name="firstLetter" attributeType="String"/>
+        <attribute name="groupId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="groupName" optional="YES" attributeType="String"/>
+        <attribute name="isFavourited" attributeType="Boolean" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="locallyRefreshedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="addresses" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AddressEntity" inverseName="contact" inverseEntity="AddressEntity"/>
+        <relationship name="agent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Agent" inverseName="contacts" inverseEntity="Agent"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
-                <constraint value="id"/>
+                <constraint value="contactConversationId"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
+    </entity>
+    <entity name="AddressEntity" representedClassName="AddressEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="addressName" optional="YES" attributeType="String"/>
+        <attribute name="defaultAddress" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="secondAddress" optional="YES" attributeType="String"/>
+        <relationship name="contact" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AddressBookContact" inverseName="addresses" inverseEntity="AddressBookContact"/>
+        <relationship name="mainAddress" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="MainAddressEntity" inverseName="address" inverseEntity="MainAddressEntity"/>
     </entity>
     <entity name="Agent" representedClassName="Agent" syncable="YES" codeGenerationType="class">
         <attribute name="allConversationsFetchedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -46,6 +55,7 @@
         <attribute name="workerID" optional="YES" attributeType="Integer 32" minValueString="1" usesScalarValueType="YES"/>
         <relationship name="autoResponse" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="AutoResponse" inverseName="autoResponseSender" inverseEntity="AutoResponse"/>
         <relationship name="calls" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AgentCall" inverseName="worker" inverseEntity="AgentCall"/>
+        <relationship name="contacts" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AddressBookContact" inverseName="agent" inverseEntity="AddressBookContact"/>
         <relationship name="customers" toMany="YES" deletionRule="Cascade" destinationEntity="Customer" inverseName="agent" inverseEntity="Customer"/>
         <relationship name="galleryItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AgentGalleryItem" inverseName="agent" inverseEntity="AgentGalleryItem"/>
         <relationship name="quickResponses" toMany="YES" deletionRule="Cascade" destinationEntity="QuickResponse" inverseName="sender" inverseEntity="QuickResponse"/>
@@ -159,7 +169,6 @@
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="workerPersonName" optional="YES" attributeType="String"/>
         <attribute name="workerPhoneNumber" optional="YES" attributeType="String"/>
-        <relationship name="addressBook" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="AddressBook" inverseName="customer" inverseEntity="AddressBook"/>
         <relationship name="agent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Agent" inverseName="customers" inverseEntity="Agent"/>
         <relationship name="customerDetails" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CustomerDetails" inverseName="conversation" inverseEntity="CustomerDetails"/>
         <relationship name="messages" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="UserMessage" inverseName="conversation" inverseEntity="UserMessage"/>
@@ -185,6 +194,37 @@
                 <constraint value="id"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
+    </entity>
+    <entity name="GeometryEntity" representedClassName="GeometryEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="locationLatitude" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="locationLongitude" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="viewportEast" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="viewportNorth" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="viewportSouth" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="viewportWest" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="mainAddress" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MainAddressEntity" inverseName="geometry" inverseEntity="MainAddressEntity"/>
+    </entity>
+    <entity name="MainAddressComponent" representedClassName="MainAddressComponent" syncable="YES" codeGenerationType="class">
+        <attribute name="longName" optional="YES" attributeType="String"/>
+        <attribute name="shortName" optional="YES" attributeType="String"/>
+        <attribute name="types" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="Array&lt;String&gt;"/>
+        <relationship name="mainAddress" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MainAddressEntity" inverseName="addressComponents" inverseEntity="MainAddressEntity"/>
+    </entity>
+    <entity name="MainAddressEntity" representedClassName="MainAddressEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="adrAddress" optional="YES" attributeType="String"/>
+        <attribute name="formattedAddress" optional="YES" attributeType="String"/>
+        <attribute name="icon" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="placeId" optional="YES" attributeType="String"/>
+        <attribute name="reference" optional="YES" attributeType="String"/>
+        <attribute name="types" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="Array&lt;String&gt;"/>
+        <attribute name="url" optional="YES" attributeType="URI"/>
+        <attribute name="utcOffset" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="utcOffsetMinutes" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="vicinity" optional="YES" attributeType="String"/>
+        <relationship name="address" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AddressEntity" inverseName="mainAddress" inverseEntity="AddressEntity"/>
+        <relationship name="addressComponents" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MainAddressComponent" inverseName="mainAddress" inverseEntity="MainAddressComponent"/>
+        <relationship name="geometry" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="GeometryEntity" inverseName="mainAddress" inverseEntity="GeometryEntity"/>
     </entity>
     <entity name="QuickResponse" representedClassName="QuickResponse" syncable="YES" codeGenerationType="class">
         <attribute name="answer" optional="YES" attributeType="String"/>
@@ -263,16 +303,20 @@
         </uniquenessConstraints>
     </entity>
     <elements>
-        <element name="AddressBook" positionX="-711.54296875" positionY="176.5" width="128" height="268"/>
-        <element name="Agent" positionX="-1461.12109375" positionY="219.5390625" width="128" height="433"/>
-        <element name="AgentCall" positionX="-1440" positionY="252" width="128" height="358"/>
-        <element name="AgentGalleryItem" positionX="-1272.69140625" positionY="732" width="128" height="148"/>
-        <element name="AutoResponse" positionX="-1644.57421875" positionY="605.0234375" width="128" height="163"/>
-        <element name="BlockedUser" positionX="-1268.88671875" positionY="97.640625" width="128" height="208"/>
-        <element name="Customer" positionX="-939.34375" positionY="152.140625" width="128" height="584"/>
-        <element name="CustomerDetails" positionX="-924.04296875" positionY="815.85546875" width="128" height="179"/>
-        <element name="QuickResponse" positionX="-1465.515625" positionY="706.03515625" width="128" height="178"/>
-        <element name="ScheduledMessage" positionX="-1102.84765625" positionY="102.38671875" width="128" height="208"/>
-        <element name="UserMessage" positionX="-525.5546875" positionY="217.13671875" width="128" height="568"/>
+        <element name="Agent" positionX="-1461.12109375" positionY="219.5390625" width="128" height="448"/>
+        <element name="AgentCall" positionX="-1710.9609375" positionY="641.16796875" width="128" height="358"/>
+        <element name="AgentGalleryItem" positionX="-1102.0625" positionY="672.59765625" width="128" height="148"/>
+        <element name="AutoResponse" positionX="-1670.42578125" positionY="348.9921875" width="128" height="163"/>
+        <element name="BlockedUser" positionX="-1491.91015625" positionY="-77.7734375" width="128" height="208"/>
+        <element name="Customer" positionX="-1024.16015625" positionY="-15.7421875" width="128" height="583"/>
+        <element name="CustomerDetails" positionX="-825.28125" positionY="302.921875" width="128" height="179"/>
+        <element name="QuickResponse" positionX="-1499.8125" positionY="731.21484375" width="128" height="178"/>
+        <element name="ScheduledMessage" positionX="-1663.60546875" positionY="-67.7421875" width="128" height="208"/>
+        <element name="UserMessage" positionX="-603.69921875" positionY="65.24609375" width="128" height="568"/>
+        <element name="AddressBookContact" positionX="-1242.34765625" positionY="1012.30078125" width="128" height="298"/>
+        <element name="AddressEntity" positionX="-1061.90625" positionY="1162.33984375" width="128" height="118"/>
+        <element name="MainAddressEntity" positionX="-880.421875" positionY="1057.24609375" width="128" height="253"/>
+        <element name="MainAddressComponent" positionX="-677.58203125" positionY="1048.3359375" width="128" height="103"/>
+        <element name="GeometryEntity" positionX="-673.80078125" positionY="1304.87109375" width="128" height="148"/>
     </elements>
 </model>

@@ -41,6 +41,19 @@
 		6F087DD322E0F1D600CAD840 /* OnlineUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F087DD222E0F1D600CAD840 /* OnlineUserCell.swift */; };
 		6F13C4902476A21C00E9C060 /* BlacklistedDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F13C48F2476A21C00E9C060 /* BlacklistedDetailsViewController.swift */; };
 		6F13C4922476A23700E9C060 /* BlacklistedDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F13C4912476A23700E9C060 /* BlacklistedDetailsView.swift */; };
+		6F14AF8026977E8400A98679 /* AddressBookViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F14AF7F26977E8400A98679 /* AddressBookViewController.swift */; };
+		6F14AF8226977ED600A98679 /* AddressBook+CoreDataHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F14AF8126977ED600A98679 /* AddressBook+CoreDataHelpers.swift */; };
+		6F14AF8426977EEC00A98679 /* AddressBook+TableViewHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F14AF8326977EEC00A98679 /* AddressBook+TableViewHelpers.swift */; };
+		6F14AF862697861400A98679 /* AddressBookJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F14AF852697861400A98679 /* AddressBookJSON.swift */; };
+		6F14AF88269789A300A98679 /* AddressBook+ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F14AF87269789A300A98679 /* AddressBook+ServiceProvider.swift */; };
+		6F14AF8A26978B9700A98679 /* AddressBook+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F14AF8926978B9700A98679 /* AddressBook+Helpers.swift */; };
+		6F14AF91269999B800A98679 /* AddressBookOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F14AF90269999B700A98679 /* AddressBookOperations.swift */; };
+		6F14AF932699C50100A98679 /* AddressBook+Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F14AF922699C50100A98679 /* AddressBook+Search.swift */; };
+		6F14AF95269AC42400A98679 /* APIEndpointOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F14AF94269AC42400A98679 /* APIEndpointOperation.swift */; };
+		6F14AF97269C8B8300A98679 /* AddressBookContactCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F14AF96269C8B8300A98679 /* AddressBookContactCell.swift */; };
+		6F14AF9D269CC1D100A98679 /* ContactDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F14AF9C269CC1D100A98679 /* ContactDetailsViewController.swift */; };
+		6F14AF9F269CC36D00A98679 /* ContactDetails+TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F14AF9E269CC36D00A98679 /* ContactDetails+TableView.swift */; };
+		6F14AFA1269CC37A00A98679 /* ContactDetails+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F14AFA0269CC37A00A98679 /* ContactDetails+Helpers.swift */; };
 		6F1BD2EA22C4AD250053D0CC /* FollowUpsIndexCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1BD2E922C4AD250053D0CC /* FollowUpsIndexCodable.swift */; };
 		6F1BD2ED22C4ADED0053D0CC /* FollowUpVCTableViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1BD2EC22C4ADED0053D0CC /* FollowUpVCTableViewExtensions.swift */; };
 		6F1BD2EF22C4B0ED0053D0CC /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1BD2EE22C4B0ED0053D0CC /* Protocols.swift */; };
@@ -381,6 +394,20 @@
 		6F087DD222E0F1D600CAD840 /* OnlineUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineUserCell.swift; sourceTree = "<group>"; };
 		6F13C48F2476A21C00E9C060 /* BlacklistedDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlacklistedDetailsViewController.swift; sourceTree = "<group>"; };
 		6F13C4912476A23700E9C060 /* BlacklistedDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlacklistedDetailsView.swift; sourceTree = "<group>"; };
+		6F14AF7A2697454800A98679 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		6F14AF7F26977E8400A98679 /* AddressBookViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressBookViewController.swift; sourceTree = "<group>"; };
+		6F14AF8126977ED600A98679 /* AddressBook+CoreDataHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AddressBook+CoreDataHelpers.swift"; sourceTree = "<group>"; };
+		6F14AF8326977EEC00A98679 /* AddressBook+TableViewHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AddressBook+TableViewHelpers.swift"; sourceTree = "<group>"; };
+		6F14AF852697861400A98679 /* AddressBookJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressBookJSON.swift; sourceTree = "<group>"; };
+		6F14AF87269789A300A98679 /* AddressBook+ServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AddressBook+ServiceProvider.swift"; sourceTree = "<group>"; };
+		6F14AF8926978B9700A98679 /* AddressBook+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AddressBook+Helpers.swift"; sourceTree = "<group>"; };
+		6F14AF90269999B700A98679 /* AddressBookOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressBookOperations.swift; sourceTree = "<group>"; };
+		6F14AF922699C50100A98679 /* AddressBook+Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AddressBook+Search.swift"; sourceTree = "<group>"; };
+		6F14AF94269AC42400A98679 /* APIEndpointOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEndpointOperation.swift; sourceTree = "<group>"; };
+		6F14AF96269C8B8300A98679 /* AddressBookContactCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressBookContactCell.swift; sourceTree = "<group>"; };
+		6F14AF9C269CC1D100A98679 /* ContactDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDetailsViewController.swift; sourceTree = "<group>"; };
+		6F14AF9E269CC36D00A98679 /* ContactDetails+TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContactDetails+TableView.swift"; sourceTree = "<group>"; };
+		6F14AFA0269CC37A00A98679 /* ContactDetails+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContactDetails+Helpers.swift"; sourceTree = "<group>"; };
 		6F1BD2E922C4AD250053D0CC /* FollowUpsIndexCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUpsIndexCodable.swift; sourceTree = "<group>"; };
 		6F1BD2EC22C4ADED0053D0CC /* FollowUpVCTableViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUpVCTableViewExtensions.swift; sourceTree = "<group>"; };
 		6F1BD2EE22C4B0ED0053D0CC /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
@@ -561,7 +588,7 @@
 		6F987A7B245C93D800C6046E /* ManageAgentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsView.swift; sourceTree = "<group>"; };
 		6F987A7D245C9B8F00C6046E /* ManageAgentsCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAgentsCellView.swift; sourceTree = "<group>"; };
 		6F987A7F245CC1B500C6046E /* FirebaseOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseOperations.swift; sourceTree = "<group>"; };
-		6F987A81245CCA9000C6046E /* APIOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIOperations.swift; sourceTree = "<group>"; };
+		6F987A81245CCA9000C6046E /* APIOperations.swift */ = {isa = PBXFileReference; indentWidth = 3; lastKnownFileType = sourcecode.swift; path = APIOperations.swift; sourceTree = "<group>"; tabWidth = 3; wrapsLines = 1; };
 		6F9E6EB9248AD81B0001950E /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6F9E6EBC248E442E0001950E /* Messages+DataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Messages+DataProvider.swift"; sourceTree = "<group>"; };
 		6FA389D62590D7C0007D7A14 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
@@ -647,7 +674,6 @@
 		6FE24ABE2541C6E60043ACC7 /* Telabook-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Telabook-Bridging-Header.h"; sourceTree = "<group>"; };
 		6FE24AC325421D110043ACC7 /* ConfigManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigManager.swift; sourceTree = "<group>"; };
 		6FE24AC725421D890043ACC7 /* AppManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppManager.swift; sourceTree = "<group>"; };
-		6FEC641124D19FE40012B234 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6FEC641224D48DCB0012B234 /* MessagePayloadJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePayloadJSON.swift; sourceTree = "<group>"; };
 		6FEC641424D80F270012B234 /* DisabledAccountsJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisabledAccountsJSON.swift; sourceTree = "<group>"; };
 		6FEC642324D836A10012B234 /* CustomerDetailsJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerDetailsJSON.swift; sourceTree = "<group>"; };
@@ -874,6 +900,87 @@
 				6F087DD022E0EFFD00CAD840 /* OnlineUsersAPI.swift */,
 			);
 			path = API;
+			sourceTree = "<group>";
+		};
+		6F14AF7B26977D7800A98679 /* Address Book */ = {
+			isa = PBXGroup;
+			children = (
+				6F14AF8F269999AC00A98679 /* Operations */,
+				6F14AF7E26977D8F00A98679 /* Views */,
+				6F14AF7D26977D8A00A98679 /* Controllers */,
+				6F14AF7C26977D8200A98679 /* Extensions+Helpers */,
+			);
+			path = "Address Book";
+			sourceTree = "<group>";
+		};
+		6F14AF7C26977D8200A98679 /* Extensions+Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				6F14AF8926978B9700A98679 /* AddressBook+Helpers.swift */,
+				6F14AF8126977ED600A98679 /* AddressBook+CoreDataHelpers.swift */,
+				6F14AF87269789A300A98679 /* AddressBook+ServiceProvider.swift */,
+				6F14AF8326977EEC00A98679 /* AddressBook+TableViewHelpers.swift */,
+				6F14AF922699C50100A98679 /* AddressBook+Search.swift */,
+			);
+			path = "Extensions+Helpers";
+			sourceTree = "<group>";
+		};
+		6F14AF7D26977D8A00A98679 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				6F14AF7F26977E8400A98679 /* AddressBookViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		6F14AF7E26977D8F00A98679 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				6F14AF96269C8B8300A98679 /* AddressBookContactCell.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		6F14AF8F269999AC00A98679 /* Operations */ = {
+			isa = PBXGroup;
+			children = (
+				6F14AF90269999B700A98679 /* AddressBookOperations.swift */,
+			);
+			path = Operations;
+			sourceTree = "<group>";
+		};
+		6F14AF98269CC18500A98679 /* Contact Details */ = {
+			isa = PBXGroup;
+			children = (
+				6F14AF9B269CC19F00A98679 /* Views */,
+				6F14AF9A269CC19900A98679 /* Controllers */,
+				6F14AF99269CC19200A98679 /* Extensions+Helpers */,
+			);
+			path = "Contact Details";
+			sourceTree = "<group>";
+		};
+		6F14AF99269CC19200A98679 /* Extensions+Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				6F14AFA0269CC37A00A98679 /* ContactDetails+Helpers.swift */,
+				6F14AF9E269CC36D00A98679 /* ContactDetails+TableView.swift */,
+			);
+			path = "Extensions+Helpers";
+			sourceTree = "<group>";
+		};
+		6F14AF9A269CC19900A98679 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				6F14AF9C269CC1D100A98679 /* ContactDetailsViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		6F14AF9B269CC19F00A98679 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		6F1BD2E722C4ACA70053D0CC /* Model */ = {
@@ -1680,6 +1787,7 @@
 				6F987A472456C8B900C6046E /* APIServiceProtocol.swift */,
 				6FB25D9025835D3A007644F7 /* APIServer.swift */,
 				6F987A81245CCA9000C6046E /* APIOperations.swift */,
+				6F14AF94269AC42400A98679 /* APIEndpointOperation.swift */,
 			);
 			path = "API Service";
 			sourceTree = "<group>";
@@ -1792,6 +1900,7 @@
 				6F7310E524E826B4007B082F /* AutoResponseJSON.swift */,
 				6FFBCC6024F944A500C7E96C /* AgentCallsJSON.swift */,
 				6F05C3392528C123001C7FD2 /* UserJSON.swift */,
+				6F14AF852697861400A98679 /* AddressBookJSON.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1824,7 +1933,9 @@
 				9D78E82FCB5E6192D5C81890 /* Pods */,
 				AF7486D7D8259DA12A827688 /* Frameworks */,
 			);
+			indentWidth = 3;
 			sourceTree = "<group>";
+			tabWidth = 3;
 		};
 		6FB11AE1229BDDBD0098D050 /* Products */ = {
 			isa = PBXGroup;
@@ -1895,6 +2006,8 @@
 			isa = PBXGroup;
 			children = (
 				6FC602252464451500C1BF6D /* Agents */,
+				6F14AF7B26977D7800A98679 /* Address Book */,
+				6F14AF98269CC18500A98679 /* Contact Details */,
 				6F06533C246487B900F857C1 /* Customers */,
 				6F21377B247434DF002AB150 /* Messaging */,
 			);
@@ -2164,7 +2277,7 @@
 		6FEE9A1F247EFE3200709E2D /* Development */ = {
 			isa = PBXGroup;
 			children = (
-				6FEC641124D19FE40012B234 /* GoogleService-Info.plist */,
+				6F14AF7A2697454800A98679 /* GoogleService-Info.plist */,
 			);
 			path = Development;
 			sourceTree = "<group>";
@@ -2493,6 +2606,7 @@
 				6FCF7F7A24DF21D300A7AB0B /* UserProfileOperations.swift in Sources */,
 				6F6B44CE24BC794400AD2649 /* MessageDetailsController+Delegate.swift in Sources */,
 				6F987A78245B6BE700C6046E /* CustomerCodable.swift in Sources */,
+				6F14AFA1269CC37A00A98679 /* ContactDetails+Helpers.swift in Sources */,
 				6FB11B33229EB5190098D050 /* OnlineUsersViewController.swift in Sources */,
 				6FB11AFB229BF0590098D050 /* TabBarController.swift in Sources */,
 				6FEE9A13247D4FFF00709E2D /* MessageOperations.swift in Sources */,
@@ -2500,12 +2614,14 @@
 				6F97BA9224A9AF5A00F8DE72 /* ScheduleNewMessage+Helpers.swift in Sources */,
 				6FF842182482EADD0069A789 /* QuickResponsePickerView.swift in Sources */,
 				6FB11B29229E75710098D050 /* FirebaseAuthService.swift in Sources */,
+				6F14AF8026977E8400A98679 /* AddressBookViewController.swift in Sources */,
 				6FC823092475AE23002421F0 /* Blacklist+CoreDataHelpers.swift in Sources */,
 				6FC60236246447E500C1BF6D /* Agents+Helpers.swift in Sources */,
 				6F69BE8822D4780F00F8903F /* ManageAgentsServiceProvider.swift in Sources */,
 				6F987A5724570EDA00C6046E /* SelectCompanyViewController.swift in Sources */,
 				6F05C33A2528C123001C7FD2 /* UserJSON.swift in Sources */,
 				6F987A76245B556600C6046E /* PersistenceContainer.swift in Sources */,
+				6F14AF8426977EEC00A98679 /* AddressBook+TableViewHelpers.swift in Sources */,
 				6F8927FE24A8E8FA0025DF64 /* ScheduledMessagesOperations.swift in Sources */,
 				6F02B2E22461CBC000FFB34E /* AutoResponseOperations.swift in Sources */,
 				6F987A4E2456CAE800C6046E /* APIServiceURLConstructor.swift in Sources */,
@@ -2605,9 +2721,11 @@
 				6F5064B524A0D12D003CAC2E /* ConversationGalleryCell.swift in Sources */,
 				6F37E2512460AE29003E9126 /* QuickResponses+FetchedResultsHelpers.swift in Sources */,
 				6FEE9A05247D305D00709E2D /* Messages+CoreDataHelpers.swift in Sources */,
+				6F14AF91269999B800A98679 /* AddressBookOperations.swift in Sources */,
 				6F97B1622503D148006D5A61 /* GroupedCallDetails+TableView.swift in Sources */,
 				6FF2E6A3248FA4B300502B99 /* Profile+Helpers.swift in Sources */,
 				6F395C9B248135A30023255F /* Login+ForgotPassword.swift in Sources */,
+				6F14AF95269AC42400A98679 /* APIEndpointOperation.swift in Sources */,
 				6F6B44D024BC79AA00AD2649 /* MessageDetailsController+CellDelegate.swift in Sources */,
 				6F1BD2EF22C4B0ED0053D0CC /* Protocols.swift in Sources */,
 				6FF2E6B1249002BF00502B99 /* FullImage+Helpers.swift in Sources */,
@@ -2644,6 +2762,7 @@
 				6FF2E6A7248FA4E500502B99 /* Profile+ServicePorvider.swift in Sources */,
 				6F987A482456C8B900C6046E /* APIServiceProtocol.swift in Sources */,
 				6F00F2DE24A50E46001E33D9 /* MessageDownloadService.swift in Sources */,
+				6F14AF932699C50100A98679 /* AddressBook+Search.swift in Sources */,
 				6FFBCC5024F9396A00C7E96C /* CallsTabAgents+TableView.swift in Sources */,
 				6F58C33922D618C40091C785 /* AutoResponseAPIProtocol.swift in Sources */,
 				6F1BD2F322C4B4CB0053D0CC /* FollowUpDataProvider.swift in Sources */,
@@ -2664,6 +2783,7 @@
 				6F9453D122DDDC2100047C7F /* ScheduledMessageCell.swift in Sources */,
 				6F987A73245B159500C6046E /* TapticEngine.swift in Sources */,
 				6F8A8328249F560B002ACDFE /* FirebaseAgentGalleryItem.swift in Sources */,
+				6F14AF862697861400A98679 /* AddressBookJSON.swift in Sources */,
 				6F087DD322E0F1D600CAD840 /* OnlineUserCell.swift in Sources */,
 				6F8BC1D524E7FE4A00EF6639 /* AgentsMockData.swift in Sources */,
 				6FB11AE4229BDDBD0098D050 /* AppDelegate.swift in Sources */,
@@ -2692,6 +2812,7 @@
 				6F6B44D424BC7A2600AD2649 /* MessageDetailsController+Layout.swift in Sources */,
 				6F97B1642503D3B0006D5A61 /* CallDetailsViewController.swift in Sources */,
 				6FD4F7AE24AF526B00BD2569 /* LocalNotificationItem.swift in Sources */,
+				6F14AF9F269CC36D00A98679 /* ContactDetails+TableView.swift in Sources */,
 				6FB11B14229C3FCA0098D050 /* BadgeBarItem.swift in Sources */,
 				6FC8230D2475AE5A002421F0 /* Blacklist+Helpers.swift in Sources */,
 				6F987A7A245C27B600C6046E /* AgentOperations.swift in Sources */,
@@ -2705,6 +2826,7 @@
 				6F987A612457529600C6046E /* SelectCompanyTableViewHelpers.swift in Sources */,
 				6F7BF52E24D00D75009B9D5E /* UserMessage+Firebase.swift in Sources */,
 				6FC823072475ADFA002421F0 /* BlacklistView.swift in Sources */,
+				6F14AF8A26978B9700A98679 /* AddressBook+Helpers.swift in Sources */,
 				6F7310E624E826B4007B082F /* AutoResponseJSON.swift in Sources */,
 				6F41013722DDF8950038AA76 /* CallGroupsAPIProtocol.swift in Sources */,
 				6F395C9724804B160023255F /* Login+Helpers.swift in Sources */,
@@ -2723,6 +2845,7 @@
 				6FAD46EA245066F10050F7F2 /* SceneDelegate.swift in Sources */,
 				6F2137782473EED8002AB150 /* AddressBookCodable.swift in Sources */,
 				6F987A5F245751AB00C6046E /* UserCompaniesCodable.swift in Sources */,
+				6F14AF88269789A300A98679 /* AddressBook+ServiceProvider.swift in Sources */,
 				6F91C4D0254ECFE000B3B407 /* CallViewController.swift in Sources */,
 				6FB11B1D229D19E10098D050 /* NetworkManager.swift in Sources */,
 				6F5064AD24A09147003CAC2E /* AddMediaCell.swift in Sources */,
@@ -2742,6 +2865,7 @@
 				6F7A38332502650000759922 /* AgentCalls+ServiceProvider.swift in Sources */,
 				6F69BE9622D4DE4900F8903F /* QuickResponsesDataProvider.swift in Sources */,
 				6F6F06962552D765003B3AB2 /* UIDigitButton.swift in Sources */,
+				6F14AF9D269CC1D100A98679 /* ContactDetailsViewController.swift in Sources */,
 				6F00F2D624A50D69001E33D9 /* MessageMediaManager.swift in Sources */,
 				6FCF7F7424DF0C2A00A7AB0B /* NormalDialerViewController.swift in Sources */,
 				6FD4F7B024AF527900BD2569 /* LocalNotificationService.swift in Sources */,
@@ -2804,10 +2928,12 @@
 				6FEE9A19247ED6A400709E2D /* BotMessageCell.swift in Sources */,
 				6F987A6F245B053C00C6046E /* AgentCodable.swift in Sources */,
 				6FB11B05229BFA120098D050 /* HomeViewController.swift in Sources */,
+				6F14AF8226977ED600A98679 /* AddressBook+CoreDataHelpers.swift in Sources */,
 				6FEC642424D836A10012B234 /* CustomerDetailsJSON.swift in Sources */,
 				6F8A82FF249A91B8002ACDFE /* FirebaseConfiguration.swift in Sources */,
 				6FAD46E6245054020050F7F2 /* AppData.swift in Sources */,
 				6F6F06A425544454003B3AB2 /* LinphoneLoggingServiceManager.swift in Sources */,
+				6F14AF97269C8B8300A98679 /* AddressBookContactCell.swift in Sources */,
 				6FA3DFEF2475BFDE0083AB13 /* Blacklist+SearchHelpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

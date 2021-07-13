@@ -60,7 +60,7 @@ extension MessagesController: InputBarAccessoryViewDelegate {
             #endif
             return
         }
-        quickResponses.sort(by: { $0.updatedAt ?? Date() > $1.updatedAt ?? Date() })
+        quickResponses.sort(by: { $0.createdAt ?? Date() < $1.createdAt ?? Date() })
         let vc = QuickResponsePickerController(responses: quickResponses)
         vc.delegate = self
         let navController = UINavigationController(rootViewController: vc)

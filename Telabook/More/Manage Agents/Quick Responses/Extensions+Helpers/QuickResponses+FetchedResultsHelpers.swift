@@ -21,7 +21,7 @@ extension QuickResponsesViewController {
         let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [agentPredicate, deletionCheckPredicate])
         fetchRequest.predicate = predicate
         
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(QuickResponse.updatedAt), ascending: false)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(QuickResponse.createdAt), ascending: true)]
         
         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
         

@@ -521,7 +521,7 @@ extension CustomersViewController {
             completionHandler(true)
         })
         detailsAction.image = UIImage.textImage(image: #imageLiteral(resourceName: "edit").withTintColor(.white), text: "Details").withRenderingMode(.alwaysOriginal)
-        detailsAction.backgroundColor = .systemPink
+        detailsAction.backgroundColor = .systemOrange
         let configuration = UISwipeActionsConfiguration(actions: [detailsAction, moreAction])
         
         return configuration
@@ -534,8 +534,19 @@ extension CustomersViewController {
             customer.node != nil else { return }
         printAndLog(message: "*************** \nConversation ID: \(customer.externalConversationID)\nNode: \(customer.node ?? "--") | \nConversation object:-\n\(customer)\n*************", log: .ui, logType: .info)
         let vc = MessagesController(customer: customer)
-        navigationController?.pushViewController(vc, animated: true)
+        
+        self.navigationController?.pushViewController(vc, animated: true)
         viewDidAppear = false
+    }
+    func getNavBarTitle(customer: Customer) -> String {
+        let agentName = customer.workerPersonName
+        let agentDIDNumber = customer.workerPhoneNumber ?? ""
+        let number = agentDIDNumber.getE164FormattedNumber(shouldPrefixCountryCode: false) ?? agentDIDNumber
+        if let name = agentName, !name.isBlank {
+            return name
+        } else {
+            return number
+        }
     }
 }
 

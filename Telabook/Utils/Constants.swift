@@ -8,3 +8,7 @@
 
 import Foundation
 
+struct Constants {
+   static let alphabet = "abcdefghijklmnopqrstuvwxyz"
+   static let digits = "0123456789"
+}

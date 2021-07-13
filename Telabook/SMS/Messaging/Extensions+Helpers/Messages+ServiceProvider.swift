@@ -66,13 +66,18 @@ extension MessagesController {
                     self.messages[index] = message
                     self.updateCell(with: message)
                 } else if message.sentDate >= self.screenEntryTime {
-                    self.messages.append(message)
                     self.messagesCollectionView.performBatchUpdates({
+                      self.messages.append(message)
                         self.messagesCollectionView.insertSections([self.messages.count - 1])
                         if self.messages.count >= 2 {
                             self.messagesCollectionView.reloadSections([self.messages.count - 2])
+                            self.messagesCollectionView.reloadDataAndKeepOffset()
                         }
-                    }) { _ in }
+                    }, completion: { [weak self] _ in
+                        if self?.isLastSectionVisible() == true {
+                            self?.messagesCollectionView.scrollToLastItem(animated: true)
+                        }
+                    })
                 }
             }
         }
@@ -562,7 +567,7 @@ extension MessagesController {
                             
                         } else {
                             DispatchQueue.main.async {
-                                self.messagesCollectionView.scrollToBottom(animated: true)
+                              self.messagesCollectionView.scrollToLastItem(animated: true)
                             }
                         }
                 }

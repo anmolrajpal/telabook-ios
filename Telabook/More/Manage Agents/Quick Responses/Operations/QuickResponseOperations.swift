@@ -207,7 +207,12 @@ class DownloadQuickResponsesEntriesFromServer_Operation: Operation {
             finish(result: .failure(.cancelled))
             return
         }
-        APIOperations.triggerAPIEndpointOperations(endpoint: .FetchQuickResponses, httpMethod: .GET, params: params, headers: headers, completion: finish, decoder: defaultDecoder)
+      APIOperations.triggerAPIEndpointOperations(endpoint: .FetchQuickResponses,
+                                                 httpMethod: .GET,
+                                                 params: params,
+                                                 headers: headers,
+                                                 decoder: defaultDecoder,
+                                                 completion: finish)
     }
 }
 
@@ -390,7 +395,15 @@ class CreateNewQuickResponseEntryOnServer_Operation: Operation {
             finish(result: .failure(.cancelled))
             return
         }
-        APIOperations.triggerAPIEndpointOperations(endpoint: .CreateQuickResponse, httpMethod: .POST, params: params, httpBody: httpBody, headers: headers, guardResponse: .Created, expectData: false, completion: finish, decoder: defaultDecoder)
+      APIOperations.triggerAPIEndpointOperations(endpoint: .CreateQuickResponse,
+                                                 httpMethod: .POST,
+                                                 params: params,
+                                                 httpBody: httpBody,
+                                                 headers: headers,
+                                                 guardResponse: .Created,
+                                                 expectData: false,
+                                                 decoder: defaultDecoder,
+                                                 completion: finish)
     }
 }
 
@@ -508,7 +521,15 @@ class UpdateExistingQuickResponseEntryOnServer_Operation: Operation {
             finish(result: .failure(.cancelled))
             return
         }
-        APIOperations.triggerAPIEndpointOperations(endpoint: .UpdateQuickResponse(responseID: responseID), httpMethod: .PUT, params: params, httpBody: httpBody, headers: headers, guardResponse: .Created, expectData: false, completion: finish, decoder: defaultDecoder)
+      APIOperations.triggerAPIEndpointOperations(endpoint: .UpdateQuickResponse(responseID: responseID),
+                                                 httpMethod: .PUT,
+                                                 params: params,
+                                                 httpBody: httpBody,
+                                                 headers: headers,
+                                                 guardResponse: .Created,
+                                                 expectData: false,
+                                                 decoder: defaultDecoder,
+                                                 completion: finish)
     }
 }
 
@@ -615,7 +636,13 @@ class DeleteExistingQuickResponseEntryOnServer_Operation: Operation {
             finish(result: .failure(.cancelled))
             return
         }
-        APIOperations.triggerAPIEndpointOperations(endpoint: .DeleteQuickResponse(responseID: responseID), httpMethod: .DELETE, params: params, guardResponse: .Created, expectData: false, completion: finish, decoder: defaultDecoder)
+      APIOperations.triggerAPIEndpointOperations(endpoint: .DeleteQuickResponse(responseID: responseID),
+                                                 httpMethod: .DELETE,
+                                                 params: params,
+                                                 guardResponse: .Created,
+                                                 expectData: false,
+                                                 decoder: defaultDecoder,
+                                                 completion: finish)
     }
 }
 

@@ -9,7 +9,7 @@
 import UIKit
 import MessageKit
 
-protocol LoginDelegate: class {
+protocol LoginDelegate: AnyObject {
     func didLoginIWithSuccess()
 }
 class LoginViewController: UIViewController {

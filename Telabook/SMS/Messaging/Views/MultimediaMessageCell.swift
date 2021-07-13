@@ -10,7 +10,7 @@ import UIKit
 import MessageKit
 
 
-protocol MultimediaMessageCellDelegate: class {
+protocol MultimediaMessageCellDelegate: AnyObject {
     func didTapDownloadButton(in cell:MultimediaMessageCell)
     func startDownloadingMedia(forMultimediaMessage message:UserMessage, at indexPath:IndexPath)
     func startUploadingMedia(forMultimediaMessage message:UserMessage, at indexPath:IndexPath)

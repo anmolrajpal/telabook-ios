@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol NormalDialerDelegate: class {
+protocol NormalDialerDelegate: AnyObject {
     func normalDialer(didEnteredNumberToDial number: String, controller: NormalDialerViewController)
 }
 

@@ -162,6 +162,14 @@ extension AgentsViewController {
             
             
             
+            // MARK: - Address Book Action
+            
+            let addressBookAction = UIAction(title: "Address Book", image: #imageLiteral(resourceName: "addressbook")) { _ in
+                self.showAddressBook(for: agent)
+            }
+            menuItems.append(addressBookAction)
+            
+            
             
             // MARK: - Agent's Gallery Action
             
@@ -206,6 +214,13 @@ extension AgentsViewController {
         } else {
             fatalError("User ID not found")
         }
+    }
+    
+    private func showAddressBook(for agent: Agent) {
+        let vc = AddressBookViewController(agent: agent)
+        let navController = UINavigationController(rootViewController: vc)
+//        navController.modalPresentationStyle = .overFullScreen
+        present(navController, animated: true)
     }
     private func showGallery(for agent:Agent) {
         let vc = AgentGalleryController(agent: agent)

@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-fileprivate protocol DataSourceDelegate: class {
+fileprivate protocol DataSourceDelegate: AnyObject {
     func dataSourceDidUpdate()
 }
 

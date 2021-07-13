@@ -630,7 +630,7 @@ extension TabBarController: LogoutDelegate {
         authenticate(animated: true)
     }
 }
-protocol LogoutDelegate: class {
+protocol LogoutDelegate: AnyObject {
     func presentLogin()
 }
 extension TabBarController: CallViewDelegate {

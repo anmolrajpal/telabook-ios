@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-protocol MessageMediaManagerDelegate: class {
+protocol MessageMediaManagerDelegate: AnyObject {
     func downloadProgressDidUpdate(for downloadItem:Download, formattedDownloadedSize:String, formattedTotalSize:String)
     func downloadDidFinish(for downloadItem:Download)
     func uploadProgressDidUpdate(for uploadItem:Upload, formattedUploadedSize:String, formattedTotalSize:String)

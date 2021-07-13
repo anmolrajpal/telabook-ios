@@ -125,3 +125,22 @@ class DictionaryDecoder {
         return try jsonDecoder.decode(type, from: jsonData)
     }
 }
+
+func showAlert(title:String = "Error", withErrorMessage errorMessage: String, actionCompletion: (() -> Void)? = nil, presentCompletion: (() -> Void)? = nil) {
+    DispatchQueue.main.async {
+        let topWindow = UIWindow(frame: UIScreen.main.bounds)
+        topWindow.rootViewController = UIViewController()
+        topWindow.windowLevel = UIWindow.Level.alert + 1
+        let title = NSLocalizedString(title, comment: "The Title of the Alert")
+        let message = NSLocalizedString(errorMessage, comment: "The message to be displayed in the Alert")
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: ""),
+                                      style: .cancel,
+                                      handler: {(_ action: UIAlertAction) -> Void in
+                                        topWindow.isHidden = true // if you want to hide the topwindow then use this
+                                        actionCompletion?()
+                                      }))
+        topWindow.makeKeyAndVisible()
+        topWindow.rootViewController?.present(alert, animated: true, completion: presentCompletion)
+    }   
+}

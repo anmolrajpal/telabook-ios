@@ -431,7 +431,7 @@ extension MessagesController {
                         DispatchQueue.main.async {
                             self.messages = messages
                             self.messagesCollectionView.reloadData()
-                            self.messagesCollectionView.scrollToBottom(animated: animated)
+                          self.messagesCollectionView.scrollToLastItem(animated: animated)
                             if fetchFromFirebase {
                                 self.loadInitialMessagesFromFirebase()
                             }
@@ -448,7 +448,7 @@ extension MessagesController {
                             }
                         }
                         self.messagesCollectionView.reloadData()
-                        self.messagesCollectionView.scrollToBottom(animated: animated)
+                      self.messagesCollectionView.scrollToLastItem(animated: animated)
                         if fetchFromFirebase {
                             self.upsertExistingMessagesFromFirebase(fetchedMessages: messages)
                         }
