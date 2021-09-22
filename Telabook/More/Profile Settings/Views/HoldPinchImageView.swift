@@ -90,7 +90,7 @@ class HoldPinchImageView: UIImageView, UIGestureRecognizerDelegate {
     }
     
     private func configureImageView() {
-        self.contentMode = .scaleAspectFill
+        self.contentMode = .scaleAspectFit
     }
     
     

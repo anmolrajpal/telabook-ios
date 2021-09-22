@@ -43,6 +43,7 @@ class CustomerCell: UITableViewCell {
         let phoneNumber = customer.phoneNumber ?? ""
         let number = phoneNumber.getE164FormattedNumber(shouldPrefixCountryCode: false) ?? phoneNumber
         let name = customer.addressBookName ?? customer.name
+      print("Customer: \(customer)")
 //        guard let type = customer.messageType, !type.isEmpty else {
 //            fatalError("Message type isn't available for conversation: \(customer.description)")
 //        }

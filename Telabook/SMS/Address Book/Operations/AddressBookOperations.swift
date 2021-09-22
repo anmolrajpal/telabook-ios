@@ -275,7 +275,13 @@ class UpsertContactEntriesInStore_Operation: Operation {
       }
       context.performAndWait {
          _ = serverEntries.map { serverEntry -> AddressBookContact in
-            //                let existingEntry = fetchedEntries?.first(where: { $0.contactConversationId == serverEntry.contactConversationId.toInt64 })
+            let existingEntry = fetchedEntries?.first(where: { $0.contactConversationId == serverEntry.contactConversationId.toInt64 })
+            if let existingAddresses = existingEntry?.addresses {
+               for case let address as AddressEntity in existingAddresses {
+                  existingEntry?.removeFromAddresses(address)
+                  context.delete(address)
+               }
+            }
             let contact = AddressBookContact(context: context, addressBookProperties: serverEntry, agent: agent)
             return contact
          }

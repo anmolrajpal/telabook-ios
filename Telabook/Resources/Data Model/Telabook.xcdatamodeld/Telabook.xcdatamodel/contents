@@ -28,8 +28,20 @@
         <attribute name="addressName" optional="YES" attributeType="String"/>
         <attribute name="defaultAddress" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="secondAddress" optional="YES" attributeType="String"/>
+        <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <relationship name="contact" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AddressBookContact" inverseName="addresses" inverseEntity="AddressBookContact"/>
         <relationship name="mainAddress" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="MainAddressEntity" inverseName="address" inverseEntity="MainAddressEntity"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="uuid"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="AddressPhotoEntity" representedClassName="AddressPhotoEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="height" optional="YES" attributeType="Integer 64" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="htmlAttributes" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="Array&lt;String&gt;"/>
+        <attribute name="width" optional="YES" attributeType="Integer 64" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="mainAddress" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MainAddressEntity" inverseName="photos" inverseEntity="MainAddressEntity"/>
     </entity>
     <entity name="Agent" representedClassName="Agent" syncable="YES" codeGenerationType="class">
         <attribute name="allConversationsFetchedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -225,6 +237,7 @@
         <relationship name="address" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AddressEntity" inverseName="mainAddress" inverseEntity="AddressEntity"/>
         <relationship name="addressComponents" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MainAddressComponent" inverseName="mainAddress" inverseEntity="MainAddressComponent"/>
         <relationship name="geometry" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="GeometryEntity" inverseName="mainAddress" inverseEntity="GeometryEntity"/>
+        <relationship name="photos" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AddressPhotoEntity" inverseName="mainAddress" inverseEntity="AddressPhotoEntity"/>
     </entity>
     <entity name="QuickResponse" representedClassName="QuickResponse" syncable="YES" codeGenerationType="class">
         <attribute name="answer" optional="YES" attributeType="String"/>
@@ -303,6 +316,8 @@
         </uniquenessConstraints>
     </entity>
     <elements>
+        <element name="AddressBookContact" positionX="-1242.34765625" positionY="1012.30078125" width="128" height="298"/>
+        <element name="AddressEntity" positionX="-1061.90625" positionY="1162.33984375" width="128" height="133"/>
         <element name="Agent" positionX="-1461.12109375" positionY="219.5390625" width="128" height="448"/>
         <element name="AgentCall" positionX="-1710.9609375" positionY="641.16796875" width="128" height="358"/>
         <element name="AgentGalleryItem" positionX="-1102.0625" positionY="672.59765625" width="128" height="148"/>
@@ -310,13 +325,12 @@
         <element name="BlockedUser" positionX="-1491.91015625" positionY="-77.7734375" width="128" height="208"/>
         <element name="Customer" positionX="-1024.16015625" positionY="-15.7421875" width="128" height="583"/>
         <element name="CustomerDetails" positionX="-825.28125" positionY="302.921875" width="128" height="179"/>
+        <element name="GeometryEntity" positionX="-673.80078125" positionY="1304.87109375" width="128" height="148"/>
+        <element name="MainAddressComponent" positionX="-677.58203125" positionY="1048.3359375" width="128" height="103"/>
+        <element name="MainAddressEntity" positionX="-880.421875" positionY="1057.24609375" width="128" height="254"/>
         <element name="QuickResponse" positionX="-1499.8125" positionY="731.21484375" width="128" height="178"/>
         <element name="ScheduledMessage" positionX="-1663.60546875" positionY="-67.7421875" width="128" height="208"/>
         <element name="UserMessage" positionX="-603.69921875" positionY="65.24609375" width="128" height="568"/>
-        <element name="AddressBookContact" positionX="-1242.34765625" positionY="1012.30078125" width="128" height="298"/>
-        <element name="AddressEntity" positionX="-1061.90625" positionY="1162.33984375" width="128" height="118"/>
-        <element name="MainAddressEntity" positionX="-880.421875" positionY="1057.24609375" width="128" height="253"/>
-        <element name="MainAddressComponent" positionX="-677.58203125" positionY="1048.3359375" width="128" height="103"/>
-        <element name="GeometryEntity" positionX="-673.80078125" positionY="1304.87109375" width="128" height="148"/>
+        <element name="AddressPhotoEntity" positionX="-1494" positionY="90" width="128" height="89"/>
     </elements>
 </model>

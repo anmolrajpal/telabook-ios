@@ -15,6 +15,7 @@ target 'Telabook' do
 	pod 'ReachabilitySwift'
   pod 'MessageKit'
   pod 'PINRemoteImage'
+  pod 'GooglePlaces'
   pod 'linphone-sdk' , '4.4.7'
 end
 

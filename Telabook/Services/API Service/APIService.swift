@@ -142,7 +142,11 @@ public struct APIService: APIServiceProtocol {
       /// Endpoint to fetch Address Book of an Agent
       case FetchContacts
       
+      /// Endpoint to update addressbook contact details including addresses
+      case UpdateContactDetails(contactConversationID: Int)
       
+      /// Endpoint to create new addressbook contact including addresses
+      case CreateAddressBookContact
       /**
        Returns the path of a specified Endpoint.
        ## Example Usage ##
@@ -185,6 +189,8 @@ public struct APIService: APIServiceProtocol {
          case .FetchAgentCalls(let workerID): return "/worker/\(workerID)/calls"
          case .RegisterFCMToken: return "/registration/token"
          case .FetchContacts: return "/book/address-books"
+         case .UpdateContactDetails(let contactConversationID): return "/book/address-books/\(contactConversationID)"
+         case .CreateAddressBookContact: return "/book/address-books"
          }
       }
    }

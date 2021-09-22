@@ -7,17 +7,32 @@
 //
 
 import UIKit
+import GooglePlaces
 
+//extension MainAddressEntity {
+//   func getGMSPlaceObject(from mainAddress: MainAddressEntity) -> GMSPlace {
+//
+//   }
+//}
 class ContactDetailsViewController: UITableViewController {
  
    // MARK: - Stored Properties / Declarations
-   let contact: AddressBookContact
+   
+   var contact = AddressBookProperties(address: []) {
+      didSet {
+         updateUI()
+      }
+   }
    var dataSource:DataSource! = nil
+   var viewDidAppear = false
+   var agentMOC:Agent!
+   var isCreatingNewContact = false
+//   var addressBookContact:AddressBookContact!
    
    // MARK: - Init / Deinit
    
-   init(contact: AddressBookContact) {
-      self.contact = contact
+   init() {
+//      self.contact = contact
       super.init(style: .insetGrouped)
    }
    required init?(coder: NSCoder) {
@@ -25,5 +40,43 @@ class ContactDetailsViewController: UITableViewController {
    }
    deinit {
       print("\(self): Deinitialized")
+   }
+   
+   // MARK: - Computed Properties
+   
+//   var addresses = [AddressBookProperties.Address]() {
+//      didSet {
+//         updateUI()
+//      }
+//   }
+
+
+   // MARK: - Lifecycle
+   
+   override func viewDidLoad() {
+      super.viewDidLoad()
+      commonInit()
+   }
+   override func viewDidAppear(_ animated: Bool) {
+      super.viewDidAppear(animated)
+      viewDidAppear = true
+   }
+   override var isModalInPresentation: Bool {
+       get {
+           return true
+       }
+       set {
+           super.isModalInPresentation = newValue
+       }
+   }
+}
+private extension String {
+   var firstLetter: Self {
+      self.uppercased().prefix(1).string
+   }
+}
+private extension Optional where Wrapped == String {
+   var firstLetter: String {
+      self?.uppercased().prefix(1).string ?? ""
    }
 }

@@ -8,49 +8,48 @@
 
 import Foundation
 enum Configuration {
-    enum Error: Swift.Error {
-        case missingKey, invalidValue
-    }
-    enum Constants:String {
-        case baseURL = "BASE_URL"
-        case apiHost = "API_HOST"
-        case urlScheme = "URL_SCHEME"
-        case subdomain = "SUBDOMAIN"
-        case timoutInterval = "TIMEOUT_INTERVAL"
-        case bundleID = "CFBundleIdentifier"
-        case bundleDisplayName = "CFBundleDisplayName"
-        case appGroupID = "APP_GROUP_ID"
-    }
-    static func value<T>(for key: String) throws -> T where T: LosslessStringConvertible {
-        guard let object = Bundle.main.object(forInfoDictionaryKey:key) else {
-            throw Error.missingKey
-        }
-
-        switch object {
-        case let value as T:
-            return value
-        case let string as String:
-            guard let value = T(string) else { fallthrough }
-            return value
-        default:
-            throw Error.invalidValue
-        }
-    }
-    
-    
-    static func value<T>(for key: Constants) throws -> T where T: LosslessStringConvertible {
-        guard let object = Bundle.main.object(forInfoDictionaryKey:key.rawValue) else {
-            throw Error.missingKey
-        }
-
-        switch object {
-        case let value as T:
-            return value
-        case let string as String:
-            guard let value = T(string) else { fallthrough }
-            return value
-        default:
-            throw Error.invalidValue
-        }
-    }
+   enum Error: Swift.Error {
+      case missingKey, invalidValue
+   }
+   enum Constants:String {
+      case baseURL = "BASE_URL"
+      case apiHost = "API_HOST"
+      case urlScheme = "URL_SCHEME"
+      case subdomain = "SUBDOMAIN"
+      case timoutInterval = "TIMEOUT_INTERVAL"
+      case bundleID = "CFBundleIdentifier"
+      case bundleDisplayName = "CFBundleDisplayName"
+      case appGroupID = "APP_GROUP_ID"
+      case placesApiKey = "PLACES_API_KEY"
+   }
+   static func value<T>(for key: String) throws -> T where T: LosslessStringConvertible {
+      guard let object = Bundle.main.object(forInfoDictionaryKey:key) else {
+         throw Error.missingKey
+      }
+      
+      switch object {
+      case let value as T:
+         return value
+      case let string as String:
+         guard let value = T(string) else { fallthrough }
+         return value
+      default:
+         throw Error.invalidValue
+      }
+   }
+   
+   static func value<T>(for key: Constants) throws -> T where T: LosslessStringConvertible {
+      guard let object = Bundle.main.object(forInfoDictionaryKey:key.rawValue) else {
+         throw Error.missingKey
+      }
+      switch object {
+      case let value as T:
+         return value
+      case let string as String:
+         guard let value = T(string) else { fallthrough }
+         return value
+      default:
+         throw Error.invalidValue
+      }
+   }
 }

@@ -61,7 +61,7 @@ extension AddressBookViewController {
          guard self != nil else { return nil }
          let cell = tableView.dequeueReusableCell(AddressBookContactCell.self, for: indexPath)
          cell.backgroundColor = .clear
-         cell.configureCell(with: contact, animated: true)
+         cell.configureCell(with: contact, animated: false)
          return cell
       })
       dataSource.defaultRowAnimation = .none
@@ -155,6 +155,15 @@ extension AddressBookViewController {
 extension AddressBookViewController {
    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
       AddressBookContactCell.cellHeight
+   }
+   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+      guard let selectedContact = dataSource.itemIdentifier(for: indexPath) else { return }
+      let vc = ContactDetailsViewController()
+      vc.contact = selectedContact.serverObject
+      vc.agentMOC = selectedContact.agent
+      vc.isCreatingNewContact = false
+      navigationController?.pushViewController(vc, animated: true)
+      viewDidAppear = false
    }
    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
       if section == 0 {

@@ -443,3 +443,48 @@ extension CallViewController {
     }
     
 }
+/*
+@objc func onPan(_ panGesture: UIPanGestureRecognizer) {
+
+        func slideViewVerticallyTo(_ y: CGFloat) {
+//               containerView.frame.origin = CGPoint(x: 0, y: y)
+         let translate = CGAffineTransform(translationX: 0, y: y)
+          containerView.transform = translate
+        }
+
+        switch panGesture.state {
+
+        case .began, .changed:
+            // If pan started or is ongoing then
+            // slide the view to follow the finger
+            let translation = panGesture.translation(in: containerView)
+            let y = max(0, translation.y)
+            slideViewVerticallyTo(y)
+
+        case .ended:
+            // If pan ended, decide it we should close or reset the view
+            // based on the final position and the speed of the gesture
+            let translation = panGesture.translation(in: containerView)
+            let velocity = panGesture.velocity(in: containerView)
+         
+            let closing = (translation.y > self.containerView.frame.size.height * minimumScreenRatioToHide) ||
+                          (velocity.y > minimumVelocityToHide)
+
+            if closing {
+               dismissAnimated()
+            } else {
+                // If not closing, reset the view to the top
+                UIView.animate(withDuration: animationDuration, animations: {
+                    slideViewVerticallyTo(0)
+                })
+            }
+
+        default:
+            // If gesture state is undefined, reset the view to the top
+            UIView.animate(withDuration: animationDuration, animations: {
+                slideViewVerticallyTo(0)
+            })
+
+        }
+}
+*/

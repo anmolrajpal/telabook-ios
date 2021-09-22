@@ -45,11 +45,21 @@ extension AddressBookViewController {
       let cancelButtonImage = SFSymbol.cancel.image(withSymbolConfiguration: .init(textStyle: .largeTitle)).image(scaledTo: .init(width: 28, height: 28))
       let cancelButton = UIBarButtonItem(image: cancelButtonImage, style: .plain, target: self, action: #selector(cancelButtonDidTap))
       cancelButton.tintColor = UIColor.white.withAlphaComponent(0.2)
-      navigationItem.rightBarButtonItems = [cancelButton]
+      let addButton = UIBarButtonItem(image: #imageLiteral(resourceName: "add").withRenderingMode(.alwaysOriginal), style: UIBarButtonItem.Style.done, target: self, action: #selector(addButtonDidTap))
+      navigationItem.leftBarButtonItems = [cancelButton]
+      navigationItem.rightBarButtonItems = [addButton]
    }
    @objc
    private func cancelButtonDidTap() {
       self.dismiss(animated: true)
+   }
+   @objc
+   private func addButtonDidTap() {
+      let vc = ContactDetailsViewController()
+      vc.agentMOC = agent
+      vc.isCreatingNewContact = true
+      navigationController?.pushViewController(vc, animated: true)
+      viewDidAppear = false
    }
    
    /// Manages the UI state based on the fetched results available

@@ -219,7 +219,6 @@ extension AgentsViewController {
     private func showAddressBook(for agent: Agent) {
         let vc = AddressBookViewController(agent: agent)
         let navController = UINavigationController(rootViewController: vc)
-//        navController.modalPresentationStyle = .overFullScreen
         present(navController, animated: true)
     }
     private func showGallery(for agent:Agent) {

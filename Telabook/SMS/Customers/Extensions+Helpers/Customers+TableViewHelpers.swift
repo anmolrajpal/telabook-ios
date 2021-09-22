@@ -259,7 +259,7 @@ extension CustomersViewController {
             
             
             // MARK: - Details Action
-            
+
             let detailsAction = UIAction(title: "Details", image: SFSymbol.person.image.withTintColor(.telaBlue, renderingMode: .alwaysOriginal)) { _ in
                 let vc = CustomerDetailsController(conversation: customer)
 //                vc.delegate = self

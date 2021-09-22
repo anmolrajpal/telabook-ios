@@ -535,7 +535,9 @@ class TabBarController: UITabBarController {
         if AppData.isLoggedIn && AppData.workerId != 0 {
             requestNotifications {
                 DispatchQueue.main.async {
-                    UIApplication.shared.registerForRemoteNotifications()
+                  if !UIApplication.shared.isRegisteredForRemoteNotifications {
+                     UIApplication.shared.registerForRemoteNotifications()
+                  }
                     let topic = "operator_ios_\(AppData.workerId)"
                     Messaging.messaging().subscribe(toTopic: topic) { error in
                         if let error = error {
@@ -552,7 +554,9 @@ class TabBarController: UITabBarController {
         if AppData.isLoggedIn && AppData.workerId != 0 {
             requestNotifications {
                 DispatchQueue.main.async {
-                    UIApplication.shared.registerForRemoteNotifications()
+                  if !UIApplication.shared.isRegisteredForRemoteNotifications {
+                     UIApplication.shared.registerForRemoteNotifications()
+                  }
                     Messaging.messaging().token { (token, error) in
                         if let error = error {
                             printAndLog(message: "### \(#function) Error retrieving fcmToken from Firebase sdk | Error: \n\(error)", log: .notifications, logType: .error)

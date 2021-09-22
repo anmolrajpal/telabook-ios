@@ -331,6 +331,15 @@ extension UIView {
       }
    }
    
+   func animateBorderWidth(toValue: CGFloat, duration: Double = 0.7, withColor color: UIColor = .clear) {
+      let animation:CABasicAnimation = CABasicAnimation(keyPath: "borderWidth")
+      animation.fromValue = layer.borderWidth
+      animation.toValue = toValue
+      animation.duration = duration
+      layer.borderColor = color.cgColor
+      layer.add(animation, forKey: "Width")
+      layer.borderWidth = toValue
+   }
 }
 extension UIViewController {
    //    func startSpinner() {
@@ -351,9 +360,9 @@ extension UIViewController {
       //        navigationItem.backBarButtonItem?.tintColor = .telaGray6
       extendedLayoutIncludesOpaqueBars = true
    }
-   func hideKeyboardWhenTappedAround() {
+   func hideKeyboardWhenTappedAround(cancellingTouches: Bool = true) {
       let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
-      tap.cancelsTouchesInView = true
+      tap.cancelsTouchesInView = cancellingTouches
       view.addGestureRecognizer(tap)
    }
    
@@ -787,12 +796,27 @@ extension NSObject {
    }
 }
 extension String {
-   func slice(from: String, to: String) -> String? {
-      return (range(of: from)?.upperBound).flatMap { substringFrom in
-         (range(of: to, range: substringFrom..<endIndex)?.lowerBound).map { substringTo in
-            String(self[substringFrom..<substringTo])
-         }
-      }
+   var percentEscapedString: Self {
+       var characterSet = CharacterSet.alphanumerics
+       characterSet.insert(charactersIn: "-._* ")
+       
+       return self
+         .addingPercentEncoding(withAllowedCharacters: characterSet)!
+         .replacingOccurrences(of: " ", with: "+")
+         .replacingOccurrences(of: " ", with: "+", options: [], range: nil)
+     }
+   func slice(from: String, to: String, includingStartPredicate: Bool = true, includingEndPredicate: Bool = true) -> String? {
+       return (includingStartPredicate ?
+                  (range(of: from)?.lowerBound) :
+                  (range(of: from)?.upperBound))
+         .flatMap { substringFrom in
+           (includingEndPredicate ?
+               (range(of: to, range: substringFrom..<endIndex)?.upperBound) :
+               (range(of: to, range: substringFrom..<endIndex)?.lowerBound))
+            .map { substringTo in
+               String(self[substringFrom..<substringTo])
+           }
+       }
    }
    static func emptyIfNil(_ optionalString: String?) -> String {
       let text: String
@@ -1322,6 +1346,11 @@ extension Int16 { var toInt: Int { Int(self) } }
 extension Int32 { var toInt: Int { Int(self) } }
 extension Int64 { var toInt: Int { Int(self) } }
 
+extension CLLocationDegrees { var floatValue: Float { Float(self) } }
+extension Optional where Wrapped == CLLocationDegrees { var floatValue: Float { Float(self ?? 0) } }
+extension CGFloat { var intValue: Int { Int(self) } }
+extension Optional where Wrapped == CGFloat { var intValue: Int { Int(self ?? 0) } }
+
 extension UIRefreshControl {
    
    func beginExplicitRefreshing() {
@@ -1581,6 +1610,17 @@ extension StringProtocol  {
 extension LosslessStringConvertible {
    var string: String { .init(self) }
 }
+
+//extension String {
+//   var firstLetter:Self {
+//      let letter = self.uppercased().prefix(1).string
+//      let alphabet = (Constants.alphabet.uppercased()).map(String.init)
+//      if alphabet.contains(letter) {
+//         return letter
+//      }
+//      return "#"
+//   }
+//}
 
 extension Numeric where Self: LosslessStringConvertible {
    /// Returns an array of integer digits from called integer.
