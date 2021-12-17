@@ -25,7 +25,7 @@ class ContactAddressViewController: UITableViewController {
       didSet {
          if let place = gmsPlace {
             address.mainAddress = place.mainAddress
-            updateUI(animating: false)
+            updateUI(animating: false, reloadingData: true)
          }
       }
    }

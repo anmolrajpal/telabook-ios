@@ -124,7 +124,10 @@ extension MessageDetailsViewController {
                         case .sentByApi:
                             cell.imageView?.image = self.singleTickImage(size: imageSize)
                             cell.detailTextLabel?.text = self.dateString(from: self.message.sentByApiAt)
-                        default: fatalError()
+                        default:
+                       let errorMessage = "### \(#function) | ### \(#file) | Error: Unhandled case for property row under defaultInfo section: \(item)"
+                       printAndLog(message: errorMessage, log: .default, logType: .error)
+                       fatalError(errorMessage)
                     }
                 case .debugInfo:
                     cell.textLabel?.text = item.property.name
@@ -135,7 +138,10 @@ extension MessageDetailsViewController {
                             cell.detailTextLabel?.text = String(self.message.conversationID)
                         case .conversationNode:
                             cell.detailTextLabel?.text = self.message.conversation?.node
-                        default: fatalError()
+                        default:
+                       let errorMessage = "### \(#function) | ### \(#file) | Error: Unhandled case for property row under debugInfo section: \(item)"
+                       printAndLog(message: errorMessage, log: .default, logType: .error)
+                       fatalError(errorMessage)
                 }
             }
             return cell

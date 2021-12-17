@@ -55,6 +55,7 @@ extension ContactAddressViewController {
             cell.selectionStyle = .none
             cell.textField.addTarget(self, action: #selector(self.addressNameTextFieldDidChange(_:)), for: .editingChanged)
             cell.configureCell(with: self.address.addressName, placeholder: Section.addressName.title)
+            cell.textField.isEnabled = true
             tableViewCell = cell
          case 1:
             let cell = tableView.dequeueReusableCell(TextFieldTableViewCell.self, for: indexPath)
@@ -67,6 +68,7 @@ extension ContactAddressViewController {
             cell.selectionStyle = .none
             cell.textField.addTarget(self, action: #selector(self.secondaryAddressTextFieldDidChange(_:)), for: .editingChanged)
             cell.configureCell(with: self.address.secondAddress, placeholder: Section.additionalAddress.title)
+            cell.textField.isEnabled = true
             tableViewCell = cell
          case 3:
             let cell = tableView.dequeueReusableCell(UITableViewCell.self, for: indexPath)

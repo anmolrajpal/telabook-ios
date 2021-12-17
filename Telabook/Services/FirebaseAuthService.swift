@@ -194,10 +194,15 @@ final class FirebaseAuthService:NSObject {
             #if !RELEASE
             print("Failed to unwrap Firebase Current User. Error: \(FirebaseError.noCurrentUser.localizedDescription)")
             #endif
+         
             defer {
 //                AuthenticationService.shared.callSignOutSequence()
             }
             DispatchQueue.main.async {
+               if let window = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first,
+                  let tabBarController = window.rootViewController as? TabBarController {
+                  tabBarController.presentLogin()
+               }
                 completion(.failure(.noCurrentUser))
             }
         }

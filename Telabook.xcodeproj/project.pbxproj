@@ -299,6 +299,12 @@
 		6FC8230F2475AE68002421F0 /* Blacklist+ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC8230E2475AE68002421F0 /* Blacklist+ServiceProvider.swift */; };
 		6FC823112475AF41002421F0 /* BlacklistCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC823102475AF41002421F0 /* BlacklistCell.swift */; };
 		6FC823132475AF4B002421F0 /* BlacklistCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC823122475AF4B002421F0 /* BlacklistCellView.swift */; };
+		6FCB25DA275E821500BF9DB1 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 6FCB25D9275E821500BF9DB1 /* FirebaseAnalytics */; };
+		6FCB25DC275E821500BF9DB1 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 6FCB25DB275E821500BF9DB1 /* FirebaseAuth */; };
+		6FCB25DE275E821500BF9DB1 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 6FCB25DD275E821500BF9DB1 /* FirebaseCrashlytics */; };
+		6FCB25E0275E821500BF9DB1 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 6FCB25DF275E821500BF9DB1 /* FirebaseDatabase */; };
+		6FCB25E2275E821500BF9DB1 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 6FCB25E1275E821500BF9DB1 /* FirebaseMessaging */; };
+		6FCB25E4275E821500BF9DB1 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 6FCB25E3275E821500BF9DB1 /* FirebaseStorage */; };
 		6FCF7F7424DF0C2A00A7AB0B /* NormalDialerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCF7F7324DF0C2900A7AB0B /* NormalDialerViewController.swift */; };
 		6FCF7F7624DF0C4200A7AB0B /* NormalDialerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCF7F7524DF0C4200A7AB0B /* NormalDialerView.swift */; };
 		6FCF7F7824DF108800A7AB0B /* NormalDialer+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCF7F7724DF108800A7AB0B /* NormalDialer+Helpers.swift */; };
@@ -740,9 +746,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6FCB25E2275E821500BF9DB1 /* FirebaseMessaging in Frameworks */,
 				E0040EAC93256506636B8DE1 /* Pods_Telabook.framework in Frameworks */,
+				6FCB25DC275E821500BF9DB1 /* FirebaseAuth in Frameworks */,
+				6FCB25E4275E821500BF9DB1 /* FirebaseStorage in Frameworks */,
 				6FEA102D259A772D00F09C79 /* MenuController in Frameworks */,
+				6FCB25DE275E821500BF9DB1 /* FirebaseCrashlytics in Frameworks */,
 				6FEA105E259A78D500F09C79 /* TOCropViewController in Frameworks */,
+				6FCB25DA275E821500BF9DB1 /* FirebaseAnalytics in Frameworks */,
+				6FCB25E0275E821500BF9DB1 /* FirebaseDatabase in Frameworks */,
 				6FEA105C259A78D500F09C79 /* CropViewController in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2512,6 +2524,7 @@
 				6FB11ADE229BDDBD0098D050 /* Resources */,
 				C02A7ED43DA0A597301692FD /* [CP] Embed Pods Frameworks */,
 				FC2BB25EA0549CA65B49DBD9 /* [CP] Copy Pods Resources */,
+				6FCB25E5275E846700BF9DB1 /* Configure Firebase Crashlytics */,
 			);
 			buildRules = (
 			);
@@ -2522,6 +2535,12 @@
 				6FEA102C259A772D00F09C79 /* MenuController */,
 				6FEA105B259A78D500F09C79 /* CropViewController */,
 				6FEA105D259A78D500F09C79 /* TOCropViewController */,
+				6FCB25D9275E821500BF9DB1 /* FirebaseAnalytics */,
+				6FCB25DB275E821500BF9DB1 /* FirebaseAuth */,
+				6FCB25DD275E821500BF9DB1 /* FirebaseCrashlytics */,
+				6FCB25DF275E821500BF9DB1 /* FirebaseDatabase */,
+				6FCB25E1275E821500BF9DB1 /* FirebaseMessaging */,
+				6FCB25E3275E821500BF9DB1 /* FirebaseStorage */,
 			);
 			productName = Telabook;
 			productReference = 6FB11AE0229BDDBD0098D050 /* Telabook.app */;
@@ -2562,6 +2581,7 @@
 			packageReferences = (
 				6FEA102B259A772D00F09C79 /* XCRemoteSwiftPackageReference "MenuController" */,
 				6FEA105A259A78D500F09C79 /* XCRemoteSwiftPackageReference "TOCropViewController" */,
+				6FCB25D8275E821500BF9DB1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = 6FB11AE1229BDDBD0098D050 /* Products */;
 			projectDirPath = "";
@@ -2593,6 +2613,26 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		6FCB25E5275E846700BF9DB1 /* Configure Firebase Crashlytics */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}",
+				"$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+			);
+			name = "Configure Firebase Crashlytics";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
+		};
 		6FEE9A23247EFFDE00709E2D /* Setup Firebase Support Files */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 12;
@@ -3086,7 +3126,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Telabook/Support Files/Entitlements/Telabook-PreRelease.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = "${TARGET_NAME}/Support Files/Config/Info.plist";
@@ -3238,6 +3278,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Telabook/Support Files/Entitlements/Telabook-Debug.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = "${TARGET_NAME}/Support Files/Config/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -3349,7 +3390,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Telabook/Support Files/Entitlements/Telabook-Staging.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = "${TARGET_NAME}/Support Files/Config/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -3397,6 +3438,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		6FCB25D8275E821500BF9DB1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
 		6FEA102B259A772D00F09C79 /* XCRemoteSwiftPackageReference "MenuController" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/anmolrajpal/MenuController.git";
@@ -3416,6 +3465,36 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		6FCB25D9275E821500BF9DB1 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6FCB25D8275E821500BF9DB1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		6FCB25DB275E821500BF9DB1 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6FCB25D8275E821500BF9DB1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		6FCB25DD275E821500BF9DB1 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6FCB25D8275E821500BF9DB1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
+		6FCB25DF275E821500BF9DB1 /* FirebaseDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6FCB25D8275E821500BF9DB1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
+		};
+		6FCB25E1275E821500BF9DB1 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6FCB25D8275E821500BF9DB1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+		6FCB25E3275E821500BF9DB1 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6FCB25D8275E821500BF9DB1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
 		6FEA102C259A772D00F09C79 /* MenuController */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 6FEA102B259A772D00F09C79 /* XCRemoteSwiftPackageReference "MenuController" */;

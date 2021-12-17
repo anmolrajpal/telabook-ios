@@ -44,7 +44,7 @@ extension MoreViewController {
         self.present(alertVC, animated: true, completion: nil)
     }
     
-    private func callSignOutSequence() {
+   func callSignOutSequence() {
         
         FirebaseAuthService.shared.signOut { (error) in
             guard error == nil else {

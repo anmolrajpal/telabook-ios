@@ -60,14 +60,18 @@ class DownloadService {
     
     func startDownload(_ message: UserMessage) {
         guard let url = message.imageURL else {
-            fatalError("### \(#function) - Download URL not available for message: \(message)")
+           let errorMessage = "### \(#function) | ### \(#file) | Error: Download URL not available for message: \(message)"
+           printAndLog(message: errorMessage, log: .default, logType: .error)
+         fatalError(errorMessage)
         }
         guard activeDownloads[url] == nil else {
             print("Already download in progress")
             return
         }
         guard let context = message.managedObjectContext else {
-            fatalError("Failed to get managed object context from message: \(message)")
+           let errorMessage = "### \(#function) | ### \(#file) | Error: Failed to get managed object context from message: \(message)"
+           printAndLog(message: errorMessage, log: .default, logType: .error)
+            fatalError(errorMessage)
         }
         context.performAndWait {
             do {

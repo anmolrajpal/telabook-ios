@@ -63,7 +63,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       
       UNUserNotificationCenter.current().delegate = self
       registerForVoIPNotifications() // Register for notifications must be done ASAP to give a chance for first SIP register to be done with right token. Specially true in case of remote provisionning or re-install with new type of signing certificate, like debug to release.
-      
+      if #available(iOS 15.0, *) {
+          UITableView.appearance().sectionHeaderTopPadding = 0
+      }
       let linphoneManager = LinphoneManager.instance()
       let configManager = ConfigManager.instance()
       configManager.setDb(db: linphoneManager.config.getCobject!)
