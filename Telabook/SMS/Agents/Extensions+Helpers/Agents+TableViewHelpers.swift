@@ -167,7 +167,7 @@ extension AgentsViewController {
             let addressBookAction = UIAction(title: "Address Book", image: #imageLiteral(resourceName: "addressbook")) { _ in
                 self.showAddressBook(for: agent)
             }
-//            menuItems.append(addressBookAction)
+            menuItems.append(addressBookAction)
             
             
             
