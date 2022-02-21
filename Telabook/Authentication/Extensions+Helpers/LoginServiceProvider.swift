@@ -57,23 +57,25 @@ extension LoginViewController {
             showMessage(message: "Error while saving login info. Please try again.")
             return
         }
-        
+        AnalyticsManager.shared.identifyUser(withDistinctID: String(userId))
+       if let email = userObject.email, !email.isBlank {
+          AnalyticsManager.shared.setUserProperties(properties: [.email: email])
+       }
+       if let name = userObject.name, !name.isBlank {
+          AnalyticsManager.shared.setUserProperties(properties: [.name: name])
+       }
         self.setAppPreferences(userId, companyId, workerId, roleId, userObject)
         
         let appUserRole:AppUserRole = AppUserRole.getUserRole(byRoleCode: roleId)
         
         if appUserRole == .Developer {
-            #if !RELEASE
-            print("User is able to select company because the role is \(appUserRole)")
-            #endif
+           printAndLog(message: "User is able to select company because the role is \(appUserRole)", log: .network, logType: .info)
             let vc = SelectCompanyViewController()
             vc.isModalInPresentation = true
             vc.delegate = self
             self.present(vc, animated: true, completion: nil)
         } else {
-            #if !RELEASE
-            print("User Does not need to select company, proceeding with login with the user of role: \(appUserRole)")
-            #endif
+           printAndLog(message: "User Does not need to select company, proceeding with login with the user of role: \(appUserRole)", log: .network, logType: .info)
             TapticEngine.generateFeedback(ofType: .Success)
             DispatchQueue.main.async {
                 self.stopButtonSpinner()

@@ -36,6 +36,7 @@ PODS:
     - PINCache (~> 3.0.3)
     - PINRemoteImage/Core
   - ReachabilitySwift (5.0.0)
+  - Wormholy (1.6.5)
 
 DEPENDENCIES:
   - GooglePlaces
@@ -43,6 +44,7 @@ DEPENDENCIES:
   - MessageKit
   - PINRemoteImage
   - ReachabilitySwift
+  - Wormholy
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
@@ -53,6 +55,7 @@ SPEC REPOS:
     - PINOperation
     - PINRemoteImage
     - ReachabilitySwift
+    - Wormholy
   https://gitlab.linphone.org/BC/public/podspec.git:
     - linphone-sdk
 
@@ -65,7 +68,8 @@ SPEC CHECKSUMS:
   PINOperation: 00c935935f1e8cf0d1e2d6b542e75b88fc3e5e20
   PINRemoteImage: f1295b29f8c5e640e25335a1b2bd9d805171bd01
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
+  Wormholy: 3252bc3e55a1847ef9a0976c1377bd77bf3635fa
 
-PODFILE CHECKSUM: e35d3dc49a3ccf7ddd224274985c7811a21d95e9
+PODFILE CHECKSUM: 553cdd1e8f6dafd8980e99492e45613c342299fa
 
 COCOAPODS: 1.11.2

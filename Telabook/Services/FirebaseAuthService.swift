@@ -58,27 +58,30 @@ final class FirebaseAuthService:NSObject {
         Auth.auth().signIn(withEmail: email, password: password) { [weak self] user, error in
             guard self != nil else {
                 DispatchQueue.main.async {
-                    print(FirebaseError.referenceError.localizedDescription)
+                   printAndLog(message: "###\(#function) | Firebase Token Fetch Error: \(FirebaseError.referenceError.localizedDescription)", log: .firebase, logType: .error)
                     completion(nil, .referenceError)
                 }
                 return
             }
             if let err = error {
                 DispatchQueue.main.async {
-                    print(FirebaseError.authenticationError(err))
+                   printAndLog(message: "###\(#function) | Firebase Token Fetch Error: \(FirebaseError.authenticationError(err))", log: .firebase, logType: .error)
                     completion(nil, .authenticationError(err))
                 }
             } else if let userData = user {
                 userData.user.getIDToken(completion: { (token, err) in
                     if let e = err {
-                        print(FirebaseError.noIDToken(e))
+                       printAndLog(message: "###\(#function) | Firebase Token Fetch Error: \(FirebaseError.noIDToken(e))", log: .firebase, logType: .error)
                         DispatchQueue.main.async {
                             completion(nil, .noIDToken(e))
                         }
                     } else if let t = token {
+                       printAndLog(message: "###\(#function) | Firebase Token Fetch Success | Token: \(t)", log: .firebase, logType: .error)
                         DispatchQueue.main.async {
                             completion(t, nil)
                         }
+                    } else {
+                       printAndLog(message: "###\(#function) | Firebase Token Fetch Error: Bad Firebase", log: .firebase, logType: .error)
                     }
                 })
             }

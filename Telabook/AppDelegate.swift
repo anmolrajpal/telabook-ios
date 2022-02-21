@@ -14,6 +14,7 @@ import PushKit
 import linphonesw
 import CallKit
 import GooglePlaces
+import Wormholy
 
 var linphoneCore: Core {
    return LinphoneManager.getLc()
@@ -54,6 +55,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
    }
    
    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+      configureWormholy()
+      initializeAnalytics()
       FirebaseApp.configure()
       Messaging.messaging().delegate = self
       
@@ -120,7 +123,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       return true
    }
    
-   
+   private func configureWormholy() {
+      if Config.environment == .production {
+         #if DEBUG
+         Wormholy.shakeEnabled = true
+         #else
+         Wormholy.shakeEnabled = Config.isTestFlightBuild
+         #endif
+      } else {
+         Wormholy.shakeEnabled = true
+      }
+   }
    
    /*
     private func initializeLinphoneCore() {
@@ -233,8 +246,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     */
    
-   
-   
+   func applicationDidEnterBackground(_ application: UIApplication) {
+      AnalyticsManager.shared.flush()
+   }
+   private func initializeAnalytics() {
+      AnalyticsManager.shared.initialize()
+   }
    func setupVoipAccount() {
       guard let credentials = AppData.userInfo?.extension,
             let userName = credentials.number,

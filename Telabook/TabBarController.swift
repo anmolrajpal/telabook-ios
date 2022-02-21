@@ -477,16 +477,15 @@ class TabBarController: UITabBarController {
     
     fileprivate func authenticate(animated:Bool = false) {
         guard !AppData.isLoggedIn else { configureTabBarController(); return }
-        selectedViewController?.view.isHidden = true
-        viewControllers = nil
+        viewControllers = [.init()]
         guard !(presentedViewController is LoginViewController) else { return }
-        let loginViewController = LoginViewController()
-        loginViewController.delegate = self
-        loginViewController.isModalInPresentation = true
+        let vc = LoginViewController()
+        vc.delegate = self
+        vc.isModalInPresentation = true
         AppData.clearData()
         AppData.isLoggedIn = false
         DispatchQueue.main.async {
-            self.present(loginViewController, animated: animated, completion: nil)
+            self.present(vc, animated: animated, completion: nil)
         }
     }
     

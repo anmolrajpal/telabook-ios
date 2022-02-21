@@ -21,6 +21,8 @@ enum Configuration {
       case bundleDisplayName = "CFBundleDisplayName"
       case appGroupID = "APP_GROUP_ID"
       case placesApiKey = "PLACES_API_KEY"
+      case environment = "APP_ENVIRONMENT"
+      case mixpanelToken = "MixpanelToken"
    }
    static func value<T>(for key: String) throws -> T where T: LosslessStringConvertible {
       guard let object = Bundle.main.object(forInfoDictionaryKey:key) else {

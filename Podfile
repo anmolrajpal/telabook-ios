@@ -11,4 +11,5 @@ target 'Telabook' do
   pod 'PINRemoteImage'
   pod 'GooglePlaces'
   pod 'linphone-sdk' , '4.4.7'
+  pod 'Wormholy'
 end

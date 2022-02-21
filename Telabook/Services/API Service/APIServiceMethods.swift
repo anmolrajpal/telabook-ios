@@ -13,22 +13,19 @@ extension APIService {
     func loginWithCredentials<T: Decodable>(endpoint: Endpoint = .SignIn, email: String, password: String, params: [String: String]? = nil, httpBody: Data? = nil, headers: [HTTPHeader]? = nil, guardResponse: ResponseStatus? = nil, decoder:JSONDecoder = defaultDecoder, completion: @escaping APICompletion<T>) {
         FirebaseAuthService.shared.authenticateAndFetchToken(email: email, password: password) { (token, error) in
             guard let bearerToken = token else {
+               printAndLog(message: "###\(#function) | Firebase Token Fetch Error: Failed to fetch bearer token from Firebase", log: .firebase, logType: .error)
                 DispatchQueue.main.async {
                     completion(.failure(.noFirebaseToken(error: error!)))
                 }
                 return
             }
-            #if !RELEASE
-            print("\n\n------------------------------------------------ Firebase Token: BEGIN ------------------------------------------------\n\nFirebase Bearer Token: \(bearerToken)\n\n--------------------------------------------------- Firebase Token: END ------------------------------------------------\n\n")
-            #endif
+           printAndLog(message: "###\(#function) | Firebase Token Fetch Success: \n\n------------------------------------------------ Firebase Token: BEGIN ------------------------------------------------\n\nFirebase Bearer Token: \(bearerToken)\n\n--------------------------------------------------- Firebase Token: END ------------------------------------------------\n\n", log: .firebase, logType: .info)
             guard let url = self.constructURL(forEndpoint: endpoint, with: .init(apiCommonPath: "\(Config.APIConfig.urlPrefix)/v2")) else {
-                print("Error Log: Unable to Construct URL")
+               printAndLog(message: "###\(#function) | Error Log: Unable to Construct URL", log: .firebase, logType: .error)
                 completion(.failure(.invalidURL))
                 return
             }
-            #if !RELEASE
             print("Endpoint URL= \(url)")
-            #endif
             var request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.useProtocolCachePolicy, timeoutInterval: Configuration.defaultConfiguration.timeOutInterval)
             request.httpMethod = HTTPMethod.POST.rawValue
             request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: Header.headerName.Authorization.rawValue)
@@ -36,12 +33,14 @@ extension APIService {
             if let httpBody = httpBody { request.httpBody = httpBody }
             let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
                 guard error == nil else {
+                   printAndLog(message: "###\(#function) | Network Error: \(String(describing: error?.localizedDescription))", log: .network, logType: .error)
                     DispatchQueue.main.async {
                         completion(.failure(.networkError(error: error!)))
                     }
                     return
                 }
                 guard let response = response else {
+                   printAndLog(message: "###\(#function) | No response", log: .network, logType: .error)
                     DispatchQueue.main.async {
                         completion(.failure(.noResponse))
                     }
@@ -49,11 +48,10 @@ extension APIService {
                 }
                 let responseCode = (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)
                 let responseStatus = ResponseStatus.getResponseStatusBy(statusCode: responseCode)
-                #if !RELEASE
                 print("\n\n------------------------------------------------ Response: BEGIN ------------------------------------------------\n\nResponse Status => \(responseStatus)\nResponse Code => \(responseCode)\n\n--------------------------------------------------- Response: END ------------------------------------------------\n\n")
-                #endif
                 if let expectedResponse = guardResponse {
                     guard responseStatus == expectedResponse else {
+                       printAndLog(message: "###\(#function) | Network Error: Unexpected guarded response: \(responseStatus)", log: .network, logType: .error)
                         DispatchQueue.main.async {
                             completion(.failure(.unexpectedResponse(response: responseStatus, data: data)))
                         }
@@ -71,6 +69,7 @@ extension APIService {
                                 }
                             }
                         }
+                       printAndLog(message: "###\(#function) | Network Error: Unexpected response", log: .network, logType: .error)
                         DispatchQueue.main.async {
                             completion(.failure(.unexpectedResponse(response: responseStatus, data: data)))
                         }
@@ -78,15 +77,14 @@ extension APIService {
                     }
                 }
                 guard let data = data else {
+                   printAndLog(message: "###\(#function) | Network Error: No data | Response: \(responseStatus)", log: .network, logType: .error)
                     DispatchQueue.main.async {
-                        completion(.failure(.noData(response: ResponseStatus.getResponseStatusBy(statusCode: (response as? HTTPURLResponse)?.statusCode ?? ResponseStatus.getStatusCode(by: .UnknownResponse)))))
+                        completion(.failure(.noData(response: responseStatus)))
                     }
                     return
                 }
-                #if !RELEASE
                 let jsonString = String(data: data, encoding: .utf8)!
                 print("\n\n------------------------------------------------ Raw JSON Object: BEGIN ------------------------------------------------\n\n"+jsonString+"\n\n--------------------------------------------------- Raw JSON Object: END ------------------------------------------------\n\n")
-                #endif
                 do {
                     let object = try decoder.decode(T.self, from: data)
                     DispatchQueue.main.async {
@@ -94,9 +92,7 @@ extension APIService {
                     }
                 } catch let error {
                     DispatchQueue.main.async {
-                        #if !RELEASE
-                        print("JSON Decoding Error: \(error.localizedDescription)")
-                        #endif
+                       printAndLog(message: "###\(#function) | JSON Decoding Error: \(error.localizedDescription)", log: .network, logType: .error)
                         completion(.failure(.jsonDecodingError(error: error, data: data)))
                     }
                 }

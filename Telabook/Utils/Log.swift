@@ -28,6 +28,7 @@ extension OSLog.Category {
 ///   - log: The log file. `eg: CoreData, Firebase, UI, etc`
 ///   - logType: The category of log. `eg: debug, info, error, etc`
 public func printAndLog(message:String, log:OSLog, logType:OSLogType, isPrivate:Bool = false) {
+   AnalyticsManager.shared.trackEvent(.printLog, properties: ["message": message])
    print(message)
    if !isPrivate {
       os_log("%@", log: log, type: logType, message)

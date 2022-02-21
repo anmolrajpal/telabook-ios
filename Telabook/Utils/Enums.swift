@@ -154,6 +154,25 @@ public enum CustomDateFormat: String {
         
     }
 }
+enum Environment {
+   case development, staging, preProduction, production
+}
+extension Environment: RawRepresentable {
+   typealias EnvironmentValue = String
+   
+   init(rawValue: EnvironmentValue) {
+      switch rawValue {
+      case "development": self = .development
+      case "staging": self = .staging
+      case "pre-production": self = .preProduction
+      case "production": self = .production
+      default: fatalError("Unhandled case for Environment Type")
+      }
+   }
+   var rawValue: EnvironmentValue {
+      String(describing: self)
+   }
+}
 public enum TextFieldItemPosition {
     case Left
     case Right
