@@ -71,7 +71,7 @@ class LoginView: UIView {
     lazy var logoImageView:UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = #imageLiteral(resourceName: "logo")
+        imageView.image = Config.environment == .mzp·production ? UIImage(named: "logo·mzp") : UIImage(named: "logo")
         imageView.contentMode = UIView.ContentMode.scaleAspectFit
         return imageView
     }()

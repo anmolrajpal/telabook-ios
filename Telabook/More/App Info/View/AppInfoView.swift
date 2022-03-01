@@ -45,9 +45,9 @@ class AppInfoView: UIView {
     }()
     lazy var logoImageView:UIImageView = {
         let imageView = UIImageView()
-        imageView.image = #imageLiteral(resourceName: "logo")
-        //        imageView.clipsToBounds = true
-        //        imageView.layer.masksToBounds = false
+        
+        let logo = Config.environment == .mzp·production ? UIImage(named: "logo·mzp") : UIImage(named: "logo")
+        imageView.image = logo
         imageView.contentMode = UIView.ContentMode.scaleAspectFit
         return imageView
     }()

@@ -59,6 +59,7 @@
 		6F14AFA3269EDDD400A98679 /* ContactDetailsCreateAddressCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F14AFA2269EDDD400A98679 /* ContactDetailsCreateAddressCell.swift */; };
 		6F14AFA5269EDE0400A98679 /* ContactDetailsAddressCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F14AFA4269EDE0400A98679 /* ContactDetailsAddressCell.swift */; };
 		6F14AFA7269EDE3500A98679 /* ContactDetailsTextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F14AFA6269EDE3500A98679 /* ContactDetailsTextFieldCell.swift */; };
+		6F198C2827CA0ADA00913B8F /* LaunchScreen-MZP.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6F198C2727CA0ADA00913B8F /* LaunchScreen-MZP.storyboard */; };
 		6F1BD2EA22C4AD250053D0CC /* FollowUpsIndexCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1BD2E922C4AD250053D0CC /* FollowUpsIndexCodable.swift */; };
 		6F1BD2ED22C4ADED0053D0CC /* FollowUpVCTableViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1BD2EC22C4ADED0053D0CC /* FollowUpVCTableViewExtensions.swift */; };
 		6F1BD2EF22C4B0ED0053D0CC /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1BD2EE22C4B0ED0053D0CC /* Protocols.swift */; };
@@ -374,6 +375,7 @@
 		00F6128E3969BE17225C7C7D /* Pods_Telabook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Telabook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1092199FF62996FC89AA08A3 /* Pods-Telabook.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.debug.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.debug.xcconfig"; sourceTree = "<group>"; };
 		3B815F1CE2F9D37C2C220D00 /* Pods-Telabook.prerelease.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.prerelease.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.prerelease.xcconfig"; sourceTree = "<group>"; };
+		45ED935AEDF5DD87E638609F /* Pods-Telabook.mzp-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.mzp-production.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.mzp-production.xcconfig"; sourceTree = "<group>"; };
 		57F3A85608A94CC5EB995225 /* Pods-Telabook.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Telabook.release.xcconfig"; path = "Target Support Files/Pods-Telabook/Pods-Telabook.release.xcconfig"; sourceTree = "<group>"; };
 		6F00F2D524A50D68001E33D9 /* MessageMediaManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageMediaManager.swift; sourceTree = "<group>"; };
 		6F00F2D724A50DDA001E33D9 /* MessageDownloadItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDownloadItem.swift; sourceTree = "<group>"; };
@@ -426,6 +428,10 @@
 		6F14AFA2269EDDD400A98679 /* ContactDetailsCreateAddressCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDetailsCreateAddressCell.swift; sourceTree = "<group>"; };
 		6F14AFA4269EDE0400A98679 /* ContactDetailsAddressCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDetailsAddressCell.swift; sourceTree = "<group>"; };
 		6F14AFA6269EDE3500A98679 /* ContactDetailsTextFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDetailsTextFieldCell.swift; sourceTree = "<group>"; };
+		6F198C1F27C7ECF100913B8F /* Config-MZP-Production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Config-MZP-Production.xcconfig"; sourceTree = "<group>"; };
+		6F198C2327C9E32D00913B8F /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		6F198C2427CA016600913B8F /* TelabookMZP-Production.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "TelabookMZP-Production.entitlements"; sourceTree = "<group>"; };
+		6F198C2727CA0ADA00913B8F /* LaunchScreen-MZP.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "LaunchScreen-MZP.storyboard"; sourceTree = "<group>"; };
 		6F1BD2E922C4AD250053D0CC /* FollowUpsIndexCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUpsIndexCodable.swift; sourceTree = "<group>"; };
 		6F1BD2EC22C4ADED0053D0CC /* FollowUpVCTableViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUpVCTableViewExtensions.swift; sourceTree = "<group>"; };
 		6F1BD2EE22C4B0ED0053D0CC /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
@@ -1014,6 +1020,14 @@
 				6F14AFA2269EDDD400A98679 /* ContactDetailsCreateAddressCell.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		6F198C2227C9E2B400913B8F /* MZP-Production */ = {
+			isa = PBXGroup;
+			children = (
+				6F198C2327C9E32D00913B8F /* GoogleService-Info.plist */,
+			);
+			path = "MZP-Production";
 			sourceTree = "<group>";
 		};
 		6F1BD2E722C4ACA70053D0CC /* Model */ = {
@@ -1618,6 +1632,7 @@
 		6F8E959D257625D4001420AC /* Entitlements */ = {
 			isa = PBXGroup;
 			children = (
+				6F198C2427CA016600913B8F /* TelabookMZP-Production.entitlements */,
 				6FB11B4722A462340098D050 /* Telabook.entitlements */,
 				6F8E95A025762997001420AC /* Telabook-Debug.entitlements */,
 				6F8E95A1257629BD001420AC /* Telabook-Staging.entitlements */,
@@ -1737,6 +1752,7 @@
 				6FEE9A2C247F0D0300709E2D /* Config-Staging.xcconfig */,
 				6F6F9F89247FB76900C9114D /* Config-PreRelease.xcconfig */,
 				6FEE9A2D247F0D1200709E2D /* Config-Production.xcconfig */,
+				6F198C1F27C7ECF100913B8F /* Config-MZP-Production.xcconfig */,
 				6F9817C42564EC6A001647D0 /* Linphone */,
 			);
 			path = Config;
@@ -1772,6 +1788,7 @@
 			isa = PBXGroup;
 			children = (
 				6FB11AFC229BF36B0098D050 /* LaunchScreen.storyboard */,
+				6F198C2727CA0ADA00913B8F /* LaunchScreen-MZP.storyboard */,
 			);
 			path = "Launch Files";
 			sourceTree = "<group>";
@@ -2001,9 +2018,9 @@
 				9D78E82FCB5E6192D5C81890 /* Pods */,
 				AF7486D7D8259DA12A827688 /* Frameworks */,
 			);
-			indentWidth = 3;
+			indentWidth = 4;
 			sourceTree = "<group>";
-			tabWidth = 3;
+			tabWidth = 4;
 		};
 		6FB11AE1229BDDBD0098D050 /* Products */ = {
 			isa = PBXGroup;
@@ -2328,6 +2345,7 @@
 		6FEE9A1D247EFE2700709E2D /* Firebase */ = {
 			isa = PBXGroup;
 			children = (
+				6F198C2227C9E2B400913B8F /* MZP-Production */,
 				6F6F9F87247FB6C100C9114D /* PreRelease */,
 				6FEE9A20247EFE4B00709E2D /* Production */,
 				6FEE9A1F247EFE3200709E2D /* Development */,
@@ -2503,6 +2521,7 @@
 				57F3A85608A94CC5EB995225 /* Pods-Telabook.release.xcconfig */,
 				F3B1A0A2620F72CF524F9BF2 /* Pods-Telabook.staging.xcconfig */,
 				3B815F1CE2F9D37C2C220D00 /* Pods-Telabook.prerelease.xcconfig */,
+				45ED935AEDF5DD87E638609F /* Pods-Telabook.mzp-production.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -2608,6 +2627,7 @@
 				6FE24ABC2541C68A0043ACC7 /* ringback.wav in Resources */,
 				6FE24ABA2541C68A0043ACC7 /* notes_of_the_optimistic.caf in Resources */,
 				6F6F06A125543CB3003B3AB2 /* linphonerc-factory in Resources */,
+				6F198C2827CA0ADA00913B8F /* LaunchScreen-MZP.storyboard in Resources */,
 				6FB11AEB229BDDBE0098D050 /* Assets.xcassets in Resources */,
 				6FB11AF9229BE2400098D050 /* Gotham-Book.otf in Resources */,
 				6F6F069C25543A2F003B3AB2 /* linphonerc in Resources */,
@@ -2656,7 +2676,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Name of the resource we're selectively copying\nGOOGLESERVICE_INFO_PLIST=GoogleService-Info.plist\n\n# Get references to development, staging, pre-release and production versions of the GoogleService-Info.plist\n# NOTE: These should only live on the file system and should NOT be part of the target (since we'll be adding them to the target manually)\nGOOGLESERVICE_INFO_DEVELOPMENT=${PROJECT_DIR}/${TARGET_NAME}/Support\\ Files/Firebase/Development/${GOOGLESERVICE_INFO_PLIST}\nGOOGLESERVICE_INFO_PRODUCTION=${PROJECT_DIR}/${TARGET_NAME}/Support\\ Files/Firebase/Production/${GOOGLESERVICE_INFO_PLIST}\nGOOGLESERVICE_INFO_STAGING=${PROJECT_DIR}/${TARGET_NAME}/Support\\ Files/Firebase/Staging/${GOOGLESERVICE_INFO_PLIST}\nGOOGLESERVICE_INFO_PRE_RELEASE=${PROJECT_DIR}/${TARGET_NAME}/Support\\ Files/Firebase/PreRelease/${GOOGLESERVICE_INFO_PLIST}\n\n# Make sure the dev version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_DEVELOPMENT}\"\nif [ ! -f $GOOGLESERVICE_INFO_DEVELOPMENT ]\nthen\n    echo \"No Development GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\n    exit 1\nfi\n\n# Make sure the prod version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_PRODUCTION}\"\nif [ ! -f $GOOGLESERVICE_INFO_PRODUCTION ]\nthen\n    echo \"No Production GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\n    exit 1\nfi\n\n# Make sure the staging version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_STAGING}\"\nif [ ! -f $GOOGLESERVICE_INFO_STAGING ]\nthen\n    echo \"No Staging GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\n    exit 1\nfi\n\n# Make sure the pre release version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_PRE_RELEASE}\"\nif [ ! -f $GOOGLESERVICE_INFO_PRE_RELEASE ]\nthen\n    echo \"No Pre-Release GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\n    exit 1\nfi\n\n# Get a reference to the destination location for the GoogleService-Info.plist\nPLIST_DESTINATION=${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app\necho \"Will copy ${GOOGLESERVICE_INFO_PLIST} to final destination: ${PLIST_DESTINATION}\"\n\n# Copy over the prod GoogleService-Info.plist for Release builds\nif [ \"${CONFIGURATION}\" == \"Release\" ]\nthen\n    echo \"Using ${GOOGLESERVICE_INFO_PRODUCTION}\"\n    cp \"${GOOGLESERVICE_INFO_PRODUCTION}\" \"${PLIST_DESTINATION}\"\nelif [ \"${CONFIGURATION}\" == \"PreRelease\" ]\nthen\n    echo \"Using ${GOOGLESERVICE_INFO_PRE_RELEASE}\"\n    cp \"${GOOGLESERVICE_INFO_PRE_RELEASE}\" \"${PLIST_DESTINATION}\"\nelif [ \"${CONFIGURATION}\" == \"Staging\" ]\nthen\n    echo \"Using ${GOOGLESERVICE_INFO_STAGING}\"\n    cp \"${GOOGLESERVICE_INFO_STAGING}\" \"${PLIST_DESTINATION}\"\nelse\n    echo \"Using ${GOOGLESERVICE_INFO_DEVELOPMENT}\"\n    cp \"${GOOGLESERVICE_INFO_DEVELOPMENT}\" \"${PLIST_DESTINATION}\"\nfi\n";
+			shellScript = "# Name of the resource we're selectively copying\nGOOGLESERVICE_INFO_PLIST=GoogleService-Info.plist\n\n# Get references to development, staging, pre-release and production versions of the GoogleService-Info.plist\n# NOTE: These should only live on the file system and should NOT be part of the target (since we'll be adding them to the target manually)\nGOOGLESERVICE_INFO_DEVELOPMENT=${PROJECT_DIR}/${TARGET_NAME}/Support\\ Files/Firebase/Development/${GOOGLESERVICE_INFO_PLIST}\nGOOGLESERVICE_INFO_PRODUCTION=${PROJECT_DIR}/${TARGET_NAME}/Support\\ Files/Firebase/Production/${GOOGLESERVICE_INFO_PLIST}\nGOOGLESERVICE_INFO_MZP_PRODUCTION=${PROJECT_DIR}/${TARGET_NAME}/Support\\ Files/Firebase/MZP-Production/${GOOGLESERVICE_INFO_PLIST}\nGOOGLESERVICE_INFO_STAGING=${PROJECT_DIR}/${TARGET_NAME}/Support\\ Files/Firebase/Staging/${GOOGLESERVICE_INFO_PLIST}\nGOOGLESERVICE_INFO_PRE_RELEASE=${PROJECT_DIR}/${TARGET_NAME}/Support\\ Files/Firebase/PreRelease/${GOOGLESERVICE_INFO_PLIST}\n\n# Make sure the dev version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_DEVELOPMENT}\"\nif [ ! -f $GOOGLESERVICE_INFO_DEVELOPMENT ]\nthen\n    echo \"No Development GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\n    exit 1\nfi\n\n# Make sure the prod version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_PRODUCTION}\"\nif [ ! -f $GOOGLESERVICE_INFO_PRODUCTION ]\nthen\n    echo \"No Production GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\n    exit 1\nfi\n\n# Make sure the staging version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_STAGING}\"\nif [ ! -f $GOOGLESERVICE_INFO_STAGING ]\nthen\n    echo \"No Staging GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\n    exit 1\nfi\n\n# Make sure the pre release version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_PRE_RELEASE}\"\nif [ ! -f $GOOGLESERVICE_INFO_PRE_RELEASE ]\nthen\n    echo \"No Pre-Release GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\n    exit 1\nfi\n\n# Make sure the MZP prod version of GoogleService-Info.plist exists\necho \"Looking for ${GOOGLESERVICE_INFO_PLIST} in ${GOOGLESERVICE_INFO_MZP_PRODUCTION}\"\nif [ ! -f $GOOGLESERVICE_INFO_MZP_PRODUCTION ]\nthen\n    echo \"No MZP Production GoogleService-Info.plist found. Please ensure it's in the proper directory.\"\n    exit 1\nfi\n\n# Get a reference to the destination location for the GoogleService-Info.plist\nPLIST_DESTINATION=${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app\necho \"Will copy ${GOOGLESERVICE_INFO_PLIST} to final destination: ${PLIST_DESTINATION}\"\n\n# Copy over the prod GoogleService-Info.plist for Release builds\nif [ \"${CONFIGURATION}\" == \"Release\" ]\nthen\n    echo \"Using ${GOOGLESERVICE_INFO_PRODUCTION}\"\n    cp \"${GOOGLESERVICE_INFO_PRODUCTION}\" \"${PLIST_DESTINATION}\"\nelif [ \"${CONFIGURATION}\" == \"PreRelease\" ]\nthen\n    echo \"Using ${GOOGLESERVICE_INFO_PRE_RELEASE}\"\n    cp \"${GOOGLESERVICE_INFO_PRE_RELEASE}\" \"${PLIST_DESTINATION}\"\nelif [ \"${CONFIGURATION}\" == \"Staging\" ]\nthen\n    echo \"Using ${GOOGLESERVICE_INFO_STAGING}\"\n    cp \"${GOOGLESERVICE_INFO_STAGING}\" \"${PLIST_DESTINATION}\"\nelif [ \"$CONFIGURATION\" == \"Debug\"]\nthen\n    echo \"Using ${GOOGLESERVICE_INFO_DEVELOPMENT}\"\n    cp \"${GOOGLESERVICE_INFO_DEVELOPMENT}\" \"${PLIST_DESTINATION}\"\nelse\n    echo \"Using ${GOOGLESERVICE_INFO_MZP_PRODUCTION}\"\n    cp \"${GOOGLESERVICE_INFO_MZP_PRODUCTION}\" \"${PLIST_DESTINATION}\"\nfi\n";
 		};
 		83AEEE2018CB49FC492B0824 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3067,6 +3087,94 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		6F198C2027C93C8D00913B8F /* MZP-Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6F198C1F27C7ECF100913B8F /* Config-MZP-Production.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RELEASE;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "MZP-Production";
+		};
+		6F198C2127C93C8D00913B8F /* MZP-Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6F198C1F27C7ECF100913B8F /* Config-MZP-Production.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-MZP";
+				CODE_SIGN_ENTITLEMENTS = "Telabook/Support Files/Entitlements/TelabookMZP-Production.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 0;
+				DEVELOPMENT_TEAM = J9GL83RFA4;
+				INFOPLIST_FILE = "${TARGET_NAME}/Support Files/Config/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LAUNCH_SCREEN_NAME = "LaunchScreen-MZP";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.7;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -Xfrontend -warn-long-function-bodies=5000 -Xfrontend -warn-long-expression-type-checking=5000 -Xfrontend -debug-time-function-bodies";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID)";
+				PRODUCT_NAME = Telabook;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Telabook/Telabook-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = "MZP-Production";
+		};
 		6F6F9F8B247FB79300C9114D /* PreRelease */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6F6F9F89247FB76900C9114D /* Config-PreRelease.xcconfig */;
@@ -3134,17 +3242,18 @@
 				CODE_SIGN_ENTITLEMENTS = "Telabook/Support Files/Entitlements/Telabook-PreRelease.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 0;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = "${TARGET_NAME}/Support Files/Config/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LAUNCH_SCREEN_NAME = LaunchScreen;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.6;
+				MARKETING_VERSION = 1.0.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -Xfrontend -warn-long-function-bodies=5000 -Xfrontend -warn-long-expression-type-checking=5000 -Xfrontend -debug-time-function-bodies";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID)";
@@ -3288,16 +3397,17 @@
 				CODE_SIGN_ENTITLEMENTS = "Telabook/Support Files/Entitlements/Telabook-Debug.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 0;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = "${TARGET_NAME}/Support Files/Config/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LAUNCH_SCREEN_NAME = LaunchScreen;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.6;
+				MARKETING_VERSION = 1.0.7;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -Xfrontend -warn-long-function-bodies=5000 -Xfrontend -warn-long-expression-type-checking=5000 -Xfrontend -debug-time-function-bodies";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID)";
 				PRODUCT_NAME = Telabook;
@@ -3316,15 +3426,16 @@
 				CODE_SIGN_ENTITLEMENTS = "Telabook/Support Files/Entitlements/Telabook.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 0;
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = "${TARGET_NAME}/Support Files/Config/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LAUNCH_SCREEN_NAME = LaunchScreen;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.6;
+				MARKETING_VERSION = 1.0.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -Xfrontend -warn-long-function-bodies=5000 -Xfrontend -warn-long-expression-type-checking=5000 -Xfrontend -debug-time-function-bodies";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID)";
@@ -3403,16 +3514,17 @@
 				CODE_SIGN_ENTITLEMENTS = "Telabook/Support Files/Entitlements/Telabook-Staging.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 0;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = J9GL83RFA4;
 				INFOPLIST_FILE = "${TARGET_NAME}/Support Files/Config/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LAUNCH_SCREEN_NAME = LaunchScreen;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.6;
+				MARKETING_VERSION = 1.0.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -Xfrontend -warn-long-function-bodies=5000 -Xfrontend -warn-long-expression-type-checking=5000 -Xfrontend -debug-time-function-bodies";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID)";
@@ -3433,6 +3545,7 @@
 			buildConfigurations = (
 				6FB11AF0229BDDBE0098D050 /* Debug */,
 				6FB11AF1229BDDBE0098D050 /* Release */,
+				6F198C2027C93C8D00913B8F /* MZP-Production */,
 				6FEE9A29247F098A00709E2D /* Staging */,
 				6F6F9F8B247FB79300C9114D /* PreRelease */,
 			);
@@ -3444,6 +3557,7 @@
 			buildConfigurations = (
 				6FB11AF3229BDDBE0098D050 /* Debug */,
 				6FB11AF4229BDDBE0098D050 /* Release */,
+				6F198C2127C93C8D00913B8F /* MZP-Production */,
 				6FEE9A2A247F098A00709E2D /* Staging */,
 				6F6F9F8C247FB79300C9114D /* PreRelease */,
 			);

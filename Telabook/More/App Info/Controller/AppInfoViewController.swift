@@ -24,8 +24,7 @@ class AppInfoViewController: UIViewController {
         title = "APP INFORMATION"
         configureNavigationBarAppearance()
         
-        let appName:String = try! Configuration.value(for: .bundleDisplayName)
-        subview.appNameLabel.text = appName
+        subview.appNameLabel.text = Config.appName
         let version = Bundle.versionNumber ?? ""
         let build = Bundle.buildNumber ?? ""
         subview.appVersionLabel.text = "Version \(version) (\(build))"

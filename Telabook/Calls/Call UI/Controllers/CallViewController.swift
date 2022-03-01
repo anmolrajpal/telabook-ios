@@ -346,7 +346,8 @@ class CallViewController: UIViewController {
     lazy var logoImageView:UIImageView = {
         let view = UIImageView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.image = #imageLiteral(resourceName: "logo_transparent")
+        let logo = Config.environment == .mzp·production ? UIImage(named: "logo·mzp·just") : UIImage(named: "logo_transparent")
+        view.image = logo
         view.contentMode = .scaleAspectFit
         view.clipsToBounds = true
         view.isUserInteractionEnabled = true

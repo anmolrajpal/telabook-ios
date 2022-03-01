@@ -65,7 +65,7 @@ class QuickResponsesView: UIView {
     }()
     lazy var placeholderLabel:UILabel = {
         let label = UILabel()
-        label.text = "Turn on Mobile Data or Wifi to Access Telabook"
+        label.text = "Turn on Mobile Data or Wifi to Access \(Config.appName)"
         label.font = UIFont(name: CustomFonts.gothamMedium.rawValue, size: 16)
         label.textColor = UIColor.telaGray6
         label.textAlignment = .center

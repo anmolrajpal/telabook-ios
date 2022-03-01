@@ -155,7 +155,7 @@ public enum CustomDateFormat: String {
     }
 }
 enum Environment {
-   case development, staging, preProduction, production
+   case development, staging, preProduction, production, mzp·production
 }
 extension Environment: RawRepresentable {
    typealias EnvironmentValue = String
@@ -166,6 +166,7 @@ extension Environment: RawRepresentable {
       case "staging": self = .staging
       case "pre-production": self = .preProduction
       case "production": self = .production
+      case "mzp-production": self = .mzp·production
       default: fatalError("Unhandled case for Environment Type")
       }
    }

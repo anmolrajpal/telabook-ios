@@ -50,11 +50,58 @@ extension AgentsViewController {
         }
         return reference.observe(.value, with: { snapshot in
             guard !self.agents.isEmpty else { return }
-//            print("Wasnotseen snapshot: \(snapshot)")
-            let context = PersistentContainer.shared.newBackgroundContext()
+           /*
+           ["unread_messages": 3,
+            "error": 0,
+            "sent_by_api": 0,
+            "delivered_by_provider": 0,
+            "archive": 0,
+            "all_last_message_seen": 2021-07-26T14:33:32.471251Z,
+            "last_read_time": 1645579210121,
+            "blacklist_reason": no reason,
+            "last_message_date": 1645605882,
+            "external_conversation_id": 94140,
+            "customer_id": 64622,
+            "external_conversation_black_list": 0,
+            "updated_at": 1645605881733,
+            "message_type": MULTIMEDIA,
+            "last_message_key": -Mw_kFTmJ0rXcYfJZyAP,
+            "archived": 0,
+            "priority": 0,
+            "node": 232-64622-Customer,
+            "deleted": 0,
+            "worker_phone_number": +18135885444,
+            "colour": 3,
+            "incoming": 1,
+            "lastmessages": {
+               "-Mw_kEKtjFkaMJ4dDohx" =     {
+                   conversationId = 94140;
+                   date = 1645605876943;
+                   incoming = 1;
+                   isImage = 0;
+                   message = "Rachel, 25,";
+                   sender = 64622;
+                   "sender_is_worker" = 0;
+                   "sender_name" = "";
+                   "sender_number" = "+14349620029";
+                   type = sms;
+                   "updated_at" = 1645605876942;
+               };
+           },
+            "last_message_datetime": 1645605882,
+            "sent_by_app": 0,
+            "customer_phone_number": +14349620029,
+            "all_last_message_text": ,
+            "worker_person": LA Recruiting,
+            "sender_id": 232,
+            "sent_by_provider": 0]
+           */
+            
+           let context = PersistentContainer.shared.newBackgroundContext()
             let agents = self.agents.compactMap { context.object(with: $0.objectID) as? Agent }
             var totalCount = 0
             var pendingMessages:[PendingMessage] = []
+           
             for agent in agents {
                 var count = 0
                 var lastMessageDate:Date?
@@ -73,12 +120,28 @@ extension AgentsViewController {
             }
             self.updateTabBarBadge(withCount: totalCount)
             self.updateAgents(with: pendingMessages, context: context)
+           
+           /*
+           for child in snapshot.children {
+              if let snapshot = child as? DataSnapshot,
+                 let value = snapshot.value as? [String: AnyObject] {
+                 let workerID = mapToInt(value: value["sender_id"])
+                 let count = mapToInt(value: value["unread_messages"])
+                 let lastMessageDate = mapToDate(value: value["date"])
+//                 updateCounter(ofAgentWithID: workerID, count: count, lastMessageDate: lastMessageDate)
+              }
+           }
+           */
+           
         }) { error in
             let message = "### \(#function) - Error observing wasnotseen reference node: \(error.localizedDescription)"
             printAndLog(message: message, log: .firebase, logType: .error)
         }
     }
-    
+   
+   private func updateCounter(ofAgentWithID workerID: Int, count: Int, lastMessageDate:Date?) {
+      
+   }
     func setInitialPendingMessagesCount() {
         let count = Int(agents.map({ $0.externalPendingMessagesCount }).sum())
         updateTabBarBadge(withCount: count)
